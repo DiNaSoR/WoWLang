@@ -8,6 +8,11 @@ on:
 env:
   NODE_VERSION: '20'
 
+permissions:
+  contents: write
+  packages: write
+  actions: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
