@@ -24,6 +24,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        set -e
         for addon in WoWAR WoWPL WoWTR; do
           echo "Building $addon..."
           mkdir -p builds/$addon
@@ -43,7 +44,7 @@ jobs:
           (cd builds/$addon && zip -r ../$addon.zip .)
           
           echo "Creating release for $addon..."
-          release_url=$(curl -s -X POST \
+          release_response=$(curl -s -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ github.repository }}/releases \
@@ -53,13 +54,31 @@ jobs:
               "body": "Release notes for '$addon' ${{ github.ref_name }}",
               "draft": false,
               "prerelease": false
-            }' | jq -r .upload_url | sed 's/{?name,label}//g')
+            }')
+          
+          echo "Release creation response: $release_response"
+          
+          release_url=$(echo "$release_response" | jq -r .upload_url | sed 's/{?name,label}//g')
+          
+          if [ -z "$release_url" ] || [ "$release_url" == "null" ]; then
+            echo "Error: Failed to create release. API response: $release_response"
+            exit 1
+          fi
           
           echo "Uploading $addon.zip to release..."
-          curl -s -X POST \
+          upload_response=$(curl -s -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/zip" \
             -H "Accept: application/vnd.github.v3+json" \
             --data-binary @builds/$addon.zip \
-            "${release_url}?name=$addon.zip"
+            "${release_url}?name=$addon.zip")
+          
+          echo "Upload response: $upload_response"
+          
+          if ! echo "$upload_response" | jq -e .id > /dev/null; then
+            echo "Error: Failed to upload asset. API response: $upload_response"
+            exit 1
+          fi
+          
+          echo "Successfully released and uploaded $addon"
         done
