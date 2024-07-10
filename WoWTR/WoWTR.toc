@@ -1,0 +1,40 @@
+﻿## Interface: 110002
+## Title: WoWTR |cff8080ff11.00B2|r
+## Version: 11.00B2
+## Notes: Oyun içindeki Görevleri Türkçe'ye tercüme eder.
+## Notes_en: AddOn displays the translated quest informations in Turkish.
+## Author: Platine & WoWTR team
+## E-mail: info@wowtr.com.tr
+## WWW: https://www.wowtr.com.tr
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## IconTexture: Interface\AddOns\WoWTR\Images\icon.png
+## SavedVariables: QTR_PS, QTR_SAVED, QTR_MISSING, QTR_GOSSIP, BB_PM, BB_PS, BB_TR, MF_PM, MF_PS, TT_PS, TT_TUTORIALS, BT_PM, BT_SAVED, ST_PM, ST_PS, ST_PH, WoWTR_minimapDB
+
+Libs\LibStub\LibStub.lua
+Libs\AceAddon-3.0\AceAddon-3.0.lua
+Libs\AceConsole-3.0\AceConsole-3.0.lua
+Libs\AceDB-3.0\AceDB-3.0.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
+
+Translations\QuestData_TR.lua
+Translations\Gossip_TR.lua
+Translations\TlumaczOnline_TR.lua
+Translations\Bubbles_TR.lua
+Translations\Subtitles_TR.lua
+Translations\TutorialsData7_TR.lua
+Translations\Books_TR.lua
+Translations\Tooltips_TR.lua
+
+WoW_Localization_TR.lua
+WoW_Quests.lua
+WoW_Bubbles.lua
+WoW_MovieSubtitles.lua
+WoW_Tutorials.lua
+WoW_Books.lua
+WoW_Tooltips.lua
+
+WoW_Core.lua
+WoW_Config.lua
