@@ -5,50 +5,114 @@ on:
     tags:
       - 'v*.*.*'
 
-env:
-  NODE_VERSION: '20'
-
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
+
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3  # Updated to the latest version
 
     - name: Set up Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v3  # Updated to the latest version
       with:
-        node-version: ${{ env.NODE_VERSION }}
+        node-version: '20'  # Using Node.js 20
 
-    - name: Build and Release Add-Ons
+    - name: Build WoWAr Add-On
+      run: |
+        mkdir -p builds/WoWAr
+        cp -r WoWAr/* builds/WoWAr/
+        cp -r common/* builds/WoWAr/
+        cd builds/WoWAr
+        zip -r ../WoWAr.zip .
+        cd ../..
+
+    - name: Create WoWAR Release
+      id: create_wowar_release
+      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: WoWAR_release_${{ github.ref }}
+        body: |
+          Release notes for WoWAR ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload WoWAr to WoWAR Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_wowar_release.outputs.upload_url }}
+        asset_path: builds/WoWAr.zip
+        asset_name: WoWAr.zip
+        asset_content_type: application/zip
+
+    - name: Build WoWPL Add-On
       run: |
-        for addon in WoWAr WoWPL WoWTR; do
-          echo "Building $addon..."
-          mkdir -p builds/$addon
-          cp -r $addon/* builds/$addon/
-          cp -r common/* builds/$addon/
-          (cd builds/$addon && zip -r ../$addon.zip .)
-          
-          echo "Creating release for $addon..."
-          release_url=$(curl -s -X POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.repository }}/releases \
-            -d '{
-              "tag_name": "${{ github.ref_name }}",
-              "name": "'$addon'_release_${{ github.ref_name }}",
-              "body": "Release notes for '$addon' ${{ github.ref_name }}",
-              "draft": false,
-              "prerelease": false
-            }' | jq -r .upload_url | sed 's/{?name,label}//g')
-          
-          echo "Uploading $addon.zip to release..."
-          curl -s -X POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Content-Type: application/zip" \
-            -H "Accept: application/vnd.github.v3+json" \
-            --data-binary @builds/$addon.zip \
-            "${release_url}?name=$addon.zip"
-        done
+        mkdir -p builds/WoWPL
+        cp -r WoWPL/* builds/WoWPL/
+        cp -r common/* builds/WoWPL/
+        cd builds/WoWPL
+        zip -r ../WoWPL.zip .
+        cd ../..
+
+    - name: Create WoWPL Release
+      id: create_wowpl_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: WoWPL_release_${{ github.ref }}
+        body: |
+          Release notes for WoWPL ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload WoWPL to WoWPL Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_wowpl_release.outputs.upload_url }}
+        asset_path: builds/WoWPL.zip
+        asset_name: WoWPL.zip
+        asset_content_type: application/zip
+
+    - name: Build WoWTR Add-On
+      run: |
+        mkdir -p builds/WoWTR
+        cp -r WoWTR/* builds/WoWTR/
+        cp -r common/* builds/WoWTR/
+        cd builds/WoWTR
+        zip -r ../WoWTR.zip .
+        cd ../..
+
+    - name: Create WoWTR Release
+      id: create_wowtr_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: WoWTR_release_${{ github.ref }}
+        body: |
+          Release notes for WoWTR ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload WoWTR to WoWTR Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_wowtr_release.outputs.upload_url }}
+        asset_path: builds/WoWTR.zip
+        asset_name: WoWTR.zip
+        asset_content_type: application/zip
