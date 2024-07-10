@@ -24,11 +24,22 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        for addon in WoWAr WoWPL WoWTR; do
+        for addon in WoWAR WoWPL WoWTR; do
           echo "Building $addon..."
           mkdir -p builds/$addon
-          cp -r $addon/* builds/$addon/
-          cp -r common/* builds/$addon/
+          if [ -d "$addon" ]; then
+            cp -r $addon/* builds/$addon/
+          else
+            echo "Warning: $addon directory not found, skipping..."
+            continue
+          fi
+          
+          if [ -d "common" ]; then
+            cp -r common/* builds/$addon/
+          else
+            echo "Warning: common directory not found, skipping..."
+          fi
+          
           (cd builds/$addon && zip -r ../$addon.zip .)
           
           echo "Creating release for $addon..."
