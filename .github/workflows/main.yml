@@ -1,0 +1,110 @@
+name: Create Add-On Releases
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build WoWAr Add-On
+      run: |
+        mkdir -p builds/WoWAr
+        cp -r WoWAr/* builds/WoWAr/
+        cp -r common/* builds/WoWAr/
+        cd builds/WoWAr
+        zip -r ../WoWAr.zip .
+        cd ../..
+
+    - name: Create WoWAR Release
+      id: create_wowar_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: WoWAR_release_${{ github.ref }}
+        body: |
+          Release notes for WoWAR ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload WoWAr to WoWAR Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_wowar_release.outputs.upload_url }}
+        asset_path: builds/WoWAr.zip
+        asset_name: WoWAr.zip
+        asset_content_type: application/zip
+
+    - name: Build WoWPL Add-On
+      run: |
+        mkdir -p builds/WoWPL
+        cp -r WoWPL/* builds/WoWPL/
+        cp -r common/* builds/WoWPL/
+        cd builds/WoWPL
+        zip -r ../WoWPL.zip .
+        cd ../..
+
+    - name: Create WoWPL Release
+      id: create_wowpl_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: WoWPL_release_${{ github.ref }}
+        body: |
+          Release notes for WoWPL ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload WoWPL to WoWPL Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_wowpl_release.outputs.upload_url }}
+        asset_path: builds/WoWPL.zip
+        asset_name: WoWPL.zip
+        asset_content_type: application/zip
+
+    - name: Build WoWTR Add-On
+      run: |
+        mkdir -p builds/WoWTR
+        cp -r WoWTR/* builds/WoWTR/
+        cp -r common/* builds/WoWTR/
+        cd builds/WoWTR
+        zip -r ../WoWTR.zip .
+        cd ../..
+
+    - name: Create WoWTR Release
+      id: create_wowtr_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: WoWTR_release_${{ github.ref }}
+        body: |
+          Release notes for WoWTR ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload WoWTR to WoWTR Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_wowtr_release.outputs.upload_url }}
+        asset_path: builds/WoWTR.zip
+        asset_name: WoWTR.zip
+        asset_content_type: application/zip
