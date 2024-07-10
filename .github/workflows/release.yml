@@ -5,17 +5,20 @@ on:
     tags:
       - 'v*.*.*'
 
+env:
+  NODE_VERSION: '20'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: ${{ env.NODE_VERSION }}
 
     - name: Build and Release Add-Ons
       env:
@@ -34,9 +37,9 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ github.repository }}/releases \
             -d '{
-              "tag_name": "${{ github.ref }}",
-              "name": "'$addon'_release_${{ github.ref }}",
-              "body": "Release notes for '$addon' ${{ github.ref }}",
+              "tag_name": "${{ github.ref_name }}",
+              "name": "'$addon'_release_${{ github.ref_name }}",
+              "body": "Release notes for '$addon' ${{ github.ref_name }}",
               "draft": false,
               "prerelease": false
             }' | jq -r .upload_url | sed 's/{?name,label}//g')
