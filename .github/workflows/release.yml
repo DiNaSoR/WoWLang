@@ -47,6 +47,9 @@ jobs:
             fi
             INCLUDED_ADDONS+="$addon "
             
+            # Add header to Lua files
+            find temp/$addon -name "*.lua" -type f -exec sed -i "1i-- Addon: $addon (Version: $VERSION) (Date: $DATE)" {} \;
+            
             # Create the zip file
             FILENAME="${addon}_v${VERSION}_${DATE}.zip"
             (cd temp && zip -r ../builds/$FILENAME $addon)
