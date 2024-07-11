@@ -29,6 +29,9 @@ jobs:
         ADDONS=(WoWAR WoWPL WoWTR)
         INCLUDED_ADDONS=""
         
+        # Create necessary directories
+        mkdir -p builds temp
+        
         for addon in "${ADDONS[@]}"; do
           echo "Building $addon..."
           if [ -d "$addon" ]; then
