@@ -26,8 +26,8 @@ jobs:
         set -e
         # Get the version from the tag
         VERSION=${GITHUB_REF#refs/tags/v}
-        # Get the current date in the format DD-MM-YYYY
-        DATE=$(date +'%d-%m-%Y')
+        # Get the current date in the format YYYY-MM-DD
+        DATE=$(date +'%Y-%m-%d')
         for addon in WoWAR WoWPL WoWTR; do
           echo "Building $addon..."
           mkdir -p builds/$addon
