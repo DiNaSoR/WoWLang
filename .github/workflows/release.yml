@@ -24,15 +24,17 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         set -e
-        # Get the version from the tag
         VERSION=${GITHUB_REF#refs/tags/v}
-        # Get the current date in the format YYYY-MM-DD
         DATE=$(date +'%Y-%m-%d')
-        for addon in WoWAR WoWPL WoWTR; do
+        ADDONS=(WoWAR WoWPL WoWTR)
+        INCLUDED_ADDONS=""
+        
+        for addon in "${ADDONS[@]}"; do
           echo "Building $addon..."
           mkdir -p builds/$addon
           if [ -d "$addon" ]; then
             cp -r $addon/* builds/$addon/
+            INCLUDED_ADDONS+="$addon "
           else
             echo "Warning: $addon directory not found, skipping..."
             continue
@@ -44,49 +46,56 @@ jobs:
             echo "Warning: common directory not found, skipping..."
           fi
           
-          # Create the zip file with the new naming convention
           FILENAME="${addon}_v${VERSION}_${DATE}.zip"
           (cd builds/$addon && zip -r ../$FILENAME .)
+        done
+        
+        INCLUDED_ADDONS=$(echo $INCLUDED_ADDONS | sed 's/ /, /g' | sed 's/, $//')
+        
+        echo "Checking for existing release..."
+        release_info=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}")
+        release_id=$(echo "$release_info" | jq -r '.id // empty')
+        existing_body=$(echo "$release_info" | jq -r '.body // empty')
+        
+        NEW_BODY="Release notes for ${{ github.ref_name }}"
+        if [ -n "$existing_body" ]; then
+          NEW_BODY="$existing_body"$'\n\n'"Updated on ${DATE}"
+        fi
+        NEW_BODY="$NEW_BODY"$'\n'"Included add-ons: $INCLUDED_ADDONS"
+        
+        if [ -n "$release_id" ]; then
+          echo "Updating existing release..."
+          release_url="https://api.github.com/repos/${{ github.repository }}/releases/$release_id"
+          curl -s -X PATCH \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "$release_url" \
+            -d "$(jq -n --arg body "$NEW_BODY" '{"name":"Release ${{ github.ref_name }}","body":$body}')"
+        else
+          echo "Creating new release..."
+          release_response=$(curl -s -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/releases \
+            -d "$(jq -n --arg body "$NEW_BODY" '{"tag_name":"${{ github.ref_name }}","name":"Release ${{ github.ref_name }}","body":$body,"draft":false,"prerelease":false}')")
           
-          echo "Checking for existing release..."
-          release_id=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}" | \
-            jq -r '.id // empty')
+          echo "Release creation response: $release_response"
+          release_url=$(echo "$release_response" | jq -r .upload_url | sed 's/{?name,label}//g')
           
-          if [ -n "$release_id" ]; then
-            echo "Updating existing release for $addon..."
-            release_url="https://api.github.com/repos/${{ github.repository }}/releases/$release_id"
-            curl -s -X PATCH \
-              -H "Authorization: token $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github.v3+json" \
-              "$release_url" \
-              -d '{
-                "name": "Release ${{ github.ref_name }}",
-                "body": "Release notes for ${{ github.ref_name }}\n\nUpdated: '$addon'"
-              }'
-          else
-            echo "Creating new release for $addon..."
-            release_response=$(curl -s -X POST \
-              -H "Authorization: token $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github.v3+json" \
-              https://api.github.com/repos/${{ github.repository }}/releases \
-              -d '{
-                "tag_name": "${{ github.ref_name }}",
-                "name": "Release ${{ github.ref_name }}",
-                "body": "Release notes for ${{ github.ref_name }}\n\nIncluded: '$addon'",
-                "draft": false,
-                "prerelease": false
-              }')
-            
-            echo "Release creation response: $release_response"
-            release_url=$(echo "$release_response" | jq -r .upload_url | sed 's/{?name,label}//g')
-            
-            if [ -z "$release_url" ] || [ "$release_url" == "null" ]; then
-              echo "Error: Failed to create release. API response: $release_response"
-              exit 1
-            fi
+          if [ -z "$release_url" ] || [ "$release_url" == "null" ]; then
+            echo "Error: Failed to create release. API response: $release_response"
+            exit 1
+          fi
+        fi
+        
+        for addon in "${ADDONS[@]}"; do
+          if [ ! -f "builds/${addon}_v${VERSION}_${DATE}.zip" ]; then
+            echo "Skipping upload for $addon as the file was not created."
+            continue
           fi
           
+          FILENAME="${addon}_v${VERSION}_${DATE}.zip"
           echo "Uploading $FILENAME to release..."
           upload_url="${release_url/api.github.com\/repos/uploads.github.com\/repos}/assets"
           upload_response=$(curl -s -X POST \
@@ -103,5 +112,7 @@ jobs:
             exit 1
           fi
           
-          echo "Successfully released and uploaded $FILENAME"
+          echo "Successfully uploaded $FILENAME"
         done
+        
+        echo "Release process completed successfully"
