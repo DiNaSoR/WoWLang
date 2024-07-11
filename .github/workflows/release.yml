@@ -1,35 +1,33 @@
 name: Create Add-On Releases
-
 on:
   push:
     tags:
       - 'v*.*.*'
-
 env:
   NODE_VERSION: '20'
-
 permissions:
   contents: write
   packages: write
   actions: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
-
     - name: Build and Release Add-Ons
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         set -e
+        # Get the version from the tag
+        VERSION=${GITHUB_REF#refs/tags/v}
+        # Get the current date in the format DD-MM-YYYY
+        DATE=$(date +'%d-%m-%Y')
         for addon in WoWAR WoWPL WoWTR; do
           echo "Building $addon..."
           mkdir -p builds/$addon
@@ -46,7 +44,9 @@ jobs:
             echo "Warning: common directory not found, skipping..."
           fi
           
-          (cd builds/$addon && zip -r ../$addon.zip .)
+          # Create the zip file with the new naming convention
+          FILENAME="${addon}_v${VERSION}_${DATE}.zip"
+          (cd builds/$addon && zip -r ../$FILENAME .)
           
           echo "Checking for existing release..."
           release_id=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
@@ -87,14 +87,14 @@ jobs:
             fi
           fi
           
-          echo "Uploading $addon.zip to release..."
+          echo "Uploading $FILENAME to release..."
           upload_url="${release_url/api.github.com\/repos/uploads.github.com\/repos}/assets"
           upload_response=$(curl -s -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/zip" \
             -H "Accept: application/vnd.github.v3+json" \
-            --data-binary @builds/$addon.zip \
-            "${upload_url}?name=$addon.zip")
+            --data-binary @builds/$FILENAME \
+            "${upload_url}?name=$FILENAME")
           
           echo "Upload response: $upload_response"
           
@@ -103,5 +103,5 @@ jobs:
             exit 1
           fi
           
-          echo "Successfully released and uploaded $addon"
+          echo "Successfully released and uploaded $FILENAME"
         done
