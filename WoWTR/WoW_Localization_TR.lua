@@ -1,5 +1,4 @@
-﻿-- Addon: WoWTR (version: 10.L11) 2024.02.12
--- Description: Texts in the selected localization language
+﻿-- Description: Texts in the selected localization language
 -- Author: Platine [platine.wow@gmail.com]
 -- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]
 -------------------------------------------------------------------------------------------------------

@@ -1,4 +1,3 @@
--- Addon: WoWLang-Movies (version: 10.C14) 2024.01.22
 -- Description: The AddOn displays the translated text information in chosen language
 -- Author: Platine [platine.wow@gmail.com]
 -- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]

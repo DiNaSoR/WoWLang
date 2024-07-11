@@ -1,4 +1,3 @@
--- Addon: WoWLang-Quests (version: 10.A52) 2024.04.27
 -- Description: The AddOn displays the translated text information in chosen language
 -- Author: Platine [platine.wow@gmail.com]
 -- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]

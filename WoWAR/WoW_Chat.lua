@@ -1,5 +1,4 @@
-﻿-- Addon: WoWinArabic-Chat (version: 0.40) 2024.04.07
--- Description: The addon supports chat for entering and displaying messages in Arabic.
+﻿-- Description: The addon supports chat for entering and displaying messages in Arabic.
 -- Author: Platine [platine.wow@gmail.com]
 -- Co-Author: Dragonarab[WoWAR]
 -------------------------------------------------------------------------------------------------------

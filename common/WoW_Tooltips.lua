@@ -1,5 +1,4 @@
-﻿-- Addon: WoWLang-Tooltips (version: 10.S52) 2024.04.26
--- Description: The AddOn displays the translated text information in chosen language
+﻿-- Description: The AddOn displays the translated text information in chosen language
 -- Author: Platine [platine.wow@gmail.com]
 -- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]
 -------------------------------------------------------------------------------------------------------

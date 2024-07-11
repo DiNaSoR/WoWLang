@@ -1,4 +1,3 @@
--- Addon: WoWAR (version: 10.L12) 2024.04.16
 -- Description: Texts in the selected localization language
 -- Author: Platine [platine.wow@gmail.com]
 -- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]

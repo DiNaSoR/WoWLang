@@ -1,4 +1,3 @@
--- Addon: WoWpoPolsku (version: 10.L10) 2024.01.30
 -- Description: Texts in the selected localization language
 -- Author: Platine [platine.wow@gmail.com]
 -- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]

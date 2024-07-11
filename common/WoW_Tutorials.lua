@@ -1,4 +1,3 @@
--- Addon: WoWLang-Tutorials (version: 10.T9) 2024.01.22
 -- Description: The AddOn displays the translated text information in chosen language
 -- Author: Platine [platine.wow@gmail.com]
 -- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]

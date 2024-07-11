@@ -1,5 +1,4 @@
-﻿-- Addon: WoWLang-Core (version: 10.50) 2024.04.17
--- Description: The AddOn displays the translated text information in chosen language
+﻿-- Description: The AddOn displays the translated text information in chosen language
 -- Author: Platine [platine.wow@gmail.com]
 -- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]
 -------------------------------------------------------------------------------------------------------
