@@ -1172,8 +1172,23 @@ function ST_SuggestTabClick()
       local obj12 = EncounterJournalSuggestFrame.Suggestion1.reward.text;               -- https://imgur.com/kkPedLC
       ST_CheckAndReplaceTranslationText(obj12, true, "ui");
 	  
-	  local obj13 = EncounterJournalMonthlyActivitiesFrame.BarComplete.PendingRewardsText;               -- https://imgur.com/kkPedLC
+      local obj13 = EncounterJournalMonthlyActivitiesFrame.BarComplete.PendingRewardsText;               -- https://imgur.com/kkPedLC
       ST_CheckAndReplaceTranslationText(obj13, true, "ui");
+
+      local obj14 = EncounterJournalMonthlyActivitiesTab.Text;  -- Tab: Traveler's Log
+      ST_CheckAndReplaceTranslationText(obj14, true, "ui");
+
+      local obj15 = EncounterJournalSuggestTab.Text;            -- Tab: Suggested Content
+      ST_CheckAndReplaceTranslationText(obj15, true, "ui");
+
+      local obj16 = EncounterJournalDungeonTab.Text;            -- Tab: Dungeons
+      ST_CheckAndReplaceTranslationText(obj16, true, "ui");
+
+      local obj17 = EncounterJournalRaidTab.Text;               -- Tab: Raids
+      ST_CheckAndReplaceTranslationText(obj17, true, "ui");
+
+      local obj18 = EncounterJournalLootJournalTab.Text;        -- Tab: Item Sets
+      ST_CheckAndReplaceTranslationText(obj18, true, "ui");
    end
    if (not WOWTR_wait(0.01, ST_SuggestTabClickTekrar)) then
    end  
