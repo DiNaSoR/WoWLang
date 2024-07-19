@@ -2346,6 +2346,50 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
+--BANK FRAME (Bank, Reagent, Warband Bank)
+function ST_WarbandBankFrm()
+   if (TT_PS["active"] == "1") then
+      local BANKFrame01 = AccountBankPanel.PurchasePrompt.Title;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame01, false, "ui");
+
+      local BANKFrame02 = AccountBankPanel.PurchasePrompt.PromptText;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame02, false, "ui");
+
+      local BANKFrame03 = AccountBankPanel.PurchasePrompt.TabCostFrame.PurchaseButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame03, false, "ui");
+
+      local BANKFrame04 = AccountBankPanel.PurchasePrompt.TabCostFrame.TabCost;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame04, false, "ui");
+
+      local BANKFrame05 = AccountBankPanel.MoneyFrame.WithdrawButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame05, false, "ui");
+
+      local BANKFrame06 = AccountBankPanel.MoneyFrame.DepositButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame06, false, "ui");
+
+      local BANKFrame07 = AccountBankPanel.ItemDepositFrame.DepositButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame07, false, "ui");
+
+      local BANKFrame08 = AccountBankPanel.ItemDepositFrame.IncludeReagentsCheckbox.Text;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame08, false, "ui");
+
+      local BANKFrame09 = BankItemSearchBox.Instructions;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame09, false, "ui");
+   end
+
+   if (not WOWTR_wait(0.3, ST_WarbandBankFrmTekrar)) then
+   end  
+   
+end
+
+function ST_WarbandBankFrmTekrar()
+   if ( BankFrame:IsVisible()) then
+      ST_WarbandBankFrm();
+   end
+end
+
+-------------------------------------------------------------------------------------------------------
+
 if ((GetLocale()=="enUS") or (GetLocale()=="enGB")) then
 -- Własne okno Tooltips - do wyświetlenia tłumaczenia Buff lub Debudd
    ST_MyGameTooltip = CreateFrame( "GameTooltip", "ST_MyGameTooltip", UIParent, "GameTooltipTemplate" );
