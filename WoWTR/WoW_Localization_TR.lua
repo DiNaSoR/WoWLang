@@ -48,7 +48,7 @@ WoWTR_Localization = {
    WoWTR_Spellbook_enDESC = "English",                   			 -- Spell Book: English
    your_home = "eviniz",                                             -- 'your home' (if the Hearthstone location fails to be read)
    welcomeIconPos = 255,                                             -- position of welcome icon on the welcom panel; 0 = disabled to display
-   resetButton1 = "WoW_Core.lua dosyasındaki kayıtları temizle",        -- Clear saved untranslated texts (without turkish font)
+   resetButton1 = "WoWTR.lua dosyasındaki kayıtları temizle",        -- Clear saved untranslated texts (without turkish font)
    resetButton2 = "Eklenti ayarlarını sıfırla",                      -- Reset the addon to its default settings (without turkish font)
    resetButton1Opis = "Kaydedilmiş çevrilmemiş metinleri temizle",   -- Clear saved untranslated texts (as tooltip)
    resetButton1OpisDESC = "Kaydedilen tüm oyun verileri silinecek",  -- Clear saved untranslated texts (as tooltip)
@@ -256,7 +256,7 @@ WoWTR_Config_Interface = {
    saveUntranslatedTooltipsDESC = "Etkinleştirilirse çevrilmemiş araç ipuçları kaydedilecek",         -- If enabled, untranslated tooltips will be saved (TR:Etkinleştirilirse çevrilmemiş araç ipuçları kaydedilecek)
 
    titleTab9 = "Hakkında",                                                                            -- About (TR:Hakkında)
-   generalText = "\nWoWTR - İyi Eğlenceler Diler...\n\nOyun içeriğine kendi dilinizde erişim sağlayabilmeniz için gayretle çalışıyoruz. \nGörevler, konuşmalar ve altyazılarda Türkçe çeviri desteği sağlıyoruz.\n\nEklentinin ayarlar menüsünden çeşitli seçenekleri değiştirebilirsiniz.\n\nBize destek olmak için çevirisi yapılmayan metinleri kaydedebilirsiniz.\nDaha sonrasında discord kanalımız üzerinden bizimle kayıt dosyanızı paylaşarak\nTürkçe veritabanımızın gelişmesine katkı sağlayabilirsiniz.\n\n\n|cffEAC408Kayıt Dosyası Yolu:|r \n...World of Warcraft\\_retail_\\WTF\\Account\\[XXX]\\SavedVariables\\|cffEAC408WoW_Core.lua|r\n\n",
+   generalText = "\nWoWTR - İyi Eğlenceler Diler...\n\nOyun içeriğine kendi dilinizde erişim sağlayabilmeniz için gayretle çalışıyoruz. \nGörevler, konuşmalar ve altyazılarda Türkçe çeviri desteği sağlıyoruz.\n\nEklentinin ayarlar menüsünden çeşitli seçenekleri değiştirebilirsiniz.\n\nBize destek olmak için çevirisi yapılmayan metinleri kaydedebilirsiniz.\nDaha sonrasında discord kanalımız üzerinden bizimle kayıt dosyanızı paylaşarak\nTürkçe veritabanımızın gelişmesine katkı sağlayabilirsiniz.\n\n\n|cffEAC408Kayıt Dosyası Yolu:|r \n...World of Warcraft\\_retail_\\WTF\\Account\\[XXX]\\SavedVariables\\|cffEAC408WoWTR.lua|r\n\n",
    welcomeText = "",
    welcomeButton = "Tamam - okundu",                                                                  -- Button: Close welcome panel
    showWelcome = "Karşılama panelini göster",                                                         -- Button: Show welcome panel
