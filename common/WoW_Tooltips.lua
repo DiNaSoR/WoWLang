@@ -1371,7 +1371,7 @@ function ST_showDelveDifficultFrame()
 --print("show DelveDifficultFrame");
    -- if (TT_PS["ui7"] == "1") then
       local DelveDF01 = DelvesDifficultyPickerFrame.Description; -- Çevirisi Yapılan Kısım - Przetłumaczona sekcja - https://imgur.com/a/SAyXuiR
-      ST_CheckAndReplaceTranslationTextUI(DelveDF01, true, "ui");       -- save untranslated text
+      ST_CheckAndReplaceTranslationTextUI(DelveDF01, true, "Dungeon&Raid:Zone:DelvesFrame");       -- save untranslated text
       
       local DelveDF02 = DelvesDifficultyPickerFrame.EnterDelveButton.Text; -- Çevirisi Yapılan Kısım - Przetłumaczona sekcja - https://imgur.com/a/SAyXuiR
       ST_CheckAndReplaceTranslationTextUI(DelveDF02, false, "ui");       -- dont save untranslated text
@@ -1383,7 +1383,7 @@ function ST_showDelveDifficultFrame()
       ST_CheckAndReplaceTranslationTextUI(DelveDF04, false, "ui");       -- dont save untranslated text
 
       local DelveDF05 = DelvesDifficultyPickerFrame.Title; -- Çevirisi Yapılan Kısım - Przetłumaczona sekcja - https://imgur.com/a/SAyXuiR
-      ST_CheckAndReplaceTranslationTextUI(DelveDF05, true, "ui");       -- dont save untranslated text
+      ST_CheckAndReplaceTranslationTextUI(DelveDF05, true, "Dungeon&Raid:Zone:DelvesFrame");       -- dont save untranslated text
    -- end
    
    if (not WOWTR_wait(0.01, ST_showDelveDifficultFrameTekrar)) then
