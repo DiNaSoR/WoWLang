@@ -446,6 +446,7 @@ function WOWTR_onEvent(self, event, name, ...)
       SplashFrame:HookScript("OnShow", ST_SplashFrame);
       PingSystemTutorialTitleText:HookScript("OnShow", ST_PingSystemTutorial);
       BankFrame:HookScript("OnShow", ST_WarbandBankFrm);
+      ItemRefTooltip:HookScript("OnShow", ST_ItemRefTooltip);
       BB_OknoTRonline();
       DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..WoWTR_Localization.addonName.."  ver. "..WOWTR_version.." - "..WoWTR_Localization.started);
       if ((not QTR_PS["welcome"]) and (string.len(WoWTR_Config_Interface.welcomeText) > 1)) then
