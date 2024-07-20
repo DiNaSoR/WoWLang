@@ -2390,6 +2390,29 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
+--TOOLTIPS FRAME (click on chat frame) 
+function ST_ItemRefTooltip()			-- https://imgur.com/a/5Ooqnb2 
+--print("ItemRef");
+      local ItemRef01 = ItemRefTooltipTextLeft3;
+      ST_CheckAndReplaceTranslationTextUI(ItemRef01, false, "other");
+      local ItemRef02 = ItemRefTooltipTextLeft2;
+      ST_CheckAndReplaceTranslationTextUI(ItemRef02, false, "other");
+      local ItemRef03 = ItemRefTooltipTextLeft5;
+      ST_CheckAndReplaceTranslationTextUI(ItemRef03, false, "other");
+
+   if (not WOWTR_wait(0.3, ST_ItemRefTooltipTekrar)) then
+   end  
+   
+end
+
+function ST_ItemRefTooltipTekrar()
+   if ( ItemRefTooltip:IsVisible()) then
+      ST_ItemRefTooltip();
+   end
+end
+
+-------------------------------------------------------------------------------------------------------
+
 if ((GetLocale()=="enUS") or (GetLocale()=="enGB")) then
 -- Własne okno Tooltips - do wyświetlenia tłumaczenia Buff lub Debudd
    ST_MyGameTooltip = CreateFrame( "GameTooltip", "ST_MyGameTooltip", UIParent, "GameTooltipTemplate" );
