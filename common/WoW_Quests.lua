@@ -596,6 +596,8 @@ function GossipOnQuestFrame()       -- frame: QuestFrame
    local QFGoodbyeBtext = QuestFrameGoodbyeButtonText;
    ST_CheckAndReplaceTranslationText(QFGoodbyeBtext, true, "ui",false,true);
 
+   local QFNoticetext = QuestInfoAccountCompletedNotice;
+   ST_CheckAndReplaceTranslationText(QFNoticetext, true, "ui",false,true);
 end
 
 -------------------------------------------------------------------------------------------------------------------
