@@ -1371,7 +1371,7 @@ function ST_showDelveDifficultFrame()
 --print("show DelveDifficultFrame");
    -- if (TT_PS["ui7"] == "1") then
       local DelveDF01 = DelvesDifficultyPickerFrame.Description; -- Çevirisi Yapılan Kısım - Przetłumaczona sekcja - https://imgur.com/a/SAyXuiR
-      ST_CheckAndReplaceTranslationTextUI(DelveDF01, true, "ui");       -- save untranslated text
+      ST_CheckAndReplaceTranslationTextUI(DelveDF01, true, "Dungeon&Raid:Zone:DelvesFrame");       -- save untranslated text
       
       local DelveDF02 = DelvesDifficultyPickerFrame.EnterDelveButton.Text; -- Çevirisi Yapılan Kısım - Przetłumaczona sekcja - https://imgur.com/a/SAyXuiR
       ST_CheckAndReplaceTranslationTextUI(DelveDF02, false, "ui");       -- dont save untranslated text
@@ -1383,7 +1383,7 @@ function ST_showDelveDifficultFrame()
       ST_CheckAndReplaceTranslationTextUI(DelveDF04, false, "ui");       -- dont save untranslated text
 
       local DelveDF05 = DelvesDifficultyPickerFrame.Title; -- Çevirisi Yapılan Kısım - Przetłumaczona sekcja - https://imgur.com/a/SAyXuiR
-      ST_CheckAndReplaceTranslationTextUI(DelveDF05, true, "ui");       -- dont save untranslated text
+      ST_CheckAndReplaceTranslationTextUI(DelveDF05, true, "Dungeon&Raid:Zone:DelvesFrame");       -- dont save untranslated text
    -- end
    
    if (not WOWTR_wait(0.01, ST_showDelveDifficultFrameTekrar)) then
@@ -2341,6 +2341,75 @@ end
 function ST_PingSystemTutorialTekrar()
    if ( SettingsPanel:IsVisible()) then
       ST_PingSystemTutorial();
+   end
+end
+
+-------------------------------------------------------------------------------------------------------
+
+--BANK FRAME (Bank, Reagent, Warband Bank)
+function ST_WarbandBankFrm()
+   if (TT_PS["active"] == "1") then
+      local BANKFrame01 = AccountBankPanel.PurchasePrompt.Title;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame01, false, "ui");
+
+      local BANKFrame02 = AccountBankPanel.PurchasePrompt.PromptText;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame02, false, "ui");
+
+      local BANKFrame03 = AccountBankPanel.PurchasePrompt.TabCostFrame.PurchaseButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame03, false, "ui");
+
+      local BANKFrame04 = AccountBankPanel.PurchasePrompt.TabCostFrame.TabCost;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame04, false, "ui");
+
+      local BANKFrame05 = AccountBankPanel.MoneyFrame.WithdrawButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame05, false, "ui");
+
+      local BANKFrame06 = AccountBankPanel.MoneyFrame.DepositButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame06, false, "ui");
+
+      local BANKFrame07 = AccountBankPanel.ItemDepositFrame.DepositButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame07, false, "ui");
+
+      local BANKFrame08 = AccountBankPanel.ItemDepositFrame.IncludeReagentsCheckbox.Text;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame08, false, "ui");
+
+      local BANKFrame09 = BankItemSearchBox.Instructions;
+      ST_CheckAndReplaceTranslationTextUI(BANKFrame09, false, "ui");
+   end
+
+   if (not WOWTR_wait(0.3, ST_WarbandBankFrmTekrar)) then
+   end  
+   
+end
+
+function ST_WarbandBankFrmTekrar()
+   if ( BankFrame:IsVisible()) then
+      ST_WarbandBankFrm();
+   end
+end
+
+-------------------------------------------------------------------------------------------------------
+
+--TOOLTIPS FRAME (click on chat frame) 
+function ST_ItemRefTooltip()			-- https://imgur.com/a/5Ooqnb2 
+--print("ItemRef");
+      local ItemRef01 = ItemRefTooltipTextLeft2;
+      ST_CheckAndReplaceTranslationTextUI(ItemRef01, false, "other");
+      local ItemRef02 = ItemRefTooltipTextLeft3;
+      ST_CheckAndReplaceTranslationTextUI(ItemRef02, false, "other");
+      local ItemRef03 = ItemRefTooltipTextLeft4;
+      ST_CheckAndReplaceTranslationTextUI(ItemRef03, false, "other");
+      local ItemRef04 = ItemRefTooltipTextLeft5;
+      ST_CheckAndReplaceTranslationTextUI(ItemRef04, false, "other");
+
+   if (not WOWTR_wait(0.3, ST_ItemRefTooltipTekrar)) then
+   end  
+   
+end
+
+function ST_ItemRefTooltipTekrar()
+   if ( ItemRefTooltip:IsVisible()) then
+      ST_ItemRefTooltip();
    end
 end
 
