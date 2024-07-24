@@ -1,0 +1,40 @@
+﻿## Interface: 110000, 110002
+## Title: WoWpoPolsku |cff8080ff11.01|r
+## Version: 11.01
+## Notes: Доповнення відображає перекладені тексти українською мовою
+## Notes_en: AddOn displays the translated text informations in Ukrainian
+## Author: Platine
+## E-mail: platine.wow@gmail.com
+## WWW: https://www.wowpopolsku.pl/
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## IconTexture: Interface\AddOns\WoWPL\Images\icon.png
+## SavedVariables: QTR_PS, QTR_SAVED, QTR_MISSING, QTR_GOSSIP, BB_PM, BB_PS, BB_TR, MF_PM, MF_PS, TT_PS, TT_TUTORIALS, BT_PM, BT_SAVED, ST_PM, ST_PS, ST_PH, WoWTR_minimapDB
+
+Libs\LibStub\LibStub.lua
+Libs\AceAddon-3.0\AceAddon-3.0.lua
+Libs\AceConsole-3.0\AceConsole-3.0.lua
+Libs\AceDB-3.0\AceDB-3.0.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
+
+Translations\QuestData_UA.lua
+Translations\Gossip_UA.lua
+Translations\TlumaczOnline_UA.lua
+Translations\Bubbles_UA.lua
+Translations\Subtitles_UA.lua
+Translations\TutorialsData7_UA.lua
+Translations\Books_UA.lua
+Translations\Tooltips_UA.lua
+
+WoW_Localization_UA.lua
+WoW_Quests.lua
+WoW_Bubbles.lua
+WoW_MovieSubtitles.lua
+WoW_Tutorials.lua
+WoW_Books.lua
+WoW_Tooltips.lua
+
+WoW_Core.lua
+WoW_Config.lua

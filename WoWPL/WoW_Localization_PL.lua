@@ -1,4 +1,4 @@
--- Description: Texts in the selected localization language
+﻿-- Description: Texts in the selected localization language
 -- Author: Platine [platine.wow@gmail.com]
 -- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]
 -------------------------------------------------------------------------------------------------------
@@ -6,7 +6,7 @@
 WoWTR_Localization = {
    lang = "PL",
    started = "uruchomiony",                                          -- addon was started
-   mainFolder = "Interface\\AddOns\\WoWpoPolsku",                    -- origin main folder for addon files
+   mainFolder = "Interface\\AddOns\\WoWPL", 	                     -- origin main folder for addon files
    addonName = "WoWpoPolsku",                                        -- origin short name of the addon 
    addonIconDesc = "Kliknij, aby otworzyć\nmenu ustawień dodatku",   -- Click to open the settings menu 
    optionName = "WoWpoPolsku - ustawienia",                          -- WowTR - options 
