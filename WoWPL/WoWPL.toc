@@ -1,7 +1,6 @@
-﻿## Interface: 100207
-
-## Title: WoWpoPolsku |cff8080ff10.64|r
-## Version: 10.64
+﻿## Interface: 110000, 110002
+## Title: WoWpoPolsku |cff8080ff11.01|r
+## Version: 11.01
 ## Notes: Dodatek wyswietla przetlumaczone teksty po polsku
 ## Notes_en: AddOn displays the translated text informations in Polish
 ## Author: Platine
