@@ -1,4 +1,5 @@
 ## WoW-Lang - Experience WoW in Your Language! 🌍🎮
+### 🌍 Supported Languages [AR,PL,TR,UA,HU]
 ### ⚠️ Not supported by Blizzard ⚠️
 
 Welcome to the official repository for **WoW-Lang**, a comprehensive project dedicated to translating World of Warcraft's vast content into multiple languages, **not supported by Blizzard**. Our goal is to make the game accessible and enjoyable for players around the world, no matter what language they speak.
@@ -50,7 +51,7 @@ We encourage everyone to contribute to WoW-Lang! Here are some ways you can help
 ### Support 💬
 
 * **Discord:** Join our [Discord server](https://discord.gg/uW5NJ6y) for discussions, help, and updates.
-* **Email:** Contact us at platine.wow@gmail.com for any questions or inquiries.
+* **Email:** Contact us at platine.wow@gmail.com / Dragonarab@gmail.com for any questions or inquiries.
 
 ---
 
