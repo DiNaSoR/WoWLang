@@ -353,7 +353,7 @@ end
 ----------------------------------------------------------------------------------------------------------------------------------------
 
 function WOWTR_onEvent(self, event, name, ...)
-   if (event=="ADDON_LOADED" and name==WoWTR_Localization.addonName) then
+   if (event=="ADDON_LOADED" and name==WoWTR_Localization.addonFolder) then
       self:UnregisterEvent("ADDON_LOADED");
       self:RegisterEvent("QUEST_ACCEPTED");
       self:RegisterEvent("QUEST_DETAIL");

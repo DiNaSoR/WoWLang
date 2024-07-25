@@ -7,7 +7,8 @@ WoWTR_Localization = {
    lang = "AR",
    started = "started",                                              -- addon was started
    mainFolder = "Interface\\AddOns\\WoWAR",                          -- main folder for addon files
-   addonName = "WoWAR",                                              -- short name of the addon                                       -- version of the addon
+   addonFolder = "WoWAR",                                            -- forder of instaled addon
+   addonName = "WoWAR",                                              -- short name of the addon
    addonIconDesc = "ﺍﻧﻘﺮ , ﻟﻔﺘﺢ ﻗﺎﺋﻤﺔ ﺍﻹﻋﺪﺍﺩﺍﺕ.",                    -- Click to open the settings menu
    optionName = "WoWAR - Options",                                   -- WoWAR - options
    optionTitle = "ﺇﺿﺎﻓﺔ ﻭﺍﻭ ﺑﺎﻟﻌﺮﺑﻲ",                                -- WoWAR Patch
@@ -298,6 +299,7 @@ local p_race = {
    ["Draenei"] = { M="دراﻳﻨﻲ", F="دراﻳﻨﻴﺔ" },
    ["Dwarf"] = { M="دوارف", F="دوارﻓﺔ" },
    ["Gnome"] = { M="ﺟﻨﻮم", F="ﺟﻨﻮﻣﺔ" },
+   ["Earthen"] = { M="ترابي", F="ترابي" },
    ["Goblin"] = { M="ﺟﻮﺑﻠﻦ", F="ﺟﻮﺑﻠﻨﺔ" },
    ["Highmountain Tauren"] = { M="ﻫﺎي ﻣﺎوﻧﺘﻦ ﺗﻮرﻳﻦ", F="ﻫﺎي ﻣﺎوﻧﺘﻦ ﺗﻮرﻳﻨﺔ" },
    ["Human"] = { M="ﻫﻴﻮﻣﻦ", F="ﻫﻴﻮﻣﻨﺔ" },

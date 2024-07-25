@@ -6,10 +6,11 @@
 WoWTR_Localization = {
    lang = "PL",
    started = "uruchomiony",                                          -- addon was started
-   mainFolder = "Interface\\AddOns\\WoWPL", 	                     -- origin main folder for addon files
+   mainFolder = "Interface\\AddOns\\WoWPL",                          -- origin main folder for addon files
+   addonFolder = "WoWPL",                                            -- forder of instaled addon
    addonName = "WoWpoPolsku",                                        -- origin short name of the addon 
    addonIconDesc = "Kliknij, aby otworzyć\nmenu ustawień dodatku",   -- Click to open the settings menu 
-   optionName = "WoWpoPolsku - ustawienia",                          -- WowTR - options 
+   optionName = "WoWpoPolsku - ustawienia",                          -- WoWPL - options 
    optionTitle = "WoWpoPolsku",                                      -- origin full name 
    optionTitleAR = "",
    addressWWW = "https://www.wowpopolsku.pl/",                       -- address of project page 
@@ -298,6 +299,7 @@ local p_race = {
       ["Dracthyr"] = { M1="Draktyr", D1="draktyra", C1="draktyrowi", B1="draktyra", N1="draktyrem", K1="draktyrze", W1="Draktyrze", M2="Draktyrka", D2="draktyrki", C2="draktyrce", B2="draktyrkę", N2="draktyrką", K2="draktyrce", W2="Draktyrko" },
       ["Draenei"] = { M1="Draenei", D1="draeneia", C1="draeneiowi", B1="draeneia", N1="draeneiem", K1="draeneiu", W1="Draeneiu", M2="Draeneika", D2="draeneiki", C2="draeneice", B2="draeneikę", N2="draeneiką", K2="draeneice", W2="Draeneiko" },
       ["Dwarf"] = { M1="Krasnolud", D1="krasnoluda", C1="krasnoludowi", B1="krasnoluda", N1="krasnoludem", K1="krasnoludzie", W1="Krasnoludzie", M2="Krasnoludzica", D2="krasnoludzicy", C2="krasnoludzicy", B2="krasnoludzicę", N2="krasnoludzicą", K2="krasnoludzicy", W2="Krasnoludzico" },
+      ["Earthen"] = { M1="Ziemny", D1="zmiemnego", C1="ziemnemu", B1="ziemnego", N1="ziemnym", K1="ziemnym", W1="Ziemny", M2="Ziemna", D2="ziemnej", C2="ziemnej", B2="ziemną", N2="ziemną", K2="ziemnej", W2="Ziemna" },
       ["Gnome"] = { M1="Gnom", D1="gnoma", C1="gnomowi", B1="gnoma", N1="gnomem", K1="gnomie", W1="Gnomie", M2="Gnomka", D2="gnomki", C2="gnomce", B2="gnomkę", N2="gnomką", K2="gnomce", W2="Gnomko" },
       ["Goblin"] = { M1="Goblin", D1="goblina", C1="goblinowi", B1="goblina", N1="goblinem", K1="goblinie", W1="Goblinie", M2="Goblinka", D2="goblinki", C2="goblince", B2="goblinkę", N2="goblinką", K2="goblince", W2="Goblinko" },
       ["Highmountain Tauren"] = { M1="Tauren z Wysokiej Góry", D1="taurena z Wysokiej Góry", C1="taurenowi z Wysokiej Góry", B1="taurena z Wysokiej Góry", N1="taurenen z Wysokiej Góry", K1="taurenie z Wysokiej Góry", W1="Taurenie z Wysokiej Góry", M2="Taurenka z Wysokiej Góry", D2="taurenki z Wysokiej Góry", C2="taurence z Wysokiej Góry", B2="taurenkę z Wysokiej Góry", N2="taurenką z Wysokiej Góry", K2="taurence z Wysokiej Góry", W2="Taurenko z Wysokiej Góry" },
@@ -351,4 +353,5 @@ end
 WOWTR_Font1 = WoWTR_Localization.mainFolder.."\\Fonts\\morpheus_pl.ttf";
 WOWTR_Font2 = WoWTR_Localization.mainFolder.."\\Fonts\\frizquadratatt_pl.ttf";
 WOWTR_Fonts = {"frizquadratatt_pl.ttf"};
-WOWTR_version = GetAddOnMetadata(WoWTR_Localization.addonName, "Version");
+local GetAddOnMetadata = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata;
+WOWTR_version = GetAddOnMetadata(WoWTR_Localization.addonFolder, "Version");
