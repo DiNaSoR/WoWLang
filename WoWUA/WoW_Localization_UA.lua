@@ -34,7 +34,6 @@ WoWTR_Localization = {
    clickToComplete = "натисніть, щоб завершити",
    failed = "Не вдалося",
    optional = "Необов'язково",
-   emptyProgress = "Ти добре справляєшся, $N",
    bookID = "Ідентифікатор книги:",
    stopTheMovie = "Ви хочете зупинити відео??",
    stopTheMovieYes = "Так",
