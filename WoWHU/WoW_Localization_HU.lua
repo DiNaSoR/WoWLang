@@ -34,7 +34,6 @@ WoWTR_Localization = {
    clickToComplete = "Kattints a befejezéshez",                      -- click to complete 
    failed = "Nem sikerült",                                          -- Failed 
    optional = "Választható",                                         -- Optional 
-   emptyProgress = "Jól csinálod, $N",                               -- You are doing well, $N 
    bookID = "Könyvazonosító:",                                       -- Book ID:
    stopTheMovie = "Leállítod a videót?",                             -- Do you want to stop the video? 
    stopTheMovieYes = "Igen",                                         -- Yes 
