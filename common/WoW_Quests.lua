@@ -1398,7 +1398,7 @@ function QTR_QuestPrepare(zdarzenie)
                QTR_MISSING[QTR_quest_ID.." PROGRESS"]=QTR_quest_EN[QTR_quest_ID].progress;     -- save missing translation part
             end
             if (strlen(QTR_quest_LG[QTR_quest_ID].progress)==0) then
-               QTR_quest_LG[QTR_quest_ID].objectives = QTR_quest_EN[QTR_quest_ID].progress;   -- If the translation is missing, the original text appears.
+               QTR_quest_LG[QTR_quest_ID].progress = QTR_quest_EN[QTR_quest_ID].progress;   -- If the translation is missing, the original text appears.
             end
          end
          if (zdarzenie=="QUEST_COMPLETE") then
