@@ -34,7 +34,6 @@ WoWTR_Localization = {
    clickToComplete = "ﺍﻧﻘﺮ ﻟﻺﻛﻤﺎﻝ",                                  -- click to complete
    failed = "ﻓﺸﻞ",                                                   -- Failed
    optional = "ﺍﺧﺘﻴﺎﺭﻱ",                                             -- Optional
-   emptyProgress = "ﺃﻧﺖ ﺗﻘﻮﻡ ﺑﻌﻤﻞ ﺟﻴﺪ, YOUR_NAME",                   -- You are doing well, $N
    bookID = "ﺭﻗﻢ ﺍﻟﻜﺘﺎﺏ:",                                           -- Book ID:
    stopTheMovie = "ﺗﺮﻳﺪ ﺇﻳﻘﺎﻑ ﺍﻟﻔﻴﺪﻳﻮ ؟",                            -- Do you want to stop the video?
    stopTheMovieYes = "ﻧﻌﻢ",                                          -- Yes

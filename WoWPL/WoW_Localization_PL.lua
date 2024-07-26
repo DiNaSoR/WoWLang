@@ -34,7 +34,6 @@ WoWTR_Localization = {
    clickToComplete = "kliknij, aby zakończyć",                       -- click to complete 
    failed = "Niepowodzenie",                                         -- Failed 
    optional = "Opcjonalne",                                          -- Optional 
-   emptyProgress = "Dobrze ci idzie, $N",                            -- You are doing well, $N 
    bookID = "ID książki:",                                           -- Book ID:
    stopTheMovie = "Czy na pewno zatrzymać film?",                    -- Do you want to stop the video? 
    stopTheMovieYes = "Tak",                                          -- Yes 
