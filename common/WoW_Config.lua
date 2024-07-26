@@ -3349,6 +3349,7 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(WoWTR_Localization.addonName, "Ac
 -- We open the addon settings window by clicking on the icon
    OnClick = function()
       Settings.OpenToCategory(WOWTR_Options);          -- open Settings of the addon
+      SettingsPanel.AddOnsTab:Click();
    end,
    
 -- Here we add a description of the addon to the tooltip object
@@ -3373,7 +3374,7 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(WoWTR_Localization.addonName, "Ac
       profile = {
          minimap = {
             hide = false,
-			minimapPos = 238,
+         minimapPos = 238,
          },
       },
    });
