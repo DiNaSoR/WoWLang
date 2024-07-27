@@ -170,6 +170,7 @@ WOWTR_Options.refresh = function (self) WOWTR_SetCheckButtonState() end;
 --InterfaceOptions_AddCategory(WOWTR_Options);
 local category = Settings.RegisterCanvasLayoutCategory(WOWTR_Options, WoWTR_Localization.optionName);
 Settings.RegisterAddOnCategory(category);
+WOWTR.CategoryID = category:GetID();
 WOWTR_Options:SetScript("OnShow", function (self) WOWTR_SetCheckButtonState() end);
 
 local WOWTR_OptionsHeader = WOWTR_Options:CreateFontString(nil, "ARTWORK");
@@ -3279,7 +3280,7 @@ end
 
 function WOWTR_SlashCommand(msg)
    if not msg or msg:trim() == "" then
-      InterfaceOptionsFrame_OpenToCategory(WOWTR_Options);          -- open Settings of the addon
+      InterfaceOptionsFrame_OpenToCategory(WOWTR.CategoryID);          -- open Settings of the addon
    end
 end
 
@@ -3348,8 +3349,7 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(WoWTR_Localization.addonName, "Ac
    
 -- We open the addon settings window by clicking on the icon
    OnClick = function()
-      Settings.OpenToCategory(WOWTR_Options);          -- open Settings of the addon
-      SettingsPanel.AddOnsTab:Click();
+      Settings.OpenToCategory(WOWTR.CategoryID);          -- open Settings of the addon
    end,
    
 -- Here we add a description of the addon to the tooltip object
