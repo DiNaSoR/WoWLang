@@ -21,7 +21,7 @@ Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
 
 Translations\QuestData_HU.lua
 Translations\Gossip_HU.lua
-Translations\TlumaczOnline_PL.lua
+Translations\TlumaczOnline_HU.lua
 Translations\Bubbles_HU.lua
 Translations\Subtitles_HU.lua
 Translations\TutorialsData7_HU.lua

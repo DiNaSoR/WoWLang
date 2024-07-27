@@ -351,4 +351,4 @@ WOWTR_Font1 = WoWTR_Localization.mainFolder.."\\Fonts\\morpheus_hu.ttf";
 WOWTR_Font2 = WoWTR_Localization.mainFolder.."\\Fonts\\frizquadrata_hu.ttf";
 WOWTR_Fonts = {"frizquadrata_hu.ttf"};
 local GetAddOnMetadata = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata;
-WOWTR_version = GetAddOnMetadata(WoWTR_Localization.addonName, "Version");
+WOWTR_version = GetAddOnMetadata(WoWTR_Localization.addonFolder, "Version");

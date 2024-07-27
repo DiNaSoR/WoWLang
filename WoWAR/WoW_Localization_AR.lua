@@ -357,4 +357,4 @@ WOWTR_Font1 = WoWTR_Localization.mainFolder.."\\Fonts\\font1.ttf";
 WOWTR_Font2 = WoWTR_Localization.mainFolder.."\\Fonts\\font2.ttf";
 WOWTR_Fonts = {"font2.ttf"};
 local GetAddOnMetadata = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata;
-WOWTR_version = GetAddOnMetadata(WoWTR_Localization.addonName, "Version");
+WOWTR_version = GetAddOnMetadata(WoWTR_Localization.addonFolder, "Version");
