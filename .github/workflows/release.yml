@@ -109,7 +109,7 @@ jobs:
         fi
         
         # Use a heredoc for multiline string with actual newlines
-        read -r -d '' NEW_BODY << EOM
+        NEW_BODY=$(cat << EOF
         # 🚀 Release $VERSION
 
         ![Release](https://img.shields.io/badge/Release-$VERSION-blue?style=for-the-badge&logo=github)
@@ -119,8 +119,8 @@ jobs:
         $INCLUDED_ADDONS
 
         ## 🔍 Changes in this release
-
-        EOM
+        EOF
+        )
         
         # Define labels, their descriptions, and icons
         declare -A LABELS=(
