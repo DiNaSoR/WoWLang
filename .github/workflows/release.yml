@@ -111,11 +111,11 @@ jobs:
             exit 1
           fi
           
-          NEW_BODY="# 🚀 Release $VERSION\n\n"
-          NEW_BODY+="![Release](https://img.shields.io/badge/Release-$VERSION-blue?style=for-the-badge&logo=github)\n\n"
-          NEW_BODY+="## 📦 Included add-ons\n\n"
-          NEW_BODY+="$INCLUDED_ADDONS\n\n"
-          NEW_BODY+="## 🔍 Changes in this release\n\n"
+          NEW_BODY+="# 🚀 Release $VERSION  \n\n"
+          NEW_BODY+="![Release](https://img.shields.io/badge/Release-$VERSION-blue?style=for-the-badge&logo=github)  \n\n"
+          NEW_BODY+="## 📦 Included add-ons  \n\n"
+          NEW_BODY+="$INCLUDED_ADDONS  \n\n"
+          NEW_BODY+="## 🔍 Changes in this release  \n\n"
           
           # Define labels, their descriptions, and icons
           declare -A LABELS=(
