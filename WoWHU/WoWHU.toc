@@ -1,14 +1,14 @@
 ﻿## Interface: 110000, 110002
-## Title: WoWpoPolsku |cff8080ff11.01|r
+## Title: World of HunCraft |cff8080ff11.01|r
 ## Version: 11.01
-## Notes: Dodatek wyswietla przetlumaczone teksty po polsku
-## Notes_en: AddOn displays the translated text informations in Polish
-## Author: Platine
+## Notes: Az AddOn magyar nyelven jeleníti meg a lefordított szöveges információkat
+## Notes_en: AddOn displays the translated text informations in Hungarian
+## Author: Platine & WowHunCraft team
 ## E-mail: platine.wow@gmail.com
-## WWW: https://www.wowpopolsku.pl/
+## WWW: https://panel.wowpopolsku.pl/
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
-## IconTexture: Interface\AddOns\WoWPL\Images\icon.png
+## IconTexture: Interface\AddOns\WoWHU\Images\icon.png
 ## SavedVariables: QTR_PS, QTR_SAVED, QTR_MISSING, QTR_GOSSIP, BB_PM, BB_PS, BB_TR, MF_PM, MF_PS, TT_PS, TT_TUTORIALS, BT_PM, BT_SAVED, ST_PM, ST_PS, ST_PH, WoWTR_minimapDB
 
 Libs\LibStub\LibStub.lua
@@ -19,16 +19,16 @@ Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
 
-Translations\QuestData_PL.lua
-Translations\Gossip_PL.lua
-Translations\TlumaczOnline_PL.lua
-Translations\Bubbles_PL.lua
-Translations\Subtitles_PL.lua
-Translations\TutorialsData7_PL.lua
-Translations\Books_PL.lua
-Translations\Tooltips_PL.lua
+Translations\QuestData_HU.lua
+Translations\Gossip_HU.lua
+Translations\TlumaczOnline_HU.lua
+Translations\Bubbles_HU.lua
+Translations\Subtitles_HU.lua
+Translations\TutorialsData7_HU.lua
+Translations\Books_HU.lua
+Translations\Tooltips_HU.lua
 
-WoW_Localization_PL.lua
+WoW_Localization_HU.lua
 WoW_Quests.lua
 WoW_Bubbles.lua
 WoW_MovieSubtitles.lua

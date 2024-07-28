@@ -170,6 +170,7 @@ WOWTR_Options.refresh = function (self) WOWTR_SetCheckButtonState() end;
 --InterfaceOptions_AddCategory(WOWTR_Options);
 local category = Settings.RegisterCanvasLayoutCategory(WOWTR_Options, WoWTR_Localization.optionName);
 Settings.RegisterAddOnCategory(category);
+WOWTR.CategoryID = category:GetID();
 WOWTR_Options:SetScript("OnShow", function (self) WOWTR_SetCheckButtonState() end);
 
 local WOWTR_OptionsHeader = WOWTR_Options:CreateFontString(nil, "ARTWORK");
@@ -658,7 +659,7 @@ local WOWTR_slider4 = CreateFrame("Slider", "WOWTR_slider4", WOWTR_OptionPanel1,
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_slider4:SetPoint("TOPLEFT", WOWTR_CheckButton14, "BOTTOMLEFT", 70, -30);
 else
-   WOWTR_slider4:SetPoint("TOPLEFT", WOWTR_CheckButton14, "BOTTOMLEFT", -30, -30);
+   WOWTR_slider4:SetPoint("TOPLEFT", WOWTR_CheckButton14, "BOTTOMLEFT", 0, -30);
 end
 WOWTR_slider4:SetMinMaxValues(11, 14);
 WOWTR_slider4.minValue, WOWTR_slider4.maxValue = WOWTR_slider4:GetMinMaxValues();
@@ -688,9 +689,9 @@ WOWTR_Opis4:SetJustifyH("LEFT");
 WOWTR_Opis4:SetJustifyV("TOP");
 WOWTR_Opis4:ClearAllPoints();
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_Opis4:SetPoint("TOPLEFT", WOWTR_slider4, "BOTTOMLEFT", -230, 16);
+   WOWTR_Opis4:SetPoint("TOPLEFT", WOWTR_slider4, "BOTTOMLEFT", -230, 30);
 else
-   WOWTR_Opis4:SetPoint("TOPLEFT", WOWTR_slider4, "BOTTOMLEFT", 160, 16);
+   WOWTR_Opis4:SetPoint("TOPLEFT", WOWTR_slider4, "BOTTOMLEFT", 180, 30);
 end
 local fontsize = tonumber(QTR_PS["fontsize"]);
 WOWTR_Opis4:SetFont(WOWTR_Font2, fontsize);
@@ -3279,7 +3280,7 @@ end
 
 function WOWTR_SlashCommand(msg)
    if not msg or msg:trim() == "" then
-      InterfaceOptionsFrame_OpenToCategory(WOWTR_Options);          -- open Settings of the addon
+      InterfaceOptionsFrame_OpenToCategory(WOWTR.CategoryID);          -- open Settings of the addon
    end
 end
 
@@ -3348,7 +3349,7 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(WoWTR_Localization.addonName, "Ac
    
 -- We open the addon settings window by clicking on the icon
    OnClick = function()
-      Settings.OpenToCategory(WOWTR_Options);          -- open Settings of the addon
+      Settings.OpenToCategory(WOWTR.CategoryID);          -- open Settings of the addon
    end,
    
 -- Here we add a description of the addon to the tooltip object
@@ -3373,7 +3374,7 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(WoWTR_Localization.addonName, "Ac
       profile = {
          minimap = {
             hide = false,
-			minimapPos = 238,
+         minimapPos = 238,
          },
       },
    });

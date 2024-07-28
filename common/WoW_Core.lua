@@ -119,9 +119,9 @@ function WOWTR_CheckVars()
       QTR_PS["fontsize"] = "13";   
    end
    -- display own names in translation language
---   if (not QTR_PS["ownnames"] ) then
+   if (not QTR_PS["ownnames"] ) then
       QTR_PS["ownnames"] = "0";   
---   end
+   end
    -- activate the quest tracker translation ONLINE
    if (not QTR_PS["tracker"] ) then
       QTR_PS["tracker"] = "1";   
@@ -353,7 +353,7 @@ end
 ----------------------------------------------------------------------------------------------------------------------------------------
 
 function WOWTR_onEvent(self, event, name, ...)
-   if (event=="ADDON_LOADED" and name==WoWTR_Localization.addonName) then
+   if (event=="ADDON_LOADED" and name==WoWTR_Localization.addonFolder) then
       self:UnregisterEvent("ADDON_LOADED");
       self:RegisterEvent("QUEST_ACCEPTED");
       self:RegisterEvent("QUEST_DETAIL");
