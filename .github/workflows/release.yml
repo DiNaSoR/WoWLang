@@ -150,16 +150,18 @@ jobs:
           update_response=$(curl -s -X PATCH \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
             "$release_url" \
-            -d "$(jq -n --arg body "$NEW_BODY" '{"name":"Release ${{ github.ref_name }}","body":$body}')")
+            -d "$(jq -n --arg body "$NEW_BODY" '{name:"Release ${{ github.ref_name }}",body:$body}')")
           echo "Update response: $update_response"
         else
           echo "Creating new release..."
           release_response=$(curl -s -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
             https://api.github.com/repos/${{ github.repository }}/releases \
-            -d "$(jq -n --arg body "$NEW_BODY" '{"tag_name":"${{ github.ref_name }}","name":"Release ${{ github.ref_name }}","body":$body,"draft":false,"prerelease":false}')")
+            -d "$(jq -n --arg body "$NEW_BODY" '{tag_name:"${{ github.ref_name }}",name:"Release ${{ github.ref_name }}",body:$body,draft:false,prerelease:false}')")
           
           echo "Release creation response: $release_response"
           release_url=$(echo "$release_response" | jq -r .upload_url | sed 's/{?name,label}//g')
