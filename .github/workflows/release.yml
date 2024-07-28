@@ -15,6 +15,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
@@ -26,7 +28,7 @@ jobs:
         set -e
         VERSION=${GITHUB_REF#refs/tags/v}
         DATE=$(date +'%Y-%m-%d')
-        ADDONS=(WoWAR WoWPL WoWTR WoWHU WoWUA)
+        ADDONS=(WoWAR WoWPL WoWTR)
         INCLUDED_ADDONS=""
         
         # Create necessary directories
@@ -64,17 +66,64 @@ jobs:
         
         INCLUDED_ADDONS=$(echo $INCLUDED_ADDONS | sed 's/ /, /g' | sed 's/, $//')
         
+        # Generate release notes based on commit labels
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        if [ -z "$PREVIOUS_TAG" ]; then
+          COMMITS=$(git log --format="%h %s" --no-merges)
+        else
+          COMMITS=$(git log ${PREVIOUS_TAG}..HEAD --format="%h %s" --no-merges)
+        fi
+        
+        NEW_BODY="# 🚀 Release notes for ${{ github.ref_name }}\n\n"
+        NEW_BODY+="![Release Banner](https://img.shields.io/badge/Release-${{ github.ref_name }}-blue?style=for-the-badge&logo=github)\n\n"
+        NEW_BODY+="**📦 Included add-ons:** $INCLUDED_ADDONS\n\n"
+        NEW_BODY+="## 🔍 Changes in this release\n\n"
+        
+        # Define labels, their descriptions, and icons
+        declare -A LABELS=(
+          ["fea"]="✨ New Features"
+          ["bug"]="🐛 Bug Fixes"
+          ["per"]="⚡ Performance Improvements"
+          ["ref"]="🔧 Code Refactoring"
+          ["docs"]="📚 Documentation Updates"
+          ["test"]="🧪 Tests"
+          ["add"]="➕ New Additions"
+          ["up"]="🔄 Updates"
+        )
+        
+        # Generate categorized release notes
+        for label in "${!LABELS[@]}"; do
+          LABEL_COMMITS=$(echo "$COMMITS" | grep -i "\[$label\]")
+          if [ ! -z "$LABEL_COMMITS" ]; then
+            NEW_BODY+="\n### ${LABELS[$label]}\n\n"
+            while IFS= read -r commit; do
+              COMMIT_HASH=$(echo $commit | cut -d' ' -f1)
+              COMMIT_MSG=$(echo $commit | cut -d' ' -f2- | sed -E "s/\[$label\]//i" | xargs)
+              NEW_BODY+="- $COMMIT_MSG ([${COMMIT_HASH}](https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}))\n"
+            done <<< "$LABEL_COMMITS"
+          fi
+        done
+        
+        # Add uncategorized commits
+        UNCATEGORIZED=$(echo "$COMMITS" | grep -vE "$(IFS=\|; echo "${!LABELS[*]}" | sed -e 's/^/\\[/' -e 's/$/\\]/i')")
+        if [ ! -z "$UNCATEGORIZED" ]; then
+          NEW_BODY+="\n### 🔀 Other Changes\n\n"
+          while IFS= read -r commit; do
+            COMMIT_HASH=$(echo $commit | cut -d' ' -f1)
+            COMMIT_MSG=$(echo $commit | cut -d' ' -f2- | xargs)
+            NEW_BODY+="- $COMMIT_MSG ([${COMMIT_HASH}](https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}))\n"
+          done <<< "$UNCATEGORIZED"
+        fi
+        
+        # Add footer
+        NEW_BODY+="\n---\n\n"
+        NEW_BODY+="📅 Released on: $DATE\n"
+        NEW_BODY+="🙏 Thank you to all our contributors!\n"
+        
         echo "Checking for existing release..."
         release_info=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
           "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}")
         release_id=$(echo "$release_info" | jq -r '.id // empty')
-        existing_body=$(echo "$release_info" | jq -r '.body // empty')
-        
-        NEW_BODY="Release notes for ${{ github.ref_name }}"
-        if [ -n "$existing_body" ]; then
-          NEW_BODY="$existing_body"$'\n\n'"Updated on ${DATE}"
-        fi
-        NEW_BODY="$NEW_BODY"$'\n'"Included add-ons: $INCLUDED_ADDONS"
         
         if [ -n "$release_id" ]; then
           echo "Updating existing release..."
