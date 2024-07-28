@@ -80,7 +80,7 @@ QTR_Messages = {
    itemchoose1       = "اﺧﺘﺮ اﻟﻤﻜﺎﻓﺄة:", -- Możesz wybrać jedną z nagród: (You will be able to choose one of these rewards:)
    itemchoose2       = "اﺧﺘﺮ اﻟﻤﻜﺎﻓﺄة:", -- Wybierz jedną z nagród: (Choose one of these rewards:)
    itemchoose3       = "ﺳﺘﺄﺧﺬ اﻟﻤﻜﺎﻓﺄة:", -- Otrzymujesz nagrodę: (You receiving the reward:)
-   itemreceiv0       = "ﺳﺘﺴﺘﻠﻢ", -- Otrzymasz: (You will receive:)
+   itemreceiv0       = "ﺳﺘﺴﺘﻠﻢ:", -- Otrzymasz: (You will receive:)
    itemreceiv1       = "ﺃﻳﻀﺎ ﺳﻮﻑ ﺗﺄﺧﺬ:", -- Otrzymasz również: (You will also receive:)
    itemreceiv2       = "اﻟﻤﻜﺎﻓﺄة:", -- Otrzymujesz nagrodę: (You receiving the reward:)
    itemreceiv3       = "اﻟﻤﻜﺎﻓﺄة:", -- Otrzymujesz również nagrodę: (You also receiving the reward:)
@@ -338,7 +338,7 @@ local QTR_race = UnitRace("player");
 local QTR_class = UnitClass("player");
 
 if (p_race[QTR_race]) then
-   player_race_table = { M=AS_UTF8reverse(p_race[QTR_race].M), F=AS_UTF8reverse(p_race[QTR_race].F) };
+   player_race_table = { M=p_race[QTR_race].M, F=p_race[QTR_race].F };
 else   
    player_race_table = { M=QTR_race, F=QTR_race };
 end
