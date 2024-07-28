@@ -26,6 +26,12 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         set -e
+        
+        # Function to log errors
+        log_error() {
+          echo "ERROR: $1" >&2
+        }
+        
         VERSION=${GITHUB_REF#refs/tags/v}
         DATE=$(date +'%Y-%m-%d')
         ADDONS=(WoWAR WoWPL WoWTR WoWHU WoWUA)
@@ -74,6 +80,11 @@ jobs:
           COMMITS=$(git log ${PREVIOUS_TAG}..HEAD --format="%h %s" --no-merges)
         fi
         
+        if [ -z "$COMMITS" ]; then
+          log_error "No commits found between tags. Release notes generation failed."
+          exit 1
+        fi
+        
         NEW_BODY="# 🚀 Release notes for ${{ github.ref_name }}\n\n"
         NEW_BODY+="**📦 Included add-ons:** $INCLUDED_ADDONS\n\n"
         NEW_BODY+="## 🔍 Changes in this release\n\n"
@@ -92,7 +103,7 @@ jobs:
         
         # Generate categorized release notes
         for label in "${!LABELS[@]}"; do
-          LABEL_COMMITS=$(echo "$COMMITS" | grep -i "\[$label\]")
+          LABEL_COMMITS=$(echo "$COMMITS" | grep -i "\[$label\]" || true)
           if [ ! -z "$LABEL_COMMITS" ]; then
             NEW_BODY+="\n### ${LABELS[$label]}\n\n"
             while IFS= read -r commit; do
@@ -104,7 +115,7 @@ jobs:
         done
         
         # Add uncategorized commits
-        UNCATEGORIZED=$(echo "$COMMITS" | grep -vE "$(IFS=\|; echo "${!LABELS[*]}" | sed -e 's/^/\\[/' -e 's/$/\\]/i')")
+        UNCATEGORIZED=$(echo "$COMMITS" | grep -vE "$(IFS=\|; echo "${!LABELS[*]}" | sed -e 's/^/\\[/' -e 's/$/\\]/i')" || true)
         if [ ! -z "$UNCATEGORIZED" ]; then
           NEW_BODY+="\n### 🔀 Other Changes\n\n"
           while IFS= read -r commit; do
@@ -150,7 +161,7 @@ jobs:
           release_url=$(echo "$release_response" | jq -r .upload_url | sed 's/{?name,label}//g')
           
           if [ -z "$release_url" ] || [ "$release_url" == "null" ]; then
-            echo "Error: Failed to create release. API response: $release_response"
+            log_error "Failed to create release. API response: $release_response"
             exit 1
           fi
         fi
@@ -174,7 +185,7 @@ jobs:
           echo "Upload response for $FILENAME: $upload_response"
           
           if ! echo "$upload_response" | jq -e .id > /dev/null; then
-            echo "Error: Failed to upload asset $FILENAME. API response: $upload_response"
+            log_error "Failed to upload asset $FILENAME. API response: $upload_response"
             exit 1
           fi
           
