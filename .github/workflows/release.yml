@@ -3,230 +3,235 @@ on:
   push:
     tags:
       - 'v*.*.*'
-
 env:
   NODE_VERSION: '20'
-
 permissions:
   contents: write
   packages: write
   actions: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # This allows access to all history for all branches and tags
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Build and Release Add-Ons
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -e
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Build and Release Add-Ons
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        set -e
+        
+        # Function to log errors
+        log_error() {
+          echo "ERROR: $1" >&2
+        }
+        
+        # Function to create JSON payload
+        create_json_payload() {
+          local body="$1"
+          local name="$2"
+          local tag_name="$3"
+          local is_update="$4"
           
-          # Function to log errors
-          log_error() {
-            echo "ERROR: $1" >&2
-          }
-          
-          # Function to create JSON payload
-          create_json_payload() {
-            local body="$1"
-            local name="$2"
-            local tag_name="$3"
-            local is_update="$4"
-            
-            if [ "$is_update" = "true" ]; then
-              jq -n \
-                --arg name "$name" \
-                --arg body "$body" \
-                '{name: $name, body: $body}'
-            else
-              jq -n \
-                --arg name "$name" \
-                --arg body "$body" \
-                --arg tag_name "$tag_name" \
-                '{tag_name: $tag_name, name: $name, body: $body, draft: false, prerelease: false}'
-            fi
-          }
-          
-          VERSION=${GITHUB_REF#refs/tags/v}
-          DATE=$(date +'%Y-%m-%d')
-          ADDONS=(WoWAR WoWPL WoWTR WoWHU WoWUA)
-          INCLUDED_ADDONS=""
-          
-          # Create necessary directories
-          mkdir -p builds temp
-          
-          for addon in "${ADDONS[@]}"; do
-            echo "Building $addon..."
-            if [ -d "$addon" ]; then
-              # Create a temporary directory for this add-on
-              mkdir -p temp/$addon
-              # Copy add-on specific files
-              cp -r $addon/* temp/$addon/
-              # Copy common files if they exist
-              if [ -d "common" ]; then
-                cp -r common/* temp/$addon/
-              else
-                echo "Warning: common directory not found, skipping..."
-              fi
-              INCLUDED_ADDONS+="$addon "
-              
-              # Add header to Lua files
-              find temp/$addon -name "*.lua" -type f -exec sed -i "1i-- Addon: $addon (Version: $VERSION) (Date: $DATE)" {} \;
-              
-              # Create the zip file
-              FILENAME="${addon}_v${VERSION}_${DATE}.zip"
-              (cd temp && zip -r ../builds/$FILENAME $addon)
-              
-              # Clean up temporary directory
-              rm -rf temp/$addon
-            else
-              echo "Warning: $addon directory not found, skipping..."
-              continue
-            fi
-          done
-          
-          INCLUDED_ADDONS=$(echo $INCLUDED_ADDONS | sed 's/ /, /g' | sed 's/, $//')
-          
-          echo "Generating release notes..."
-          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-          if [ -z "$PREVIOUS_TAG" ]; then
-            COMMITS=$(git log --format="%h %s" --no-merges)
+          if [ "$is_update" = "true" ]; then
+            jq -n --arg name "$name" --arg body "$body" '{
+              name: $name,
+              body: $body
+            }'
           else
-            COMMITS=$(git log ${PREVIOUS_TAG}..HEAD --format="%h %s" --no-merges)
+            jq -n --arg name "$name" --arg body "$body" --arg tag_name "$tag_name" '{
+              tag_name: $tag_name,
+              name: $name,
+              body: $body,
+              draft: false,
+              prerelease: false
+            }'
+          fi
+        }
+        
+        VERSION=${GITHUB_REF#refs/tags/v}
+        DATE=$(date +'%Y-%m-%d')
+        ADDONS=(WoWAR WoWPL WoWTR WoWHU WoWUA)
+        INCLUDED_ADDONS=""
+        
+        # Create necessary directories
+        mkdir -p builds temp
+        
+        for addon in "${ADDONS[@]}"; do
+          echo "Building $addon..."
+          if [ -d "$addon" ]; then
+            # Create a temporary directory for this add-on
+            mkdir -p temp/$addon
+            # Copy add-on specific files
+            cp -r $addon/* temp/$addon/
+            # Copy common files if they exist
+            if [ -d "common" ]; then
+              cp -r common/* temp/$addon/
+            else
+              echo "Warning: common directory not found, skipping..."
+            fi
+            INCLUDED_ADDONS+="$addon "
+            
+            # Add header to Lua files
+            find temp/$addon -name "*.lua" -type f -exec sed -i "1i-- Addon: $addon (Version: $VERSION) (Date: $DATE)" {} \;
+            
+            # Create the zip file
+            FILENAME="${addon}_v${VERSION}_${DATE}.zip"
+            (cd temp && zip -r ../builds/$FILENAME $addon)
+            
+            # Clean up temporary directory
+            rm -rf temp/$addon
+          else
+            echo "Warning: $addon directory not found, skipping..."
+            continue
+          fi
+        done
+        
+        INCLUDED_ADDONS=$(echo $INCLUDED_ADDONS | sed 's/ /, /g' | sed 's/, $//')
+        
+        echo "Generating release notes..."
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        if [ -z "$PREVIOUS_TAG" ]; then
+          COMMITS=$(git log --format="%h %s" --no-merges)
+        else
+          COMMITS=$(git log ${PREVIOUS_TAG}..HEAD --format="%h %s" --no-merges)
+        fi
+        
+        if [ -z "$COMMITS" ]; then
+          log_error "No commits found between tags. Release notes generation failed."
+          exit 1
+        fi
+        
+        # Use a heredoc for multiline string with actual newlines
+        read -r -d '' NEW_BODY << EOM
+        # 🚀 Release $VERSION
+
+        ![Release](https://img.shields.io/badge/Release-$VERSION-blue?style=for-the-badge&logo=github)
+
+        ## 📦 Included add-ons
+
+        $INCLUDED_ADDONS
+
+        ## 🔍 Changes in this release
+
+        EOM
+        
+        # Define labels, their descriptions, and icons
+        declare -A LABELS=(
+          ["fea"]="✨ New Features"
+          ["bug"]="🐛 Bug Fixes"
+          ["per"]="⚡ Performance Improvements"
+          ["ref"]="🔧 Code Refactoring"
+          ["docs"]="📚 Documentation Updates"
+          ["test"]="🧪 Tests"
+          ["add"]="➕ New Additions"
+          ["up"]="🔄 Updates"
+        )
+        
+        # Generate categorized release notes
+        for label in "${!LABELS[@]}"; do
+          LABEL_COMMITS=$(echo "$COMMITS" | grep -i "\[$label\]" || true)
+          if [ ! -z "$LABEL_COMMITS" ]; then
+            NEW_BODY+=$'\n'"### ${LABELS[$label]}"$'\n\n'
+            while IFS= read -r commit; do
+              COMMIT_HASH=$(echo $commit | cut -d' ' -f1)
+              COMMIT_MSG=$(echo $commit | cut -d' ' -f2- | sed -E "s/\[$label\]//i" | xargs)
+              NEW_BODY+="- $COMMIT_MSG ([${COMMIT_HASH}](https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}))"$'\n'
+            done <<< "$LABEL_COMMITS"
+            NEW_BODY+=$'\n'
+          fi
+        done
+        
+        # Add uncategorized commits
+        UNCATEGORIZED=$(echo "$COMMITS" | grep -vE "$(IFS=\|; echo "${!LABELS[*]}" | sed -e 's/^/\\[/' -e 's/$/\\]/i')" || true)
+        if [ ! -z "$UNCATEGORIZED" ]; then
+          NEW_BODY+=$'\n'"### 🔀 Other Changes"$'\n\n'
+          while IFS= read -r commit; do
+            COMMIT_HASH=$(echo $commit | cut -d' ' -f1)
+            COMMIT_MSG=$(echo $commit | cut -d' ' -f2- | xargs)
+            NEW_BODY+="- $COMMIT_MSG ([${COMMIT_HASH}](https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}))"$'\n'
+          done <<< "$UNCATEGORIZED"
+          NEW_BODY+=$'\n'
+        fi
+        
+        # Add footer
+        NEW_BODY+="---"$'\n\n'
+        NEW_BODY+="📅 Released on: $DATE"$'\n\n'
+        NEW_BODY+="🙏 Thank you to all our contributors!"$'\n'
+        
+        echo "Debug: Displaying NEW_BODY content"
+        echo "$NEW_BODY"
+        
+        echo "Checking for existing release..."
+        release_info=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}")
+        release_id=$(echo "$release_info" | jq -r '.id // empty')
+        existing_body=$(echo "$release_info" | jq -r '.body // empty')
+        
+        if [ -n "$existing_body" ]; then
+          NEW_BODY="$existing_body"$'\n\n'"Updated on ${DATE}"$'\n\n'"$NEW_BODY"
+        fi
+        
+        if [ -n "$release_id" ]; then
+          echo "Updating existing release..."
+          release_url="https://api.github.com/repos/${{ github.repository }}/releases/$release_id"
+          json_payload=$(create_json_payload "$NEW_BODY" "Release ${{ github.ref_name }}" "${{ github.ref_name }}" "true")
+          update_response=$(curl -s -X PATCH \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Content-Type: application/json" \
+            "$release_url" \
+            -d "$json_payload")
+          echo "Update response: $update_response"
+        else
+          echo "Creating new release..."
+          json_payload=$(create_json_payload "$NEW_BODY" "Release ${{ github.ref_name }}" "${{ github.ref_name }}" "false")
+          release_response=$(curl -s -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Content-Type: application/json" \
+            https://api.github.com/repos/${{ github.repository }}/releases \
+            -d "$json_payload")
+          
+          echo "Release creation response: $release_response"
+          release_url=$(echo "$release_response" | jq -r .upload_url | sed 's/{?name,label}//g')
+          
+          if [ -z "$release_url" ] || [ "$release_url" == "null" ]; then
+            log_error "Failed to create release. API response: $release_response"
+            exit 1
+          fi
+        fi
+        
+        for addon in "${ADDONS[@]}"; do
+          FILENAME="${addon}_v${VERSION}_${DATE}.zip"
+          if [ ! -f "builds/$FILENAME" ]; then
+            echo "Skipping upload for $addon as the file was not created."
+            continue
           fi
           
-          if [ -z "$COMMITS" ]; then
-            log_error "No commits found between tags. Release notes generation failed."
+          echo "Uploading $FILENAME to release..."
+          upload_url="${release_url/api.github.com\/repos/uploads.github.com\/repos}/assets"
+          upload_response=$(curl -s -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Type: application/zip" \
+            -H "Accept: application/vnd.github.v3+json" \
+            --data-binary @builds/$FILENAME \
+            "${upload_url}?name=$FILENAME")
+          
+          echo "Upload response for $FILENAME: $upload_response"
+          
+          if ! echo "$upload_response" | jq -e .id > /dev/null; then
+            log_error "Failed to upload asset $FILENAME. API response: $upload_response"
             exit 1
           fi
           
-          NEW_BODY+="# 🚀 Release $VERSION  \n\n"
-          NEW_BODY+="![Release](https://img.shields.io/badge/Release-$VERSION-blue?style=for-the-badge&logo=github)  \n\n"
-          NEW_BODY+="## 📦 Included add-ons  \n\n"
-          NEW_BODY+="$INCLUDED_ADDONS  \n\n"
-          NEW_BODY+="## 🔍 Changes in this release  \n\n"
-          
-          # Define labels, their descriptions, and icons
-          declare -A LABELS=(
-            ["fea"]="✨ New Features"
-            ["bug"]="🐛 Bug Fixes"
-            ["per"]="⚡ Performance Improvements"
-            ["ref"]="🔧 Code Refactoring"
-            ["docs"]="📚 Documentation Updates"
-            ["test"]="🧪 Tests"
-            ["add"]="➕ New Additions"
-            ["up"]="🔄 Updates"
-          )
-          
-          # Generate categorized release notes
-          for label in "${!LABELS[@]}"; do
-            LABEL_COMMITS=$(echo "$COMMITS" | grep -i "\[$label\]" || true)
-            if [ ! -z "$LABEL_COMMITS" ]; then
-              NEW_BODY+="### ${LABELS[$label]}\n\n"
-              while IFS= read -r commit; do
-                COMMIT_HASH=$(echo $commit | cut -d' ' -f1)
-                COMMIT_MSG=$(echo $commit | cut -d' ' -f2- | sed -E "s/\[$label\]//i" | xargs)
-                NEW_BODY+="- $COMMIT_MSG ([${COMMIT_HASH}](https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}))\n"
-              done <<< "$LABEL_COMMITS"
-              NEW_BODY+="\n"
-            fi
-          done
-          
-          # Add uncategorized commits
-          UNCATEGORIZED=$(echo "$COMMITS" | grep -vE "$(IFS=\|; echo "${!LABELS[*]}" | sed -e 's/^/\\[/' -e 's/$/\\]/i')" || true)
-          if [ ! -z "$UNCATEGORIZED" ]; then
-            NEW_BODY+="### 🔀 Other Changes\n\n"
-            while IFS= read -r commit; do
-              COMMIT_HASH=$(echo $commit | cut -d' ' -f1)
-              COMMIT_MSG=$(echo $commit | cut -d' ' -f2- | xargs)
-              NEW_BODY+="- $COMMIT_MSG ([${COMMIT_HASH}](https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}))\n"
-            done <<< "$UNCATEGORIZED"
-            NEW_BODY+="\n"
-          fi
-          
-          # Add footer
-          NEW_BODY+="---\n\n"
-          NEW_BODY+="📅 Released on: $DATE\n\n"
-          NEW_BODY+="🙏 Thank you to all our contributors!\n"
-          
-          echo "Debug: Displaying NEW_BODY content"
-          echo "$NEW_BODY"
-          
-          echo "Checking for existing release..."
-          release_info=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}")
-          release_id=$(echo "$release_info" | jq -r '.id // empty')
-          existing_body=$(echo "$release_info" | jq -r '.body // empty')
-          
-          if [ -n "$existing_body" ]; then
-            NEW_BODY="$existing_body"$'\n\n'"Updated on ${DATE}\n\n$NEW_BODY"
-          fi
-          
-          if [ -n "$release_id" ]; then
-            echo "Updating existing release..."
-            release_url="https://api.github.com/repos/${{ github.repository }}/releases/$release_id"
-            json_payload=$(create_json_payload "$NEW_BODY" "Release ${{ github.ref_name }}" "${{ github.ref_name }}" "true")
-            update_response=$(curl -s -X PATCH \
-              -H "Authorization: token $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github.v3+json" \
-              -H "Content-Type: application/json" \
-              "$release_url" \
-              -d "$json_payload")
-            echo "Update response: $update_response"
-          else
-            echo "Creating new release..."
-            json_payload=$(create_json_payload "$NEW_BODY" "Release ${{ github.ref_name }}" "${{ github.ref_name }}" "false")
-            release_response=$(curl -s -X POST \
-              -H "Authorization: token $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github.v3+json" \
-              -H "Content-Type: application/json" \
-              https://api.github.com/repos/${{ github.repository }}/releases \
-              -d "$json_payload")
-            
-            echo "Release creation response: $release_response"
-            release_url=$(echo "$release_response" | jq -r .upload_url | sed 's/{?name,label}//g')
-            
-            if [ -z "$release_url" ] || [ "$release_url" == "null" ]; then
-              log_error "Failed to create release. API response: $release_response"
-              exit 1
-            fi
-          fi
-          
-          for addon in "${ADDONS[@]}"; do
-            FILENAME="${addon}_v${VERSION}_${DATE}.zip"
-            if [ ! -f "builds/$FILENAME" ]; then
-              echo "Skipping upload for $addon as the file was not created."
-              continue
-            fi
-            
-            echo "Uploading $FILENAME to release..."
-            upload_url="${release_url/api.github.com\/repos/uploads.github.com\/repos}/assets"
-            upload_response=$(curl -s -X POST \
-              -H "Authorization: token $GITHUB_TOKEN" \
-              -H "Content-Type: application/zip" \
-              -H "Accept: application/vnd.github.v3+json" \
-              --data-binary @builds/$FILENAME \
-              "${upload_url}?name=$FILENAME")
-            
-            echo "Upload response for $FILENAME: $upload_response"
-            
-            if ! echo "$upload_response" | jq -e .id > /dev/null; then
-              log_error "Failed to upload asset $FILENAME. API response: $upload_response"
-              exit 1
-            fi
-            
-            echo "Successfully uploaded $FILENAME"
-          done
-          
-          echo "Release process completed successfully"
+          echo "Successfully uploaded $FILENAME"
+        done
+        
+        echo "Release process completed successfully"
