@@ -16,7 +16,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0
+        fetch-depth: 0  # This allows access to all history for all branches and tags
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
@@ -28,7 +28,7 @@ jobs:
         set -e
         VERSION=${GITHUB_REF#refs/tags/v}
         DATE=$(date +'%Y-%m-%d')
-        ADDONS=(WoWAR WoWPL WoWTR)
+        ADDONS=(WoWAR WoWPL WoWTR WoWHU WoWUA)
         INCLUDED_ADDONS=""
         
         # Create necessary directories
@@ -66,7 +66,7 @@ jobs:
         
         INCLUDED_ADDONS=$(echo $INCLUDED_ADDONS | sed 's/ /, /g' | sed 's/, $//')
         
-        # Generate release notes based on commit labels
+        echo "Generating release notes..."
         PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
         if [ -z "$PREVIOUS_TAG" ]; then
           COMMITS=$(git log --format="%h %s" --no-merges)
@@ -75,7 +75,6 @@ jobs:
         fi
         
         NEW_BODY="# 🚀 Release notes for ${{ github.ref_name }}\n\n"
-        NEW_BODY+="![Release Banner](https://img.shields.io/badge/Release-${{ github.ref_name }}-blue?style=for-the-badge&logo=github)\n\n"
         NEW_BODY+="**📦 Included add-ons:** $INCLUDED_ADDONS\n\n"
         NEW_BODY+="## 🔍 Changes in this release\n\n"
         
@@ -124,15 +123,21 @@ jobs:
         release_info=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
           "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}")
         release_id=$(echo "$release_info" | jq -r '.id // empty')
+        existing_body=$(echo "$release_info" | jq -r '.body // empty')
+        
+        if [ -n "$existing_body" ]; then
+          NEW_BODY="$existing_body"$'\n\n'"Updated on ${DATE}\n\n$NEW_BODY"
+        fi
         
         if [ -n "$release_id" ]; then
           echo "Updating existing release..."
           release_url="https://api.github.com/repos/${{ github.repository }}/releases/$release_id"
-          curl -s -X PATCH \
+          update_response=$(curl -s -X PATCH \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
             "$release_url" \
-            -d "$(jq -n --arg body "$NEW_BODY" '{"name":"Release ${{ github.ref_name }}","body":$body}')"
+            -d "$(jq -n --arg body "$NEW_BODY" '{"name":"Release ${{ github.ref_name }}","body":$body}')")
+          echo "Update response: $update_response"
         else
           echo "Creating new release..."
           release_response=$(curl -s -X POST \
@@ -166,10 +171,10 @@ jobs:
             --data-binary @builds/$FILENAME \
             "${upload_url}?name=$FILENAME")
           
-          echo "Upload response: $upload_response"
+          echo "Upload response for $FILENAME: $upload_response"
           
           if ! echo "$upload_response" | jq -e .id > /dev/null; then
-            echo "Error: Failed to upload asset. API response: $upload_response"
+            echo "Error: Failed to upload asset $FILENAME. API response: $upload_response"
             exit 1
           fi
           
