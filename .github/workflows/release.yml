@@ -85,8 +85,10 @@ jobs:
           exit 1
         fi
         
-        NEW_BODY="# 🚀 Release notes for ${{ github.ref_name }}\n\n"
-        NEW_BODY+="**📦 Included add-ons:** $INCLUDED_ADDONS\n\n"
+        NEW_BODY="# 🚀 Release $VERSION\n\n"
+        NEW_BODY+="![Release](https://img.shields.io/badge/Release-$VERSION-blue?style=for-the-badge&logo=github)\n\n"
+        NEW_BODY+="## 📦 Included add-ons\n\n"
+        NEW_BODY+="$INCLUDED_ADDONS\n\n"
         NEW_BODY+="## 🔍 Changes in this release\n\n"
         
         # Define labels, their descriptions, and icons
@@ -105,29 +107,31 @@ jobs:
         for label in "${!LABELS[@]}"; do
           LABEL_COMMITS=$(echo "$COMMITS" | grep -i "\[$label\]" || true)
           if [ ! -z "$LABEL_COMMITS" ]; then
-            NEW_BODY+="\n### ${LABELS[$label]}\n\n"
+            NEW_BODY+="### ${LABELS[$label]}\n\n"
             while IFS= read -r commit; do
               COMMIT_HASH=$(echo $commit | cut -d' ' -f1)
               COMMIT_MSG=$(echo $commit | cut -d' ' -f2- | sed -E "s/\[$label\]//i" | xargs)
               NEW_BODY+="- $COMMIT_MSG ([${COMMIT_HASH}](https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}))\n"
             done <<< "$LABEL_COMMITS"
+            NEW_BODY+="\n"
           fi
         done
         
         # Add uncategorized commits
         UNCATEGORIZED=$(echo "$COMMITS" | grep -vE "$(IFS=\|; echo "${!LABELS[*]}" | sed -e 's/^/\\[/' -e 's/$/\\]/i')" || true)
         if [ ! -z "$UNCATEGORIZED" ]; then
-          NEW_BODY+="\n### 🔀 Other Changes\n\n"
+          NEW_BODY+="### 🔀 Other Changes\n\n"
           while IFS= read -r commit; do
             COMMIT_HASH=$(echo $commit | cut -d' ' -f1)
             COMMIT_MSG=$(echo $commit | cut -d' ' -f2- | xargs)
             NEW_BODY+="- $COMMIT_MSG ([${COMMIT_HASH}](https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}))\n"
           done <<< "$UNCATEGORIZED"
+          NEW_BODY+="\n"
         fi
         
         # Add footer
-        NEW_BODY+="\n---\n\n"
-        NEW_BODY+="📅 Released on: $DATE\n"
+        NEW_BODY+="---\n\n"
+        NEW_BODY+="📅 Released on: $DATE\n\n"
         NEW_BODY+="🙏 Thank you to all our contributors!\n"
         
         echo "Checking for existing release..."
