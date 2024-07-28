@@ -1098,22 +1098,31 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function ST_SpellBookTranslateButton()
-    if (ST_PM["active"] == "1") then
-        -- przycisk do przełączania wersji TR - EN dla talentów
-        WOWTR_ToggleButtonS = CreateFrame("Button", nil, SpellBookFrame, "UIPanelButtonTemplate");
-        WOWTR_ToggleButtonS:SetWidth(100);
-        WOWTR_ToggleButtonS:SetHeight(15); -- Metin boyutunu 15 olarak ayarla
-        WOWTR_ToggleButtonS:SetFrameStrata("HIGH")
-        if (ST_PM["spell"] == "1") then
-            WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_trDESC);
-        else
-            WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_enDESC);
-        end
-        WOWTR_ToggleButtonS:ClearAllPoints();
-        WOWTR_ToggleButtonS:SetPoint("CENTER", PlayerSpellsFrameTitleText, "CENTER", 80, 0);
-        WOWTR_ToggleButtonS:SetScript("OnClick", STspell_ON_OFF);
-        PlayerSpellsFrame:HookScript("OnHide", function() WOWTR_ToggleButtonS:Hide(); end);
-    end
+   if (ST_PM["active"] == "1") then
+       -- Button to toggle between TR - EN for talents
+       WOWTR_ToggleButtonS = CreateFrame("Button", nil, SpellBookFrame, "UIPanelButtonTemplate");
+       WOWTR_ToggleButtonS:SetWidth(100);
+       WOWTR_ToggleButtonS:SetHeight(15); -- Set the height to 15
+       WOWTR_ToggleButtonS:SetFrameStrata("HIGH")
+
+       if (ST_PM["spell"] == "1") then
+           if (WoWTR_Localization.lang == 'AR') then
+               WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_trDESC);
+               local arFont = WOWTR_ToggleButtonS:CreateFontString();
+               arFont:SetFont(WOWTR_Font2, 13); -- Use appropriate font and size for Arabic
+               WOWTR_ToggleButtonS:SetFontString(arFont);
+           else
+               WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_trDESC);
+           end
+       else
+           WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_enDESC);
+       end
+
+       WOWTR_ToggleButtonS:ClearAllPoints();
+       WOWTR_ToggleButtonS:SetPoint("CENTER", PlayerSpellsFrameTitleText, "CENTER", 80, 0);
+       WOWTR_ToggleButtonS:SetScript("OnClick", STspell_ON_OFF);
+       PlayerSpellsFrame:HookScript("OnHide", function() WOWTR_ToggleButtonS:Hide(); end);
+   end
 end
 	  
 -------------------------------------------------------------------------------------------------------
