@@ -110,11 +110,11 @@ jobs:
         
         # Use a heredoc for multiline string with actual newlines
         NEW_BODY=$(cat << EOF
-        ### 📦 Addons
+        ## 📦 Addons
 
         $INCLUDED_ADDONS
 
-        ### 🔍 Changes
+        ## 🔍 Changes
         EOF
         )
         
@@ -134,7 +134,7 @@ jobs:
         for label in "${!LABELS[@]}"; do
           LABEL_COMMITS=$(echo "$COMMITS" | grep -i "\[$label\]" || true)
           if [ ! -z "$LABEL_COMMITS" ]; then
-            NEW_BODY+=$'\n'"#### ${LABELS[$label]}"$'\n\n'
+            NEW_BODY+=$'\n'"### ${LABELS[$label]}"$'\n\n'
             while IFS= read -r commit; do
               COMMIT_HASH=$(echo $commit | cut -d' ' -f1)
               COMMIT_MSG=$(echo $commit | cut -d' ' -f2- | sed -E "s/\[$label\]//i" | xargs)
@@ -147,7 +147,7 @@ jobs:
         # Add uncategorized commits
         UNCATEGORIZED=$(echo "$COMMITS" | grep -vE "$(IFS=\|; echo "${!LABELS[*]}" | sed -e 's/^/\\[/' -e 's/$/\\]/i')" || true)
         if [ ! -z "$UNCATEGORIZED" ]; then
-          NEW_BODY+=$'\n'"#### 🔀 Other Changes"$'\n\n'
+          NEW_BODY+=$'\n'"### 🔀 Other Changes"$'\n\n'
           while IFS= read -r commit; do
             COMMIT_HASH=$(echo $commit | cut -d' ' -f1)
             COMMIT_MSG=$(echo $commit | cut -d' ' -f2- | xargs)
@@ -158,7 +158,8 @@ jobs:
         
         # Add footer
         NEW_BODY+="---"$'\n\n'
-        NEW_BODY+="WoWLang Team"$'\n'
+        NEW_BODY+="📅 Released on: $DATE"$'\n\n'
+        NEW_BODY+="WoWl"$'\n'
         
         echo "Debug: Displaying NEW_BODY content"
         echo "$NEW_BODY"
@@ -170,7 +171,7 @@ jobs:
         existing_body=$(echo "$release_info" | jq -r '.body // empty')
         
         if [ -n "$existing_body" ]; then
-          NEW_BODY="$existing_body"$'\n\n'"📅 Released on: ${DATE}"$'\n\n'"$NEW_BODY"
+          NEW_BODY="$existing_body"$'\n\n'"Updated on ${DATE}"$'\n\n'"$NEW_BODY"
         fi
         
         if [ -n "$release_id" ]; then
