@@ -118,10 +118,10 @@ function WOWTR_CheckVars()
    if (not QTR_PS["fontsize"] ) then
       QTR_PS["fontsize"] = "13";   
    end
-   -- display own names in translation language
---   if (not QTR_PS["ownnames"] ) then
+   -- display own names in translation language (active in Polish version)
+   if (not QTR_PS["ownnames"] ) then
       QTR_PS["ownnames"] = "0";   
---   end
+   end
    -- activate the quest tracker translation ONLINE
    if (not QTR_PS["tracker"] ) then
       QTR_PS["tracker"] = "1";   

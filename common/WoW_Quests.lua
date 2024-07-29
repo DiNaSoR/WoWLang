@@ -723,13 +723,13 @@ function QTR_START()
    end)
    GoQ_IconAI:Hide()
 
-   -- Ensure QUEST_TRACKER_MODULE exists before hooking functions
-   if QUEST_TRACKER_MODULE then
-      -- Function called on clicking a quest name in QuestTracker   
-      hooksecurefunc(QUEST_TRACKER_MODULE, "OnBlockHeaderClick", QTR_PrepareReload)
+   -- Ensure QUEST_TRACKER_MODULE exists before hooking functions (QUEST TRACKER IS NOT SERVICES)
+--   if QUEST_TRACKER_MODULE then
+--      -- Function called on clicking a quest name in QuestTracker   
+--      hooksecurefunc(QUEST_TRACKER_MODULE, "OnBlockHeaderClick", QTR_PrepareReload)
       -- Function called on updating QuestTracker
-      hooksecurefunc(QUEST_TRACKER_MODULE, "EnumQuestWatchData", QTR_ObjectiveTracker_Check)
-   end
+--      hooksecurefunc(QUEST_TRACKER_MODULE, "EnumQuestWatchData", QTR_ObjectiveTracker_Check)
+--   end
 
    WorldMapFrame:HookScript("OnHide", function() 
       if (not WOWTR_wait(0.1, QTR_ObjectiveTracker_QuestHeader)) then
