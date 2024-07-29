@@ -1,4 +1,4 @@
-﻿-- Description: The AddOn displays the translated text information in chosen language
+-- Description: The AddOn displays the translated text information in chosen language
 -- Author: Platine [platine.wow@gmail.com]
 -- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]
 -------------------------------------------------------------------------------------------------------
@@ -1087,6 +1087,10 @@ function WOWSTR_onEvent(_, event, addonName)
    elseif (addonName == 'Blizzard_DelvesDifficultyPicker') then
       ST_load7 = true;
       DelvesDifficultyPickerFrame:HookScript("OnShow", ST_showDelveDifficultFrame);
+
+   elseif (addonName == 'Blizzard_ItemUpgradeUI') then
+      ST_load8 = true;
+      ItemUpgradeFrame:HookScript("OnShow", ST_ItemUpgradeFrm);
 	  
    end
    
@@ -2419,6 +2423,37 @@ end
 function ST_ItemRefTooltipTekrar()
    if ( ItemRefTooltip:IsVisible()) then
       ST_ItemRefTooltip();
+   end
+end
+
+-------------------------------------------------------------------------------------------------------
+
+--ITEM UPGRADE FRAME
+function ST_ItemUpgradeFrm()			-- https://imgur.com/a/Vy6wNjO
+      local ItemUpFrm01 = ItemUpgradeFrameTitleText;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm01, false, "ui");
+      local ItemUpFrm02 = ItemUpgradeFrame.ItemInfo.MissingItemText;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm02, false, "ui");
+      local ItemUpFrm03 = ItemUpgradeFrame.MissingDescription;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm03, false, "ui");
+      local ItemUpFrm04 = ItemUpgradeFrame.UpgradeButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm04, false, "ui");
+      local ItemUpFrm05 = ItemUpgradeFrame.UpgradeCostFrame.Label;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm05, false, "ui");
+      local ItemUpFrm06 = ItemUpgradeFrame.ItemInfo.UpgradeTo;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm06, false, "ui");
+      local ItemUpFrm07 = ItemUpgradeFrameLeftItemPreviewFrameTextLeft1;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm07, false, "ui");
+      local ItemUpFrm08 = ItemUpgradeFrameRightItemPreviewFrameTextLeft1;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm08, false, "ui");
+   if (not WOWTR_wait(0.3, ST_ItemUpgradeFrmTekrar)) then
+   end  
+   
+end
+
+function ST_ItemUpgradeFrmTekrar()
+   if ( ItemUpgradeFrame:IsVisible()) then
+      ST_ItemUpgradeFrm();
    end
 end
 
