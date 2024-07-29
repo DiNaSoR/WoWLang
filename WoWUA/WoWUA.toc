@@ -1,5 +1,5 @@
 ﻿## Interface: 110000, 110002
-## Title: WoWUA |cff8080ff11.01|r
+## Title: WoW-UA |cff8080ff11.01|r
 ## Version: 11.01
 ## Notes: Доповнення відображає перекладені тексти українською мовою
 ## Notes_en: AddOn displays the translated text informations in Ukrainian
