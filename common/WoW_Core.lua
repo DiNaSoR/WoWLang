@@ -119,9 +119,9 @@ function WOWTR_CheckVars()
       QTR_PS["fontsize"] = "13";   
    end
    -- display own names in translation language
-   if (not QTR_PS["ownnames"] ) then
+--   if (not QTR_PS["ownnames"] ) then
       QTR_PS["ownnames"] = "0";   
-   end
+--   end
    -- activate the quest tracker translation ONLINE
    if (not QTR_PS["tracker"] ) then
       QTR_PS["tracker"] = "1";   
@@ -154,7 +154,9 @@ function WOWTR_CheckVars()
    if (not QTR_PS["FontFile"] ) then
       QTR_PS["FontFile"] = WOWTR_Fonts[1];   
    end
-   WOWTR_Font2 = WoWTR_Localization.mainFolder.."\\Fonts\\"..QTR_PS["FontFile"];
+   if (#WOWTR_Fonts > 1) then
+      WOWTR_Font2 = WoWTR_Localization.mainFolder.."\\Fonts\\"..QTR_PS["FontFile"];
+   end
 
    if (not QTR_PS.firstTimeLoaded) then   -- Automatic log cleaning (reset saved texts)
       QTR_PS.firstTimeLoaded = true;
