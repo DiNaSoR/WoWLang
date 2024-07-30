@@ -3277,7 +3277,7 @@ function WOW_ZmienKody(message, target)
          end
          nr_poz, nr_poz2 = string.find(msg, "{O");
       end
-   else
+   else        -- other languages, not AR
       -- obsługa kodu YOUR_GENDER(x;y)
       local nr_1, nr_2, nr_3 = 0;
       local QTR_forma = "";
@@ -3371,7 +3371,7 @@ function WOW_ZmienKody(message, target)
                   nr_3 = nr_3 + 1;
                end
                if (string.sub(msg, nr_3, nr_3) == ")") then
-                  if (QTR_PS["ownname"] == "1") then        -- forma narodowa: polska, czeska, ukraińska, węgierska, włoska, turecka, arabska
+                  if (QTR_PS["ownnames"] == "1") then        -- forma narodowa: polska, czeska, ukraińska, węgierska, włoska, turecka, arabska
                      QTR_forma = string.sub(msg,nr_2+1,nr_3-1);
                   else                                      -- forma angielska
                      QTR_forma = string.sub(msg,nr_1+1,nr_2-1);
