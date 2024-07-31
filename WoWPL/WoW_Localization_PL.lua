@@ -23,6 +23,7 @@ WoWTR_Localization = {
    addressBlik = "+48 601 635 712",                                  -- telephon number for BLIK payment
    gossipText = "Gossip",                                            -- gossip text 
    quests = "Zadania",                                               -- Quests 
+   worldquests = "Światowe Zadania",                                 -- World Quests 
    campaignquests = "Zadania Kampanii",                              -- Campaign Quests
    scenariodung = "Scenariusz",                                      -- Scenario/Dungeon
    objectives = "Cele zadanie",                                      -- Objectives 
