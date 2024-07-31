@@ -23,6 +23,7 @@ WoWTR_Localization = {
    addressBlik = "",                                                 -- telephon number for BLIK payment
    gossipText = "Pletykák",                                          -- gossip text 
    quests = "Küldetések",                                            -- Quests 
+   worldquests = "Világ Küldetések",                                 -- World Quests    
    campaignquests = "Kampány küldetések",                            -- Campaign Quests
    scenariodung = "Forgatókönyv",                                    -- Scenario/Dungeon
    objectives = "Célok",                                             -- Objectives 
