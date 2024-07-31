@@ -22,7 +22,8 @@ WoWTR_Localization = {
    addressPayPal = "https://www.paypal.com/donate/?hosted_button_id=FC2NVQ5DN7GVA",   -- address of PayPal page
    addressBlik = "",                                                 -- telephon number for BLIK payment
    gossipText = "Плитки",
-   quests = "Завдання",
+   quests = "Квести",
+   worldquests = "Світові квести",
    campaignquests = "Квести кампанії",                               -- Campaign Quests
    scenariodung = "Сценарій",                                        -- Scenario/Dungeon
    objectives = "Цілі завдання",
