@@ -19,7 +19,7 @@ end
 
 function TT_onTutorialShow()          				-- main function called when tutorial text appears
 	local function MyRepeatingFunction(iteration) 	-- limited number of consecutive runs of the function
-	print("Function executed! Iteration: " .. iteration);
+	--print("Function executed! Iteration: " .. iteration);
 	   if (TT_PS["active"] == "1") then
 		  local obj,txt,id;
 		  obj = "TutorialMainFrame_Frame";
