@@ -753,10 +753,8 @@ function QTR_START()
    QuestFrameCompleteQuestButton:HookScript("OnClick", QTR_QuestFrameButton_OnClick)
    QuestLogPopupDetailFrame:HookScript("OnShow", QTR_QuestLogPopupShow)
    
-   QuestMapFrame.CampaignOverview:HookScript("OnShow", function() 
-      if (not WOWTR_wait(0.1, TT_CampaignOverview)) then
-      -- Delay of 0.1 sec
-      end
+   QuestMapFrame.CampaignOverview:HookScript("OnShow", function()
+      WOWTR_wait(0.5, TT_CampaignOverview) -- After 0.5 seconds the translation is displayed.
    end)
    
    isClassicQuestLog()
