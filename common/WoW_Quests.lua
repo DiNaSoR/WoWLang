@@ -731,11 +731,11 @@ function QTR_START()
       hooksecurefunc(QUEST_TRACKER_MODULE, "EnumQuestWatchData", QTR_ObjectiveTracker_Check)
    end
 
-   WorldMapFrame:HookScript("OnHide", function() 
-      if (not WOWTR_wait(0.1, QTR_ObjectiveTracker_QuestHeader)) then
-      -- opóźnienie 0.1 sek
-      end
-   end );
+   -- WorldMapFrame:HookScript("OnHide", function() 
+      -- if (not WOWTR_wait(0.1, QTR_ObjectiveTracker_QuestHeader)) then
+      -- -- opóźnienie 0.1 sek
+      -- end
+   -- end );
    WorldMapFrame:HookScript("OnShow", function() 
       if (not WOWTR_wait(0.2, QTR_QuestScrollFrame_OnShow)) then
       -- opóźnienie 0.2 sek
@@ -774,18 +774,19 @@ end
 
 -------------------------------------------------------------------------------------------------------------------
 
-function QTR_ObjectiveTracker_QuestHeader()
-   if ( QTR_PS["active"]=="1" and QTR_PS["tracker"]=="1" ) then   -- tłumaczenia włączone
-      --10.2.7
-      --local _font1, _size1, _3 = QuestObjectiveTracker.Header.Text:GetFont();   -- odczytaj aktualną czcionkę i rozmiar
-      --QuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.quests));
-      --QuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, _size1);
-      --11.00
-      local _font1, _size1, _3 = QuestObjectiveTracker.Header.Text:GetFont();   -- odczytaj aktualną czcionkę i rozmiar
-      QuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.quests));
-      QuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, _size1);
-   end
-end
+-- function QTR_ObjectiveTracker_QuestHeader()
+-- print("questheader")
+   -- if ( QTR_PS["active"]=="1" and QTR_PS["tracker"]=="1" ) then   -- tłumaczenia włączone
+      -- --10.2.7
+      -- --local _font1, _size1, _3 = QuestObjectiveTracker.Header.Text:GetFont();   -- odczytaj aktualną czcionkę i rozmiar
+      -- --QuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.quests));
+      -- --QuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, _size1);
+      -- --11.00
+      -- local _font1, _size1, _3 = QuestObjectiveTracker.Header.Text:GetFont();   -- odczytaj aktualną czcionkę i rozmiar
+      -- --QuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.quests));
+      -- --QuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, _size1);
+   -- end
+-- end
 
 -------------------------------------------------------------------------------------------------------------------
 
@@ -1057,27 +1058,27 @@ objectiveSpecials = {
 
 function QTR_ObjectiveTracker_Check()
    if ( QTR_PS["active"]=="1" and QTR_PS["tracker"]=="1" ) then   -- tłumaczenia włączone
-      ObjectiveTrackerFrame.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.objectives));
-      ObjectiveTrackerFrame.Header.Text:SetFont(WOWTR_Font2, 16);
-      QuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 16);
-      if (WoWTR_Localization.lang == 'AR') then
-         --Added New Translation Campaign and Scenario for Arabic only
-         ObjectiveTrackerBlocksFrame.CampaignQuestHeader.Text:SetFont(WOWTR_Font2, 16);
-         ObjectiveTrackerBlocksFrame.ScenarioHeader.Text:SetFont(WOWTR_Font2, 16);
-         ObjectiveTrackerBlocksFrame.CampaignQuestHeader.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.campaignquests));
-         ObjectiveTrackerBlocksFrame.ScenarioHeader.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.scenariodung));
-         --Make LEFT
-         ObjectiveTrackerBlocksFrame.CampaignQuestHeader.Text:SetJustifyH("LEFT");
-         ObjectiveTrackerBlocksFrame.ScenarioHeader.Text:SetJustifyH("LEFT");
-         -- --10.2.7
-         -- --ObjectiveTrackerBlocksFrame.QuestHeader.Text:SetJustifyH("LEFT");
-         -- --11.00
-         QuestObjectiveTracker.Header.Text:SetJustifyH("LEFT");
-      end
+      -- ObjectiveTrackerFrame.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.objectives));
+      -- ObjectiveTrackerFrame.Header.Text:SetFont(WOWTR_Font2, 16);
+      -- QuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 16);
+      -- if (WoWTR_Localization.lang == 'AR') then
+         -- --Added New Translation Campaign and Scenario for Arabic only
+         -- ObjectiveTrackerBlocksFrame.CampaignQuestHeader.Text:SetFont(WOWTR_Font2, 16);
+         -- ObjectiveTrackerBlocksFrame.ScenarioHeader.Text:SetFont(WOWTR_Font2, 16);
+         -- ObjectiveTrackerBlocksFrame.CampaignQuestHeader.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.campaignquests));
+         -- ObjectiveTrackerBlocksFrame.ScenarioHeader.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.scenariodung));
+         -- --Make LEFT
+         -- ObjectiveTrackerBlocksFrame.CampaignQuestHeader.Text:SetJustifyH("LEFT");
+         -- ObjectiveTrackerBlocksFrame.ScenarioHeader.Text:SetJustifyH("LEFT");
+         -- -- --10.2.7
+         -- -- --ObjectiveTrackerBlocksFrame.QuestHeader.Text:SetJustifyH("LEFT");
+         -- -- --11.00
+         -- QuestObjectiveTracker.Header.Text:SetJustifyH("LEFT");
+      -- end
       -- --10.2.7
       -- --ObjectiveTrackerBlocksFrame.QuestHeader.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.quests));   -- może: QTR_ExpandUnitInfo ?
       -- --11.00
-      QuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.quests));   -- może: QTR_ExpandUnitInfo ?
+      -- QuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.quests));   -- może: QTR_ExpandUnitInfo ?
 
 --      for questID, block in pairs(QUEST_TRACKER_MODULE.usedBlocks.ObjectiveTrackerBlockTemplate) do
 --         local str_ID = tostring(questID);
@@ -1126,6 +1127,40 @@ function QTR_ObjectiveTracker_Check()
 --         end
 --      end
    end
+end
+
+-------------------------------------------------------------------------------------------------------------------
+
+function QTR_ObjectiveTrackerFrame_Titles()                       -- Translation of Quest Tracker titles
+	if ( QTR_PS["active"]=="1" and QTR_PS["tracker"]=="1" ) then   -- Translations included
+		C_Timer.After(1, function() 
+			 ObjectiveTrackerFrame.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.objectives));
+			 ObjectiveTrackerFrame.Header.Text:SetFont(WOWTR_Font2, 14);
+			 QuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.quests));
+			 QuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 14);
+			 WorldQuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.worldquests));
+			 WorldQuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 14);
+			 CampaignQuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.campaignquests));
+			 CampaignQuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 14);
+
+			if (WoWTR_Localization.lang == 'AR') then
+			 --Added New Translation Campaign and Scenario for Arabic only
+			 ObjectiveTrackerFrame.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.objectives));
+			 ObjectiveTrackerFrame.Header.Text:SetFont(WOWTR_Font2, 16);
+			 QuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.quests));
+			 QuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 16);
+			 WorldQuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.worldquests));
+			 WorldQuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 16);
+			 CampaignQuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.campaignquests));
+			 CampaignQuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 16);
+			 --Make LEFT
+			 ObjectiveTrackerFrame.Header.Text:SetJustifyH("LEFT");
+			 QuestObjectiveTracker.Header.Text:SetJustifyH("LEFT");
+			 WorldQuestObjectiveTracker.Header.Text:SetJustifyH("LEFT");
+			 CampaignQuestObjectiveTracker.Header.Text:SetJustifyH("LEFT");
+			end
+		end)
+	end
 end
 
 -------------------------------------------------------------------------------------------------------------------
