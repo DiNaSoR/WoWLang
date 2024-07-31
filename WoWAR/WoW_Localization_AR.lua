@@ -23,6 +23,7 @@ WoWTR_Localization = {
    addressBlik = "",                                                 -- telephon number for BLIK payment
    gossipText = "ﻧﺺ ﺍﻟﺸﺎﺋﻌﺎﺕ",                                       -- gossip text
    quests = "ﺍﻟﻤﻬﺎﻡ",                                                -- Quests
+   worldquests = "المهام العالمية",									          -- World Quests
    campaignquests = "ﺍﻟﺤﻤﻼﺕ",                                       -- Campaign Quests
    scenariodung = "ﺍﻟﺪﻫﻠﻴﺰ",                                         -- Scenario/Dungeon
    objectives = "اﻷﻫﺪاف",                                             -- Objectives
