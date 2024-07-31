@@ -580,10 +580,10 @@ WOWTR_CheckButton12:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton13 = CreateFrame("CheckButton", "WOWTR_CheckButton13", WOWTR_OptionPanel1, "UICheckButtonTemplate");
 WOWTR_CheckButton13:SetScript("OnClick", function(self) if (QTR_PS["gossip"]=="1") then QTR_PS["gossip"]="0" else QTR_PS["gossip"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton13:SetPoint("TOPLEFT", WOWTR_CheckButton12, "BOTTOMLEFT", -215, -2);
+   WOWTR_CheckButton13:SetPoint("TOPLEFT", WOWTR_CheckButton12, "BOTTOMLEFT", -215, 3);
    WOWTR_CheckButton13:SetWidth(220);
 else
-   WOWTR_CheckButton13:SetPoint("TOPLEFT", WOWTR_CheckButton12, "BOTTOMLEFT", 0, 0);
+   WOWTR_CheckButton13:SetPoint("TOPLEFT", WOWTR_CheckButton12, "BOTTOMLEFT", 0, 5);
 end
 WOWTR_CheckButton13.Text:SetText("|cffffffff"..QTR_ReverseIfAR(WoWTR_Config_Interface.translateGossipTexts).."|r");   -- Display translation of GOSSIP texts
 WOWTR_CheckButton13.Text:SetFont(WOWTR_Font2, 15);
@@ -603,9 +603,9 @@ WOWTR_CheckButton13:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton1a = CreateFrame("CheckButton", "WOWTR_CheckButton1a", WOWTR_OptionPanel1, "UICheckButtonTemplate");
 WOWTR_CheckButton1a:SetScript("OnClick", function(self) if (QTR_PS["ownnames"]=="1") then QTR_PS["ownnames"]="0" else QTR_PS["ownnames"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton1a:SetPoint("TOPLEFT", WOWTR_CheckButton13, "BOTTOMLEFT", -260, -2);
+   WOWTR_CheckButton1a:SetPoint("TOPLEFT", WOWTR_CheckButton13, "BOTTOMLEFT", -260, 3);
 else
-   WOWTR_CheckButton1a:SetPoint("TOPLEFT", WOWTR_CheckButton13, "BOTTOMLEFT", 0, 0);
+   WOWTR_CheckButton1a:SetPoint("TOPLEFT", WOWTR_CheckButton13, "BOTTOMLEFT", 0, 5);
 end
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton1a.Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(WoWTR_Config_Interface.translateOwnNames)..""));   -- Display translation of GOSSIP texts
@@ -630,37 +630,37 @@ WOWTR_CheckButton1a:SetScript("OnLeave", function(self)
    GameTooltip:Hide()   -- Hide the tooltip
    end);
 
--- QUEST TRACKER IS NOT SERVICED
---local WOWTR_CheckButton14 = CreateFrame("CheckButton", "WOWTR_CheckButton14", WOWTR_OptionPanel1, "UICheckButtonTemplate");
---WOWTR_CheckButton14:SetScript("OnClick", function(self) if (QTR_PS["tracker"]=="1") then QTR_PS["tracker"]="0" else QTR_PS["tracker"]="1" end; end);
---if (WoWTR_Localization.lang == 'AR') then
---   WOWTR_CheckButton14:SetPoint("TOPLEFT", WOWTR_CheckButton1a, "BOTTOMLEFT", -217, -2);
---else
---   WOWTR_CheckButton14:SetPoint("TOPLEFT", WOWTR_CheckButton1a, "BOTTOMLEFT", 0, 0);
---end
---WOWTR_CheckButton14.Text:SetText("|cffffffff"..QTR_ReverseIfAR(WoWTR_Config_Interface.translateTrackObjectives).."|r");   -- Display translation of GOSSIP texts
---WOWTR_CheckButton14.Text:SetFont(WOWTR_Font2, 15);
---WOWTR_CheckButton14:SetScript("OnEnter", function(self)
---   GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
---   GameTooltip:ClearLines();
---   GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateTrackObjectives).." ", false);                -- red color, no wrap
---   getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
---   GameTooltip:AddLine(QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateTrackObjectivesDESC,false,getglobal("GameTooltipTextLeft1"),WOWTR_Font2).." ", 1, 1, 1, true);    -- white color, wrap
---   getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
---   GameTooltip:Show()   -- Show the tooltip
---   end);
---WOWTR_CheckButton14:SetScript("OnLeave", function(self)
---   GameTooltip:Hide()   -- Hide the tooltip
---   end);
---if (WoWTR_Localization.lang == 'AR') then
---   WOWTR_CheckButton14:Hide();               -- opcja Quest Tracker jest wyłączona w wersji AR
---end
+-- QUEST TRACKER
+local WOWTR_CheckButton14 = CreateFrame("CheckButton", "WOWTR_CheckButton14", WOWTR_OptionPanel1, "UICheckButtonTemplate");
+WOWTR_CheckButton14:SetScript("OnClick", function(self) if (QTR_PS["tracker"]=="1") then QTR_PS["tracker"]="0" else QTR_PS["tracker"]="1" end; end);
+if (WoWTR_Localization.lang == 'AR') then
+   WOWTR_CheckButton14:SetPoint("TOPLEFT", WOWTR_CheckButton1a, "BOTTOMLEFT", -217, 3);
+else
+   WOWTR_CheckButton14:SetPoint("TOPLEFT", WOWTR_CheckButton1a, "BOTTOMLEFT", 0, 5);
+end
+WOWTR_CheckButton14.Text:SetText("|cffffffff"..QTR_ReverseIfAR(WoWTR_Config_Interface.translateTrackObjectives).."|r");   -- Display translation of GOSSIP texts
+WOWTR_CheckButton14.Text:SetFont(WOWTR_Font2, 15);
+WOWTR_CheckButton14:SetScript("OnEnter", function(self)
+   GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
+   GameTooltip:ClearLines();
+   GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateTrackObjectives).." ", false);                -- red color, no wrap
+   getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
+   GameTooltip:AddLine(QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateTrackObjectivesDESC,false,getglobal("GameTooltipTextLeft1"),WOWTR_Font2).." ", 1, 1, 1, true);    -- white color, wrap
+   getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
+   GameTooltip:Show()   -- Show the tooltip
+   end);
+WOWTR_CheckButton14:SetScript("OnLeave", function(self)
+   GameTooltip:Hide()   -- Hide the tooltip
+   end);
+if (WoWTR_Localization.lang == 'AR') then
+   WOWTR_CheckButton14:Hide();               -- opcja Quest Tracker jest wyłączona w wersji AR
+end
  
 local WOWTR_slider4 = CreateFrame("Slider", "WOWTR_slider4", WOWTR_OptionPanel1, "OptionsSliderTemplate");
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_slider4:SetPoint("TOPLEFT", WOWTR_CheckButton1a, "BOTTOMLEFT", 70, -30);
+   WOWTR_slider4:SetPoint("TOPLEFT", WOWTR_CheckButton14, "BOTTOMLEFT", 70, -30);
 else
-   WOWTR_slider4:SetPoint("TOPLEFT", WOWTR_CheckButton1a, "BOTTOMLEFT", 0, -30);
+   WOWTR_slider4:SetPoint("TOPLEFT", WOWTR_CheckButton14, "BOTTOMLEFT", 0, -30);
 end
 WOWTR_slider4:SetMinMaxValues(11, 14);
 WOWTR_slider4.minValue, WOWTR_slider4.maxValue = WOWTR_slider4:GetMinMaxValues();
