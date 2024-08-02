@@ -12,7 +12,7 @@ function WOWTR_SetCheckButtonState()
    WOWTR_CheckButton11:SetChecked(QTR_PS["active"]=="1");
    WOWTR_CheckButton12:SetChecked(QTR_PS["transtitle"]=="1");
    WOWTR_CheckButton13:SetChecked(QTR_PS["gossip"]=="1");
---   WOWTR_CheckButton14:SetChecked(QTR_PS["tracker"]=="1");
+   WOWTR_CheckButton14:SetChecked(QTR_PS["tracker"]=="1");
    WOWTR_CheckButton15:SetChecked(QTR_PS["saveQS"]=="1");
    WOWTR_CheckButton16:SetChecked(QTR_PS["saveGS"]=="1");
    WOWTR_CheckButton17:SetChecked(QTR_PS["immersion"]=="1");
