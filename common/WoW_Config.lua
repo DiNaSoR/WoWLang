@@ -1446,11 +1446,11 @@ if (WoWTR_Localization.lang == 'AR') then          -- part: Chat
    WOWTR_sliderVal6:SetText(BB_PM["fontsize"]);   
    WOWTR_sliderVal6:SetFont(WOWTR_Font2, 13);
    
-   if (CH_PM["active"]=="1") then
-      CH_ToggleButton:Show();
-   else
-      CH_ToggleButton:Hide();
-   end
+   --if (CH_PM["active"]=="1") then
+   --   CH_ToggleButton:Show();
+   --else
+   --   CH_ToggleButton:Hide();
+   --end
 end
 
 ----- TAB 4
