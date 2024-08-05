@@ -27,6 +27,7 @@ WoWTR_Localization = {
    campaignquests = "Zadania Kampanii",                              -- Campaign Quests
    scenariodung = "Scenariusz",                                      -- Scenario/Dungeon
    objectives = "Cele zadanie",                                      -- Objectives 
+   bonusobjective = "Cel bonusowy",                                  -- Bonus Objective
    rewards = "Nagrody",                                              -- Rewards 
    storyLineProgress = "Postęp historii",                            -- Story Progress 
    storyLineChapters = "Rozdziały",                                  -- Chapters 
