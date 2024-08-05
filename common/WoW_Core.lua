@@ -385,6 +385,9 @@ function WOWTR_onEvent(self, event, name, ...)
       WOWTR_CheckVars();
       QTR_START();
       Config_OnEnable();
+      if (WoWTR_Localization.lang == 'AR') then
+         CHAT_START();
+      end
       TutorialFrame:HookScript("OnShow", TT_onTutorialShow);
       if (not PlayerChoiceFrame) then
          PlayerChoice_LoadUI();
