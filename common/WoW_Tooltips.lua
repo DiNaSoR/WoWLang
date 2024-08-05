@@ -171,23 +171,7 @@ end
 
 -- Przygotowuje tłumaczenie właściwe: zamienia $x w tłumaczeniu na odpowiednie liczby z oryginału
 function ST_TranslatePrepare(ST_origin, ST_tlumacz)
-   local tlumaczenie;
-   if (WoWTR_Localization.lang == 'AR') then
-      tlumaczenie = ST_tlumacz;
-   else
-      tlumaczenie = string.gsub(ST_tlumacz,"$b","$B");
-      tlumaczenie = string.gsub(ST_tlumacz,"$B"," NEW_LINE ");
-      tlumaczenie = string.gsub(tlumaczenie,"$n","$N");
-      tlumaczenie = string.gsub(tlumaczenie,"$N"," YOUR_NAME ");
-      tlumaczenie = string.gsub(tlumaczenie,"  "," ");
-   end
-   tlumaczenie = string.gsub(tlumaczenie,"NEW_LINE","\n");
-   tlumaczenie = string.gsub(tlumaczenie,"$B","\n");
-   tlumaczenie = string.gsub(tlumaczenie,"{B}","\n");
-   tlumaczenie = string.gsub(tlumaczenie,"$b","\n");
-   tlumaczenie = string.gsub(tlumaczenie,"YOUR_NAME",WOWTR_player_name);
-   tlumaczenie = string.gsub(tlumaczenie,"$N",WOWTR_player_name);
-   tlumaczenie = string.gsub(tlumaczenie,"$n",WOWTR_player_name);
+   local tlumaczenie = WOW_ZmienKody(ST_tlumacz);
    if (not ST_miasto) then
       ST_miasto = WoWTR_Localization.your_home;
    end
