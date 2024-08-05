@@ -27,6 +27,7 @@ WoWTR_Localization = {
    campaignquests = "Kampány küldetések",                            -- Campaign Quests
    scenariodung = "Forgatókönyv",                                    -- Scenario/Dungeon
    objectives = "Célok",                                             -- Objectives 
+   bonusobjective = "Bónusz célkitűzés",                             -- Bonus Objective
    rewards = "Jutalmak",                                             -- Rewards 
    storyLineProgress = "A történet előrehaladása",                   -- Story Progress 
    storyLineChapters = "Fejezetek",                                  -- Chapters 
