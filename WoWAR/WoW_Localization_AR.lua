@@ -27,6 +27,7 @@ WoWTR_Localization = {
    campaignquests = "ﺍﻟﺤﻤﻼﺕ",                                       -- Campaign Quests
    scenariodung = "ﺍﻟﺪﻫﻠﻴﺰ",                                         -- Scenario/Dungeon
    objectives = "اﻷﻫﺪاف",                                             -- Objectives
+   bonusobjective = "هدف المكافأة",                             -- Bonus Objective
    rewards = "اﻟﻤﻜﺎﻓﺌﺔ",                                              -- Rewards
    storyLineProgress = "ﻣﺮﺍﺣﻞ ﺗﻘﺪﻡ ﺍﻟﻘﺼﺔ",                           -- StoryLine Progress
    storyLineChapters = "ﻓﺼﻮﻝ ﺍﻟﻘﺼﺔ",                                 -- StoryLine Chapters
