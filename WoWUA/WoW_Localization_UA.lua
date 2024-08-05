@@ -27,6 +27,7 @@ WoWTR_Localization = {
    campaignquests = "Квести кампанії",                               -- Campaign Quests
    scenariodung = "Сценарій",                                        -- Scenario/Dungeon
    objectives = "Цілі завдання",
+   bonusobjective = "Бонусні цілі",
    rewards = "Вигороди",
    storyLineProgress = "Хід історії ",
    storyLineChapters = "Розділи",
