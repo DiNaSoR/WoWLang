@@ -50,7 +50,7 @@ We encourage everyone to contribute to WoW-Lang! Here are some ways you can help
 
 ### Support 💬
 
-* **Discord:** Join our [WoWPopolsku](https://discord.gg/NzdxQ6w), [WoWTR](https://discord.gg/PEknRSqEQ7), [WoWAR](https://discord.gg/uW5NJ6y) discord server for discussions, help, and updates.
+* **Discord:** Join our [WoWPopolsku](https://discord.gg/NzdxQ6w), [WoWTR](https://discord.gg/PEknRSqEQ7), [WoWAR](https://discord.gg/uW5NJ6y) discord servers for discussions, help, and updates.
 * **Email:** Contact us at platine.wow@gmail.com / hknylmz@gmail.com / Dragonarab@gmail.com for any questions or inquiries.
 
 ---
