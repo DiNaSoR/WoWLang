@@ -1076,7 +1076,13 @@ WOWTR_CheckButton2d2:SetScript("OnEnter", function(self)
 WOWTR_CheckButton2d2:SetScript("OnLeave", function(self)
    GameTooltip:Hide()   -- Hide the tooltip
    end);
- 
+
+if (WoWTR_Localization.lang == 'TR') then
+   WOWTR_CheckButton2d1:Hide();
+	WOWTR_CheckButton2d2:Hide();
+	BB_PM["dungeon"]="0";
+end
+
 local WOWTR_slider5 = CreateFrame("Slider", "WOWTR_slider5", WOWTR_OptionPanel2, "OptionsSliderTemplate");
 WOWTR_slider5:SetPoint("TOPLEFT", WOWTR_CheckButton2d2, "BOTTOMLEFT", 20, -30);
 WOWTR_slider5:SetMinMaxValues(3, 10);
