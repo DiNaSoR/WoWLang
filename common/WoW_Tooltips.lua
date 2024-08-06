@@ -1076,7 +1076,10 @@ QTR_ObjectiveTrackerFrame_Titles() -- Addon adds translations when it starts
    elseif (addonName == 'Blizzard_ItemUpgradeUI') then
       ST_load8 = true;
       ItemUpgradeFrame:HookScript("OnShow", ST_ItemUpgradeFrm);
-	  
+	 
+   elseif (addonName == 'Blizzard_WeeklyRewards') then
+      ST_load9 = true;
+      WeeklyRewardsFrame:HookScript("OnShow", ST_WeeklyRewardsFrame); 
    end
    
    if (ST_load1 and ST_load2 and ST_load3 and ST_load4 and ST_load5 and ST_load6 and ST_load7) then    -- otworzono wszystkie dodatki Blizzarda
@@ -2439,6 +2442,30 @@ end
 function ST_ItemUpgradeFrmTekrar()
    if ( ItemUpgradeFrame:IsVisible()) then
       ST_ItemUpgradeFrm();
+   end
+end
+
+-------------------------------------------------------------------------------------------------------
+
+--WEEKLY REWARDS - GREAT VAULT FRAME
+function ST_WeeklyRewardsFrame()			-- https://imgur.com/a/weeklyrewardsframe-z4bRXJ2
+      local WeeklyRFrm01 = WeeklyRewardsFrame.HeaderFrame.Text;
+      ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm01, false, "ui");
+      local WeeklyRFrm02 = WeeklyRewardsFrame.RaidFrame.Name;
+      ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm02, false, "ui");
+      local WeeklyRFrm03 = WeeklyRewardsFrame.MythicFrame.Name;
+      ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm03, false, "ui");
+      local WeeklyRFrm04 = WeeklyRewardsFrame.WorldFrame.Name;
+      ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm04, false, "ui");
+	  
+   if (not WOWTR_wait(0.3, ST_WeeklyRewardsFrameTekrar)) then
+   end  
+   
+end
+
+function ST_WeeklyRewardsFrameTekrar()
+   if ( WeeklyRewardsFrame:IsVisible()) then
+      ST_WeeklyRewardsFrame();
    end
 end
 
