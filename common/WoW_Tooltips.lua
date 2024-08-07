@@ -900,7 +900,7 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function ST_updateSpecContentsHook()
-   for specContentFrame in ClassTalentFrame.SpecTab.SpecContentFramePool:EnumerateActive() do
+   for specContentFrame in PlayerSpellsFrame.SpecFrame.SpecContentFramePool:EnumerateActive() do
       local _, _, description, _, _, primaryStat = GetSpecializationInfo(specContentFrame.specIndex, false, false, nil, WOWTR_player_sex);
       if (description and string.find(description," ")==nil) then    -- nie jest to tekst turecki (twarda spacja)
          local ST_hash = StringHash(ST_UsunZbedneZnaki(description));
@@ -1047,6 +1047,7 @@ QTR_ObjectiveTrackerFrame_Titles() -- Addon adds translations when it starts
    if (addonName == 'Blizzard_PlayerSpells') then
       ST_Load1 = true;
       PlayerSpellsFrame:HookScript("OnShow", ST_SpellBookTranslateButton);
+      PlayerSpellsFrame.SpecFrame:HookScript("OnShow", ST_updateSpecContentsHook);
       
    elseif (addonName == 'Blizzard_EncounterJournal') then
       ST_load2 = true;
