@@ -60,6 +60,25 @@ function WOWTR_wait(delay, func, ...)           -- można też użyć funkcji sy
 end
 
 ----------------------------------------------------------------------------------------------------------------------------------------
+-- Repetitive function until the frame is opened and closed
+
+local tickers = {}
+function StartTicker(frame, func, interval)
+    if not tickers[frame] then
+        --print("Ticker is activated: " .. tostring(frame:GetName()))
+        tickers[frame] = C_Timer.NewTicker(interval, function()
+            if frame:IsVisible() then
+                func()
+            else
+                --print("Ticker stopped: " .. tostring(frame:GetName()))
+                tickers[frame]:Cancel()
+                tickers[frame] = nil
+            end
+        end)
+    end
+end
+
+----------------------------------------------------------------------------------------------------------------------------------------
 
 -- Addon Variables saved in computer
 function WOWTR_CheckVars()
@@ -385,6 +404,9 @@ function WOWTR_onEvent(self, event, name, ...)
       WOWTR_CheckVars();
       QTR_START();
       Config_OnEnable();
+      if (WoWTR_Localization.lang == 'AR') then
+         CHAT_START();
+      end
       TutorialFrame:HookScript("OnShow", TT_onTutorialShow);
       if (not PlayerChoiceFrame) then
          PlayerChoice_LoadUI();
@@ -432,23 +454,20 @@ function WOWTR_onEvent(self, event, name, ...)
             -- WOWTR_ToggleButtonS:Hide();
          -- end
       -- end);
-      
-      StaticPopup1:HookScript("OnShow", ST_StaticPopup1);
-      StaticPopup2:HookScript("OnShow", ST_StaticPopup1);
-      DropDownList1:HookScript("OnShow", ST_FilterandButtons);
-      DropDownList2:HookScript("OnShow", ST_FilterandButtons);
+
+      StaticPopup1:HookScript("OnShow", function() StartTicker(StaticPopup1, ST_StaticPopup1, 0.1) end);
+      StaticPopup2:HookScript("OnShow", function() StartTicker(StaticPopup1, ST_StaticPopup1, 0.1) end);
       GameMenuFrame:HookScript("OnShow", ST_GameMenuTranslate);
       MerchantFrame:HookScript("OnShow", ST_MerchantFrame);
-      PVEFrame:HookScript("OnShow", ST_GroupFinder);
-      WorldMapFrame.NavBar.overlay:HookScript("OnUpdate", ST_WorldMapFunc);
-      CharacterFrame:HookScript("OnShow", ST_CharacterFrame);
-      FriendsFrame:HookScript("OnShow", ST_FriendsFrame);
-      HelpPlateTooltip:HookScript("OnShow", ST_HelpPlateTooltip);  
-      ReputationFrame.ReputationDetailFrame:HookScript("OnShow", ST_CharacterFrame);
-      SplashFrame:HookScript("OnShow", ST_SplashFrame);
-      PingSystemTutorialTitleText:HookScript("OnShow", ST_PingSystemTutorial);
-      BankFrame:HookScript("OnShow", ST_WarbandBankFrm);
-      ItemRefTooltip:HookScript("OnShow", ST_ItemRefTooltip);
+      PVEFrame:HookScript("OnShow", function() StartTicker(PVEFrame, ST_GroupFinder, 0.2) end);
+      WorldMapFrame:HookScript("OnShow", function() StartTicker(WorldMapFrame, ST_WorldMapFunc, 0.2) end);
+      CharacterFrame:HookScript("OnShow", function() StartTicker(CharacterFrame, ST_CharacterFrame, 0.2) end);
+      FriendsFrame:HookScript("OnShow", function() StartTicker(FriendsFrame, ST_FriendsFrame, 0.2) end);
+      HelpPlateTooltip:HookScript("OnShow", function() StartTicker(HelpPlateTooltip, ST_HelpPlateTooltip, 0.2) end);
+      SplashFrame:HookScript("OnShow", function() StartTicker(SplashFrame, ST_SplashFrame, 0.1) end);
+      PingSystemTutorialTitleText:HookScript("OnShow", function() StartTicker(PingSystemTutorialTitleText, ST_PingSystemTutorial, 0.2) end);
+      BankFrame:HookScript("OnShow", function() StartTicker(BankFrame, ST_WarbandBankFrm, 0.2) end);
+      ItemRefTooltip:HookScript("OnShow", function() StartTicker(ItemRefTooltip, ST_ItemRefTooltip, 0.2) end);
       BB_OknoTRonline();
       DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..WoWTR_Localization.addonName.."  ver. "..WOWTR_version.." - "..WoWTR_Localization.started);
       if ((not QTR_PS["welcome"]) and (string.len(WoWTR_Config_Interface.welcomeText) > 1)) then

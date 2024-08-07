@@ -1076,7 +1076,13 @@ WOWTR_CheckButton2d2:SetScript("OnEnter", function(self)
 WOWTR_CheckButton2d2:SetScript("OnLeave", function(self)
    GameTooltip:Hide()   -- Hide the tooltip
    end);
- 
+
+if (WoWTR_Localization.lang == 'TR') then
+   WOWTR_CheckButton2d1:Hide();
+	WOWTR_CheckButton2d2:Hide();
+	BB_PM["dungeon"]="0";
+end
+
 local WOWTR_slider5 = CreateFrame("Slider", "WOWTR_slider5", WOWTR_OptionPanel2, "OptionsSliderTemplate");
 WOWTR_slider5:SetPoint("TOPLEFT", WOWTR_CheckButton2d2, "BOTTOMLEFT", 20, -30);
 WOWTR_slider5:SetMinMaxValues(3, 10);
@@ -1446,11 +1452,11 @@ if (WoWTR_Localization.lang == 'AR') then          -- part: Chat
    WOWTR_sliderVal6:SetText(BB_PM["fontsize"]);   
    WOWTR_sliderVal6:SetFont(WOWTR_Font2, 13);
    
-   if (CH_PM["active"]=="1") then
-      CH_ToggleButton:Show();
-   else
-      CH_ToggleButton:Hide();
-   end
+   --if (CH_PM["active"]=="1") then
+   --   CH_ToggleButton:Show();
+   --else
+   --   CH_ToggleButton:Hide();
+   --end
 end
 
 ----- TAB 4
@@ -1675,7 +1681,9 @@ WOWTR_CheckButton43:SetScript("OnEnter", function(self)
 WOWTR_CheckButton43:SetScript("OnLeave", function(self)
    GameTooltip:Hide()   -- Hide the tooltip
    end);
-   
+   WOWTR_CheckButton43:Hide(); -- Hide button
+   TT_PS["ui1"]="0";
+
 local WOWTR_CheckButton45 = CreateFrame("CheckButton", "WOWTR_CheckButton45", WOWTR_OptionPanel4, "UICheckButtonTemplate");
 WOWTR_CheckButton45:SetScript("OnClick", function(self) if (TT_PS["ui2"]=="1") then TT_PS["ui2"]="0" else TT_PS["ui2"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
@@ -1857,6 +1865,8 @@ WOWTR_CheckButton40:SetScript("OnEnter", function(self)
 WOWTR_CheckButton40:SetScript("OnLeave", function(self)
    GameTooltip:Hide()   -- Hide the tooltip
    end);
+   WOWTR_CheckButton40:Hide(); -- Hide button
+   TT_PS["ui8"]="0";
 
 WOWTR_ReloadButtonUI = CreateFrame("BUTTON", nil, WOWTR_OptionPanel4, "UIPanelButtonTemplate");
 WOWTR_ReloadButtonUI:SetWidth(350);
