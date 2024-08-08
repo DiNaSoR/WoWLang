@@ -60,7 +60,7 @@ function WOWTR_wait(delay, func, ...)           -- można też użyć funkcji sy
 end
 
 ----------------------------------------------------------------------------------------------------------------------------------------
--- Repetitive function until the frame is opened and closed
+-- Repetitive function and delay function until the frame is opened and closed
 
 local tickers = {}
 function StartTicker(frame, func, interval)
@@ -76,6 +76,14 @@ function StartTicker(frame, func, interval)
             end
         end)
     end
+end
+
+function StartDelayedFunction(frame, func, delay)
+    C_Timer.After(delay, function()
+        if frame:IsVisible() then
+            func()
+        end
+    end)
 end
 
 ----------------------------------------------------------------------------------------------------------------------------------------
