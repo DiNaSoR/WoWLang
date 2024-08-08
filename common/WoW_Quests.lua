@@ -752,7 +752,7 @@ function QTR_START()
    QuestFrameAcceptButton:HookScript("OnClick", QTR_QuestFrameButton_OnClick)
    QuestFrameCompleteQuestButton:HookScript("OnClick", QTR_QuestFrameButton_OnClick)
    QuestLogPopupDetailFrame:HookScript("OnShow", QTR_QuestLogPopupShow)
-   QuestMapFrame.CampaignOverview:HookScript("OnShow", function() StartDelayedFunction(QuestMapFrame.CampaignOverview, TT_CampaignOverview, 0.5) end)
+   QuestMapFrame.CampaignOverview:HookScript("OnShow", function() StartDelayedFunction(TT_CampaignOverview, 0.5) end)
    
    isClassicQuestLog()
    isImmersion()
