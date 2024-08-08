@@ -78,12 +78,8 @@ function StartTicker(frame, func, interval)
     end
 end
 
-function StartDelayedFunction(frame, func, delay)
-    C_Timer.After(delay, function()
-        if frame:IsVisible() then
-            func()
-        end
-    end)
+function StartDelayedFunction(func, delay)
+    C_Timer.After(delay, func)
 end
 
 ----------------------------------------------------------------------------------------------------------------------------------------
