@@ -30,6 +30,8 @@ function BookTranslator_ShowTranslation()
          local BT_znacznik=BT_tytul_en.."#"..BT_nr_str.."#"..string.sub(BT_beginTXT,1,15);
          if (BT_BooksID[BT_znacznik]) then                -- jest znacznik w bazie ID - pobierz bookID
             BT_bookID = BT_BooksID[BT_znacznik];          -- jako string
+         else
+            BT_bookID = StringHash(BT_tytul_en);          -- nie udało się określić ID książki, tworzymy własny Hash tytułu
          end
       end
       if (BT_bookID and (tonumber(BT_bookID)>0)) then
