@@ -1671,12 +1671,13 @@ function QTR_Translate_On(typ,event)
                QuestInfoDescriptionText:SetWidth(WOW_width - 50);
                QuestInfoObjectivesText:SetWidth(WOW_width - 50);
                QuestProgressText:SetWidth(WOW_width - 50);
+               QuestInfoRewardText:SetWidth(WOW_width - 45);
            else
                QuestInfoDescriptionText:SetWidth(WOW_width - 1);
                QuestInfoObjectivesText:SetWidth(WOW_width - 1);
                QuestProgressText:SetWidth(WOW_width - 1);
+               QuestInfoRewardText:SetWidth(WOW_width);
            end
-            QuestInfoRewardText:SetWidth(WOW_width);
             QuestInfoDescriptionText:SetFont(WOWTR_Font2, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtext.size or tonumber(QTR_PS["fontsize"]))
             QuestInfoObjectivesText:SetFont(WOWTR_Font2, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtext.size or tonumber(QTR_PS["fontsize"]))
             QuestProgressText:SetFont(WOWTR_Font2, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtext.size or tonumber(QTR_PS["fontsize"]))
@@ -3058,6 +3059,50 @@ function QTR_DUIGossipFrame()
 end
 
 -------------------------------------------------------------------------------------------------------------------
+-- New function to handle special WoW codes
+function HandleWoWSpecialCodes(msg)
+   local specialCodes = {}
+   local index = 1
+
+   -- Handle color codes separately
+   msg = msg:gsub("(|c%x%x%x%x%x%x%x%x)(.-)(|r)", function(colorStart, text, colorEnd)
+       specialCodes[index] = colorStart
+       local startPlaceholder = "\001" .. index .. "\002"
+       index = index + 1
+       specialCodes[index] = colorEnd
+       local endPlaceholder = "\001" .. index .. "\002"
+       index = index + 1
+       return startPlaceholder .. text .. endPlaceholder
+   end)
+
+   -- Find and store other special WoW codes
+   msg = msg:gsub("(|T.-|t)", function(code)
+       specialCodes[index] = code
+       index = index + 1
+       return "\001" .. (index-1) .. "\002"
+   end)
+
+   msg = msg:gsub("(|A.-|a)", function(code)
+      specialCodes[index] = code
+      index = index + 1
+      return "\001" .. (index-1) .. "\002"
+  end)
+
+   msg = msg:gsub("(|H.-|h%[.-%]|h)", function(code)
+       specialCodes[index] = code
+       index = index + 1
+       return "\001" .. (index-1) .. "\002"
+   end)
+
+   return msg, specialCodes
+end
+
+-- Function to restore special codes
+function RestoreWoWSpecialCodes(msg, specialCodes)
+   return msg:gsub("\002(%d+)\001", function(i)
+       return specialCodes[tonumber(i)]
+   end)
+end
 
 function WOW_ZmienKody(message, target)
    msg = message;
@@ -3433,12 +3478,12 @@ function QTR_ExpandUnitInfo(msg, OnObjectives, AR_obj, AR_font, AR_corr)
       local _font = WOW_Font2;
       local AR_size = 13;
       if (AR_obj.GetFont) then
-         _font, AR_size, _3 = AR_obj:GetFont("P");             -- odczytaj aktualną czcionkę i rozmiar obiektu
+         _font, AR_size, _3 = AR_obj:GetFont("P");             -- read current font and size of the object
       else
-         local regions = { AR_obj:GetRegions() };              -- poszukiwanie obiektu FontString do odczytania czcionki
+         local regions = { AR_obj:GetRegions() };              -- search for FontString object to read the font
          for k, v in pairs(regions) do
             if (v:GetObjectType() == "FontString") then
-               _font, AR_size, _3 = v:GetFont();               -- odczytaj aktualną czcionkę i rozmiar obiektu
+               _font, AR_size, _3 = v:GetFont();               -- read current font and size of the object
             end
          end
       end
@@ -3446,52 +3491,40 @@ function QTR_ExpandUnitInfo(msg, OnObjectives, AR_obj, AR_font, AR_corr)
       if (AR_corr and (type(AR_corr)=="number")) then
          _corr = AR_corr;
       end
+
+      msg, specialCodes = HandleWoWSpecialCodes(msg)
+
       msg = string.gsub(msg, "{n}", "\n");
       msg = string.gsub(msg, "\n", "#");
       msg = string.gsub(msg, "{r}", "r|");
-      local nr_poz1, nr_poz2 = string.find(msg, "{c");    -- znajdź kod koloru {c , gdy nie znalazł, jest: nil
-      while (nr_poz1) do
-         local pomoc = string.sub(msg, nr_poz2+1, nr_poz2+8);  -- odczytaj składowe koloru
-         msg = string.gsub(msg, "{c"..pomoc.."}", string.reverse(pomoc).."c|");
-         nr_poz1, nr_poz2 = string.find(msg, "{c");       -- znajdź kod koloru {c , gdy nie znalazł, jest: nil
-      end
-      local nr_poz1 = string.find(msg, "{T");    -- znajdź kod {T , gdy nie znalazł, jest: nil
-      while (nr_poz1) do
-         local nr_poz2 = string.find(msg, "{t}");  -- koniec składowych kodu
-         if (nr_poz2) then
-            local pomoc = string.sub(msg, nr_poz1+2, nr_poz2-2);  -- odczytaj składowe
-            msg = string.gsub(msg, "{T"..pomoc.."}", string.reverse(pomoc).."T|");
-            nr_poz1 = string.find(msg, "{T");       -- znajdź kod {T , gdy nie znalazł, jest: nil
-         else
-            break;
+      
+      -- Handle {c}, {T}, {A}, {H} codes
+      local function handleCode(startCode, endCode)
+         local nr_poz1 = string.find(msg, startCode)
+         while (nr_poz1) do
+            local nr_poz2 = string.find(msg, endCode, nr_poz1)
+            if (nr_poz2) then
+               local pomoc = string.sub(msg, nr_poz1+2, nr_poz2-1)
+               msg = string.gsub(msg, startCode..pomoc..endCode, string.reverse(pomoc)..string.sub(startCode, 2, 2).."|")
+               nr_poz1 = string.find(msg, startCode, nr_poz2)
+            else
+               break
+            end
          end
       end
-      local nr_poz1 = string.find(msg, "{A");    -- znajdź kod {A , gdy nie znalazł, jest: nil
-      while (nr_poz1) do
-         local nr_poz2 = string.find(msg, "{a}");  -- koniec składowych kodu
-         if (nr_poz2) then
-            local pomoc = string.sub(msg, nr_poz1+2, nr_poz2-2);  -- odczytaj składowe
-            msg = string.gsub(msg, "{A"..pomoc.."}", string.reverse(pomoc).."A|");
-            nr_poz1 = string.find(msg, "{A");       -- znajdź kod {A , gdy nie znalazł, jest: nil
-         else
-            break;
-         end
-      end
-      local nr_poz1 = string.find(msg, "{H");    -- znajdź kod {H , gdy nie znalazł, jest: nil
-      while (nr_poz1) do
-         local nr_poz2 = string.find(msg, "{h}");  -- koniec składowych kodu
-         if (nr_poz2) then
-            local pomoc = string.sub(msg, nr_poz1+2, nr_poz2-2);  -- odczytaj składowe
-            msg = string.gsub(msg, "{H"..pomoc.."}", string.reverse(pomoc).."H|");
-            nr_poz1 = string.find(msg, "{H");       -- znajdź kod {H , gdy nie znalazł, jest: nil
-         else
-            break;
-         end
-      end
+
+      handleCode("{c", "}")
+      handleCode("{T", "{t}")
+      handleCode("{A", "{a}")
+      handleCode("{H", "{h}")
+
       msg = string.gsub(msg, "{t}", "t|");
       msg = string.gsub(msg, "{a}", "a|");
       msg = string.gsub(msg, "{h}", "h|");
+      
       msg = AS_ReverseAndPrepareLineText(msg, AR_obj:GetWidth()+_corr, AR_font, AR_size);
+
+      msg = RestoreWoWSpecialCodes(msg, specialCodes)
    end
    
    return msg;
