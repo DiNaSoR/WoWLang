@@ -24,7 +24,7 @@ local CH_highlight_text = false;
 local CH_BSize = 14;            -- default size of chat bubbles
 
 -- fonty z arabskimi znakami
-local CH_Font = WOWTR_Font2;
+CH_Font = WOWTR_Font2;
 
 -- user interface in addon options
 local CH_Interface = {   
