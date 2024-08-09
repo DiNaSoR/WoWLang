@@ -545,12 +545,18 @@ function STspell_ON_OFF()
    if (ST_PM["spell"] == "1") then
       ST_PM["spell"] = "0";
       WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_enDESC);
+      WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_ToggleButtonS:GetFontString():GetFont(), 8)
    else
       ST_PM["spell"] = "1";
-      WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_trDESC);
+      if (WoWTR_Localization.lang == 'AR') then
+         WOWTR_ToggleButtonS:SetText(QTR_ReverseIfAR(WoWTR_Localization.WoWTR_Spellbook_trDESC));
+         WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_Font2, 8)
+      else
+         WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_trDESC);
+         WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_ToggleButtonS:GetFontString():GetFont(), 8)
+      end
    end
 end
-
 ----------------------------------------------------------------------------------------------------------------------------------------
 
 if ((GetLocale()=="enUS") or (GetLocale()=="enGB")) then
