@@ -22,19 +22,16 @@ function BookTranslator_ShowTranslation()
       BT_nr_str=tostring(ItemTextGetPage());
       BT_bookID = 0;
       local par1, par2, par3 = C_Item.GetItemInfo(ItemTextGetItem());
-      if (par2) then
+      if ((BT_tytul_en == "Plain Letter") or (BT_tytul_en == "Order of Night Propaganda"))
+         BT_bookID = StringHash(BT_tekst_en);
+      elseif (par2) then
          local pa1, itemID, pa3 = strsplit(":",par2);
          BT_bookID = itemID;
       else
-         local BT_hashTxt = StringHash(BT_tekst_en);
-         if (BT_Books[BT_bookID]) then	                   -- jest tłumaczenie tej książki
-            BT_bookID = BT_hashTxt;
-         else
-            local BT_beginTXT=string.gsub(BT_tekst_en,"\n","");
-            local BT_znacznik=BT_tytul_en.."#"..BT_nr_str.."#"..string.sub(BT_beginTXT,1,15);
-            if (BT_BooksID[BT_znacznik]) then             -- jest znacznik w bazie ID - pobierz bookID
-               BT_bookID = BT_BooksID[BT_znacznik];       -- jako string
-            end
+         local BT_beginTXT=string.gsub(BT_tekst_en,"\n","");
+         local BT_znacznik=BT_tytul_en.."#"..BT_nr_str.."#"..string.sub(BT_beginTXT,1,15);
+         if (BT_BooksID[BT_znacznik]) then             -- jest znacznik w bazie ID - pobierz bookID
+            BT_bookID = BT_BooksID[BT_znacznik];       -- jako string
          end
       end
       if (BT_bookID and (tonumber(BT_bookID)>0)) then
