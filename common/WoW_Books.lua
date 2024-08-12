@@ -22,8 +22,9 @@ function BookTranslator_ShowTranslation()
       BT_nr_str=tostring(ItemTextGetPage());
       BT_bookID = 0;
       local par1, par2, par3 = C_Item.GetItemInfo(ItemTextGetItem());
-      if ((BT_tytul_en == "Plain Letter") or (BT_tytul_en == "Order of Night Propaganda"))
-         BT_bookID = StringHash(BT_tekst_en);
+      local BT_bookIDsh = StringHash(BT_tekst_en);
+      if ((BT_tytul_en == "Plain Letter") or (BT_tytul_en == "Order of Night Propaganda") or (BT_Books[BT_bookIDsh])) then
+         BT_bookID = BT_bookIDsh;
       elseif (par2) then
          local pa1, itemID, pa3 = strsplit(":",par2);
          BT_bookID = itemID;
@@ -32,6 +33,8 @@ function BookTranslator_ShowTranslation()
          local BT_znacznik=BT_tytul_en.."#"..BT_nr_str.."#"..string.sub(BT_beginTXT,1,15);
          if (BT_BooksID[BT_znacznik]) then             -- jest znacznik w bazie ID - pobierz bookID
             BT_bookID = BT_BooksID[BT_znacznik];       -- jako string
+         else
+            BT_bookID = BT_bookIDsh;
          end
       end
       if (BT_bookID and (tonumber(BT_bookID)>0)) then
