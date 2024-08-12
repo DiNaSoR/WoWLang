@@ -259,7 +259,7 @@ function BB_ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)     -- wywo≈
          Czysty_Text = string.gsub(Czysty_Text, "7", "");
          Czysty_Text = string.gsub(Czysty_Text, "8", "");
          Czysty_Text = string.gsub(Czysty_Text, "9", "");
-      elseif ((name_NPC == "General Hammond Clay") and (string.sub(Czysty_Text,1,27) == "For their courage, we honor"))    -- exception
+      elseif ((name_NPC == "General Hammond Clay") and (string.sub(Czysty_Text,1,27) == "For their courage, we honor")) then   -- exception
          exceptionHash = 4192543970;
       end
       local HashCode;
