@@ -2207,10 +2207,14 @@ function ST_WeeklyRewardsFrame()
     ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm03, false, "ui")
     local WeeklyRFrm04 = WeeklyRewardsFrame.WorldFrame.Name
     ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm04, false, "ui")
-    local WeeklyRFrm05 = WeeklyRewardsFrame.Overlay.Title
-    ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm05, true, "ui")
-    local WeeklyRFrm06 = WeeklyRewardsFrame.Overlay.Text
-    ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm06, true, "ui")
+    if WeeklyRewardsFrame.Overlay and WeeklyRewardsFrame.Overlay.Title then
+        local WeeklyRFrm05 = WeeklyRewardsFrame.Overlay.Title
+        ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm05, true, "ui")
+    end
+    if WeeklyRewardsFrame.Overlay and WeeklyRewardsFrame.Overlay.Text then
+        local WeeklyRFrm06 = WeeklyRewardsFrame.Overlay.Text
+        ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm06, true, "ui")
+    end
 end
 -------------------------------------------------------------------------------------------------------
 
