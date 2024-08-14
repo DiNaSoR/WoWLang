@@ -1,10 +1,10 @@
 ﻿## Interface: 110000, 110002
-## Title: WoWinJapanese |cff8080ff11.01|r
-## Version: 11.01
+## Title: WoWinJapanese |cff8080ff11.00|r
+## Version: 11.00
 ## Notes: AddOn displays the translated text informations in Japanese
 ## Author: Platine
 ## E-mail: platine.wow@gmail.com
-## WWW: https://www.wowpopolsku.pl/
+## WWW: https://panel.wowpopolsku.pl/ ,  https://www.wowpopolsku.pl
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## IconTexture: Interface\AddOns\WoWJP\Images\icon.png

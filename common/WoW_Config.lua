@@ -235,7 +235,7 @@ WOWTR_CheckButton00:SetScript("OnLeave", function(self)
 local WOWTR_Tab1TitleA = CreateFrame("BUTTON", "WOWTR_Tab1TitleA", WOWTR_Options, "GameMenuButtonTemplate");
 WOWTR_Tab1TitleA:SetWidth(100);
 WOWTR_Tab1TitleA:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab1TitleA:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab1));
@@ -249,7 +249,7 @@ WOWTR_Tab1TitleA:Show();
 local WOWTR_Tab1TitleB = CreateFrame("BUTTON", "WOWTR_Tab1TitleB", WOWTR_Options, "UIPanelButtonGrayTemplate");
 WOWTR_Tab1TitleB:SetWidth(100);
 WOWTR_Tab1TitleB:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab1TitleB:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab1));
@@ -293,7 +293,7 @@ WOWTR_Tab2TitleB:SetScript("OnClick", WOWTR_ChangePanel2);
 local WOWTR_Tab3TitleA = CreateFrame("BUTTON", "WOWTR_Tab3TitleA", WOWTR_Options, "GameMenuButtonTemplate");
 WOWTR_Tab3TitleA:SetWidth(100);
 WOWTR_Tab3TitleA:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab3TitleA:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab3));
@@ -307,7 +307,7 @@ WOWTR_Tab3TitleA:Hide();
 local WOWTR_Tab3TitleB = CreateFrame("BUTTON", "WOWTR_Tab3TitleB", WOWTR_Options, "UIPanelButtonGrayTemplate");
 WOWTR_Tab3TitleB:SetWidth(100);
 WOWTR_Tab3TitleB:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab3TitleB:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab3));
@@ -380,7 +380,7 @@ WOWTR_Tab5TitleB:SetScript("OnClick", WOWTR_ChangePanel5);
 local WOWTR_Tab6TitleA = CreateFrame("BUTTON", "WOWTR_Tab6TitleA", WOWTR_Options, "GameMenuButtonTemplate");
 WOWTR_Tab6TitleA:SetWidth(100);
 WOWTR_Tab6TitleA:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab6TitleA:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab6));
@@ -394,7 +394,7 @@ WOWTR_Tab6TitleA:Hide();
 local WOWTR_Tab6TitleB = CreateFrame("BUTTON", "WOWTR_Tab6TitleB", WOWTR_Options, "UIPanelButtonGrayTemplate");
 WOWTR_Tab6TitleB:SetWidth(100);
 WOWTR_Tab6TitleB:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab6TitleB:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab6));
@@ -409,7 +409,7 @@ WOWTR_Tab6TitleB:SetScript("OnClick", WOWTR_ChangePanel6);
 local WOWTR_Tab9TitleA = CreateFrame("BUTTON", "WOWTR_Tab9TitleA", WOWTR_Options, "GameMenuButtonTemplate");
 WOWTR_Tab9TitleA:SetWidth(100);
 WOWTR_Tab9TitleA:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab9TitleA:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab9));
@@ -423,7 +423,7 @@ WOWTR_Tab9TitleA:Hide();
 local WOWTR_Tab9TitleB = CreateFrame("BUTTON", "WOWTR_Tab9TitleB", WOWTR_Options, "UIPanelButtonGrayTemplate");
 WOWTR_Tab9TitleB:SetWidth(100);
 WOWTR_Tab9TitleB:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab9TitleB:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab9));

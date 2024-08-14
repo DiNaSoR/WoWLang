@@ -259,13 +259,13 @@ WoWTR_Config_Interface = {
 
    titleTab9 = "アドオンについて",                                                               -- About
    generalText = "\nWoWinJapaneseは、World of Warcraftのローカライズプロジェクトです。\n日本語で表示されるゲーム要素には、クエスト、NPCとの会話中のゴシップテキスト、NPCによって表示されるセリフの吹き出し、ゲーム内のチュートリアルテキスト、ヒントテキスト、ムービーやシネマティクスの字幕、ゲーム内で見つける本の翻訳が含まれます。",   -- info about project
-   welcomeText = "ようこそ、アドオン|cffff00ffWoWinJapanese|rへ。これはアドオンの初回起動であり、導入を確認してください。\n\nこれは、ゲームのテキスト翻訳を日本語で表示する新しいアドオンです。WoWpoPolskuプロジェクトの構成要素が組み合わさっており、以下の部分が含まれています。\n\n|cff00ffffクエスト|r - NPCとの会話中やクエストログ\n|cff00ffffGossip|r - NPCとの会話中に表示されるテキスト\n|cff00ffff吹き出し|r - NPCのキャラクターの上に表示されるセリフ\n|cff00ffff字幕|r - ゲーム内のムービーやシネマティクスの字幕\n|cff00ffffチュートリアル|r - ゲームの使い方を教えるテキスト\n|cff00ffffヒント|r - アイテム、魔法、または特技にマウスを合わせたときに表示されるテキスト\n|cff00ffff本|r - ゲーム内で見つけられる本のテキスト翻訳\n\nこれらの各要素は、アドオン設定パネルで個別に構成できます - 最も簡単に呼び出すには、ミニマップの横にある小さなアドオンアイコンをクリックしてください。\n\n\nプロジェクトを発展させるためには、あなたのサポートをお願い申し上げます。\n\n英語の|cffff00ff翻訳者|r、ゲームデータの|cffff00ff収集者|r、そしてプロジェクトサーバーの維持のための|cffff00ff寄付|rが必要です。詳細は当社のフォーラムでご確認ください: |cffff00ffhttps://wowpopolsku.pl|r\n金融支援を簡単にするために、|cff00ffffBLIK|rでの寄付も受け付けております。電話番号: |cff00ffff+48 601 635 712|r。",
+   welcomeText = "ようこそ、アドオン|cffff00ffWoWinJapanese|rへ。これはアドオンの初回起動であり、導入を確認してください。\n\nこれは、ゲームのテキスト翻訳を日本語で表示する新しいアドオンです。WoWinJapaneseプロジェクトの構成要素が組み合わさっており、以下の部分が含まれています。\n\n|cff00ffffクエスト|r - NPCとの会話中やクエストログ\n|cff00ffffGossip|r - NPCとの会話中に表示されるテキスト\n|cff00ffff吹き出し|r - NPCのキャラクターの上に表示されるセリフ\n|cff00ffff字幕|r - ゲーム内のムービーやシネマティクスの字幕\n|cff00ffffチュートリアル|r - ゲームの使い方を教えるテキスト\n|cff00ffffヒント|r - アイテム、魔法、または特技にマウスを合わせたときに表示されるテキスト\n|cff00ffff本|r - ゲーム内で見つけられる本のテキスト翻訳\n\nこれらの各要素は、アドオン設定パネルで個別に構成できます - 最も簡単に呼び出すには、ミニマップの横にある小さなアドオンアイコンをクリックしてください。\n\n\nプロジェクトを発展させるためには、あなたのサポートをお願い申し上げます。\n\n英語の|cffff00ff翻訳者|r、ゲームデータの|cffff00ff収集者|r、そしてプロジェクトサーバーの維持のための|cffff00ff寄付|rが必要です。詳細は当社のフォーラムでご確認ください: |cffff00ffhttps://wowpopolsku.pl|r。",
    welcomeButton = "OK - 読みました",                                                          -- Button: Close welcome panel
    showWelcome = "ウェルカムパネルを表示",                                                          -- Button: Show welcome panel
    authorHeader = "著者情報",                                                                 -- Author info
    author = "著者:",                                                                         -- Author: 
    email = "E-mail:",                                                                       -- E-mail: 
-   teamHeader = "WoWpoPolsku プロジェクトチームへの連絡",                                             -- WoWTR project team (TR:WoWTR)
+   teamHeader = "WoWinJapanese プロジェクトチームへの連絡",                                            -- WoWJP project team
    textContact = "アドオンに関する質問がある場合は、以下のいずれかの方法でご連絡ください:",
    linkWWWShow = "クリックして |cffffff00WWW|r へのリンクを表示",
    linkWWWTitle = "WWWのリンク",
@@ -285,8 +285,8 @@ WoWTR_Config_Interface = {
    linkFBTitle = "FanPageのリンク",
    linkCloseFrame = "フレームを閉じる",
    linkCopy = "リンクをコピーするには |cff00ffffCtrl+C|r を押してください",                                   -- Press Ctrl+C to copy the address to the clipboard
-   betaTestersHeader = "WoWpoPolsku チーム:",                                                   -- TRANSLATION TEAM
-   betaTestersHeaderDESC = "モデレーター: |cffff00ffOrina|r, |cffff00ffShaula|r, |cffff00ffErdzio|r, |cffff00ffPikownia|r\n\nベータテスター: |cffff00ffBorygo|r, |cffff00ffKalinkuss|r\n\n|cffffff00末尾に[AI]タグを含む翻訳は、人工知能によって翻訳されたもので、モデレーターによるチェックはまだ受けていません。|r",    -- Translators and Beta testers:
+   betaTestersHeader = "WoWinJapanese チーム:",                                                   -- TRANSLATION TEAM
+   betaTestersHeaderDESC = "モデレーター: |cffff00ffDumpty|r, |cffff00ffXeon|r,\n\n|cffffff00末尾に[AI]タグを含む翻訳は、人工知能によって翻訳されたもので、モデレーターによるチェックはまだ受けていません。|r",    -- Translators and Beta testers:
 };
 
 ---------------------------------------------------------------------------------------------------------
