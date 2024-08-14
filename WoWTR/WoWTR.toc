@@ -1,4 +1,4 @@
-## Interface: 110000, 110002
+﻿## Interface: 110002
 ## Title: WoWTR |cff8080ff11.00B3|r
 ## Version: 11.00B3
 ## Notes: Oyun içindeki Görevleri Türkçe'ye tercüme eder.

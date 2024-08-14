@@ -1,4 +1,4 @@
-﻿## Interface: 110000, 110002
+﻿## Interface: 110002
 ## Title: WoWinJapanese |cff8080ff11.00|r
 ## Version: 11.00
 ## Notes: AddOn displays the translated text informations in Japanese
