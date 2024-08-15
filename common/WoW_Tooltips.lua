@@ -1046,7 +1046,7 @@ end
 function WOWSTR_onEvent(_, event, addonName)
 --print(addonName);
 --QTR_PS["Test"] = Frame; -- search data
-QTR_ObjectiveTrackerFrame_Titles() -- Addon adds translations when it starts
+--QTR_ObjectiveTrackerFrame_Titles() -- Addon adds translations when it starts - causes error: WoW_Quests.lua 1132 - QTR_PS (a nil value)
    if (addonName == 'Blizzard_PlayerSpells') then
       ST_Load1 = true;
       PlayerSpellsFrame:HookScript("OnShow", ST_SpellBookTranslateButton);

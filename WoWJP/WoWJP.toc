@@ -1,6 +1,6 @@
 ﻿## Interface: 110002
-## Title: WoWinJapanese |cff8080ff11.00|r
-## Version: 11.00
+## Title: WoWinJapanese |cff8080ff11.01|r
+## Version: 11.01
 ## Notes: AddOn displays the translated text informations in Japanese
 ## Author: Platine
 ## E-mail: platine.wow@gmail.com
