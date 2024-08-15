@@ -395,7 +395,7 @@ function QTR_Gossip_Show()
             GossipTextFrame = GTxtframe;
          else
             if (((GTtype==3) or (GTtype==4) or (GTtype==5)) and (QTR_PS["gossip"]=="1") and (string.find(GTxtframe:GetText()," ")==nil)) then    -- gossip options
-               local GOptionText = WOWTR_DetectAndReplacePlayerName(GTxtframe:GetText());
+               local GOptionText = WOWTR_DetectAndReplacePlayerName(GTxtframe:GetText(), nil, '$N');     -- detect only name of player
                local prefix = "";
                local sufix = "";
                if (string.sub(GOptionText,1,2) == "|c") then
@@ -404,7 +404,8 @@ function QTR_Gossip_Show()
                   GOptionText = string.gsub(GOptionText, prefix, "");
                   GOptionText = string.gsub(GOptionText, sufix, "");
                end
-               local OptHash = StringHash(GOptionText);
+               local Czysty_Text = WOWTR_DeleteSpecialCodes(GOptionText, '$N');
+               local OptHash = StringHash(Czysty_Text);
                if (GO_resized > 0) then
                   local point, relativeTo, relativePoint, xOfs, yOfs = GTxtframe:GetPoint(1);
                   GTxtframe:ClearAllPoints();
@@ -525,8 +526,9 @@ function GossipOnQuestFrame()       -- frame: QuestFrame
                   GossText = string.gsub(GossText, prefix, "");
                   GossText = string.gsub(GossText, sufix, "");
                end
-               local GOptionText = WOWTR_DetectAndReplacePlayerName(GossText);
-               local TitleHash = StringHash(GossText);
+               local GOptionText = WOWTR_DetectAndReplacePlayerName(GossText, nil, '$N');    -- detect only name of player
+               local Czysty_Text = WOWTR_DeleteSpecialCodes(GOptionText, '$N');
+               local TitleHash = StringHash(Czysty_text);
                if (GO_resized > 0) then
                   local point, relativeTo, relativePoint, xOfs, yOfs = GText:GetPoint(1);
                   GText:ClearAllPoints();
@@ -3590,18 +3592,26 @@ end
 
 -------------------------------------------------------------------------------------------------------------------
 
-function WOWTR_DetectAndReplacePlayerName(txt,target)
+function WOWTR_DetectAndReplacePlayerName(txt,target,part)
    if (txt == nil) then return ""; end
    local text = string.gsub(txt, '\r', "");
-   text = string.gsub(text, '\n', "$B");
-   text = WOWTR_ReplaceOnlyWholeWords(text, WOWTR_player_name, "$N");
-   text = WOWTR_ReplaceOnlyWholeWords(text, string.upper(WOWTR_player_name), '$N$');
-   text = WOWTR_ReplaceOnlyWholeWords(text, WOWTR_player_race, '$R');
-   text = WOWTR_ReplaceOnlyWholeWords(text, string.lower(WOWTR_player_race), '$R');
-   text = WOWTR_ReplaceOnlyWholeWords(text, string.upper(WOWTR_player_race), '$R$');
-   text = WOWTR_ReplaceOnlyWholeWords(text, WOWTR_player_class, '$C');
-   text = WOWTR_ReplaceOnlyWholeWords(text, string.lower(WOWTR_player_class), '$C');
-   text = WOWTR_ReplaceOnlyWholeWords(text, string.upper(WOWTR_player_class), '$C$');
+   if (part==nil) or (part=='$B') then
+      text = string.gsub(text, '\n', "$B");
+   end
+   if (part==nil) or (part=='$N') then
+      text = WOWTR_ReplaceOnlyWholeWords(text, WOWTR_player_name, "$N");
+      text = WOWTR_ReplaceOnlyWholeWords(text, string.upper(WOWTR_player_name), '$N$');
+   end
+   if (part==nil) or (part=='$R') then
+      text = WOWTR_ReplaceOnlyWholeWords(text, WOWTR_player_race, '$R');
+      text = WOWTR_ReplaceOnlyWholeWords(text, string.lower(WOWTR_player_race), '$R');
+      text = WOWTR_ReplaceOnlyWholeWords(text, string.upper(WOWTR_player_race), '$R$');
+   end
+   if (part==nil) or (part=='$C') then
+      text = WOWTR_ReplaceOnlyWholeWords(text, WOWTR_player_class, '$C');
+      text = WOWTR_ReplaceOnlyWholeWords(text, string.lower(WOWTR_player_class), '$C');
+      text = WOWTR_ReplaceOnlyWholeWords(text, string.upper(WOWTR_player_class), '$C$');
+   end
    if (target) then
       text = WOWTR_ReplaceOnlyWholeWords(text, target, "$N");
    end
@@ -3610,14 +3620,23 @@ end
 
 -------------------------------------------------------------------------------------------------------------------
 
-function WOWTR_DeleteSpecialCodes(txt)
+function WOWTR_DeleteSpecialCodes(txt,part)
    if (txt == nil) then return ""; end
-   local text = string.gsub(txt, '$N$', '');
-   text = string.gsub(text, '$B', '');
-   text = string.gsub(text, '$N', '');
-   text = string.gsub(text, '$R$', '');
-   text = string.gsub(text, '$R', '');
-   text = string.gsub(text, '$C$', '');
-   text = string.gsub(text, '$C', '');
+   local text = txtl
+   if (part==nil) or (part=='$B') then
+      text = string.gsub(text, '$B', '');
+   end
+   if (part==nil) or (part=='$N') then
+      text = string.gsub(txt, '$N$', '');
+      text = string.gsub(text, '$N', '');
+   end
+   if (part==nil) or (part=='$R') then
+      text = string.gsub(text, '$R$', '');
+      text = string.gsub(text, '$R', '');
+   end
+   if (part==nil) or (part=='$C') then
+      text = string.gsub(text, '$C$', '');
+      text = string.gsub(text, '$C', '');
+   end
    return text;
 end
