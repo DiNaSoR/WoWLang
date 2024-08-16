@@ -3627,7 +3627,7 @@ function WOWTR_DeleteSpecialCodes(txt,part)
       text = string.gsub(text, '$B', '');
    end
    if (part==nil) or (part=='$N') then
-      text = string.gsub(txt, '$N$', '');
+      text = string.gsub(text, '$N$', '');
       text = string.gsub(text, '$N', '');
    end
    if (part==nil) or (part=='$R') then

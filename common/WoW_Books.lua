@@ -25,7 +25,7 @@ function BookTranslator_ShowTranslation()
       end
       BT_bookID = 0;
       local par1, par2, par3 = C_Item.GetItemInfo(ItemTextGetItem());
-      local BT_bookIDsh = StringHash(BT_tekst_en);
+      local BT_bookIDsh = tostring(StringHash(BT_tekst_en));
       if ((BT_tytul_en == "Plain Letter") or (BT_tytul_en == "Order of Night Propaganda") or (BT_Books[BT_bookIDsh])) then
          BT_bookID = BT_bookIDsh;
       elseif (par2) then
@@ -41,6 +41,7 @@ function BookTranslator_ShowTranslation()
          end
       end
       if (BT_bookID and (tonumber(BT_bookID)>0)) then
+--         print(BT_bookID, BT_nr_str, BT_Books[BT_bookID]["Title"];
          if (BT_Books[BT_bookID]) then	                   -- jest tłumaczenie tej książki
             if (BT_Books[BT_bookID][BT_nr_str]) then      -- jest tłumaczenie tej strony
                if ((BT_PM["title"] == "1") and (BT_Books[BT_bookID]["Title"]~='')) then            -- wyświetlaj tłumaczenie tytułu
