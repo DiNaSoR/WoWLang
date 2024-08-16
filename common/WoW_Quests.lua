@@ -3622,7 +3622,7 @@ end
 
 function WOWTR_DeleteSpecialCodes(txt,part)
    if (txt == nil) then return ""; end
-   local text = txtl
+   local text = txt;
    if (part==nil) or (part=='$B') then
       text = string.gsub(text, '$B', '');
    end
