@@ -398,7 +398,11 @@ function TT_CampaignOverview()
       if (Tut_Data7[HashCode]) then
          frame:SetText(QTR_ReverseIfAR(Tut_Data7[HashCode]));
          if (string.len(Tut_Data7[HashCode]) < 30) then
-            frame:SetFont(WOWTR_Font2, 13);
+            if (WoWTR_Localization.lang == 'TR') then
+               frame:SetFont(WOWTR_Font2, 12);
+            else
+               frame:SetFont(WOWTR_Font2, 13);
+            end
          else
             frame:SetFont(WOWTR_Font2, 12);
          end
