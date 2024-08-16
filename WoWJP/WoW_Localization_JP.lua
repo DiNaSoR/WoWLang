@@ -27,6 +27,7 @@ WoWTR_Localization = {
    campaignquests = "キャンペーンクエスト",                                   -- Campaign Quests
    scenariodung = "シナリオ",                                            -- Scenario/Dungeon
    objectives = "目的",                                               -- Objectives 
+   bonusobjective = "ボーナス目標",								            -- Bonus Objective
    rewards = "報酬",                                                  -- Rewards 
    storyLineProgress = "ストーリーの進捗状況",                              -- Story Progress 
    storyLineChapters = "チャプター",                                      -- Chapters 
