@@ -41,7 +41,6 @@ function BookTranslator_ShowTranslation()
          end
       end
       if (BT_bookID and (tonumber(BT_bookID)>0)) then
---         print(BT_bookID, BT_nr_str, BT_Books[BT_bookID]["Title"];
          if (BT_Books[BT_bookID]) then	                   -- jest tłumaczenie tej książki
             if (BT_Books[BT_bookID][BT_nr_str]) then      -- jest tłumaczenie tej strony
                if ((BT_PM["title"] == "1") and (BT_Books[BT_bookID]["Title"]~='')) then            -- wyświetlaj tłumaczenie tytułu
