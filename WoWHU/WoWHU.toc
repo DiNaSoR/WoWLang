@@ -1,4 +1,4 @@
-﻿## Interface: 110000, 110002
+﻿## Interface: 110002
 ## Title: World of HunCraft |cff8080ff11.01|r
 ## Version: 11.01
 ## Notes: Az AddOn magyar nyelven jeleníti meg a lefordított szöveges információkat

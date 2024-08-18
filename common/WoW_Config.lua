@@ -199,7 +199,7 @@ local WOWTR_OptionsHeaderText = WOWTR_Options:CreateFontString(nil, "OVERLAY", "
 WOWTR_OptionsHeaderText:SetFont(WOWTR_Font2, 18);
 WOWTR_OptionsHeaderText:SetWidth(600);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_OptionsHeaderText:SetPoint("LEFT", WOWTR_OptionsHeaderIcon, "RIGHT", 70, 10);
+   WOWTR_OptionsHeaderText:SetPoint("LEFT", WOWTR_OptionsHeaderIcon, "RIGHT", 50, 10);
    WOWTR_OptionsHeaderText:SetText(AS_UTF8reverse(WoWTR_Localization.optionTitleAR));
 else
    WOWTR_OptionsHeaderText:SetPoint("LEFT", WOWTR_OptionsHeaderIcon, "RIGHT", 0, 0);
@@ -209,8 +209,9 @@ end
 local WOWTR_CheckButton00 = CreateFrame("CheckButton", "WOWTR_CheckButton00", WOWTR_Options, "UICheckButtonTemplate");
 WOWTR_CheckButton00:SetScript("OnClick", function(self) if (QTR_PS["icon"]=="1") then QTR_PS["icon"]="0"; WOWTR.db.profile.minimap.hide=true; LibDBIcon10_WOWTR_LDB:Hide(); else QTR_PS["icon"]="1"; WOWTR.db.profile.minimap.hide=false; LibDBIcon10_WOWTR_LDB:Show(); end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton00:SetPoint("TOPLEFT", WOWTR_OptionsHeaderText, "TOPLEFT", 502, -20);
+   WOWTR_CheckButton00:SetPoint("TOPLEFT", WOWTR_OptionsHeaderText, "TOPLEFT", 525, -20);
    WOWTR_CheckButton00.Text:SetText("|cffffffff"..AS_UTF8reverse(WoWTR_Config_Interface.showMinimapIcon).."|r");   -- Show then addon setting icon next to the minimap
+   WOWTR_CheckButton00.Text:SetPoint("TOPLEFT", WOWTR_OptionsHeaderText, "TOPLEFT", 265, -30);
 --   WOWTR_CheckButton00:SetWidth(260);
 else
    WOWTR_CheckButton00:SetPoint("TOPLEFT", WOWTR_OptionsHeaderText, "TOPLEFT", 20, -20);
@@ -235,7 +236,7 @@ WOWTR_CheckButton00:SetScript("OnLeave", function(self)
 local WOWTR_Tab1TitleA = CreateFrame("BUTTON", "WOWTR_Tab1TitleA", WOWTR_Options, "GameMenuButtonTemplate");
 WOWTR_Tab1TitleA:SetWidth(100);
 WOWTR_Tab1TitleA:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab1TitleA:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab1));
@@ -249,7 +250,7 @@ WOWTR_Tab1TitleA:Show();
 local WOWTR_Tab1TitleB = CreateFrame("BUTTON", "WOWTR_Tab1TitleB", WOWTR_Options, "UIPanelButtonGrayTemplate");
 WOWTR_Tab1TitleB:SetWidth(100);
 WOWTR_Tab1TitleB:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab1TitleB:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab1));
@@ -293,7 +294,7 @@ WOWTR_Tab2TitleB:SetScript("OnClick", WOWTR_ChangePanel2);
 local WOWTR_Tab3TitleA = CreateFrame("BUTTON", "WOWTR_Tab3TitleA", WOWTR_Options, "GameMenuButtonTemplate");
 WOWTR_Tab3TitleA:SetWidth(100);
 WOWTR_Tab3TitleA:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab3TitleA:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab3));
@@ -307,7 +308,7 @@ WOWTR_Tab3TitleA:Hide();
 local WOWTR_Tab3TitleB = CreateFrame("BUTTON", "WOWTR_Tab3TitleB", WOWTR_Options, "UIPanelButtonGrayTemplate");
 WOWTR_Tab3TitleB:SetWidth(100);
 WOWTR_Tab3TitleB:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab3TitleB:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab3));
@@ -351,7 +352,7 @@ WOWTR_Tab4TitleB:SetScript("OnClick", WOWTR_ChangePanel4);
 local WOWTR_Tab5TitleA = CreateFrame("BUTTON", "WOWTR_Tab5TitleA", WOWTR_Options, "GameMenuButtonTemplate");
 WOWTR_Tab5TitleA:SetWidth(100);
 WOWTR_Tab5TitleA:SetHeight(20);
-if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'PL')) then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP') or (WoWTR_Localization.lang == 'PL')) then
    local fo = WOWTR_Tab5TitleA:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab5));
@@ -365,7 +366,7 @@ WOWTR_Tab5TitleA:Hide();
 local WOWTR_Tab5TitleB = CreateFrame("BUTTON", "WOWTR_Tab5TitleB", WOWTR_Options, "UIPanelButtonGrayTemplate");
 WOWTR_Tab5TitleB:SetWidth(100);
 WOWTR_Tab5TitleB:SetHeight(20);
-if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'PL')) then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP') or (WoWTR_Localization.lang == 'PL')) then
    local fo = WOWTR_Tab5TitleB:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab5));
@@ -380,7 +381,7 @@ WOWTR_Tab5TitleB:SetScript("OnClick", WOWTR_ChangePanel5);
 local WOWTR_Tab6TitleA = CreateFrame("BUTTON", "WOWTR_Tab6TitleA", WOWTR_Options, "GameMenuButtonTemplate");
 WOWTR_Tab6TitleA:SetWidth(100);
 WOWTR_Tab6TitleA:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab6TitleA:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab6));
@@ -394,7 +395,7 @@ WOWTR_Tab6TitleA:Hide();
 local WOWTR_Tab6TitleB = CreateFrame("BUTTON", "WOWTR_Tab6TitleB", WOWTR_Options, "UIPanelButtonGrayTemplate");
 WOWTR_Tab6TitleB:SetWidth(100);
 WOWTR_Tab6TitleB:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab6TitleB:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab6));
@@ -409,7 +410,7 @@ WOWTR_Tab6TitleB:SetScript("OnClick", WOWTR_ChangePanel6);
 local WOWTR_Tab9TitleA = CreateFrame("BUTTON", "WOWTR_Tab9TitleA", WOWTR_Options, "GameMenuButtonTemplate");
 WOWTR_Tab9TitleA:SetWidth(100);
 WOWTR_Tab9TitleA:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab9TitleA:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab9));
@@ -423,7 +424,7 @@ WOWTR_Tab9TitleA:Hide();
 local WOWTR_Tab9TitleB = CreateFrame("BUTTON", "WOWTR_Tab9TitleB", WOWTR_Options, "UIPanelButtonGrayTemplate");
 WOWTR_Tab9TitleB:SetWidth(100);
 WOWTR_Tab9TitleB:SetHeight(20);
-if (WoWTR_Localization.lang == 'AR') then
+if ((WoWTR_Localization.lang == 'AR') or (WoWTR_Localization.lang == 'JP')) then
    local fo = WOWTR_Tab9TitleB:CreateFontString();
    fo:SetFont(WOWTR_Font2, 12);
    fo:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.titleTab9));
@@ -519,25 +520,12 @@ else
 end
 
 local WOWTR_CheckButton11 = CreateFrame("CheckButton", "WOWTR_CheckButton11", WOWTR_OptionPanel1, "UICheckButtonTemplate");
--- 11.0
 WOWTR_CheckButton11:SetScript("OnClick", function(self) if (QTR_PS["active"]=="1") then QTR_PS["active"]="0" else QTR_PS["active"]="1" end; end);
-
--- 10.2.7
--- WOWTR_CheckButton11:SetScript("OnClick", function(self) if (QTR_PS["active"]=="1") then QTR_PS["active"]="0" else QTR_PS["active"]="1" end; end);
--- WOWTR_CheckButton11:SetWidth(210);
 if (WoWTR_Localization.lang == 'AR') then
-   -- 11.0
    WOWTR_CheckButton11:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", 110, -20);
-   -- 10.2.7
-   -- WOWTR_CheckButton11:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", 110, -20);
-   -- WOWTR_CheckButton11:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", -15, -22);
-   -- WOWTR_CheckButton11:SetWidth(130);
+   WOWTR_CheckButton11.Text:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", -13, -30);
 else
--- 11.0
    WOWTR_CheckButton11:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", 10, -20);
--- 10.2.7
--- WOWTR_CheckButton11:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", 10, -20);
--- WOWTR_CheckButton11:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", 50, -22);
 end
 WOWTR_CheckButton11.Text:SetText("|cffffffff"..QTR_ReverseIfAR(WoWTR_Config_Interface.activateQuestsTranslations).."|r");   -- Activate quest translations
 WOWTR_CheckButton11.Text:SetFont(WOWTR_Font2, 15);
@@ -557,8 +545,8 @@ WOWTR_CheckButton11:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton12 = CreateFrame("CheckButton", "WOWTR_CheckButton12", WOWTR_OptionPanel1, "UICheckButtonTemplate");
 WOWTR_CheckButton12:SetScript("OnClick", function(self) if (QTR_PS["transtitle"]=="1") then QTR_PS["transtitle"]="0" else QTR_PS["transtitle"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton12:SetPoint("TOPLEFT", WOWTR_CheckButton11, "BOTTOMLEFT", -160, -22);
-   WOWTR_CheckButton12:SetWidth(165);
+   WOWTR_CheckButton12:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", 110, -70);
+   WOWTR_CheckButton12.Text:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", -50, -80);
 else
    WOWTR_CheckButton12:SetPoint("TOPLEFT", WOWTR_CheckButton11, "BOTTOMLEFT", 0, -20);
 end
@@ -580,8 +568,8 @@ WOWTR_CheckButton12:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton13 = CreateFrame("CheckButton", "WOWTR_CheckButton13", WOWTR_OptionPanel1, "UICheckButtonTemplate");
 WOWTR_CheckButton13:SetScript("OnClick", function(self) if (QTR_PS["gossip"]=="1") then QTR_PS["gossip"]="0" else QTR_PS["gossip"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton13:SetPoint("TOPLEFT", WOWTR_CheckButton12, "BOTTOMLEFT", -215, 3);
-   WOWTR_CheckButton13:SetWidth(220);
+   WOWTR_CheckButton13:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", 110, -100);
+   WOWTR_CheckButton13.Text:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", -105, -110);
 else
    WOWTR_CheckButton13:SetPoint("TOPLEFT", WOWTR_CheckButton12, "BOTTOMLEFT", 0, 5);
 end
@@ -603,7 +591,8 @@ WOWTR_CheckButton13:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton1a = CreateFrame("CheckButton", "WOWTR_CheckButton1a", WOWTR_OptionPanel1, "UICheckButtonTemplate");
 WOWTR_CheckButton1a:SetScript("OnClick", function(self) if (QTR_PS["ownnames"]=="1") then QTR_PS["ownnames"]="0" else QTR_PS["ownnames"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton1a:SetPoint("TOPLEFT", WOWTR_CheckButton13, "BOTTOMLEFT", -260, 3);
+   WOWTR_CheckButton1a:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", 110, -130);
+   WOWTR_CheckButton1a.Text:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", -148, -140);
 else
    WOWTR_CheckButton1a:SetPoint("TOPLEFT", WOWTR_CheckButton13, "BOTTOMLEFT", 0, 5);
 end
@@ -617,9 +606,9 @@ WOWTR_CheckButton1a:SetScript("OnEnter", function(self)
    GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
    GameTooltip:ClearLines();
    if (WoWTR_Localization.lang == 'AR') then
-      GameTooltip:AddLine(QTR_ReverseIfAR(WOW_ZmienKody(WoWTR_Config_Interface.translateOwnNames)).." ", false);                -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WOW_ZmienKody(WoWTR_Config_Interface.translateOwnNames)).." ", false);
    else
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateOwnNames).." ", false);                                -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateOwnNames).." ", false);
    end
    getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
    GameTooltip:AddLine(QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateOwnNamesDESC,false,getglobal("GameTooltipTextLeft1"),WOWTR_Font2).." ", 1, 1, 1, true);   -- white color, wrap
@@ -634,7 +623,8 @@ WOWTR_CheckButton1a:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton14 = CreateFrame("CheckButton", "WOWTR_CheckButton14", WOWTR_OptionPanel1, "UICheckButtonTemplate");
 WOWTR_CheckButton14:SetScript("OnClick", function(self) if (QTR_PS["tracker"]=="1") then QTR_PS["tracker"]="0" else QTR_PS["tracker"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton14:SetPoint("TOPLEFT", WOWTR_CheckButton1a, "BOTTOMLEFT", -217, 3);
+   WOWTR_CheckButton14:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", 110, -160);
+   WOWTR_CheckButton14.Text:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", -108, -170);
 else
    WOWTR_CheckButton14:SetPoint("TOPLEFT", WOWTR_CheckButton1a, "BOTTOMLEFT", 0, 5);
 end
@@ -658,7 +648,7 @@ end
  
 local WOWTR_slider4 = CreateFrame("Slider", "WOWTR_slider4", WOWTR_OptionPanel1, "OptionsSliderTemplate");
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_slider4:SetPoint("TOPLEFT", WOWTR_CheckButton14, "BOTTOMLEFT", 70, -30);
+   WOWTR_slider4:SetPoint("TOPLEFT", WOWTR_CheckButton14, "BOTTOMLEFT", -120, -30);
 else
    WOWTR_slider4:SetPoint("TOPLEFT", WOWTR_CheckButton14, "BOTTOMLEFT", 0, -30);
 end
@@ -690,7 +680,7 @@ WOWTR_Opis4:SetJustifyH("LEFT");
 WOWTR_Opis4:SetJustifyV("TOP");
 WOWTR_Opis4:ClearAllPoints();
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_Opis4:SetPoint("TOPLEFT", WOWTR_slider4, "BOTTOMLEFT", -230, 30);
+   WOWTR_Opis4:SetPoint("TOPLEFT", WOWTR_slider4, "BOTTOMLEFT", -230, 20);
 else
    WOWTR_Opis4:SetPoint("TOPLEFT", WOWTR_slider4, "BOTTOMLEFT", 180, 30);
 end
@@ -715,6 +705,7 @@ local WOWTR_CheckButton15 = CreateFrame("CheckButton", "WOWTR_CheckButton15", WO
 WOWTR_CheckButton15:SetScript("OnClick", function(self) if (QTR_PS["saveQS"]=="1") then QTR_PS["saveQS"]="0" else QTR_PS["saveQS"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton15:SetPoint("TOPLEFT", WOWTR_Panel1Header2, "TOPLEFT", 55, -20);
+   WOWTR_CheckButton15.Text:SetPoint("TOPLEFT", WOWTR_Panel1Header2, "TOPLEFT", -95, -30);
 else
    WOWTR_CheckButton15:SetPoint("TOPLEFT", WOWTR_Panel1Header2, "TOPLEFT", 10, -20);
 end
@@ -736,7 +727,8 @@ WOWTR_CheckButton15:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton16 = CreateFrame("CheckButton", "WOWTR_CheckButton16", WOWTR_OptionPanel1, "UICheckButtonTemplate");
 WOWTR_CheckButton16:SetScript("OnClick", function(self) if (QTR_PS["saveGS"]=="1") then QTR_PS["saveGS"]="0" else QTR_PS["saveGS"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton16:SetPoint("TOPLEFT", WOWTR_CheckButton15, "BOTTOMLEFT", -193, -2);
+   WOWTR_CheckButton16:SetPoint("TOPLEFT", WOWTR_Panel1Header2, "TOPLEFT", 55, -50);
+   WOWTR_CheckButton16.Text:SetPoint("TOPLEFT", WOWTR_Panel1Header2, "TOPLEFT", -138, -60);
 else
    WOWTR_CheckButton16:SetPoint("TOPLEFT", WOWTR_CheckButton15, "BOTTOMLEFT", 0, 0);
 end
@@ -761,7 +753,7 @@ WOWTR_Panel1Header3:SetJustifyH("LEFT");
 WOWTR_Panel1Header3:SetJustifyV("TOP");
 WOWTR_Panel1Header3:ClearAllPoints();
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_Panel1Header3:SetPoint("TOPLEFT", WOWTR_OptionPanel1, "TOPLEFT", 620, -400);
+   WOWTR_Panel1Header3:SetPoint("TOPLEFT", WOWTR_OptionPanel1, "TOPLEFT", 620, -390);
 else
    WOWTR_Panel1Header3:SetPoint("TOPLEFT", WOWTR_OptionPanel1, "TOPLEFT", 20, -400);
 end
@@ -771,8 +763,8 @@ WOWTR_Panel1Header3:SetFont(WOWTR_Font2, 15);
 local WOWTR_CheckButton17 = CreateFrame("CheckButton", "WOWTR_CheckButton17", WOWTR_OptionPanel1, "UICheckButtonTemplate");
 WOWTR_CheckButton17:SetScript("OnClick", function(self) if (QTR_PS["immersion"]=="1") then QTR_PS["immersion"]="0" else QTR_PS["immersion"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton17:SetPoint("TOPLEFT", WOWTR_Panel1Header3, "TOPLEFT", 15, -20);
-   WOWTR_CheckButton17:SetWidth(240);
+   WOWTR_CheckButton17:SetPoint("TOPLEFT", WOWTR_Panel1Header3, "TOPLEFT", 12, -20);
+   WOWTR_CheckButton17.Text:SetPoint("TOPLEFT", WOWTR_Panel1Header3, "TOPLEFT", -210, -30);
 else
    WOWTR_CheckButton17:SetPoint("TOPLEFT", WOWTR_Panel1Header3, "TOPLEFT", 10, -20);
 end
@@ -794,8 +786,8 @@ WOWTR_CheckButton17:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton18 = CreateFrame("CheckButton", "WOWTR_CheckButton18", WOWTR_OptionPanel1, "UICheckButtonTemplate");
 WOWTR_CheckButton18:SetScript("OnClick", function(self) if (QTR_PS["storyline"]=="1") then QTR_PS["storyline"]="0" else QTR_PS["storyline"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton18:SetPoint("TOPLEFT", WOWTR_CheckButton17, "BOTTOMLEFT", -215, 3);
-
+   WOWTR_CheckButton18:SetPoint("TOPLEFT", WOWTR_Panel1Header3, "TOPLEFT", 12, -50);
+   WOWTR_CheckButton18.Text:SetPoint("TOPLEFT", WOWTR_Panel1Header3, "TOPLEFT", -203, -60);
 else
    WOWTR_CheckButton18:SetPoint("TOPLEFT", WOWTR_CheckButton17, "BOTTOMLEFT", 0, 5);
 end
@@ -817,7 +809,8 @@ WOWTR_CheckButton18:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton19 = CreateFrame("CheckButton", "WOWTR_CheckButton19", WOWTR_OptionPanel1, "UICheckButtonTemplate");
 WOWTR_CheckButton19:SetScript("OnClick", function(self) if (QTR_PS["questlog"]=="1") then QTR_PS["questlog"]="0" else QTR_PS["questlog"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton19:SetPoint("TOPLEFT", WOWTR_CheckButton18, "BOTTOMLEFT", -270, 3);
+   WOWTR_CheckButton19:SetPoint("TOPLEFT", WOWTR_Panel1Header3, "TOPLEFT", 12, -80);
+   WOWTR_CheckButton19.Text:SetPoint("TOPLEFT", WOWTR_Panel1Header3, "TOPLEFT", -255, -90);
 else
    WOWTR_CheckButton19:SetPoint("TOPLEFT", WOWTR_CheckButton18, "BOTTOMLEFT", 0, 5);
 end
@@ -839,7 +832,8 @@ WOWTR_CheckButton19:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton1b = CreateFrame("CheckButton", "WOWTR_CheckButton1b", WOWTR_OptionPanel1, "UICheckButtonTemplate");
 WOWTR_CheckButton1b:SetScript("OnClick", function(self) if (QTR_PS["dialogueui"]=="1") then QTR_PS["dialogueui"]="0" else QTR_PS["dialogueui"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton1b:SetPoint("TOPLEFT", WOWTR_CheckButton19, "BOTTOMLEFT", -230, 3);
+   WOWTR_CheckButton1b:SetPoint("TOPLEFT", WOWTR_Panel1Header3, "TOPLEFT", 12, -110);
+   WOWTR_CheckButton1b.Text:SetPoint("TOPLEFT", WOWTR_Panel1Header3, "TOPLEFT", -213, -120);
 else
    WOWTR_CheckButton1b:SetPoint("TOPLEFT", WOWTR_CheckButton19, "BOTTOMLEFT", 0, 5);
 end
@@ -887,6 +881,7 @@ local WOWTR_CheckButton21 = CreateFrame("CheckButton", "WOWTR_CheckButton21", WO
 WOWTR_CheckButton21:SetScript("OnClick", function(self) if (BB_PM["active"]=="1") then BB_PM["active"]="0" else BB_PM["active"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton21:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", 135, -20);
+   WOWTR_CheckButton21.Text:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", -7, -30);
 else
    WOWTR_CheckButton21:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", 10, -20);
 end
@@ -908,7 +903,8 @@ WOWTR_CheckButton21:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton22 = CreateFrame("CheckButton", "WOWTR_CheckButton22", WOWTR_OptionPanel2, "UICheckButtonTemplate");
 WOWTR_CheckButton22:SetScript("OnClick", function(self) if (BB_PM["chat-en"]=="1") then BB_PM["chat-en"]="0" else BB_PM["chat-en"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton22:SetPoint("TOPLEFT", WOWTR_CheckButton21, "BOTTOMLEFT", -215, -22);
+   WOWTR_CheckButton22:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", 135, -70);
+   WOWTR_CheckButton22.Text:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", -75, -80);
 else
    WOWTR_CheckButton22:SetPoint("TOPLEFT", WOWTR_CheckButton21, "BOTTOMLEFT", 0, -20);
 end
@@ -930,7 +926,8 @@ WOWTR_CheckButton22:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton23 = CreateFrame("CheckButton", "WOWTR_CheckButton23", WOWTR_OptionPanel2, "UICheckButtonTemplate");
 WOWTR_CheckButton23:SetScript("OnClick", function(self) if (BB_PM["chat-tr"]=="1") then BB_PM["chat-tr"]="0" else BB_PM["chat-tr"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton23:SetPoint("TOPLEFT", WOWTR_CheckButton22, "BOTTOMLEFT", -232, -2);
+   WOWTR_CheckButton23:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", 135, -100);
+   WOWTR_CheckButton23.Text:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", -91, -110);
 else
    WOWTR_CheckButton23:SetPoint("TOPLEFT", WOWTR_CheckButton22, "BOTTOMLEFT", 0, 0);
 end
@@ -953,7 +950,8 @@ local WOWTR_CheckButton24 = CreateFrame("CheckButton", "WOWTR_CheckButton24", WO
 WOWTR_CheckButton24:SetScript("OnClick", function(self) if (BB_PM["sex"]=="2") then BB_PM["sex"]="4";WOWTR_CheckButton26:SetChecked(true); else BB_PM["sex"]="2";WOWTR_CheckButton25:SetChecked(false);WOWTR_CheckButton26:SetChecked(false); end; end);
 WOWTR_CheckButton24:SetChecked(BB_PM["sex"] == "2")
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton24:SetPoint("TOPLEFT", WOWTR_CheckButton23, "BOTTOMLEFT", -245, -22);
+   WOWTR_CheckButton24:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", 135, -130);
+   WOWTR_CheckButton24.Text:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", -105, -140);
 else
    WOWTR_CheckButton24:SetPoint("TOPLEFT", WOWTR_CheckButton23, "BOTTOMLEFT", 0, -20);
 end
@@ -976,7 +974,8 @@ local WOWTR_CheckButton25 = CreateFrame("CheckButton", "WOWTR_CheckButton25", WO
 WOWTR_CheckButton25:SetScript("OnClick", function(self) if (BB_PM["sex"]=="3") then BB_PM["sex"]="4";WOWTR_CheckButton26:SetChecked(true); else BB_PM["sex"]="3";WOWTR_CheckButton24:SetChecked(false);WOWTR_CheckButton26:SetChecked(false); end; end);
 WOWTR_CheckButton25:SetChecked(BB_PM["sex"] == "3")
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton25:SetPoint("TOPLEFT", WOWTR_CheckButton24, "BOTTOMLEFT", -243, -2);
+   WOWTR_CheckButton25:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", 135, -160);
+   WOWTR_CheckButton25.Text:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", -103, -170);
 else
    WOWTR_CheckButton25:SetPoint("TOPLEFT", WOWTR_CheckButton24, "BOTTOMLEFT", 0, 0);
 end
@@ -999,7 +998,8 @@ local WOWTR_CheckButton26 = CreateFrame("CheckButton", "WOWTR_CheckButton26", WO
 WOWTR_CheckButton26:SetScript("OnClick", function(self) if (BB_PM["sex"]=="4") then BB_PM["sex"]="2";WOWTR_CheckButton24:SetChecked(true); else BB_PM["sex"]="4";WOWTR_CheckButton24:SetChecked(false);WOWTR_CheckButton25:SetChecked(false); end; end);
 WOWTR_CheckButton26:SetChecked(BB_PM["sex"] == "4")
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton26:SetPoint("TOPLEFT", WOWTR_CheckButton25, "BOTTOMLEFT", -248, -2);
+   WOWTR_CheckButton26:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", 135, -190);
+   WOWTR_CheckButton26.Text:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", -106, -200);
 else
    WOWTR_CheckButton26:SetPoint("TOPLEFT", WOWTR_CheckButton25, "BOTTOMLEFT", 0, 0);
 end
@@ -1021,7 +1021,8 @@ WOWTR_CheckButton26:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton2d1 = CreateFrame("CheckButton", "WOWTR_CheckButton2d1", WOWTR_OptionPanel2, "UICheckButtonTemplate");
 WOWTR_CheckButton2d1:SetScript("OnClick", function(self) if (BB_PM["dungeon"]=="1") then BB_PM["dungeon"]="0" else BB_PM["dungeon"]="1"; end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton2d1:SetPoint("TOPLEFT", WOWTR_CheckButton26, "BOTTOMLEFT", -300, 0);
+   WOWTR_CheckButton2d1:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", -200, -220);
+   WOWTR_CheckButton2d1.Text:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", -430, -230);
 elseif ((WoWTR_Localization.lang == 'TR') or (WoWTR_Localization.lang == 'UA')) then
    WOWTR_CheckButton2d1:SetPoint("TOPLEFT", WOWTR_CheckButton26, "BOTTOMLEFT", 310, 0);
 else
@@ -1044,21 +1045,22 @@ WOWTR_CheckButton2d1:SetScript("OnLeave", function(self)
  
 local WOWTR_CheckButton2d2 = CreateFrame("CheckButton", "WOWTR_CheckButton2d2", WOWTR_OptionPanel2, "UICheckButtonTemplate");
 WOWTR_CheckButton2d2:SetScript("OnClick", function(self) if (BB_PM["dungeonF"]=="1") then BB_PM["dungeonF"]="0";
-                                                                                                   WOWTR_SetDungeonFrames(WOWBB1, false);
-                                                                                                   WOWTR_SetDungeonFrames(WOWBB2, false);
-                                                                                                   WOWTR_SetDungeonFrames(WOWBB3, false);
-                                                                                                   WOWTR_SetDungeonFrames(WOWBB4, false);
-                                                                                                   WOWTR_SetDungeonFrames(WOWBB5, false);
-                                                                                              else BB_PM["dungeonF"]="1"; 
-                                                                                                   WOWTR_SetDungeonFrames(WOWBB1, true, 0);
-                                                                                                   WOWTR_SetDungeonFrames(WOWBB2, true, 250);
-                                                                                                   WOWTR_SetDungeonFrames(WOWBB3, true, -250);
-                                                                                                   WOWTR_SetDungeonFrames(WOWBB4, true, 500);
-                                                                                                   WOWTR_SetDungeonFrames(WOWBB5, true, -500);
-                                                                                              end; end);
+                                                                                          WOWTR_SetDungeonFrames(WOWBB1, false);
+                                                                                          WOWTR_SetDungeonFrames(WOWBB2, false);
+                                                                                          WOWTR_SetDungeonFrames(WOWBB3, false);
+                                                                                          WOWTR_SetDungeonFrames(WOWBB4, false);
+                                                                                          WOWTR_SetDungeonFrames(WOWBB5, false);
+                                                                                     else BB_PM["dungeonF"]="1"; 
+                                                                                          WOWTR_SetDungeonFrames(WOWBB1, true, 0);
+                                                                                          WOWTR_SetDungeonFrames(WOWBB2, true, 250);
+                                                                                          WOWTR_SetDungeonFrames(WOWBB3, true, -250);
+                                                                                          WOWTR_SetDungeonFrames(WOWBB4, true, 500);
+                                                                                          WOWTR_SetDungeonFrames(WOWBB5, true, -500);
+                                                                                     end; end);
 
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton2d2:SetPoint("TOPLEFT", WOWTR_CheckButton2d1, "BOTTOMLEFT", -195, -2);
+   WOWTR_CheckButton2d2:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", -200, -250);
+   WOWTR_CheckButton2d2.Text:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", -395, -260);
 else
    WOWTR_CheckButton2d2:SetPoint("TOPLEFT", WOWTR_CheckButton2d1, "BOTTOMLEFT", 0, 0);
 end
@@ -1079,12 +1081,16 @@ WOWTR_CheckButton2d2:SetScript("OnLeave", function(self)
 
 if (WoWTR_Localization.lang == 'TR') then
    WOWTR_CheckButton2d1:Hide();
-	WOWTR_CheckButton2d2:Hide();
-	BB_PM["dungeon"]="0";
+   WOWTR_CheckButton2d2:Hide();
+   BB_PM["dungeon"]="0";
 end
 
 local WOWTR_slider5 = CreateFrame("Slider", "WOWTR_slider5", WOWTR_OptionPanel2, "OptionsSliderTemplate");
-WOWTR_slider5:SetPoint("TOPLEFT", WOWTR_CheckButton2d2, "BOTTOMLEFT", 20, -30);
+if (WoWTR_Localization.lang == 'AR') then
+   WOWTR_slider5:SetPoint("TOPLEFT", WOWTR_CheckButton2d2, "BOTTOMLEFT", -120, -25);
+else
+   WOWTR_slider5:SetPoint("TOPLEFT", WOWTR_CheckButton2d2, "BOTTOMLEFT", 20, -30);
+end
 WOWTR_slider5:SetMinMaxValues(3, 10);
 WOWTR_slider5.minValue, WOWTR_slider5.maxValue = WOWTR_slider5:GetMinMaxValues();
 WOWTR_slider5.Low:SetText(WOWTR_slider5.minValue);
@@ -1123,6 +1129,7 @@ local WOWTR_CheckButton27 = CreateFrame("CheckButton", "WOWTR_CheckButton27", WO
 WOWTR_CheckButton27:SetScript("OnClick", function(self) if (BB_PM["saveBN"]=="1") then BB_PM["saveBM"]="0" else BB_PM["saveBM"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton27:SetPoint("TOPLEFT", WOWTR_Panel2Header2, "TOPLEFT", 55, -20);
+   WOWTR_CheckButton27.Text:SetPoint("TOPLEFT", WOWTR_Panel2Header2, "TOPLEFT", -112, -30);
 else
    WOWTR_CheckButton27:SetPoint("TOPLEFT", WOWTR_Panel2Header2, "TOPLEFT", 10, -20);
 end
@@ -1158,6 +1165,7 @@ local WOWTR_CheckButton28 = CreateFrame("CheckButton", "WOWTR_CheckButton28", WO
 WOWTR_CheckButton28:SetScript("OnClick", function(self) if (BB_PM["setsize"]=="1") then BB_PM["setsize"]="0" else BB_PM["setsize"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton28:SetPoint("TOPLEFT", WOWTR_Panel2Header3, "TOPLEFT", 35, -20);
+   WOWTR_CheckButton28.Text:SetPoint("TOPLEFT", WOWTR_Panel2Header3, "TOPLEFT", -100, -30);
 else
    WOWTR_CheckButton28:SetPoint("TOPLEFT", WOWTR_Panel2Header3, "TOPLEFT", 10, -20);
 end
@@ -1177,7 +1185,11 @@ WOWTR_CheckButton28:SetScript("OnLeave", function(self)
    end);
 
 local WOWTR_slider1 = CreateFrame("Slider", "WOWTR_slider1", WOWTR_OptionPanel2, "OptionsSliderTemplate");
-WOWTR_slider1:SetPoint("TOPLEFT", WOWTR_CheckButton28, "BOTTOMLEFT", 20, -30);
+if (WoWTR_Localization.lang == 'AR') then
+   WOWTR_slider1:SetPoint("TOPLEFT", WOWTR_CheckButton28, "BOTTOMLEFT", -120, -30);
+else
+   WOWTR_slider1:SetPoint("TOPLEFT", WOWTR_CheckButton28, "BOTTOMLEFT", 20, -30);
+end
 WOWTR_slider1:SetMinMaxValues(10, 20);
 WOWTR_slider1.minValue, WOWTR_slider1.maxValue = WOWTR_slider1:GetMinMaxValues();
 WOWTR_slider1.Low:SetText(WOWTR_slider1.minValue);
@@ -1247,6 +1259,7 @@ local WOWTR_CheckButton31 = CreateFrame("CheckButton", "WOWTR_CheckButton31", WO
 WOWTR_CheckButton31:SetScript("OnClick", function(self) if (MF_PM["active"]=="1") then MF_PM["active"]="0" else MF_PM["active"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton31:SetPoint("TOPLEFT", WOWTR_Panel3Header1, "TOPLEFT", 240, -20);
+   WOWTR_CheckButton31.Text:SetPoint("TOPLEFT", WOWTR_Panel3Header1, "TOPLEFT", 0, -30);
 else
    WOWTR_CheckButton31:SetPoint("TOPLEFT", WOWTR_Panel3Header1, "TOPLEFT", 10, -20);
 end
@@ -1268,7 +1281,8 @@ WOWTR_CheckButton31:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton32 = CreateFrame("CheckButton", "WOWTR_CheckButton32", WOWTR_OptionPanel3, "UICheckButtonTemplate");
 WOWTR_CheckButton32:SetScript("OnClick", function(self) if (MF_PM["intro"]=="1") then MF_PM["intro"]="0" else MF_PM["intro"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton32:SetPoint("TOPLEFT", WOWTR_CheckButton31, "BOTTOMLEFT", -196, -22);
+   WOWTR_CheckButton32:SetPoint("TOPLEFT", WOWTR_Panel3Header1, "TOPLEFT", 240, -50);
+   WOWTR_CheckButton32.Text:SetPoint("TOPLEFT", WOWTR_Panel3Header1, "TOPLEFT", 50, -60);
 else
    WOWTR_CheckButton32:SetPoint("TOPLEFT", WOWTR_CheckButton31, "BOTTOMLEFT", 0, -20);
 end
@@ -1290,7 +1304,8 @@ WOWTR_CheckButton32:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton33 = CreateFrame("CheckButton", "WOWTR_CheckButton33", WOWTR_OptionPanel3, "UICheckButtonTemplate");
 WOWTR_CheckButton33:SetScript("OnClick", function(self) if (MF_PM["movie"]=="1") then MF_PM["movie"]="0" else MF_PM["movie"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton33:SetPoint("TOPLEFT", WOWTR_CheckButton32, "BOTTOMLEFT", -200, -2);
+   WOWTR_CheckButton33:SetPoint("TOPLEFT", WOWTR_Panel3Header1, "TOPLEFT", 240, -80);
+   WOWTR_CheckButton33.Text:SetPoint("TOPLEFT", WOWTR_Panel3Header1, "TOPLEFT", 44, -90);
 else
    WOWTR_CheckButton33:SetPoint("TOPLEFT", WOWTR_CheckButton32, "BOTTOMLEFT", 0, 0);
 end
@@ -1312,7 +1327,8 @@ WOWTR_CheckButton33:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton34 = CreateFrame("CheckButton", "WOWTR_CheckButton34", WOWTR_OptionPanel3, "UICheckButtonTemplate");
 WOWTR_CheckButton34:SetScript("OnClick", function(self) if (MF_PM["cinematic"]=="1") then MF_PM["cinematic"]="0" else MF_PM["cinematic"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton34:SetPoint("TOPLEFT", WOWTR_CheckButton33, "BOTTOMLEFT", -200, -2);
+   WOWTR_CheckButton34:SetPoint("TOPLEFT", WOWTR_Panel3Header1, "TOPLEFT", 240, -110);
+   WOWTR_CheckButton34.Text:SetPoint("TOPLEFT", WOWTR_Panel3Header1, "TOPLEFT", 45, -120);
 else
    WOWTR_CheckButton34:SetPoint("TOPLEFT", WOWTR_CheckButton33, "BOTTOMLEFT", 0, 0);
 end
@@ -1348,6 +1364,7 @@ local WOWTR_CheckButton35 = CreateFrame("CheckButton", "WOWTR_CheckButton35", WO
 WOWTR_CheckButton35:SetScript("OnClick", function(self) if (MF_PM["save"]=="1") then MF_PM["save"]="0" else MF_PM["save"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton35:SetPoint("TOPLEFT", WOWTR_Panel3Header2, "TOPLEFT", 55, -20);
+   WOWTR_CheckButton35.Text:SetPoint("TOPLEFT", WOWTR_Panel3Header2, "TOPLEFT", -115, -30);
 else
    WOWTR_CheckButton35:SetPoint("TOPLEFT", WOWTR_Panel3Header2, "TOPLEFT", 10, -20);
 end
@@ -1372,7 +1389,7 @@ if (WoWTR_Localization.lang == 'AR') then          -- part: Chat
    WOWTR_Panel3Separator:SetJustifyH("LEFT"); 
    WOWTR_Panel3Separator:SetJustifyV("TOP");
    WOWTR_Panel3Separator:ClearAllPoints();
-   WOWTR_Panel3Separator:SetPoint("TOPLEFT", WOWTR_OptionPanel4, "TOPLEFT", 20, -300);
+   WOWTR_Panel3Separator:SetPoint("TOPLEFT", WOWTR_OptionPanel4, "TOPLEFT", 50, -300);
    local frame3 = WOWTR_OptionPanel3:CreateTexture(nil, "BACKGROUND")
    frame3:SetSize(684, 1)
    frame3:SetPoint("TOPLEFT", 0, -300)
@@ -1395,7 +1412,8 @@ if (WoWTR_Localization.lang == 'AR') then          -- part: Chat
 
    local WOWTR_CheckButton36 = CreateFrame("CheckButton", "WOWTR_CheckButton36", WOWTR_OptionPanel3, "UICheckButtonTemplate");
    WOWTR_CheckButton36:SetScript("OnClick", function(self) if (CH_PM["active"]=="1") then CH_PM["active"]="0";CH_ToggleButton:SetText("EN");CH_ToggleButton:Hide() else CH_PM["active"]="1";CH_ToggleButton:Show() end; end);
-   WOWTR_CheckButton36:SetPoint("TOPLEFT", WOWTR_Panel3Header3, "TOPLEFT", 215, -20);
+   WOWTR_CheckButton36:SetPoint("TOPLEFT", WOWTR_Panel3Header3, "TOPLEFT", 185, -20);
+   WOWTR_CheckButton36.Text:SetPoint("TOPLEFT", WOWTR_Panel3Header3, "TOPLEFT", -10, -30);
    WOWTR_CheckButton36.Text:SetText("|cffffffff"..QTR_ReverseIfAR(WoWTR_Config_Interface.activateChatService).."|r");   -- Activate service of arabic chat
    WOWTR_CheckButton36.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton36:SetScript("OnEnter", function(self)
@@ -1413,7 +1431,8 @@ if (WoWTR_Localization.lang == 'AR') then          -- part: Chat
 
    local WOWTR_CheckButton37 = CreateFrame("CheckButton", "WOWTR_CheckButton37", WOWTR_OptionPanel3, "UICheckButtonTemplate");
    WOWTR_CheckButton37:SetScript("OnClick", function(self) if (CH_PM["setsize"]=="1") then CH_PM["setsize"]="0" else CH_PM["setsize"]="1" end; end);
-   WOWTR_CheckButton37:SetPoint("TOPLEFT", WOWTR_CheckButton36, "BOTTOMLEFT", 0, 0);
+   WOWTR_CheckButton37:SetPoint("TOPLEFT", WOWTR_Panel3Header3, "TOPLEFT", 185, -50);
+   WOWTR_CheckButton37.Text:SetPoint("TOPLEFT", WOWTR_Panel3Header3, "TOPLEFT", 48, -60);
    WOWTR_CheckButton37.Text:SetText("|cffffffff"..QTR_ReverseIfAR(WoWTR_Config_Interface.chatFontActivate).."|r");   -- Activate font size changes
    WOWTR_CheckButton37.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton37:SetScript("OnEnter", function(self)
@@ -1430,7 +1449,7 @@ if (WoWTR_Localization.lang == 'AR') then          -- part: Chat
    end);
 
    local WOWTR_slider6 = CreateFrame("Slider", "WOWTR_slider6", WOWTR_OptionPanel3, "OptionsSliderTemplate");
-   WOWTR_slider6:SetPoint("TOPLEFT", WOWTR_CheckButton37, "BOTTOMLEFT", 20, -30);
+   WOWTR_slider6:SetPoint("TOPLEFT", WOWTR_CheckButton37, "BOTTOMLEFT", -150, -30);
    WOWTR_slider6:SetMinMaxValues(10, 20);
    WOWTR_slider6.minValue, WOWTR_slider6.maxValue = WOWTR_slider6:GetMinMaxValues();
    WOWTR_slider6.Low:SetText(WOWTR_slider6.minValue);
@@ -1488,6 +1507,7 @@ local WOWTR_CheckButton41 = CreateFrame("CheckButton", "WOWTR_CheckButton41", WO
 WOWTR_CheckButton41:SetScript("OnClick", function(self) if (TT_PS["active"]=="1") then TT_PS["active"]="0" else TT_PS["active"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton41:SetPoint("TOPLEFT", WOWTR_Panel4Header1, "TOPLEFT", 190, -20);
+   WOWTR_CheckButton41.Text:SetPoint("TOPLEFT", WOWTR_Panel4Header1, "TOPLEFT", 5, -30);
 else
    WOWTR_CheckButton41:SetPoint("TOPLEFT", WOWTR_Panel4Header1, "TOPLEFT", 10, -20);
 end
@@ -1523,6 +1543,7 @@ local WOWTR_CheckButton42 = CreateFrame("CheckButton", "WOWTR_CheckButton42", WO
 WOWTR_CheckButton42:SetScript("OnClick", function(self) if (TT_PS["save"]=="1") then TT_PS["save"]="0" else TT_PS["save"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton42:SetPoint("TOPLEFT", WOWTR_Panel4Header2, "TOPLEFT", 55, -20);
+   WOWTR_CheckButton42.Text:SetPoint("TOPLEFT", WOWTR_Panel4Header2, "TOPLEFT", -155, -30);
 else
    WOWTR_CheckButton42:SetPoint("TOPLEFT", WOWTR_Panel4Header2, "TOPLEFT", 10, -20);
 end
@@ -1648,7 +1669,7 @@ WOWTR_Panel4Text1:SetJustifyH("LEFT");
 WOWTR_Panel4Text1:SetJustifyV("TOP");
 WOWTR_Panel4Text1:ClearAllPoints();
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_Panel4Text1:SetPoint("TOPLEFT", WOWTR_Panel4Separator, "TOPLEFT", 485, -30);
+   WOWTR_Panel4Text1:SetPoint("TOPLEFT", WOWTR_Panel4Separator, "TOPLEFT", 480, -30);
 else
    WOWTR_Panel4Text1:SetPoint("TOPLEFT", WOWTR_Panel4Separator, "TOPLEFT", 0, -30);
 end
@@ -1660,6 +1681,7 @@ local WOWTR_CheckButton43 = CreateFrame("CheckButton", "WOWTR_CheckButton43", WO
 WOWTR_CheckButton43:SetScript("OnClick", function(self) if (TT_PS["ui1"]=="1") then TT_PS["ui1"]="0" else TT_PS["ui1"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton43:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", 135, -45);
+   WOWTR_CheckButton43.Text:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", 65, -55);
 else
    WOWTR_CheckButton43:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", 10, -45);
 end
@@ -1685,7 +1707,8 @@ WOWTR_CheckButton43:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton45 = CreateFrame("CheckButton", "WOWTR_CheckButton45", WOWTR_OptionPanel4, "UICheckButtonTemplate");
 WOWTR_CheckButton45:SetScript("OnClick", function(self) if (TT_PS["ui2"]=="1") then TT_PS["ui2"]="0" else TT_PS["ui2"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton45:SetPoint("TOPLEFT", WOWTR_CheckButton43, "TOPLEFT", -118, -30);
+   WOWTR_CheckButton45:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", 135, -75);
+   WOWTR_CheckButton45.Text:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", 22, -85);
 else
    WOWTR_CheckButton45:SetPoint("TOPLEFT", WOWTR_CheckButton43, "TOPLEFT", 0, -28);
 end
@@ -1711,7 +1734,8 @@ WOWTR_CheckButton45:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton46 = CreateFrame("CheckButton", "WOWTR_CheckButton46", WOWTR_OptionPanel4, "UICheckButtonTemplate");
 WOWTR_CheckButton46:SetScript("OnClick", function(self) if (TT_PS["ui3"]=="1") then TT_PS["ui3"]="0" else TT_PS["ui3"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton46:SetPoint("TOPLEFT", WOWTR_CheckButton45, "TOPLEFT", -122, -30);
+   WOWTR_CheckButton46:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", 135, -105);
+   WOWTR_CheckButton46.Text:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", 20, -115);
 else
    WOWTR_CheckButton46:SetPoint("TOPLEFT", WOWTR_CheckButton45, "TOPLEFT", 0, -28);
 end
@@ -1737,7 +1761,8 @@ WOWTR_CheckButton46:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton50 = CreateFrame("CheckButton", "WOWTR_CheckButton50", WOWTR_OptionPanel4, "UICheckButtonTemplate");
 WOWTR_CheckButton50:SetScript("OnClick", function(self) if (TT_PS["ui7"]=="1") then TT_PS["ui7"]="0" else TT_PS["ui7"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton50:SetPoint("TOPLEFT", WOWTR_CheckButton46, "TOPLEFT", -78, -30);
+   WOWTR_CheckButton50:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", 135, -135);
+   WOWTR_CheckButton50.Text:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", 61, -145);
 else
    WOWTR_CheckButton50:SetPoint("TOPLEFT", WOWTR_CheckButton46, "TOPLEFT", 0, -28);
 end
@@ -1764,6 +1789,7 @@ local WOWTR_CheckButton47 = CreateFrame("CheckButton", "WOWTR_CheckButton47", WO
 WOWTR_CheckButton47:SetScript("OnClick", function(self) if (TT_PS["ui4"]=="1") then TT_PS["ui4"]="0" else TT_PS["ui4"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton47:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", -100, -45);
+   WOWTR_CheckButton47.Text:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", -172, -55);
 else
    WOWTR_CheckButton47:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", 230, -45);
 end
@@ -1789,7 +1815,8 @@ WOWTR_CheckButton47:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton48 = CreateFrame("CheckButton", "WOWTR_CheckButton48", WOWTR_OptionPanel4, "UICheckButtonTemplate");
 WOWTR_CheckButton48:SetScript("OnClick", function(self) if (TT_PS["ui5"]=="1") then TT_PS["ui5"]="0" else TT_PS["ui5"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton48:SetPoint("TOPLEFT", WOWTR_CheckButton47, "TOPLEFT", -95, -30);
+   WOWTR_CheckButton48:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", -100, -75);
+   WOWTR_CheckButton48.Text:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", -190, -85);
 else
    WOWTR_CheckButton48:SetPoint("TOPLEFT", WOWTR_CheckButton47, "TOPLEFT", 0, -28);
 end
@@ -1815,7 +1842,8 @@ WOWTR_CheckButton48:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton49 = CreateFrame("CheckButton", "WOWTR_CheckButton49", WOWTR_OptionPanel4, "UICheckButtonTemplate");
 WOWTR_CheckButton49:SetScript("OnClick", function(self) if (TT_PS["ui6"]=="1") then TT_PS["ui6"]="0" else TT_PS["ui6"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton49:SetPoint("TOPLEFT", WOWTR_CheckButton48, "TOPLEFT", -92, -30);
+   WOWTR_CheckButton49:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", -100, -105);
+   WOWTR_CheckButton49.Text:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", -187, -115);
 else
    WOWTR_CheckButton49:SetPoint("TOPLEFT", WOWTR_CheckButton48, "TOPLEFT", 0, -28);
 end
@@ -1841,7 +1869,8 @@ WOWTR_CheckButton49:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton40 = CreateFrame("CheckButton", "WOWTR_CheckButton40", WOWTR_OptionPanel4, "UICheckButtonTemplate");
 WOWTR_CheckButton40:SetScript("OnClick", function(self) if (TT_PS["ui8"]=="1") then TT_PS["ui8"]="0" else TT_PS["ui8"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton40:SetPoint("TOPLEFT", WOWTR_CheckButton49, "TOPLEFT", -143, -30);
+   WOWTR_CheckButton40:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", -100, -135);
+   WOWTR_CheckButton40.Text:SetPoint("TOPLEFT", WOWTR_Panel4Header3, "TOPLEFT", -239, -145);
 else
    WOWTR_CheckButton40:SetPoint("TOPLEFT", WOWTR_CheckButton49, "TOPLEFT", 0, -28);
 end
@@ -1910,6 +1939,7 @@ local WOWTR_CheckButton44 = CreateFrame("CheckButton", "WOWTR_CheckButton44", WO
 WOWTR_CheckButton44:SetScript("OnClick", function(self) if (TT_PS["saveui"]=="1") then TT_PS["saveui"]="0" else TT_PS["saveui"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton44:SetPoint("TOPLEFT", WOWTR_Panel4Header4, "TOPLEFT", 145, -20);
+   WOWTR_CheckButton44.Text:SetPoint("TOPLEFT", WOWTR_Panel4Header4, "TOPLEFT", -105, -30);
 else
    WOWTR_CheckButton44:SetPoint("TOPLEFT", WOWTR_Panel4Header4, "TOPLEFT", 10, -20);
 end
@@ -1988,6 +2018,7 @@ local WOWTR_CheckButton51 = CreateFrame("CheckButton", "WOWTR_CheckButton51", WO
 WOWTR_CheckButton51:SetScript("OnClick", function(self) if (BT_PM["active"]=="1") then BT_PM["active"]="0" else BT_PM["active"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton51:SetPoint("TOPLEFT", WOWTR_Panel5Header1, "TOPLEFT", 110, -20);
+   WOWTR_CheckButton51.Text:SetPoint("TOPLEFT", WOWTR_Panel5Header1, "TOPLEFT", -12, -30);
 else
    WOWTR_CheckButton51:SetPoint("TOPLEFT", WOWTR_Panel5Header1, "TOPLEFT", 10, -20);
 end
@@ -2009,8 +2040,8 @@ WOWTR_CheckButton51:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton52 = CreateFrame("CheckButton", "WOWTR_CheckButton52", WOWTR_OptionPanel5, "UICheckButtonTemplate");
 WOWTR_CheckButton52:SetScript("OnClick", function(self) if (BT_PM["title"]=="1") then BT_PM["title"]="0" else BT_PM["title"]="1";BB_PM["chat-tr"]="0";WOWTR_CheckButton23:SetValue(false); end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton52:SetPoint("TOPLEFT", WOWTR_CheckButton51, "BOTTOMLEFT", -170, -22);
-   WOWTR_CheckButton52:SetWidth(172);
+   WOWTR_CheckButton52:SetPoint("TOPLEFT", WOWTR_Panel5Header1, "TOPLEFT", 110, -70);
+   WOWTR_CheckButton52.Text:SetPoint("TOPLEFT", WOWTR_Panel5Header1, "TOPLEFT", -50, -80);
 else
    WOWTR_CheckButton52:SetPoint("TOPLEFT", WOWTR_CheckButton51, "BOTTOMLEFT", 0, -20);
 end
@@ -2032,7 +2063,8 @@ WOWTR_CheckButton52:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton53 = CreateFrame("CheckButton", "WOWTR_CheckButton53", WOWTR_OptionPanel5, "UICheckButtonTemplate");
 WOWTR_CheckButton53:SetScript("OnClick", function(self) if (BT_PM["showID"]=="1") then BT_PM["showID"]="0" else BT_PM["showID"]="1";BB_PM["chat-en"]="0";WOWTR_CheckButton22:SetValue(false); end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton53:SetPoint("TOPLEFT", WOWTR_CheckButton52, "BOTTOMLEFT", -123, -2);
+   WOWTR_CheckButton53:SetPoint("TOPLEFT", WOWTR_Panel5Header1, "TOPLEFT", 110, -100);
+   WOWTR_CheckButton53.Text:SetPoint("TOPLEFT", WOWTR_Panel5Header1, "TOPLEFT", -3, -110);
 else
    WOWTR_CheckButton53:SetPoint("TOPLEFT", WOWTR_CheckButton52, "BOTTOMLEFT", 0, 0);
 end
@@ -2068,6 +2100,7 @@ local WOWTR_CheckButton55 = CreateFrame("CheckButton", "WOWTR_CheckButton55", WO
 WOWTR_CheckButton55:SetScript("OnClick", function(self) if (BT_PM["saveNW"]=="1") then BT_PM["saveNW"]="0" else BT_PM["saveNW"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton55:SetPoint("TOPLEFT", WOWTR_Panel5Header2, "TOPLEFT", 47, -20);
+   WOWTR_CheckButton55.Text:SetPoint("TOPLEFT", WOWTR_Panel5Header2, "TOPLEFT", -100, -30);
 else
    WOWTR_CheckButton55:SetPoint("TOPLEFT", WOWTR_Panel5Header2, "TOPLEFT", 10, -20);
 end
@@ -2103,6 +2136,7 @@ local WOWTR_CheckButton58 = CreateFrame("CheckButton", "WOWTR_CheckButton58", WO
 WOWTR_CheckButton58:SetScript("OnClick", function(self) if (BT_PM["setsize"]=="1") then BT_PM["setsize"]="0" else BT_PM["setsize"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton58:SetPoint("TOPLEFT", WOWTR_Panel5Header3, "TOPLEFT", 30, -20);
+   WOWTR_CheckButton58.Text:SetPoint("TOPLEFT", WOWTR_Panel5Header3, "TOPLEFT", -105, -30);
 else
    WOWTR_CheckButton58:SetPoint("TOPLEFT", WOWTR_Panel5Header3, "TOPLEFT", 10, -20);
 end
@@ -2122,7 +2156,11 @@ WOWTR_CheckButton58:SetScript("OnLeave", function(self)
    end);
 
 local WOWTR_slider2 = CreateFrame("Slider", "WOWTR_slider2", WOWTR_OptionPanel5, "OptionsSliderTemplate");
-WOWTR_slider2:SetPoint("TOPLEFT", WOWTR_CheckButton58, "BOTTOMLEFT", 20, -30);
+if (WoWTR_Localization.lang == 'AR') then
+   WOWTR_slider2:SetPoint("TOPLEFT", WOWTR_CheckButton58, "BOTTOMLEFT", -150, -50);
+else
+   WOWTR_slider2:SetPoint("TOPLEFT", WOWTR_CheckButton58, "BOTTOMLEFT", 20, -30);
+end
 WOWTR_slider2:SetMinMaxValues(10, 20);
 WOWTR_slider2.minValue, WOWTR_slider2.maxValue = WOWTR_slider2:GetMinMaxValues();
 WOWTR_slider2.Low:SetText(WOWTR_slider2.minValue);
@@ -2192,6 +2230,7 @@ local WOWTR_CheckButton61 = CreateFrame("CheckButton", "WOWTR_CheckButton61", WO
 WOWTR_CheckButton61:SetScript("OnClick", function(self) if (ST_PM["active"]=="1") then ST_PM["active"]="0" else ST_PM["active"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton61:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", 143, -20);
+   WOWTR_CheckButton61.Text:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", -2, -30);
 else
    WOWTR_CheckButton61:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", 10, -20);
 end
@@ -2213,7 +2252,8 @@ WOWTR_CheckButton61:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton62 = CreateFrame("CheckButton", "WOWTR_CheckButton62", WOWTR_OptionPanel6, "UICheckButtonTemplate");
 WOWTR_CheckButton62:SetScript("OnClick", function(self) if (ST_PM["item"]=="1") then ST_PM["item"]="0" else ST_PM["item"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton62:SetPoint("TOPLEFT", WOWTR_CheckButton61, "BOTTOMLEFT", -210, -22);
+   WOWTR_CheckButton62:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", 143, -50);
+   WOWTR_CheckButton62.Text:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", -58, -60);
 else
    WOWTR_CheckButton62:SetPoint("TOPLEFT", WOWTR_CheckButton61, "BOTTOMLEFT", 0, -20);
 end
@@ -2235,7 +2275,8 @@ WOWTR_CheckButton62:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton63 = CreateFrame("CheckButton", "WOWTR_CheckButton63", WOWTR_OptionPanel6, "UICheckButtonTemplate");
 WOWTR_CheckButton63:SetScript("OnClick", function(self) if (ST_PM["spell"]=="1") then ST_PM["spell"]="0" else ST_PM["spell"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton63:SetPoint("TOPLEFT", WOWTR_CheckButton62, "BOTTOMLEFT", -205, -2);
+   WOWTR_CheckButton63:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", 143, -80);
+   WOWTR_CheckButton63.Text:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", -54, -90);
 else
    WOWTR_CheckButton63:SetPoint("TOPLEFT", WOWTR_CheckButton62, "BOTTOMLEFT", 0, 0);
 end
@@ -2257,7 +2298,8 @@ WOWTR_CheckButton63:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton64 = CreateFrame("CheckButton", "WOWTR_CheckButton64", WOWTR_OptionPanel6, "UICheckButtonTemplate");
 WOWTR_CheckButton64:SetScript("OnClick", function(self) if (ST_PM["talent"]=="1") then ST_PM["talent"]="0" else ST_PM["talent"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton64:SetPoint("TOPLEFT", WOWTR_CheckButton63, "BOTTOMLEFT", -210, -2);
+   WOWTR_CheckButton64:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", 143, -110);
+   WOWTR_CheckButton64.Text:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", -58, -120);
 else
    WOWTR_CheckButton64:SetPoint("TOPLEFT", WOWTR_CheckButton63, "BOTTOMLEFT", 0, 0);
 end
@@ -2280,7 +2322,8 @@ if (ST_TooltipsID) then
    local WOWTR_CheckButton6A = CreateFrame("CheckButton", "WOWTR_CheckButton6A", WOWTR_OptionPanel6, "UICheckButtonTemplate");
    WOWTR_CheckButton6A:SetScript("OnClick", function(self) if (ST_PM["transtitle"]=="1") then ST_PM["transtitle"]="0" else ST_PM["transtitle"]="1" end; end);
    if (WoWTR_Localization.lang == 'AR') then
-      WOWTR_CheckButton6A:SetPoint("TOPLEFT", WOWTR_CheckButton64, "BOTTOMLEFT", -297, -2);
+      WOWTR_CheckButton6A:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", 143, -140);
+      WOWTR_CheckButton6A.Text:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", -147, -150);
    else
       WOWTR_CheckButton6A:SetPoint("TOPLEFT", WOWTR_CheckButton64, "BOTTOMLEFT", 0, 0);
    end
@@ -2303,7 +2346,8 @@ end
 local WOWTR_CheckButton65 = CreateFrame("CheckButton", "WOWTR_CheckButton65", WOWTR_OptionPanel6, "UICheckButtonTemplate");
 WOWTR_CheckButton65:SetScript("OnClick", function(self) if (ST_PM["showID"]=="1") then ST_PM["showID"]="0" else ST_PM["showID"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton65:SetPoint("TOPLEFT", WOWTR_CheckButton64, "BOTTOMLEFT", -125, -30);
+   WOWTR_CheckButton65:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", 143, -170);
+   WOWTR_CheckButton65.Text:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", 26, -180);
 else
    WOWTR_CheckButton65:SetPoint("TOPLEFT", WOWTR_CheckButton64, "BOTTOMLEFT", 0, -28);
 end
@@ -2325,7 +2369,8 @@ WOWTR_CheckButton65:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton66 = CreateFrame("CheckButton", "WOWTR_CheckButton66", WOWTR_OptionPanel6, "UICheckButtonTemplate");
 WOWTR_CheckButton66:SetScript("OnClick", function(self) if (ST_PM["showHS"]=="1") then ST_PM["showHS"]="0" else ST_PM["showHS"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton66:SetPoint("TOPLEFT", WOWTR_CheckButton65, "BOTTOMLEFT", -115, -2);
+   WOWTR_CheckButton66:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", 143, -200);
+   WOWTR_CheckButton66.Text:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", 37, -210);
 else
    WOWTR_CheckButton66:SetPoint("TOPLEFT", WOWTR_CheckButton65, "BOTTOMLEFT", 0, 0);
 end
@@ -2347,7 +2392,8 @@ WOWTR_CheckButton66:SetScript("OnLeave", function(self)
 local WOWTR_CheckButton67 = CreateFrame("CheckButton", "WOWTR_CheckButton67", WOWTR_OptionPanel6, "UICheckButtonTemplate");
 WOWTR_CheckButton67:SetScript("OnClick", function(self) if (ST_PM["sellprice"]=="1") then ST_PM["sellprice"]="0" else ST_PM["sellprice"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_CheckButton67:SetPoint("TOPLEFT", WOWTR_CheckButton66, "BOTTOMLEFT", -155, -2);
+   WOWTR_CheckButton67:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", 143, -230);
+   WOWTR_CheckButton67.Text:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", -4, -240);
 else
    WOWTR_CheckButton67:SetPoint("TOPLEFT", WOWTR_CheckButton66, "BOTTOMLEFT", 0, 0);
 end
@@ -2383,6 +2429,7 @@ local WOWTR_CheckButton68 = CreateFrame("CheckButton", "WOWTR_CheckButton68", WO
 WOWTR_CheckButton68:SetScript("OnClick", function(self) if (ST_PM["constantly"]=="1") then ST_PM["constantly"]="0" else ST_PM["constantly"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton68:SetPoint("TOPLEFT", WOWTR_Panel6Header2, "TOPLEFT", 75, -20);
+   WOWTR_CheckButton68.Text:SetPoint("TOPLEFT", WOWTR_Panel6Header2, "TOPLEFT", -82, -30);
 else
    WOWTR_CheckButton68:SetPoint("TOPLEFT", WOWTR_Panel6Header2, "TOPLEFT", 10, -20);
 end
@@ -2403,7 +2450,7 @@ WOWTR_CheckButton68:SetScript("OnLeave", function(self)
  
 local WOWTR_slider3 = CreateFrame("Slider", "WOWTR_slider3", WOWTR_OptionPanel6, "OptionsSliderTemplate");
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_slider3:SetPoint("TOPLEFT", WOWTR_CheckButton68, "BOTTOMLEFT", 50, -30);
+   WOWTR_slider3:SetPoint("TOPLEFT", WOWTR_CheckButton68, "BOTTOMLEFT", -150, -30);
 else
    WOWTR_slider3:SetPoint("TOPLEFT", WOWTR_CheckButton68, "BOTTOMLEFT", 5, -30);
 end
@@ -2445,6 +2492,7 @@ local WOWTR_CheckButton69 = CreateFrame("CheckButton", "WOWTR_CheckButton69", WO
 WOWTR_CheckButton69:SetScript("OnClick", function(self) if (ST_PM["saveNW"]=="1") then ST_PM["saveNW"]="0" else ST_PM["saveNW"]="1" end; end);
 if (WoWTR_Localization.lang == 'AR') then
    WOWTR_CheckButton69:SetPoint("TOPLEFT", WOWTR_Panel6Header3, "TOPLEFT", 45, -20);
+   WOWTR_CheckButton69.Text:SetPoint("TOPLEFT", WOWTR_Panel6Header3, "TOPLEFT", -125, -30);
 else
    WOWTR_CheckButton69:SetPoint("TOPLEFT", WOWTR_Panel6Header3, "TOPLEFT", 10, -20);
 end
@@ -2485,7 +2533,7 @@ WOWTR_Panel9Header1:SetJustifyH("LEFT");
 WOWTR_Panel9Header1:SetJustifyV("TOP");
 WOWTR_Panel9Header1:ClearAllPoints();
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_Panel9Header1:SetPoint("TOPLEFT", WOWTR_Panel9Text, "BOTTOMLEFT", 540, -70);
+   WOWTR_Panel9Header1:SetPoint("TOPLEFT", WOWTR_Panel9Text, "BOTTOMLEFT", 500, -70);
 else
    WOWTR_Panel9Header1:SetPoint("TOPLEFT", WOWTR_Panel9Text, "BOTTOMLEFT", -10, -25);
 end

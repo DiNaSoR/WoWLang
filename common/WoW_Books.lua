@@ -20,9 +20,12 @@ function BookTranslator_ShowTranslation()
       BT_tytul_en=ItemTextGetItem();
       BT_tekst_en=ItemTextGetText();
       BT_nr_str=tostring(ItemTextGetPage());
+      if (BT_nr_str == nil) then
+         BT_nr_str = '1';
+      end
       BT_bookID = 0;
       local par1, par2, par3 = C_Item.GetItemInfo(ItemTextGetItem());
-      local BT_bookIDsh = StringHash(BT_tekst_en);
+      local BT_bookIDsh = tostring(StringHash(BT_tekst_en));
       if ((BT_tytul_en == "Plain Letter") or (BT_tytul_en == "Order of Night Propaganda") or (BT_Books[BT_bookIDsh])) then
          BT_bookID = BT_bookIDsh;
       elseif (par2) then
