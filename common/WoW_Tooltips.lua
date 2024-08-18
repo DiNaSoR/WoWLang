@@ -1099,25 +1099,25 @@ function ST_SpellBookTranslateButton()
    if (ST_PM["active"] == "1") then
       -- Button to toggle between TR - EN for talents
       WOWTR_ToggleButtonS = CreateFrame("Button", nil, SpellBookFrame, "UIPanelButtonTemplate")
-      WOWTR_ToggleButtonS:SetWidth(100)
-      WOWTR_ToggleButtonS:SetHeight(15) -- Set the height to 15
-      WOWTR_ToggleButtonS:SetFrameStrata("HIGH")
+      WOWTR_ToggleButtonS:SetWidth(80)
+      WOWTR_ToggleButtonS:SetHeight(13) -- Set the height to 15
+      WOWTR_ToggleButtonS:SetFrameStrata("TOOLTIP")
 
       if (ST_PM["spell"] == "1") then
             if (WoWTR_Localization.lang == 'AR') then
                WOWTR_ToggleButtonS:SetText(QTR_ReverseIfAR(WoWTR_Localization.WoWTR_Spellbook_trDESC))
-               WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_Font2, 8)
+               WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_Font2, 7)
             else
                WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_trDESC)
-               WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_ToggleButtonS:GetFontString():GetFont(), 8)
+               WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_ToggleButtonS:GetFontString():GetFont(), 7)
             end
       else
             WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_enDESC)
-            WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_ToggleButtonS:GetFontString():GetFont(), 8)
+            WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_ToggleButtonS:GetFontString():GetFont(), 7)
       end
 
       WOWTR_ToggleButtonS:ClearAllPoints()
-      WOWTR_ToggleButtonS:SetPoint("CENTER", PlayerSpellsFrameTitleText, "CENTER", 80, 0)
+      WOWTR_ToggleButtonS:SetPoint("TOPLEFT", PlayerSpellsFrame, "TOPRIGHT", -100, 0)
       WOWTR_ToggleButtonS:SetScript("OnClick", STspell_ON_OFF)
       PlayerSpellsFrame:HookScript("OnHide", function() WOWTR_ToggleButtonS:Hide() end)
    end
