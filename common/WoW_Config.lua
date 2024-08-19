@@ -2358,7 +2358,11 @@ WOWTR_CheckButton65:SetScript("OnEnter", function(self)
    GameTooltip:ClearLines();
    GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.showTooltipID).." ", false);                -- red color, no wrap
    getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
-   GameTooltip:AddLine(QTR_ExpandUnitInfo(WoWTR_Config_Interface.showTooltipIDDESC,false,getglobal("GameTooltipTextLeft1"),WOWTR_Font2).." ", 1, 1, 1, true);   -- white color, wrap
+   if (WoWTR_Localization.lang == 'AR') then
+      GameTooltip:AddLine(QTR_ExpandUnitInfo(WoWTR_Config_Interface.showTooltipIDDESC,false,getglobal("GameTooltipTextLeft1"),WOWTR_Font2,-5).." ", 1, 1, 1, true);   -- white color, wrap
+   else
+      GameTooltip:AddLine(QTR_ExpandUnitInfo(WoWTR_Config_Interface.showTooltipIDDESC,false,getglobal("GameTooltipTextLeft1"),WOWTR_Font2).." ", 1, 1, 1, true);   -- white color, wrap
+   end
    getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
    GameTooltip:Show()   -- Show the tooltip
    end);
@@ -2522,7 +2526,7 @@ WOWTR_Panel9Text:SetPoint("TOPLEFT", WOWTR_OptionPanel9, "TOPLEFT", 25, -10);
 WOWTR_Panel9Text:SetWidth(640);
 WOWTR_Panel9Text:SetFont(WOWTR_Font2, 14);
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_Panel9Text:SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.generalText,false,WOWTR_Panel9Text,WOWTR_Font2,-50));        -- generalText
+   WOWTR_Panel9Text:SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.generalText,false,WOWTR_Panel9Text,WOWTR_Font2,-80));        -- generalText
 else
    WOWTR_Panel9Text:SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.generalText,false,WOWTR_Panel9Text,WOWTR_Font2,-50));        -- generalText
 end
@@ -2630,7 +2634,7 @@ WOWTR_Panel9Header2:SetJustifyH("LEFT");
 WOWTR_Panel9Header2:SetJustifyV("TOP");
 WOWTR_Panel9Header2:ClearAllPoints();
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_Panel9Header2:SetPoint("TOPLEFT", WOWTR_Panel9Header1, "BOTTOMLEFT", -28, -75);
+   WOWTR_Panel9Header2:SetPoint("TOPLEFT", WOWTR_Panel9Header1, "BOTTOMLEFT", 0, -75);
 else
    WOWTR_Panel9Header2:SetPoint("TOPLEFT", WOWTR_Panel9Header1, "BOTTOMLEFT", 0, -75);
 end
@@ -2643,7 +2647,7 @@ WOWTR_Panel9TextContact:SetJustifyH("LEFT");
 WOWTR_Panel9TextContact:SetJustifyV("TOP");
 WOWTR_Panel9TextContact:ClearAllPoints();
 if (WoWTR_Localization.lang == 'AR') then
-   WOWTR_Panel9TextContact:SetPoint("TOPLEFT", WOWTR_Panel9Header2, "TOPLEFT", -515, -20);
+   WOWTR_Panel9TextContact:SetPoint("TOPLEFT", WOWTR_Panel9Header2, "TOPLEFT", -545, -20);
 else
    WOWTR_Panel9TextContact:SetPoint("TOPLEFT", WOWTR_Panel9Header2, "TOPLEFT", 20, -20);
 end
@@ -2717,7 +2721,11 @@ if (string.len(WoWTR_Localization.addressWWW) > 1) then
       GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.linkWWWShow), 1, 1, 1, true);   -- white color, wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:Show() -- Show the tooltip
-      getglobal("GameTooltipTextLeft1"):SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.linkWWWShow,false,getglobal("GameTooltipTextLeft1"),WOWTR_Font2));   -- white color, wrap
+      if (WoWTR_Localization.lang == 'AR') then
+         getglobal("GameTooltipTextLeft1"):SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.linkWWWShow,false,getglobal("GameTooltipTextLeft1"),WOWTR_Font2, -20));   -- white color, wrap
+      else
+         getglobal("GameTooltipTextLeft1"):SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.linkWWWShow,false,getglobal("GameTooltipTextLeft1"),WOWTR_Font2));   -- white color, wrap
+      end
       end);
    WOWTR_linkButtonWWW:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip

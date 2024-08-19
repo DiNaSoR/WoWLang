@@ -1119,7 +1119,7 @@ function ST_SpellBookTranslateButton()
       end
 
       WOWTR_ToggleButtonS:ClearAllPoints()
-      WOWTR_ToggleButtonS:SetPoint("TOPLEFT", PlayerSpellsFrame, "TOPRIGHT", -100, 0)
+      WOWTR_ToggleButtonS:SetPoint("TOPLEFT", PlayerSpellsFrame, "TOPRIGHT", -110, 0)
       WOWTR_ToggleButtonS:SetScript("OnClick", STspell_ON_OFF)
       PlayerSpellsFrame:HookScript("OnHide", function() WOWTR_ToggleButtonS:Hide() end)
    end
