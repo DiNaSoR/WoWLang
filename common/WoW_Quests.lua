@@ -793,17 +793,24 @@ function QTR_QuestScrollFrame_OnShow()
    if (QTR_PS["active"]=="1" and QTR_PS["tracker"]=="1") then   -- translations enabled
       if (QuestScrollFrame.Contents.StoryHeader.Progress and QuestScrollFrame.Contents.StoryHeader.Progress:GetText()) then
          local txt = QuestScrollFrame.Contents.StoryHeader.Progress:GetText();
+         
          txt = string.gsub(txt, "Story Progress", QTR_ReverseIfAR(WoWTR_Localization.storyLineProgress));
          txt = string.gsub(txt, "Chapters", QTR_ReverseIfAR(WoWTR_Localization.storyLineChapters));
 
          local _font1, _size1, _3 = QuestScrollFrame.Contents.StoryHeader.Progress:GetFont();   -- get current font and size
-         QuestScrollFrame.Contents.StoryHeader.Progress:SetText(QTR_ReverseIfAR(txt));
+         QuestScrollFrame.Contents.StoryHeader.Progress:SetText(txt);
          QuestScrollFrame.Contents.StoryHeader.Progress:SetFont(WOWTR_Font2, _size1);
+         
          if (WoWTR_Localization.lang == 'AR') then
             -- Set text alignment to right using anchors
             QuestScrollFrame.Contents.StoryHeader.Progress:ClearAllPoints();
             QuestScrollFrame.Contents.StoryHeader.Progress:SetPoint("TOPRIGHT", QuestScrollFrame.Contents.StoryHeader, "TOPRIGHT", -10, -40);
             QuestScrollFrame.Contents.StoryHeader.Progress:SetJustifyH("RIGHT");
+         else
+            -- For other languages, set alignment to left
+            QuestScrollFrame.Contents.StoryHeader.Progress:ClearAllPoints();
+            QuestScrollFrame.Contents.StoryHeader.Progress:SetPoint("TOPLEFT", QuestScrollFrame.Contents.StoryHeader, "TOPLEFT", 10, -40);
+            QuestScrollFrame.Contents.StoryHeader.Progress:SetJustifyH("LEFT");
          end
       end
    end
