@@ -3141,6 +3141,7 @@ function WOW_ZmienKody(message, target)
    
    msg = string.gsub(msg, "NEW_LINE", "\n");
    if (target) then
+      msg = string.gsub(msg, "$target", WOWTR_AnsiReverse(target));
       msg = string.gsub(msg, "YOUR_NAME$", WOWTR_AnsiReverse(string.upper(target)));
       msg = string.gsub(msg, "YOUR_NAME", WOWTR_AnsiReverse(target));
    else
@@ -3639,4 +3640,28 @@ function WOWTR_DeleteSpecialCodes(txt,part)
       text = string.gsub(text, '$C', '');
    end
    return text;
+end
+
+-------------------------------------------------------------------------------------------------------------------
+
+--ADVANTURE MAP QUEST
+function ST_AdvantureMapFrm()			-- https://imgur.com/a/uQElPgm
+   if (QTR_PS["active"] == "1") then
+	local AdvMapFrm01 = AdventureMapQuestChoiceDialog.Details.Child.TitleHeader;
+	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm01, true, "quest", WOWTR_Font1);
+	local AdvMapFrm02 = AdventureMapQuestChoiceDialog.Details.Child.DescriptionText;
+	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm02, true, "quest");
+	local AdvMapFrm04 = AdventureMapQuestChoiceDialog.Details.Child.ObjectivesText;
+	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm04, true, "quest");
+   end
+   if (TT_PS["ui1"] == "1") then
+	local AdvMapFrm03 = AdventureMapQuestChoiceDialog.Details.Child.ObjectivesHeader;
+	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm03, false, "ui", WOWTR_Font1);
+	local AdvMapFrm05 = AdventureMapQuestChoiceDialog.RewardsHeader;
+	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm05, false, "ui", WOWTR_Font1);
+	local AdvMapFrm06 = AdventureMapQuestChoiceDialog.AcceptButton.Text;
+	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm06, false, "ui");
+	local AdvMapFrm07 = AdventureMapQuestChoiceDialog.DeclineButton.Text;
+	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm07, false, "ui");
+   end
 end
