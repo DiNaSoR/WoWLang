@@ -19,6 +19,7 @@ local ST_load6 = false;
 local ST_load7 = false;
 local ST_load8 = false;
 local ST_load9 = false;
+local ST_load10 = false;
 local ST_firstBoss = true;
 local ST_nameBoss = { };
 local ST_navBar1, ST_navBar2, ST_navBar3, ST_navBar4, ST_navBar5 = false;
@@ -1068,7 +1069,7 @@ function WOWSTR_onEvent(_, event, addonName)
       ST_load4 = true;
       CollectionsJournalTitleText:HookScript("OnShow", function() StartTicker(CollectionsJournalTitleText, ST_MountJournal, 0.2) end)
       WardrobeCollectionFrame:HookScript("OnShow", function() StartTicker(WardrobeCollectionFrame, ST_HelpPlateTooltip, 0.2) end)
-
+      
    elseif (addonName == 'Blizzard_PVPUI') then
       ST_load5 = true;
       PVPQueueFrameCategoryButton1:HookScript("OnShow", function() StartTicker(PVPQueueFrameCategoryButton1, ST_GroupPVPFinder, 0.2) end)
@@ -1080,17 +1081,21 @@ function WOWSTR_onEvent(_, event, addonName)
    elseif (addonName == 'Blizzard_DelvesDifficultyPicker') then
       ST_load7 = true;
       DelvesDifficultyPickerFrame:HookScript("OnShow", function() StartTicker(DelvesDifficultyPickerFrame, ST_showDelveDifficultFrame, 0.2) end)
-
+      
    elseif (addonName == 'Blizzard_ItemUpgradeUI') then
       ST_load8 = true;
       ItemUpgradeFrame:HookScript("OnShow", function() StartTicker(ItemUpgradeFrame, ST_ItemUpgradeFrm, 0.2) end)
-	 
+      
    elseif (addonName == 'Blizzard_WeeklyRewards') then
       ST_load9 = true;
       WeeklyRewardsFrame:HookScript("OnShow", function() StartTicker(WeeklyRewardsFrame, ST_WeeklyRewardsFrame, 0.2) end) 
+      
+   elseif (addonName == 'Blizzard_AdventureMap') then
+      ST_load10 = true;
+      AdventureMapQuestChoiceDialog.Details.Child.DescriptionText:HookScript("OnShow", function() StartTicker(AdventureMapQuestChoiceDialog.Details.Child.DescriptionText, ST_AdvantureMapFrm, 0.2) end) 
    end
-   
-   if (ST_load1 and ST_load2 and ST_load3 and ST_load4 and ST_load5 and ST_load6 and ST_load7 and ST_load8 and ST_load9) then    -- otworzono wszystkie dodatki Blizzarda
+
+   if (ST_load1 and ST_load2 and ST_load3 and ST_load4 and ST_load5 and ST_load6 and ST_load7 and ST_load8 and ST_load9 and ST_load10) then    -- otworzono wszystkie dodatki Blizzarda
       WOWSTR:UnregisterEvent("ADDON_LOADED");      -- wyłącz  nasłuchiwanie
    end
 end
