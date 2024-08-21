@@ -461,8 +461,17 @@ function ST_BuffOrDebuff()
          local ST_tlumaczenie = ST_TooltipsHS[ST_hash];
          ST_tlumaczenie = ST_TranslatePrepare(ST_leftText2, ST_tlumaczenie);
          local leftColR, leftColG, leftColB = _G["GameTooltipTextLeft2"]:GetTextColor();
-         GameTooltip:HookScript("OnHide", function() ST_MyGameTooltip:Hide(); end);
---         GameTooltip:GetOwner():HookScript("OnLeave", function() ST_MyGameTooltip:Hide(); end);     -- Hide() kasuje Ownera
+         
+         -- OnHide olayını sadece bir kez ekleyelim
+         if not GameTooltip.OnHideHooked then
+            GameTooltip:HookScript("OnHide", function() 
+               C_Timer.After(0.01, function() 
+                  ST_MyGameTooltip:Hide() 
+               end)
+            end)
+            GameTooltip.OnHideHooked = true
+         end
+
          ST_MyGameTooltip:SetOwner(WorldFrame, "ANCHOR_NONE" );
          ST_MyGameTooltip:ClearAllPoints();
          ST_MyGameTooltip:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", 0, 0);    -- pod przyciskiem od prawej strony
