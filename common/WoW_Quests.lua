@@ -1151,7 +1151,7 @@ function QTR_ObjectiveTrackerFrame_Titles()                       -- Translation
 			 BonusObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.bonusobjective));
 			 BonusObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 14);
           MonthlyActivitiesObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.travelerlog));
-			 MonthlyActivitiesObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 16);
+			 MonthlyActivitiesObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 14);
 
 			if (WoWTR_Localization.lang == 'AR') then
 			 --Added New Translation Campaign and Scenario for Arabic only
