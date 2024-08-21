@@ -1048,7 +1048,9 @@ function WOWSTR_onEvent(_, event, addonName)
 --print(addonName);
 --QTR_PS["Test"] = Frame; -- search data
    if (QTR_PS) then
+      C_Timer.After(1, function() 
       QTR_ObjectiveTrackerFrame_Titles() -- Addon adds translations when it starts
+      end)
    end
    if (addonName == 'Blizzard_PlayerSpells') then
       ST_Load1 = true;
@@ -2193,7 +2195,7 @@ end
 
 --ITEM UPGRADE FRAME
 function ST_ItemUpgradeFrm()			-- https://imgur.com/a/Vy6wNjO
-	--print("ST_ItemUpgradeFrm")
+   if (TT_PS["ui1"] == "1") then
 	local ItemUpFrm01 = ItemUpgradeFrameTitleText;
 	ST_CheckAndReplaceTranslationTextUI(ItemUpFrm01, false, "ui");
 	local ItemUpFrm02 = ItemUpgradeFrame.ItemInfo.MissingItemText;
@@ -2210,13 +2212,14 @@ function ST_ItemUpgradeFrm()			-- https://imgur.com/a/Vy6wNjO
 	ST_CheckAndReplaceTranslationTextUI(ItemUpFrm07, false, "ui");
 	local ItemUpFrm08 = ItemUpgradeFrameRightItemPreviewFrameTextLeft1;
 	ST_CheckAndReplaceTranslationTextUI(ItemUpFrm08, false, "ui");
+   end
 end
 
 -------------------------------------------------------------------------------------------------------
 
 --WEEKLY REWARDS - GREAT VAULT FRAME
 function ST_WeeklyRewardsFrame()
-    --print("ST_WeeklyRewardsFrame")
+   if (TT_PS["ui1"] == "1") then
     local WeeklyRFrm01 = WeeklyRewardsFrame.HeaderFrame.Text
     ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm01, false, "ui")
     local WeeklyRFrm02 = WeeklyRewardsFrame.RaidFrame.Name
@@ -2233,7 +2236,49 @@ function ST_WeeklyRewardsFrame()
         local WeeklyRFrm06 = WeeklyRewardsFrame.Overlay.Text
         ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm06, true, "ui")
     end
+   end
 end
+
+-------------------------------------------------------------------------------------------------------
+
+-- EVENT UNLOCKED TEXT FRAME
+function ST_EventToastManagerFrame()
+   if (TT_PS["ui1"] == "1") then
+    local EventTextScreen01 = EventToastManagerFrame.currentDisplayingToast.Title
+    ST_CheckAndReplaceTranslationTextUI(EventTextScreen01, true, "Collections:TextEvent", WOWTR_Font1);
+    local EventTextScreen02 = EventToastManagerFrame.currentDisplayingToast.SubTitle 
+    ST_CheckAndReplaceTranslationTextUI(EventTextScreen02, true, "Collections:TextEvent")
+	local EventTextScreen03 = EventToastManagerFrame.currentDisplayingToast.Description
+    ST_CheckAndReplaceTranslationTextUI(EventTextScreen03, true, "Collections:TextEvent")
+    local EventTextScreen04 = EventToastManagerFrame.currentDisplayingToast.Contents.Title
+    ST_CheckAndReplaceTranslationTextUI(EventTextScreen04, true, "Collections:TextEvent", WOWTR_Font1);
+    local EventTextScreen05 = EventToastManagerFrame.currentDisplayingToast.Contents.SubTitle
+    ST_CheckAndReplaceTranslationTextUI(EventTextScreen05, true, "Collections:TextEvent")
+    local EventTextScreen06 = EventToastManagerFrame.currentDisplayingToast.Contents.Description
+    ST_CheckAndReplaceTranslationTextUI(EventTextScreen06, true, "Collections:TextEvent")
+   end
+end
+
+-------------------------------------------------------------------------------------------------------
+
+-- RAID BOSS EMOTE FRAME
+function ST_RaidBossEmoteFrame()
+   if (TT_PS["ui1"] == "1") then
+	local RBossEmoteFrm04 = RaidBossEmoteFrame.slot1Text
+    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm04, false, "Collections:Emote")
+    local RBossEmoteFrm05 = RaidBossEmoteFrame.slot2Text
+    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm05, false, "Collections:Emote")
+    local RBossEmoteFrm06 = RaidBossEmoteFrame.slot3Text
+    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm06, false, "Collections:Emote")
+    local RBossEmoteFrm01 = RaidBossEmoteFrame.slot1
+    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm01, true, "Collections:Emote")
+    local RBossEmoteFrm02 = RaidBossEmoteFrame.slot2
+    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm02, true, "Collections:Emote")
+    local RBossEmoteFrm03 = RaidBossEmoteFrame.slot3
+    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm03, true, "Collections:Emote")
+   end
+end
+
 -------------------------------------------------------------------------------------------------------
 
 if ((GetLocale()=="enUS") or (GetLocale()=="enGB")) then
