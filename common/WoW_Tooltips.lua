@@ -462,7 +462,6 @@ function ST_BuffOrDebuff()
          ST_tlumaczenie = ST_TranslatePrepare(ST_leftText2, ST_tlumaczenie);
          local leftColR, leftColG, leftColB = _G["GameTooltipTextLeft2"]:GetTextColor();
          
-         -- OnHide olayını sadece bir kez ekleyelim
          if not GameTooltip.OnHideHooked then
             GameTooltip:HookScript("OnHide", function() 
                C_Timer.After(0.01, function() 
