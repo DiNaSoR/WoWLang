@@ -345,9 +345,9 @@ end
 if ((GetLocale()=="enUS") or (GetLocale()=="enGB")) then
 
 -- funkcja wywoływana po wyświetleniu się oryginalnego okienka Tooltip
-   GameTooltip:HookScript('OnShow', function(self, ...)
-      if (not WOWTR_wait(0.02, ST_GameTooltipOnShow)) then
-      -- opóźnienie 0.02 sek
+   GameTooltip:HookScript('OnUpdate', function(self, ...)
+      if (not WOWTR_wait(0.01, ST_GameTooltipOnShow)) then
+      -- opóźnienie 0.01 sek
       end
    end );
 
@@ -2160,16 +2160,33 @@ end
 -------------------------------------------------------------------------------------------------------
 
 --TOOLTIPS FRAME (click on chat frame) 
-function ST_ItemRefTooltip()			-- https://imgur.com/a/5Ooqnb2 
-	--print("ST_ItemRefTooltip");
-	local ItemRef01 = ItemRefTooltipTextLeft2;
-	ST_CheckAndReplaceTranslationTextUI(ItemRef01, false, "other");
-	local ItemRef02 = ItemRefTooltipTextLeft3;
-	ST_CheckAndReplaceTranslationTextUI(ItemRef02, false, "other");
-	local ItemRef03 = ItemRefTooltipTextLeft4;
-	ST_CheckAndReplaceTranslationTextUI(ItemRef03, false, "other");
-	local ItemRef04 = ItemRefTooltipTextLeft5;
-	ST_CheckAndReplaceTranslationTextUI(ItemRef04, false, "other");
+function ST_ItemRefTooltip()			-- https://imgur.com/a/5Ooqnb2
+    local ignorePatterns = {
+        "^Achievement in progress by",
+        "^Achievement earned by",
+        "You completed this on "
+    }
+
+    local function shouldIgnore(text)
+        for _, pattern in ipairs(ignorePatterns) do
+            if text:find(pattern) then
+                return true
+            end
+        end
+        return false
+    end
+
+    for i = 2, 20 do
+        local itemRefLeft = _G["ItemRefTooltipTextLeft" .. i];
+        if itemRefLeft and itemRefLeft:GetText() and not shouldIgnore(itemRefLeft:GetText()) then
+            ST_CheckAndReplaceTranslationTextUI(itemRefLeft, true, "other");
+        end
+
+        local itemRefRight = _G["ItemRefTooltipTextRight" .. i];
+        if itemRefRight and itemRefRight:GetText() and not shouldIgnore(itemRefRight:GetText()) then
+            ST_CheckAndReplaceTranslationTextUI(itemRefRight, true, "other");
+        end
+    end
 end
 
 -------------------------------------------------------------------------------------------------------

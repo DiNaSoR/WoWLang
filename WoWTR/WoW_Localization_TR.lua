@@ -259,7 +259,7 @@ WoWTR_Config_Interface = {
    saveUntranslatedTooltipsDESC = "Etkinleştirilirse çevrilmemiş araç ipuçları kaydedilecek",         -- If enabled, untranslated tooltips will be saved (TR:Etkinleştirilirse çevrilmemiş araç ipuçları kaydedilecek)
 
    titleTab9 = "Hakkında",                                                                            -- About (TR:Hakkında)
-   generalText = "\nWoWTR - İyi Eğlenceler Diler...\n\nOyun içeriğine kendi dilinizde erişim sağlayabilmeniz için gayretle çalışıyoruz. \nGörevler, konuşmalar ve altyazılarda Türkçe çeviri desteği sağlıyoruz.\n\nEklentinin ayarlar menüsünden çeşitli seçenekleri değiştirebilirsiniz.\n\nBize destek olmak için çevirisi yapılmayan metinleri kaydedebilirsiniz.\nDaha sonrasında discord kanalımız üzerinden bizimle kayıt dosyanızı paylaşarak\nTürkçe veritabanımızın gelişmesine katkı sağlayabilirsiniz.\n\n\n|cffEAC408Kayıt Dosyası Yolu:|r \n...World of Warcraft\\_retail_\\WTF\\Account\\[XXX]\\SavedVariables\\|cffEAC408WoWTR.lua|r\n\n",
+   generalText = "\nWoWTR: World of Warcraft Türkçe Yama Addonu\n\nBu addon, World of Warcraft oyununu Türkçe oynamak isteyen oyuncular için geliştirilmiştir. WoWTR, oyun içindeki metinleri, görev açıklamalarını, arayüz öğelerini ve daha fazlasını Türkçe\'ye çevirerek, Türk oyuncuların oyun deneyimini geliştirmeyi amaçlamaktadır.\n\n\nÖzellikler:\n - Oyun içi metinlerin Türkçe çevirisi\n - Görev açıklamalarının Türkçeleştirilmesi\n - Arayüz öğelerinin Türkçe gösterimi\n - NPC diyaloglarının çevirisi\n - Sürekli güncellenen çeviri veritabanı\n\n\nWoWTR, Türk WoW topluluğunun desteğiyle geliştirilmektedir.\nKeyifli oyunlar!\n\n\n|cffEAC408Kayıt Dosyası Yolu:|r \n...World of Warcraft\\_retail_\\WTF\\Account\\[XXX]\\SavedVariables\\|cffEAC408WoWTR.lua|r",
    welcomeText = "",
    welcomeButton = "Tamam - okundu",                                                                  -- Button: Close welcome panel
    showWelcome = "Karşılama panelini göster",                                                         -- Button: Show welcome panel
@@ -267,7 +267,7 @@ WoWTR_Config_Interface = {
    author = "Kod Yazar:",                                                                             -- Author: (TR:Kod Yazar:)
    email = "E-posta:",                                                                                -- E-mail: (TR:E-posta:)
    teamHeader = "WoWTR - İLETİŞİM",                                                                   -- WoWTR project team (TR:WoWTR)
-   textContact = "Aşağıdaki kanallardan bizimle iletişim kurabilirsiniz:",
+   textContact = "Katkıda bulunmak veya hata bildirmek için lütfen bizimle iletişime geçin.",
    linkWWWShow = "Web sayfamızın linkine ulaşmak için tıkla",
    linkWWWTitle = "İnternet sitesine bağlantı",
    linkDISCShow = "|cffffff00Discord|r bağlantısı için tıkla",
