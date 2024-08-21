@@ -345,9 +345,9 @@ end
 if ((GetLocale()=="enUS") or (GetLocale()=="enGB")) then
 
 -- funkcja wywoływana po wyświetleniu się oryginalnego okienka Tooltip
-   GameTooltip:HookScript('OnShow', function(self, ...)
-      if (not WOWTR_wait(0.02, ST_GameTooltipOnShow)) then
-      -- opóźnienie 0.02 sek
+   GameTooltip:HookScript('OnUpdate', function(self, ...)
+      if (not WOWTR_wait(0.01, ST_GameTooltipOnShow)) then
+      -- opóźnienie 0.01 sek
       end
    end );
 
