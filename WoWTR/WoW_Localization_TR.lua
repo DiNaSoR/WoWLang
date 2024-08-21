@@ -28,6 +28,7 @@ WoWTR_Localization = {
    scenariodung = "Senaryo",                                         -- Scenario/Dungeon
    objectives = "Tüm Hedefler",                                      -- All Objectives
    bonusobjective = "Bonus Hedef",								            -- Bonus Objective
+   travelerlog = "Seyyah günlüğü",                                     -- Traveler's Log
    rewards = "Ödüller",                                              -- Rewards
    storyLineProgress = "Hikaye İlerlemesi",                          -- StoryLine Progress
    storyLineChapters = "Bölümler",                                   -- StoryLine Chapters

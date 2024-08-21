@@ -28,6 +28,7 @@ WoWTR_Localization = {
    scenariodung = "シナリオ",                                            -- Scenario/Dungeon
    objectives = "目的",                                               -- Objectives 
    bonusobjective = "ボーナス目標",								            -- Bonus Objective
+   travelerlog = "旅人の記録",                                   -- Traveler's Log
    rewards = "報酬",                                                  -- Rewards 
    storyLineProgress = "ストーリーの進捗状況",                              -- Story Progress 
    storyLineChapters = "チャプター",                                      -- Chapters 

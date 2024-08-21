@@ -48,6 +48,7 @@ WoWTR_Localization = {
    WoWTR_Talent_enDESC = "Таланти: Англійська",
    WoWTR_Spellbook_trDESC = "Книга заклинань: Українська",
    WoWTR_Spellbook_enDESC = "Книга заклинань: Англійська",
+   travelerlog = "Щоденник мандрівника",                               -- Traveler's Log
    your_home = "Ваш Дім",
    welcomeIconPos = 245,
    resetButton1 = "Очистити збережені неперекладені тексти",

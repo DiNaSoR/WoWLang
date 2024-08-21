@@ -1686,34 +1686,28 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function ST_GroupMplusFinder()
---print("ST_GroupMplusFinder");
---Player vs. Player
-   if (TT_PS["ui3"] == "1") then
-      local GMplusobj01 = ChallengesFrame.SeasonChangeNoticeFrame.NewSeason;
-      ST_CheckAndReplaceTranslationTextUI(GMplusobj01, true, "ui");
-
-      local GMplusobj02 = ChallengesFrame.SeasonChangeNoticeFrame.SeasonDescription;
-      ST_CheckAndReplaceTranslationTextUI(GMplusobj02, true, "ui");
-
-      local GMplusobj03 = ChallengesFrame.SeasonChangeNoticeFrame.SeasonDescription2;
-      ST_CheckAndReplaceTranslationTextUI(GMplusobj03, true, "ui");
-
-      local GMplusobj04 = ChallengesFrame.WeeklyInfo.Child.Description;
-      ST_CheckAndReplaceTranslationTextUI(GMplusobj04, true, "ui");
-
-      local GMplusobj05 = ChallengesFrame.WeeklyInfo.Child.SeasonBest;
-      ST_CheckAndReplaceTranslationTextUI(GMplusobj05, true, "ui");
-
-      local GMplusobj06 = ChallengesFrame.WeeklyInfo.Child.ThisWeekLabel;
-      ST_CheckAndReplaceTranslationTextUI(GMplusobj06, true, "ui");
-
-      local GMplusobj07 = ChallengesFrame.WeeklyInfo.Child.WeeklyChest.RunStatus;
-      ST_CheckAndReplaceTranslationTextUI(GMplusobj07, true, "ui");
-
-      local GMplusobj08 = ChallengesFrame.WeeklyInfo.Child.DungeonScoreInfo.Title;
-      ST_CheckAndReplaceTranslationTextUI(GMplusobj08, true, "ui");
+   if TT_PS["ui3"] == "1" then
+     local elements = {
+       {ChallengesFrame.SeasonChangeNoticeFrame.NewSeason, "ui"},
+       {ChallengesFrame.SeasonChangeNoticeFrame.SeasonDescription, "ui"},
+       {ChallengesFrame.SeasonChangeNoticeFrame.SeasonDescription2, "ui"},
+       {ChallengesFrame.WeeklyInfo.Child.Description, "ui"},
+       {ChallengesFrame.WeeklyInfo.Child.SeasonBest, "ui"},
+       {ChallengesFrame.WeeklyInfo.Child.ThisWeekLabel, "ui"},
+       {ChallengesFrame.WeeklyInfo.Child.WeeklyChest.RunStatus, "ui"},
+       {ChallengesFrame.WeeklyInfo.Child.DungeonScoreInfo.Title, "ui"},
+     };
+ 
+     for _, elementData in ipairs(elements) do
+       local element, prefix = unpack(elementData);
+       if WoWTR_Localization.lang == 'AR' then
+         ST_CheckAndReplaceTranslationText(element, true, prefix, false, false, -10);
+       else
+         ST_CheckAndReplaceTranslationTextUI(element, true, prefix);
+       end
+     end
    end
-end
+ end
 
 -------------------------------------------------------------------------------------------------------
 

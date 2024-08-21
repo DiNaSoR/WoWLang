@@ -28,6 +28,7 @@ WoWTR_Localization = {
    scenariodung = "Scenariusz",                                      -- Scenario/Dungeon
    objectives = "Cele zadanie",                                      -- Objectives 
    bonusobjective = "Cel bonusowy",                                  -- Bonus Objective
+   travelerlog = "Dziennik podróżnika",                                     -- Traveler's Log
    rewards = "Nagrody",                                              -- Rewards 
    storyLineProgress = "Postęp historii",                            -- Story Progress 
    storyLineChapters = "Rozdziały",                                  -- Chapters 
