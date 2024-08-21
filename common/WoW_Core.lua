@@ -14,6 +14,7 @@ WOWTR_waitFrame = nil;
 ---------------------------------------------------------------------------------------------------------
 
 function StringHash(text)           -- funkcja tworząca Hash (32-bitowa liczba) podanego tekstu
+   if (not text or (#text == 0)) then return 0 end  -- Check if string is empty or nil
    local counter = 1;
    local pomoc = 0;
    local dlug = string.len(text);
