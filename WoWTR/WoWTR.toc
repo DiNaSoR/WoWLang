@@ -1,9 +1,9 @@
 ﻿## Interface: 110002
-## Title: WoWTR |cff8080ff11.00B3|r
-## Version: 11.00B3
+## Title: WoWTR |cff8080ff11.06|r
+## Version: 11.06
 ## Notes: Oyun içindeki Görevleri Türkçe'ye tercüme eder.
 ## Notes_en: AddOn displays the translated quest informations in Turkish.
-## Author: Platine & WoWTR team
+## Author: Platine & hknylmz
 ## E-mail: info@wowtr.com.tr
 ## WWW: https://www.wowtr.com.tr
 ## DefaultState: Enabled
