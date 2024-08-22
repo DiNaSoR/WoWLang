@@ -473,6 +473,8 @@ function WOWTR_onEvent(self, event, name, ...)
       PingSystemTutorialTitleText:HookScript("OnShow", function() StartTicker(PingSystemTutorialTitleText, ST_PingSystemTutorial, 0.2) end);
       BankFrame:HookScript("OnShow", function() StartTicker(BankFrame, ST_WarbandBankFrm, 0.2) end);
       ItemRefTooltip:HookScript("OnShow", function() StartTicker(ItemRefTooltip, ST_ItemRefTooltip, 0.2) end);
+	  EventToastManagerFrame:HookScript("OnShow", function() StartTicker(EventToastManagerFrame, ST_EventToastManagerFrame, 0.2) end);
+	  RaidBossEmoteFrame:HookScript("OnShow", function() StartTicker(RaidBossEmoteFrame, ST_RaidBossEmoteFrame, 0.2) end);
       BB_OknoTRonline();
       DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..WoWTR_Localization.addonName.."  ver. "..WOWTR_version.." - "..WoWTR_Localization.started);
       if ((not QTR_PS["welcome"]) and (string.len(WoWTR_Config_Interface.welcomeText) > 1)) then
