@@ -111,9 +111,7 @@ jobs:
         # Use a heredoc for multiline string with actual newlines
         NEW_BODY=$(cat << EOF
         ## 📦 Addons
-
         $INCLUDED_ADDONS
-
         ## 🔍 Changes
         EOF
         )
