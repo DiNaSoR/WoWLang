@@ -57,7 +57,7 @@ jobs:
         
         VERSION=${GITHUB_REF#refs/tags/v}
         DATE=$(date +'%Y-%m-%d')
-        ADDONS=(WoWAR WoWPL WoWTR WoWHU WoWUA WoWJP)
+        ADDONS=(WoWAR WoWPL WoWTR WoWHU WoWUA)
         INCLUDED_ADDONS=""
         
         # Create necessary directories
