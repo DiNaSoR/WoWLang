@@ -1626,6 +1626,7 @@ if (#WOWTR_Fonts > 1) then
             end;
          UIDropDownMenu_AddButton(info);
       end
+   UIDropDownMenu_SetSelectedValue(WOWTR_Panel4SelectF, QTR_PS["FontFile"]);
    end);
 end   -- if
    

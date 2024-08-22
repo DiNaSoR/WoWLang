@@ -28,7 +28,6 @@ WoWTR_Localization = {
    scenariodung = "Scenariusz",                                      -- Scenario/Dungeon
    objectives = "Cele zadanie",                                      -- Objectives 
    bonusobjective = "Cel bonusowy",                                  -- Bonus Objective
-   travelerlog = "Dziennik podróżnika",                                     -- Traveler's Log
    rewards = "Nagrody",                                              -- Rewards 
    storyLineProgress = "Postęp historii",                            -- Story Progress 
    storyLineChapters = "Rozdziały",                                  -- Chapters 
@@ -355,6 +354,6 @@ end
 
 WOWTR_Font1 = WoWTR_Localization.mainFolder.."\\Fonts\\morpheus_pl.ttf";
 WOWTR_Font2 = WoWTR_Localization.mainFolder.."\\Fonts\\frizquadratatt_pl.ttf";
-WOWTR_Fonts = {"frizquadratatt_pl.ttf"};
+WOWTR_Fonts = {"frizquadratatt_pl.ttf", "Expressway.ttf"};
 local GetAddOnMetadata = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata;
 WOWTR_version = GetAddOnMetadata(WoWTR_Localization.addonFolder, "Version");
