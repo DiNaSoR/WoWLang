@@ -133,11 +133,11 @@ jobs:
           LABEL_COMMITS=$(echo "$COMMITS" | grep -i "\[$label\]" || true)
           if [ ! -z "$LABEL_COMMITS" ]; then
             NEW_BODY+=$'\n'"### ${LABELS[$label]}"$'\n\n'
-            while IFS= read -r commit; do
-              COMMIT_HASH=$(echo $commit | cut -d' ' -f1)
-              COMMIT_MSG=$(echo $commit | cut -d' ' -f2- | sed -E "s/\[$label\]//i" | xargs)
+            echo "$LABEL_COMMITS" | while IFS= read -r commit; do
+              COMMIT_HASH=$(echo "$commit" | cut -d' ' -f1)
+              COMMIT_MSG=$(echo "$commit" | cut -d' ' -f2- | sed -E "s/\[$label\]//i" | sed "s/'/\\\\'/g")
               NEW_BODY+="- $COMMIT_MSG ([${COMMIT_HASH}](https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}))"$'\n'
-            done <<< "$LABEL_COMMITS"
+            done
             NEW_BODY+=$'\n'
           fi
         done
@@ -146,11 +146,11 @@ jobs:
         UNCATEGORIZED=$(echo "$COMMITS" | grep -vE "$(IFS=\|; echo "${!LABELS[*]}" | sed -e 's/^/\\[/' -e 's/$/\\]/i')" || true)
         if [ ! -z "$UNCATEGORIZED" ]; then
           NEW_BODY+=$'\n'"### 🔀 Other Changes"$'\n\n'
-          while IFS= read -r commit; do
-            COMMIT_HASH=$(echo $commit | cut -d' ' -f1)
-            COMMIT_MSG=$(echo $commit | cut -d' ' -f2- | xargs)
+          echo "$UNCATEGORIZED" | while IFS= read -r commit; do
+            COMMIT_HASH=$(echo "$commit" | cut -d' ' -f1)
+            COMMIT_MSG=$(echo "$commit" | cut -d' ' -f2- | sed "s/'/\\\\'/g")
             NEW_BODY+="- $COMMIT_MSG ([${COMMIT_HASH}](https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}))"$'\n'
-          done <<< "$UNCATEGORIZED"
+          done
           NEW_BODY+=$'\n'
         fi
         
