@@ -57,7 +57,7 @@ jobs:
         
         VERSION=${GITHUB_REF#refs/tags/v}
         DATE=$(date +'%Y-%m-%d')
-        ADDONS=(WoWAR WoWPL WoWTR WoWHU WoWUA)
+        ADDONS=(WoWAR WoWPL WoWTR WoWHU WoWUA WoWJP)
         INCLUDED_ADDONS=""
         
         # Create necessary directories
@@ -135,8 +135,8 @@ jobs:
             NEW_BODY+=$'\n'"### ${LABELS[$label]}"$'\n\n'
             echo "$LABEL_COMMITS" | while IFS= read -r commit; do
               COMMIT_HASH=$(echo "$commit" | cut -d' ' -f1)
-              COMMIT_MSG=$(echo "$commit" | cut -d' ' -f2- | sed -E "s/\[$label\]//i" | sed "s/'/\\\\'/g")
-              NEW_BODY+="- $COMMIT_MSG ([${COMMIT_HASH}](https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}))"$'\n'
+              COMMIT_MSG=$(echo "$commit" | cut -d' ' -f2- | sed "s/'/\\\\'/g")
+              NEW_BODY+="- [$label] $COMMIT_MSG ([${COMMIT_HASH}](https://github.com/${{ github.repository }}/commit/${COMMIT_HASH}))"$'\n'
             done
             NEW_BODY+=$'\n'
           fi
