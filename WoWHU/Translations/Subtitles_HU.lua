@@ -2,7 +2,7 @@
 -- a WowHunCraft addonhoz
 
 MF_lang = "HU";          -- translation language
-MF_date = "2024-07-25";  -- date of creation base
+MF_date = "2024-08-23";  -- date of creation base
 MF_base = "1883";        -- version (number of hash translations)
 
 -- intro translation table 

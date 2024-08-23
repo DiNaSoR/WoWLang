@@ -18,7 +18,7 @@ WoWTR_Localization = {
    addressTwitch = "",                                               -- address of Twitch page 
    addressFanPage = "",                                              -- address of FanPage 
    addressEmail = "",                                                -- address of e-mail
-   addressCurse = "https://www.curseforge.com/wow/addons/wowpopolsku",                -- address of CurseForge page
+   addressCurse = "https://legacy.curseforge.com/wow/addons/wowinjapanese",           -- address of CurseForge page
    addressPayPal = "https://www.paypal.com/donate/?hosted_button_id=FC2NVQ5DN7GVA",   -- address of PayPal page
    addressBlik = "",                                                 -- telephon number for BLIK payment
    gossipText = "ゴシップ",                                              -- gossip text 
@@ -27,8 +27,6 @@ WoWTR_Localization = {
    campaignquests = "キャンペーンクエスト",                                   -- Campaign Quests
    scenariodung = "シナリオ",                                            -- Scenario/Dungeon
    objectives = "目的",                                               -- Objectives 
-   bonusobjective = "ボーナス目標",								            -- Bonus Objective
-   travelerlog = "旅人の記録",                                   -- Traveler's Log
    rewards = "報酬",                                                  -- Rewards 
    storyLineProgress = "ストーリーの進捗状況",                              -- Story Progress 
    storyLineChapters = "チャプター",                                      -- Chapters 
