@@ -2252,18 +2252,28 @@ end
 -- EVENT UNLOCKED TEXT FRAME
 function ST_EventToastManagerFrame()
    if (TT_PS["ui1"] == "1") then
-    local EventTextScreen01 = EventToastManagerFrame.currentDisplayingToast.Title
-    ST_CheckAndReplaceTranslationTextUI(EventTextScreen01, true, "Collections:TextEvent", WOWTR_Font1);
-    local EventTextScreen02 = EventToastManagerFrame.currentDisplayingToast.SubTitle 
-    ST_CheckAndReplaceTranslationTextUI(EventTextScreen02, true, "Collections:TextEvent")
-	local EventTextScreen03 = EventToastManagerFrame.currentDisplayingToast.Description
-    ST_CheckAndReplaceTranslationTextUI(EventTextScreen03, true, "Collections:TextEvent")
-    local EventTextScreen04 = EventToastManagerFrame.currentDisplayingToast.Contents.Title
-    ST_CheckAndReplaceTranslationTextUI(EventTextScreen04, true, "Collections:TextEvent", WOWTR_Font1);
-    local EventTextScreen05 = EventToastManagerFrame.currentDisplayingToast.Contents.SubTitle
-    ST_CheckAndReplaceTranslationTextUI(EventTextScreen05, true, "Collections:TextEvent")
-    local EventTextScreen06 = EventToastManagerFrame.currentDisplayingToast.Contents.Description
-    ST_CheckAndReplaceTranslationTextUI(EventTextScreen06, true, "Collections:TextEvent")
+      local toast = EventToastManagerFrame.currentDisplayingToast
+      if toast then
+         local EventTextScreen01 = toast.Title
+         ST_CheckAndReplaceTranslationTextUI(EventTextScreen01, true, "Collections:TextEvent", WOWTR_Font1)
+         
+         local EventTextScreen02 = toast.SubTitle
+         ST_CheckAndReplaceTranslationTextUI(EventTextScreen02, true, "Collections:TextEvent")
+         
+         local EventTextScreen03 = toast.Description
+         ST_CheckAndReplaceTranslationTextUI(EventTextScreen03, true, "Collections:TextEvent")
+         
+         if toast.Contents then
+            local EventTextScreen04 = toast.Contents.Title
+            ST_CheckAndReplaceTranslationTextUI(EventTextScreen04, true, "Collections:TextEvent", WOWTR_Font1)
+            
+            local EventTextScreen05 = toast.Contents.SubTitle
+            ST_CheckAndReplaceTranslationTextUI(EventTextScreen05, true, "Collections:TextEvent")
+            
+            local EventTextScreen06 = toast.Contents.Description
+            ST_CheckAndReplaceTranslationTextUI(EventTextScreen06, true, "Collections:TextEvent")
+         end
+      end
    end
 end
 
