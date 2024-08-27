@@ -1374,6 +1374,8 @@ function ST_ShowAbility()            -- sprawdzanie tekstów Ability
          local txt = obj:GetText();
 
          ST_CheckAndReplaceTranslationText(obj, true, "Dungeon&Raid:Ability:".._G["EncounterJournalInfoHeader"..i.."HeaderButton"].title:GetText());
+         local ST_bossDescription2 = EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription;
+         ST_CheckAndReplaceTranslationText(ST_bossDescription2, false);
       end
    end
 end
