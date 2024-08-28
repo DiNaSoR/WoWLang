@@ -2,8 +2,8 @@
 -- do dodatku WoWpoPolsku
 
 MF_lang = "PL";          -- translation language
-MF_date = "2024-08-23";  -- date of creation base
-MF_base = "2638";        -- version (number of hash translations)
+MF_date = "2024-08-27";  -- date of creation base
+MF_base = "2639";        -- version (number of hash translations)
 
 -- intro translation table 
 MF_Data = {  
@@ -3161,6 +3161,7 @@ MF_Hash = {
 [17632192]="[grzmot]" ,
 [18542661]="Emberthal: Ty, który ukrywałeś się wśród śmiertelników, podczas gdy inne smoki walczyły i umierały, by chronić nasz świat!" ,
 [18847475]="i zniszczył," ,
+[19597533]="YOUR_GENDER(Zrobiłeś;Zrobiłaś) to, $N." ,
 [21546769]="Jesteśmy w domu." ,
 [21821614]="Ilu możesz nam dać?" ,
 [22532902]="Ruszyliśmy w pościg za królewskim okrętem flagowym, aż ten w końcu osiadł na mieliźnie..." ,
