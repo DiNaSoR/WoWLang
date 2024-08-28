@@ -1746,15 +1746,15 @@ end
 -- wyświetla oryginalny tekst angielski
 function QTR_Translate_Off(typ,event)
    QTR_display_constants(0);
-   if (QuestNPCModelText:IsVisible() and (QTR_ModelTextHash>0)) then         -- jest wyświetlony tekst QuestNPCModelText
+   if (QuestNPCModelText:IsVisible() and (QTR_ModelTextHash>0)) then
       QuestNPCModelText:SetText(QTR_ModelText_EN);
       QuestNPCModelText:SetFont(Original_Font2, 13);
    end
    
-   if (typ==1) then        -- pełne przełączenie (jest tłumaczenie)
+   if (typ==1) then
       local numer_ID = QTR_quest_ID;
       str_ID = tostring(numer_ID);
-      if (numer_ID>0 and QTR_QuestData[str_ID]) then  -- przywróć oryginalną wersję napisów
+      if (numer_ID>0 and QTR_QuestData[str_ID]) then
          QTR_ToggleButton0:SetText("Quest ID="..QTR_quest_ID.." (EN)");
          QTR_ToggleButton1:SetText("Quest ID="..QTR_quest_ID.." (EN)");
          QTR_ToggleButton2:SetText("Quest ID="..QTR_quest_ID.." (EN)");
@@ -1764,53 +1764,96 @@ function QTR_Translate_Off(typ,event)
          if (isImmersion()) then
             QTR_ToggleButton4:SetText("Quest ID="..QTR_quest_ID.." (EN)");
             QTR_Immersion_OFF();
-            ImmersionFrame.TalkBox.TextFrame.Text:RepeatTexts();   --reload text
+            ImmersionFrame.TalkBox.TextFrame.Text:RepeatTexts();
          end
          if (isStoryline() and Storyline_NPCFrame:IsVisible()) then
             QTR_ToggleButton5:SetText("Quest ID="..QTR_quest_ID.." (EN)");
             QTR_Storyline_OFF(1);
          end
-		    local WOW_width = 280;
-            if (QuestInfoRewardsFrame:IsVisible()) then
-                WOW_width = 280;
-            end
+         local WOW_width = 280;
+         if (QuestInfoRewardsFrame:IsVisible()) then
+            WOW_width = 280;
+         end
          QuestInfoTitleHeader:SetFont(Original_Font1, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtitle.size or 18);
          QuestProgressTitleText:SetFont(Original_Font1, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtitle.size or 18);
          QuestInfoTitleHeader:SetText(QTR_quest_EN[QTR_quest_ID].title);
          QuestProgressTitleText:SetText(QTR_quest_EN[QTR_quest_ID].title);
-		    QuestInfoDescriptionText:SetWidth(WOW_width - 1);
-            QuestInfoObjectivesText:SetWidth(WOW_width - 1);
-            QuestProgressText:SetWidth(WOW_width - 1);
-            QuestInfoRewardText:SetWidth(WOW_width);
+         QuestInfoDescriptionText:SetWidth(WOW_width - 1);
+         QuestInfoObjectivesText:SetWidth(WOW_width - 1);
+         QuestProgressText:SetWidth(WOW_width - 1);
+         QuestInfoRewardText:SetWidth(WOW_width);
          QuestInfoDescriptionText:SetFont(Original_Font2, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtext.size or tonumber(QTR_PS["fontsize"]));
          QuestInfoObjectivesText:SetFont(Original_Font2, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtext.size or tonumber(QTR_PS["fontsize"]));
          QuestProgressText:SetFont(Original_Font2, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtext.size or tonumber(QTR_PS["fontsize"]));
          QuestInfoRewardText:SetFont(Original_Font2, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtext.size or tonumber(QTR_PS["fontsize"]));
          QuestInfoDescriptionText:SetText(QTR_quest_EN[QTR_quest_ID].details);
-         if (WoWTR_Localization.lang == 'AR') then
-            QuestInfoDescriptionText:SetJustifyH("LEFT");
-         else
-            QuestInfoDescriptionText:SetJustifyH("LEFT");
-         end
          QuestInfoObjectivesText:SetText(QTR_quest_EN[QTR_quest_ID].objectives);
-         if (WoWTR_Localization.lang == 'AR') then
-            QuestInfoObjectivesText:SetJustifyH("LEFT");
-         else
-            QuestInfoObjectivesText:SetJustifyH("LEFT");
-         end
          QuestProgressText:SetText(QTR_quest_EN[QTR_quest_ID].progress);
-         if (WoWTR_Localization.lang == 'AR') then
-            QuestProgressText:SetJustifyH("LEFT");
-         else
-            QuestProgressText:SetJustifyH("LEFT");
-         end
          QuestInfoRewardText:SetText(QTR_quest_EN[QTR_quest_ID].completion);
+
+         -- Reset text alignment and justification for all languages
+         QuestInfoDescriptionText:SetJustifyH("LEFT");
+         QuestInfoObjectivesText:SetJustifyH("LEFT");
+         QuestProgressText:SetJustifyH("LEFT");
+
+         -- Reset experience text
+         QuestInfoXPFrame.ReceiveText:SetText(EXPERIENCE_COLON);
+         QuestInfoXPFrame.ReceiveText:SetFont(Original_Font2, 13);
+         QuestInfoXPFrame.ReceiveText:SetJustifyH("LEFT");
+
+         -- Reset item choose and receive text
+         QuestInfoRewardsFrame.ItemChooseText:SetText(QTR_quest_EN[QTR_quest_ID].itemchoose);
+         QuestInfoRewardsFrame.ItemReceiveText:SetText(QTR_quest_EN[QTR_quest_ID].itemreceive);
+         QuestInfoRewardsFrame.ItemChooseText:SetFont(Original_Font2, 13);
+         QuestInfoRewardsFrame.ItemReceiveText:SetFont(Original_Font2, 13);
+         QuestInfoRewardsFrame.ItemChooseText:SetJustifyH("LEFT");
+         QuestInfoRewardsFrame.ItemReceiveText:SetJustifyH("LEFT");
+
+         -- Hide Arabic-specific text elements
+         if QTR_QuestDetail_ItemReceiveText then QTR_QuestDetail_ItemReceiveText:Hide() end
+         if QTR_QuestReward_ItemReceiveText then QTR_QuestReward_ItemReceiveText:Hide() end
+         if QTR_QuestDetail_InfoXP then QTR_QuestDetail_InfoXP:Hide() end
+         if QTR_QuestReward_InfoXP then QTR_QuestReward_InfoXP:Hide() end
+
+         -- Reset reward headers
+         local rewardHeaders = {
+            REWARD_CHOICES = "ItemChooseText",
+            REWARD_ITEMS = "ItemReceiveText",
+            REWARD_AURA = "rewardAura",
+            REWARD_SPELL = "rewardSpell",
+            REWARD_COMPANION = "rewardCompanion",
+            REWARD_FOLLOWER = "rewardFollower",
+            REWARD_REPUTATION = "rewardReputation",
+            REWARD_TITLE = "rewardTitle",
+            REWARD_TRADESKILL = "rewardTradeskill",
+            REWARD_UNLOCK = "rewardUnlock",
+            REWARD_BONUS = "rewardBonus"
+         }
+
+         for constant, property in pairs(rewardHeaders) do
+            if QuestInfoRewardsFrame[property] then
+               QuestInfoRewardsFrame[property]:SetText(_G[constant]);
+               QuestInfoRewardsFrame[property]:SetFont(Original_Font2, 13);
+               QuestInfoRewardsFrame[property]:SetJustifyH("LEFT");
+            end
+         end
+
+         -- Process reward headers in the pool
+         for fontString in QuestInfoRewardsFrame.spellHeaderPool:EnumerateActive() do
+            for constant, _ in pairs(rewardHeaders) do
+               if fontString:GetText() == QTR_Messages[string.lower(constant)] then
+                  fontString:SetText(_G[constant]);
+                  fontString:SetFont(Original_Font2, 13);
+                  fontString:SetJustifyH("LEFT");
+               end
+            end
+         end
       end
    else   
       if (QTR_curr_trans == "0") then
          if ((ImmersionFrame ~= nil ) and (ImmersionFrame.TalkBox:IsVisible() )) then
             if (not WOWTR_wait(0.2,QTR_Immersion_OFF_Static)) then
-               -- podmiana tekstu z opóźnieniem 0.2 sek
+               -- delay text replacement by 0.2 sec
             end
          end
       end
