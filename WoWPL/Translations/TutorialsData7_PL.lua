@@ -2,8 +2,8 @@
 -- do dodatku WoWpoPolsku-Tutorials
 
 TT_lang = "PL";         -- translation language
-TT_date = "2024-08-23"; -- date of creation base
-TT_base = "405";      -- version (number of translations)
+TT_date = "2024-08-27"; -- date of creation base
+TT_base = "411";      -- version (number of translations)
 
 -- tutorial translation table: [Hash] = "translation text" 
 Tut_Data7 = {  
@@ -315,6 +315,7 @@ Tut_Data7 = {
 [3320637317]="Wybierz swoje Doświadczenie Shadowlands", 
 [3323305457]="Otwórz swoją Książkę Czarów i znajdź |cFF00FFFFShield Slam|r", 
 [3325980160]="Otwórz swoją Księgę Zaklęć i odszukaj |cFF00FFFFPrzerażenie (Fear)|r", 
+[3337142275]="Którą budowlę naszej placówki powinniśmy zbudować?", 
 [3341913344]="Spustoszenie", 
 [3344276652]="Pomóż Pierścieniowi Ziemi", 
 [3369157270]="Tajny zakon paladynów czuwa nad miejscem spoczynku wielkiego obserwatora tytanów Tyr od setek lat. Historia mówi, że jego potężny młot bojowy został tam pochowany.|n|nOstatnie wydarzenia zagroziły bezpieczeństwu ich tajnej szarży, dlatego zaapelowali o pomoc do paladynów w całym Azeroth.", 
@@ -404,12 +405,17 @@ Tut_Data7 = {
 [4189974740]="Naciśnij |cFF00FFFF1|r i rzuć |cFF00FFFFShadow Bolt|r|n|nNie ruszaj się, gdy go rzucasz.", 
 [4196087754]="W pobliżu dostępne jest kolejne zadanie. Spójrz na osobę ze znakiem |T1065418:16:16:0:0:1024:512:981:1013:1:33|t", 
 [4201002352]="Kup Burzyciel, potężny pojazd zdolny zadawać obrażenia oblężnicze, będący w stanie niszczyć wrogie struktury oraz wrota.", 
+[4225277680]="|nZaginiona Ekspedycja", 
+[4248356592]="|nStarożytny Bazar", 
 [4256164532]="Te zakładki wyświetlają twoje aktualne zaklęcia.", 
 [4266411616]="Wyświetl swoje |cFF00FFFFSpecjalizacje Bojowe|r", 
 [4270904624]="Kliknij tutaj |cFF00FFFFLPM|r, aby ustawić tę lokalizację jako twoje zameldowanie.", 
 [4271900237]="Kliknij tutaj |cFF00FFFFLPM|r, aby zamknąć mapę.", 
+[4280972331]="Czy chcesz posiąść czwartą broń artefaktową?", 
 [4282347842]="Użyj |cFFFFFFFFRozdarcia (Rip)|r.|n|nWydaj 5 |cFFFFFFFFpunktów kombinacji|r dla maksymalnych obrażeń.	", 
 [4282547118]="Kliknij |cFF00FFFFPrawym Przyciskiem Myszy (PPM)|r |A:NPE_RightClick:16:16:0:0|a na znaku |A:NPE_ExclamationPoint:16:16:0:0|a, aby pobrać swoje pierwsze zadanie.", 
 [4286171992]="Wykorzystaj swoją |cFFFF0000Wściekłość|r!|n|nWciśnij|cFF00FFFF 1|r i użyj |cFF00FFFFSlam|r", 
 [4287687658]="Otwórz Księgę Czarów i znajdź  |cFF00FFFFBlackout Kick|r", 
+[4287915313]="|nCzeluść", 
+[4291537786]="Wybierz swój artefakt.", 
 } 
