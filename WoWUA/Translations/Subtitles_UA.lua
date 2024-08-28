@@ -2,7 +2,7 @@
 -- for the addon WoW-UA
 
 MF_lang = "UA";          -- translation language
-MF_date = "2024-07-24";  -- date of creation base
+MF_date = "2024-08-23";  -- date of creation base
 MF_base = "3927";        -- version (number of hash translations)
 
 -- intro translation table 

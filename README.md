@@ -2,7 +2,7 @@
 ### 🌍 Supported Languages [AR,PL,TR,UA,HU,JP]
 ### ⚠️ Not supported by Blizzard ⚠️
 
-Welcome to the official repository for **WoW-Lang**, a comprehensive project dedicated to translating World of Warcraft's vast content into multiple languages, **not supported by Blizzard**. Our goal is to make the game accessible and enjoyable for players around the world, no matter what language they speak.
+Welcome to the official repository for **WoW-Lang**, a comprehensive project dedicated to translating World of Warcraft's vast content into multiple languages, **not supported by Blizzard**. Our goal is to make the game accessible and enjoyable for players around the world, no matter what language they speak. 
 
 ---
 

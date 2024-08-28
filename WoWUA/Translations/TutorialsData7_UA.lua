@@ -2,7 +2,7 @@
 -- for the addon WoW-UA Tutorials
 
 TT_lang = "UA";         -- translation language
-TT_date = "2024-07-24"; -- date of creation base
+TT_date = "2024-08-23"; -- date of creation base
 TT_base = "1024";      -- version (number of translations)
 
 -- tutorial translation table: [Hash] = "translation text" 

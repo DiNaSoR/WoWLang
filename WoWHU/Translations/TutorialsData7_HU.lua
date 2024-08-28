@@ -2,7 +2,7 @@
 -- a WowHunCraft addonhoz
 
 TT_lang = "HU";         -- translation language
-TT_date = "2024-07-25"; -- date of creation base
+TT_date = "2024-08-23"; -- date of creation base
 TT_base = "715";      -- version (number of translations)
 
 -- tutorial translation table: [Hash] = "translation text" 
