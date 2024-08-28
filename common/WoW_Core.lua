@@ -365,6 +365,15 @@ function WOWTR_CheckVars()
    if (not ST_PM["timer"] ) then        -- uaktywnij zmiany timera przywracania oryginalnego tekstu
       ST_PM["timer"] = "10";   
    end
+   
+   if (WoWTR_Localization.lang == 'AR') then
+      if not CH_PM then
+         CH_PM = {};
+     end
+     if not CH_PM["fontsize"] then
+         CH_PM["fontsize"] = "13";  -- Set a default value
+     end
+   end
 
    if (not WoWTR_minimapDB) then        -- inicjalizacja zmiennej globalnej na pozycję ikonki minimap
       WoWTR_minimapDB = {};
