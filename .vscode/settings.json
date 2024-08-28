@@ -12,7 +12,7 @@
         "utf8": "disable"
     },
     "Lua.workspace.library": [
-        "~\\.vscode\\extensions\\ketho.wow-api-0.17.4\\Annotations"
+        "c:\\Users\\user\\.cursor\\extensions\\ketho.wow-api-0.17.5\\Annotations"
     ],
     "Lua.diagnostics.globals": [
         "QuestFrameCompleteQuestButtonText",
@@ -248,6 +248,9 @@
         "ProfessionsFrameTitleText",
         "MountJournalName",
         "HelpTip",
-        "UIErrorsFrame"
+        "UIErrorsFrame",
+        "hash_SlashCmdList",
+        "EventToastManagerFrame",
+        "RaidBossEmoteFrame"
     ]
 }
