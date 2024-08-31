@@ -78,8 +78,11 @@ jobs:
             fi
             INCLUDED_ADDONS+="$addon "
             
+            # Remove BOM from all files
+            find temp/$addon -type f -exec sed -i '1s/^\xEF\xBB\xBF//' {} \;
+            
             # Add header to Lua files
-            find temp/$addon -name "*.lua" -type f -exec sed -i "1i-- Addon: $addon (Version: $VERSION) (Date: $DATE)" {} \;
+            find temp/$addon -name "*.lua" -type f -exec sed -i '1s/^/-- Addon: '"$addon"' (Version: '"$VERSION"') (Date: '"$DATE"')\n/' {} \;
             
             # Create the zip file
             FILENAME="${addon}_v${VERSION}_${DATE}.zip"
