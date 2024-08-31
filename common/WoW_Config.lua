@@ -1450,7 +1450,21 @@ if (WoWTR_Localization.lang == 'AR') then          -- part: Chat
    WOWTR_slider6.High:SetText(WOWTR_slider6.maxValue);
    getglobal(WOWTR_slider6:GetName() .. 'Text'):SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.fontsizeBubbles));
    getglobal(WOWTR_slider6:GetName() .. 'Text'):SetFont(WOWTR_Font2, 11);
-   WOWTR_slider6:SetValue(tonumber(CH_PM["fontsize"]));
+   if WoWTR_Localization.lang == 'AR' then
+      local WOWTR_slider6 = CreateFrame("Slider", "WOWTR_slider6", WOWTR_OptionPanel3, "OptionsSliderTemplate");
+      -- rest of WOWTR_slider6 setup code
+      
+      if CH_PM and CH_PM["fontsize"] then
+          local fontsize = tonumber(CH_PM["fontsize"])
+          if fontsize then
+              WOWTR_slider6:SetValue(fontsize);
+          else
+              WOWTR_slider6:SetValue(13);
+          end
+      else
+          WOWTR_slider6:SetValue(13);
+      end
+  end
    WOWTR_slider6:SetValueStep(1);
    WOWTR_slider6:SetScript("OnValueChanged", function(self,event,arg1) 
                                       BB_PM["fontsize"]=string.format("%d",event); 

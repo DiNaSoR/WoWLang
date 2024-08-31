@@ -251,6 +251,9 @@
         "UIErrorsFrame",
         "hash_SlashCmdList",
         "EventToastManagerFrame",
-        "RaidBossEmoteFrame"
+        "RaidBossEmoteFrame",
+        "REWARD_CHOICES",
+        "REWARD_ITEMS",
+        "EXPERIENCE_COLON"
     ]
 }
