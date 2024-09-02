@@ -671,7 +671,7 @@ function QTR_START()
    QTR_ToggleButton2:SetText("Quest ID=?")
    QTR_ToggleButton2:Show()
    QTR_ToggleButton2:ClearAllPoints()
-   QTR_ToggleButton2:SetPoint("TOPLEFT", QuestMapDetailsScrollFrame, "TOPLEFT", 96, 30)
+   QTR_ToggleButton2:SetPoint("TOPLEFT", QuestMapDetailsScrollFrame, "TOPLEFT", 96, 32)
    QTR_ToggleButton2:SetScript("OnClick", QTR_ON_OFF)
 
    -- Button in GossipFrame
