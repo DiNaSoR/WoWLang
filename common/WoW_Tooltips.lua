@@ -100,33 +100,35 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
-function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse, ST_corr)     -- obj=object with stingtext,  sav=permission to save untranstaled tekst (true/false)
-   if (obj and obj.GetText) then                                        -- prefix=text to save group,  font1=if present:SetFont to given font file,  onlyReverse=use only Reverse function
-      local txt = obj:GetText();                                        -- Font Files: WOWTR_Font1, Original_Font1, Original_Font2     ST_corr=changing the width of the object to the translation text 
+function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse, ST_corr)
+   if (obj and obj:GetText()) then
+      local txt = obj:GetText();
       if (txt and string.find(txt," ")==nil) then
          local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
+         
          if (ST_TooltipsHS[ST_Hash]) then
             local a1, a2, a3 = obj:GetFont();
             if (not ST_corr) then
                ST_corr = 0;
             end
+            -- Use WOWTR_Font2 for translations
+            obj:SetFont(WOWTR_Font2, a2);
+            if (onlyReverse) then
+               obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, ST_TooltipsHS[ST_Hash])).." ");
+            else
+               obj:SetText(QTR_ExpandUnitInfo(ST_TranslatePrepare(txt, ST_TooltipsHS[ST_Hash]),false,obj,WOWTR_Font2,ST_corr).." ");
+            end
+            -- Don't save when we have a translation
+            return
+         else
+            -- Use original font if no translation
             if (font1) then
                obj:SetFont(font1, a2);
-               if (onlyReverse) then
-                  obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, ST_TooltipsHS[ST_Hash])).." ");        -- hard space at the end of translation
-               else
-                  obj:SetText(QTR_ExpandUnitInfo(ST_TranslatePrepare(txt, ST_TooltipsHS[ST_Hash]),false,obj,font1,ST_corr).." ");        -- hard space at the end of translation
-               end
-            else
-               obj:SetFont(WOWTR_Font2, a2);
-               if (onlyReverse) then
-                  obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, ST_TooltipsHS[ST_Hash])).." ");        -- hard space at the end of translation
-               else
-                  obj:SetText(QTR_ExpandUnitInfo(ST_TranslatePrepare(txt, ST_TooltipsHS[ST_Hash]),false,obj,WOWTR_Font2,ST_corr).." ");  -- hard space at the end of translation
-               end
             end
-         elseif (sav and (ST_PM["saveNW"]=="1")) then
-            ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
+            -- Save only if we don't have a translation and saving is enabled
+            if (sav and (ST_PM["saveNW"]=="1")) then
+               ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
+            end
          end
       end
    end
@@ -935,33 +937,41 @@ end
 function ST_updateSpecContentsHook()
    for specContentFrame in PlayerSpellsFrame.SpecFrame.SpecContentFramePool:EnumerateActive() do
       local _, _, description, _, _, primaryStat = GetSpecializationInfo(specContentFrame.specIndex, false, false, nil, WOWTR_player_sex);
-      if (description and string.find(description," ")==nil) then    -- nie jest to tekst turecki (twarda spacja)
+      if (description and string.find(description," ")==nil) then    -- not already translated text (no hard space)
          local ST_hash = StringHash(ST_UsunZbedneZnaki(description));
-         if (ST_TooltipsHS[ST_hash]) then            -- mamy tłumaczenie tureckie
+         if (ST_TooltipsHS[ST_hash]) then            -- we have translation
             ST_tlumaczenie = ST_TooltipsHS[ST_hash];
             ST_tlumaczenie = ST_TranslatePrepare(description, ST_tlumaczenie);
-            local _font1, _size1, _1 = specContentFrame.Description:GetFont();    -- odczytaj aktualną czcionkę i rozmiar
+            local _font1, _size1, _1 = specContentFrame.Description:GetFont();    -- get current font and size
             specContentFrame.Description:SetFont(WOWTR_Font2, _size1);
             specContentFrame.Description:SetText(QTR_ExpandUnitInfo(ST_tlumaczenie,false,specContentFrame.Description,WOWTR_Font2));
-         elseif (ST_PM["saveNW"]=="1") then          -- jest zezwolenie na zapis
-            ST_origin = string.gsub(description,"(%d),(%d)","%1%2");      -- usuń przecinek między cyframi (odstęp tysięczny)
+         elseif (ST_PM["saveNW"]=="1") then          -- permission to save
+            ST_origin = string.gsub(description,"(%d),(%d)","%1%2");      -- remove comma between digits (thousand separator)
             ST_origin = string.gsub(ST_origin,"\r","");
             ST_SpecName = specContentFrame.SpecName:GetText();
             ST_PH[ST_hash] = "SpecTab:"..WOWTR_player_class..":"..ST_SpecName.."@"..ST_PrzedZapisem(description);
          end
       end
-      local _font, _size, _ = specContentFrame.RoleName:GetFont();    -- odczytaj aktualną czcionkę i rozmiar
-      specContentFrame.RoleName:SetText(QTR_ReverseIfAR(ST_SetText(specContentFrame.RoleName:GetText())));
-      specContentFrame.RoleName:SetFont(WOWTR_Font2, _size);
+      local _font, _size, _ = specContentFrame.RoleName:GetFont();    -- get current font and size
+      if (ST_TooltipsHS[StringHash(ST_UsunZbedneZnaki(specContentFrame.RoleName:GetText()))]) then
+         specContentFrame.RoleName:SetText(QTR_ReverseIfAR(ST_SetText(specContentFrame.RoleName:GetText())));
+         specContentFrame.RoleName:SetFont(WOWTR_Font2, _size);
+      end
       _font, _size, _ = specContentFrame.SampleAbilityText:GetFont();
-      specContentFrame.SampleAbilityText:SetText(QTR_ReverseIfAR(ST_SetText(specContentFrame.SampleAbilityText:GetText())));
-      specContentFrame.SampleAbilityText:SetFont(WOWTR_Font2, _size);
+      if (ST_TooltipsHS[StringHash(ST_UsunZbedneZnaki(specContentFrame.SampleAbilityText:GetText()))]) then
+         specContentFrame.SampleAbilityText:SetText(QTR_ReverseIfAR(ST_SetText(specContentFrame.SampleAbilityText:GetText())));
+         specContentFrame.SampleAbilityText:SetFont(WOWTR_Font2, _size);
+      end
       _font, _size, _ = specContentFrame.ActivatedText:GetFont();
-      specContentFrame.ActivatedText:SetText(QTR_ReverseIfAR(ST_SetText(specContentFrame.ActivatedText:GetText())));
-      specContentFrame.ActivatedText:SetFont(WOWTR_Font2, _size);
+      if (ST_TooltipsHS[StringHash(ST_UsunZbedneZnaki(specContentFrame.ActivatedText:GetText()))]) then
+         specContentFrame.ActivatedText:SetText(QTR_ReverseIfAR(ST_SetText(specContentFrame.ActivatedText:GetText())));
+         specContentFrame.ActivatedText:SetFont(WOWTR_Font2, _size);
+      end
       _font, _size, _ = specContentFrame.ActivateButton.Text:GetFont();
-      specContentFrame.ActivateButton.Text:SetText(QTR_ReverseIfAR(ST_SetText(specContentFrame.ActivateButton.Text:GetText())));
-      specContentFrame.ActivateButton.Text:SetFont(WOWTR_Font2, _size);
+      if (ST_TooltipsHS[StringHash(ST_UsunZbedneZnaki(specContentFrame.ActivateButton.Text:GetText()))]) then
+         specContentFrame.ActivateButton.Text:SetText(QTR_ReverseIfAR(ST_SetText(specContentFrame.ActivateButton.Text:GetText())));
+         specContentFrame.ActivateButton.Text:SetFont(WOWTR_Font2, _size);
+      end
    end
 end
 
