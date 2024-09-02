@@ -1079,7 +1079,8 @@ function WOWSTR_onEvent(_, event, addonName)
       
    elseif (addonName == 'Blizzard_Professions') then
       ST_load3 = true;
-      ProfessionsFrame:HookScript("OnShow", function() StartTicker(ProfessionsFrame, ST_showProfessionDescription, 0.2) end)
+      ProfessionsFrame:HookScript("OnShow", function() StartTicker(ProfessionsFrame, ST_showProfessionDescription, 0.02) end)
+      ProfessionsFrame:HookScript("OnShow", ST_ProfDescbutton)
       
    elseif (addonName == 'Blizzard_Collections') then
       ST_load4 = true;
@@ -1328,6 +1329,73 @@ function ST_showProfessionDescription()
       local PRobj25 = ProfessionsFrame.CraftingPage.RecipeList.FilterDropdown.Text;
       ST_CheckAndReplaceTranslationTextUI(PRobj25, true, "ui");
    end
+end
+
+-- Global button variables
+local ProfDescbuttonOFF
+local ProfDescbuttonON
+
+local function UpdateButtonVisibility()
+    if TT_PS["ui7"] == "1" then
+        if ProfDescbuttonOFF then ProfDescbuttonOFF:Show() end
+        if ProfDescbuttonON then ProfDescbuttonON:Hide() end
+    else
+        if ProfDescbuttonOFF then ProfDescbuttonOFF:Hide() end
+        if ProfDescbuttonON then ProfDescbuttonON:Show() end
+    end
+end
+
+function ST_ProfDescbutton() -- Profession Descriptions Translate On Off Button
+    -- Check the TT_PS table, create it if it does not exist
+    TT_PS = TT_PS or { ui7 = "1" } -- Set default value
+
+    -- Create both buttons
+    if not ProfDescbuttonOFF then
+        ProfDescbuttonOFF = CreateFrame("Button", nil, ProfessionsFrame, "UIPanelButtonTemplate")
+        ProfDescbuttonOFF:SetSize(120, 22)
+        if (WoWTR_Localization.lang == 'AR') then
+            ProfDescbuttonOFF:SetText(QTR_ReverseIfAR(WoWTR_Localization.WoWTR_trDESC))
+            ProfDescbuttonOFF:GetFontString():SetFont(WOWTR_Font2, 13)
+        else
+            ProfDescbuttonOFF:SetText(WoWTR_Localization.WoWTR_trDESC)
+            ProfDescbuttonOFF:GetFontString():SetFont(ProfDescbuttonOFF:GetFontString():GetFont(), 13)
+        end
+        ProfDescbuttonOFF:SetPoint("TOPLEFT", ProfessionsFrame, "TOPRIGHT", -170, 0)
+        ProfDescbuttonOFF:SetFrameStrata("TOOLTIP")
+
+        ProfDescbuttonOFF:SetScript("OnClick", function()
+            TT_PS["ui7"] = "0"
+            ST_showProfessionDescription()
+            if ProfessionsFrame.CraftingPage.SchematicForm then
+                ProfessionsFrame.CraftingPage.SchematicForm:Hide()
+                ProfessionsFrame.CraftingPage.SchematicForm:Show()
+            end
+            UpdateButtonVisibility()
+        end)
+    end
+
+    if not ProfDescbuttonON then
+        ProfDescbuttonON = CreateFrame("Button", nil, ProfessionsFrame, "UIPanelButtonTemplate")
+        ProfDescbuttonON:SetSize(120, 22)
+        if (WoWTR_Localization.lang == 'AR') then
+            ProfDescbuttonON:SetText(QTR_ReverseIfAR(WoWTR_Localization.WoWTR_enDESC))
+            ProfDescbuttonON:GetFontString():SetFont(WOWTR_Font2, 13)
+        else
+            ProfDescbuttonON:SetText(WoWTR_Localization.WoWTR_enDESC)
+            ProfDescbuttonON:GetFontString():SetFont(ProfDescbuttonON:GetFontString():GetFont(), 13)
+        end
+        ProfDescbuttonON:SetPoint("TOPLEFT", ProfessionsFrame, "TOPRIGHT", -170, 0)
+        ProfDescbuttonON:SetFrameStrata("TOOLTIP")
+
+        ProfDescbuttonON:SetScript("OnClick", function()
+            TT_PS["ui7"] = "1"
+            ST_showProfessionDescription()
+            UpdateButtonVisibility()
+        end)
+    end
+
+    -- Set visibility of buttons at startup
+    UpdateButtonVisibility()
 end
 
 -------------------------------------------------------------------------------------------------------
