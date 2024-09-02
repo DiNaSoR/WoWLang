@@ -3,8 +3,8 @@
 
 ST_lang = "AR";         -- translation language
 ST_type = "Reshaped";   -- type of saving text
-ST_date = "2024-08-28"; -- date of creation base
-ST_base = "61";      -- version (number of translations)
+ST_date = "2024-09-03"; -- date of creation base
+ST_base = "62";      -- version (number of translations)
 
 -- tooltips translation table: [Hash] = "translation text" 
 ST_TooltipsHS = {  
@@ -33,6 +33,7 @@ ST_TooltipsHS = {
 [1513136720]="ﻗﺒﻮل", 
 [1660715572]="اﻟﺴﻤﻌﺔ", 
 [1890320425]="ﺣﺴﻨﺎ", 
+[1893606548]="إﻟﻐﺎء", 
 [2121188446]="|rاﻹﺟﻤﺎﻟﻲ:|cfff4a460", 
 [2322143774]="ﻣﺴﺘﻮى اﻟﻌﺪات", 
 [2380060431]="اﻟﺨﻴﺎرات", 
@@ -66,7 +67,7 @@ ST_TooltipsHS = {
 [3787589255]="ﻣﻮﺳﻢ ﺟﺪﻳﺪ!", 
 [3841544313]="ﺷﺎرك", 
 [3859349165]="ﻗﺎﺋﻤﺔ اﻟﻠﻌﺒﺔ", 
-[3978963626]="اﻛﻤﺎل اﻟﻤﻬﻤﺔ", 
+[3978963626]="اﻛﻤﻞ اﻟﻤﻬﻤﺔ", 
 [3980282667]="اﻟﻨﻘﺎﺑﺔ", 
 [4199986284]="ﻓﺮق اﻟﻤﺤﺎرﺑﻴﻦ", 
 } 

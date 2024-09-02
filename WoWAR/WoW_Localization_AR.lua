@@ -13,12 +13,12 @@ WoWTR_Localization = {
    optionName = "WoWAR - Options",                                   -- WoWAR - options
    optionTitle = "ﺇﺿﺎﻓﺔ ﻭﺍﻭ ﺑﺎﻟﻌﺮﺑﻲ",                                -- WoWAR Patch
    optionTitleAR = "ﻣﻠﺤﻖ RAWoW ﺑﺎﻟﻠﻐﺔ ﺍﻟﻌﺮﺑﻴﺔ، baranogarD & enitalP، )C( 4202-3202",  -- Main title of addon in Arabic
-   addressWWW = "https://www.WoWinArabic.com",                       -- address of project page
+   addressWWW = "https://www.WoWAR.co",                       -- address of project page
    addressDiscord = "https://discord.gg/uW5NJ6y",                    -- address of discord page
    addressTwitch = "",                                               -- address of Twitch page 
    addressFanPage = "",                                              -- address of FanPage 
    addressEmail = "dragonarab@gmail.com",                            -- address of project e-mail
-   addressCurse = "https://www.curseforge.com/wow/addons/wowinarabic-quests",         -- address of CurseForge page
+   addressCurse = "https://www.curseforge.com/wow/addons/wowar-arabic",         -- address of CurseForge page
    addressPayPal = "https://www.paypal.com/donate/?hosted_button_id=FC2NVQ5DN7GVA",   -- address of PayPal page
    addressBlik = "",                                                 -- telephon number for BLIK payment
    gossipText = "ﻧﺺ ﺍﻟﺸﺎﺋﻌﺎﺕ",                                       -- gossip text
