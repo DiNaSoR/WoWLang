@@ -47,8 +47,8 @@ WoWTR_Localization = {
    additionalEquipped = "Masz aktualnie także założone",             -- Equipped with additional Equipment
    WoWTR_trDESC = "Polski",                                          -- Polish
    WoWTR_enDESC = "English",                                         -- English
-   WoWTR_Spellbook_trDESC = "Spell Book: Polski",                    -- Spell Book: Polish
-   WoWTR_Spellbook_enDESC = "Spell Book: English",                   -- Spell Book: English
+   WoWTR_Spellbook_trDESC = "Polski",                    -- Spell Book: Polish
+   WoWTR_Spellbook_enDESC = "English",                   -- Spell Book: English
    your_home = "twojego domu",                                       -- 'your home' (if the Hearthstone location fails to be read)
    welcomeIconPos = 255,                                             -- position of welcome icon on the welcom panel; 0 = disabled to display
    resetButton1 = "Wyczyść zapisane nieprzetłumaczone teksty",       -- Clear saved untranslated texts (without polish font)

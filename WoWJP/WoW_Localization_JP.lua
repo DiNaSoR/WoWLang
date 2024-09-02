@@ -46,8 +46,8 @@ WoWTR_Localization = {
    additionalEquipped = "追加装備を装備",                                 -- Equipped with additional Equipment
    WoWTR_trDESC = "日本語",                               -- Japanese
    WoWTR_enDESC = "英語",                              -- English
-   WoWTR_Spellbook_trDESC = "スペルブック: 日本語",                          -- Spell Book: Japanese
-   WoWTR_Spellbook_enDESC = "Spell Book: 英語",                        -- Spell Book: English
+   WoWTR_Spellbook_trDESC = "日本語",                          -- Spell Book: Japanese
+   WoWTR_Spellbook_enDESC = "英語",                        -- Spell Book: English
    your_home = "あなたのホーム",                                            -- 'your home' (if the Hearthstone location fails to be read)
    welcomeIconPos = 255,                                               -- position of welcome icon on the welcom panel; 0 = disabled to display
    resetButton1 = "保存された未翻訳のテキストをクリア",                            -- Clear saved untranslated texts (without polish font)

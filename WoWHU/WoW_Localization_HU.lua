@@ -44,8 +44,8 @@ WoWTR_Localization = {
    additionalEquipped = "Kiegészítő berendezésekkel felszerelve",    -- Equipped with additional Equipment
    WoWTR_trDESC = "Magyar",                                          -- Hungarian
    WoWTR_enDESC = "English",                                         -- English
-   WoWTR_Spellbook_trDESC = "Varázskönyv: Magyar",                   -- Spell Book: Hungarian
-   WoWTR_Spellbook_enDESC = "Spell Book: English",                   -- Spell Book: English
+   WoWTR_Spellbook_trDESC = "Magyar",                   -- Spell Book: Hungarian
+   WoWTR_Spellbook_enDESC = "English",                   -- Spell Book: English
    your_home = "az otthonod",                                        -- 'your home' (if the Hearthstone location fails to be read)
    welcomeIconPos = 255,                                             -- position of welcome icon on the welcom panel; 0 = disabled to display
    resetButton1 = "Mentett lefordítatlan szövegek törlése",          -- Clear saved untranslated texts

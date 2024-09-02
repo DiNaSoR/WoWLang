@@ -47,8 +47,8 @@ WoWTR_Localization = {
    additionalEquipped = "ﻣﺮﺗﺪﻱ ﻣﻌﺪﺍﺕ ﺇﺿﺎﻓﻴﺔ",                        -- Equipped with additional Equipment
    WoWTR_trDESC = "ﺑﺎﻟﻌﺮﺑﻲ",                        -- Arabic
    WoWTR_enDESC = "English",                         -- English
-   WoWTR_Spellbook_trDESC = "ﺍﻟﻘﺪﺭﺍﺕ: ﺑﺎﻟﻌﺮﺑﻲ",                      -- Spell Book: Arabic
-   WoWTR_Spellbook_enDESC = "Spell Book: English",                   -- Spell Book: English
+   WoWTR_Spellbook_trDESC = "ﺑﺎﻟﻌﺮﺑﻲ",                      -- Spell Book: Arabic
+   WoWTR_Spellbook_enDESC = "English",                   -- Spell Book: English
    your_home = "ﻣﻨﺰﻟﻚ",                                              -- 'your home' (if the Hearthstone location fails to be read)
    welcomeIconPos = 255,                                             -- position of welcome icon on the welcom panel; 0 = disabled to display
    resetButton1 = "ﻣﺴﺢ ﺍﻟﺴﺠﻼﺕ ﺍﻟﻤﺨﺰﻧﺔ ﻓﻲ ﻣﻠﻒ aul.RAWoW",             -- Clear saved untranslated texts (no Arabic font)
