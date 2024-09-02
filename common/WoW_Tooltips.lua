@@ -691,16 +691,37 @@ function ST_GameTooltipOnShow()
       GameTooltip:Show();   -- wyświetla ramkę podpowiedzi (zrobi także resize)
       ST_lastNumLines = GameTooltip:NumLines();
       
-      if ((ST_orygText or (ST_nh==1)) and (ST_PM["saveNW"]=="1")) then
-         for _, ST_origin in ipairs(ST_orygText) do   
-            ST_hash = StringHash(ST_UsunZbedneZnaki(ST_origin));
-            if (string.sub(ST_origin,1,11) ~= '|A:raceicon') then
-               if ((not ST_TooltipsHS[ST_hash]) and (string.find(ST_origin," ")==nil)) then    -- i nie jest to tekst tłumaczenia (twarda spacja)
-                  ST_PH[ST_hash]=ST_prefix.."@"..ST_PrzedZapisem(ST_origin);
-               end
-            end
-         end
-      end
+		local ignoreWords = {
+			"Seller: |cffffffff",
+			"Sellers: |cffffffff",
+			"Equipment Sets: |cFFFFFFFF",
+			"|cff00ff00<Made by ",
+			"Leader: |cffffffff",
+			"Realm: |cffffffff",
+			"Waiting on: |cff",
+			"Reagents: |n"
+		}
+
+		local ignorePattern = "[Яа-яĄ-Źą-źŻ-żЀ-ӿΑ-Ωα-ω]"
+
+		if ((ST_orygText or (ST_nh == 1)) and (ST_PM["saveNW"] == "1")) then
+			for _, ST_origin in ipairs(ST_orygText) do
+				ST_hash = StringHash(ST_UsunZbedneZnaki(ST_origin))
+				if (string.sub(ST_origin, 1, 11) ~= '|A:raceicon') then
+					local shouldSave = true
+					for _, word in ipairs(ignoreWords) do
+						if string.find(ST_origin, "^" .. word) then
+							shouldSave = false
+							break
+						end
+					end
+					if shouldSave and (not string.find(ST_origin, ignorePattern)) then
+						ST_PH[ST_hash] = ST_prefix .. "@" .. ST_PrzedZapisem(ST_origin)
+					end
+				end
+			end
+		end
+	  
       
    end
 end
