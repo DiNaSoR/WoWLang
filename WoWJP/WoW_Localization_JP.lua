@@ -44,9 +44,9 @@ WoWTR_Localization = {
    sellPrice = "売値:",                                                -- Sell price:
    currentlyEquipped = "現在装備中",                                     -- Currently Equipped
    additionalEquipped = "追加装備を装備",                                 -- Equipped with additional Equipment
-   WoWTR_Talent_trDESC = "タレント: 日本語",                               -- Talents: Polish
-   WoWTR_Talent_enDESC = "Talents: 英語",                              -- Talents: English
-   WoWTR_Spellbook_trDESC = "スペルブック: 日本語",                          -- Spell Book: Polish
+   WoWTR_trDESC = "日本語",                               -- Japanese
+   WoWTR_enDESC = "英語",                              -- English
+   WoWTR_Spellbook_trDESC = "スペルブック: 日本語",                          -- Spell Book: Japanese
    WoWTR_Spellbook_enDESC = "Spell Book: 英語",                        -- Spell Book: English
    your_home = "あなたのホーム",                                            -- 'your home' (if the Hearthstone location fails to be read)
    welcomeIconPos = 255,                                               -- position of welcome icon on the welcom panel; 0 = disabled to display
