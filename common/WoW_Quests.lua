@@ -816,6 +816,12 @@ function QTR_QuestScrollFrame_OnShow()
          end
       end
    end
+   if (TT_PS["ui1"]=="1") then
+      local QuestScrollFrameText01 = QuestScrollFrame.EmptyText;
+      if QuestScrollFrameText01 then
+         ST_CheckAndReplaceTranslationTextUI(QuestScrollFrameText01, true, "ui"); -- https://imgur.com/4joWH6I
+      end
+   end
 end
 
 
