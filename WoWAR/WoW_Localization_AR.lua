@@ -288,6 +288,9 @@ WoWTR_Config_Interface = {
    linkCopy = "ﺍﺿﻐﻂ ﻋﻠﻰ C+lrtC ﻟﻨﺴﺦ ﺍﻟﻌﻨﻮﺍﻥ ﺇﻟﻰ ﺍﻟﺤﺎﻓﻈﺔ",
    betaTestersHeader = "",
    betaTestersHeaderDESC = "",
+   addressCOM = "https://discord.gg/pGDHFdezcC",
+   linkDISCShowCOM = "راﺑﻂ ﻣﺠﺘﻤﻊ واو اﻟﻌﺮﺑﻲ",
+   linkCOM = "راﺑﻂ ﻣﺠﺘﻤﻊ واو اﻟﻌﺮﺑﻲ",
 };
    
 ---------------------------------------------------------------------------------------------------------

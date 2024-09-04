@@ -2784,6 +2784,44 @@ if (string.len(WoWTR_Localization.addressDiscord) > 1) then
       end);
 end
 
+if (WoWTR_Localization.lang == 'AR') then
+   if (string.len(WoWTR_Config_Interface.addressCOM) > 1) then
+      local WOWTR_linkButtonDISC = CreateFrame("Button", nil, WOWTR_OptionPanel9)
+      WOWTR_linkButtonDISC:SetSize(64, 32);
+      WOW_interPlace = WOW_interPlace + WOW_interSpace;
+      if (WoWTR_Localization.lang == 'AR') then
+         WOW_interPlace = WOW_interPlace - 40;
+         WOWTR_linkButtonDISC:SetPoint("TOPRIGHT", WOWTR_Panel9Header2, "BOTTOMRIGHT", -WOW_interPlace, -35);
+         WOW_interPlace = WOW_interPlace + 10;
+      else
+         WOWTR_linkButtonDISC:SetPoint("TOPLEFT", WOWTR_Panel9Header2, "BOTTOMLEFT", WOW_interPlace, -35);
+      end
+      WOW_interPlace = WOW_interPlace + 10;
+      WOWTR_linkButtonDISC.icon = WOWTR_linkButtonDISC:CreateTexture()
+      WOWTR_linkButtonDISC.icon:SetTexture(WoWTR_Localization.mainFolder.."\\Images\\Abosarah.png")
+      WOWTR_linkButtonDISC.icon:SetSize(32, 32);
+      WOWTR_linkButtonDISC.icon:SetPoint("LEFT", 0, 0);
+
+      WOWTR_linkButtonDISC:SetScript("OnEnter", function(self)
+         GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
+         GameTooltip:ClearLines();
+         GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.linkDISCShowCOM), 1, 1, 1, true);   -- white color, wrap
+         getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
+         GameTooltip:Show() -- Show the tooltip
+         end);
+      WOWTR_linkButtonDISC:SetScript("OnLeave", function(self)
+         GameTooltip:Hide() -- Hide the tooltip
+         end);
+      WOWTR_linkButtonDISC:SetScript("OnClick", function(self)
+         WOWTR_LinkFrame:Hide();
+         WOWTR_LinkFrame.Title:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.linkCOM));
+         WOWTR_LinkFrame.Input:SetText(WoWTR_Config_Interface.addressCOM);
+         WOWTR_LinkFrame.Text:SetFont(WOWTR_Font2, 12);
+         WOWTR_LinkFrame:Show();
+         end);
+   end
+end
+
 if (string.len(WoWTR_Localization.addressTwitch) > 1) then
    local WOWTR_linkButtonTWITCH = CreateFrame("Button", nil, WOWTR_OptionPanel9)
    WOWTR_linkButtonTWITCH:SetSize(32, 32);
