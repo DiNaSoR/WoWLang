@@ -1045,14 +1045,14 @@ end
 function ST_ProfessionEmptyText()
    if (TT_PS["ui1"] == "1") then --Game Option UI
       local PrimaryProfessionText01 = PrimaryProfession1Missing; -- First Profession
-      ST_CheckAndReplaceTranslationText(PrimaryProfessionText01, true, "Profession:Other", WOWTR_Font1,false, false, -15);
+      ST_CheckAndReplaceTranslationTextUI(PrimaryProfessionText01, true, "Profession:Other", WOWTR_Font1,false, false, -15);
       if (WoWTR_Localization.lang == 'AR') then
          PrimaryProfession1Text:SetFont(WOWTR_Font1, 11);
          PrimaryProfession1Text:SetJustifyH("RIGHT");
       end
 
       local PrimaryProfessionText02 = PrimaryProfession2Missing; -- Second Profession
-      ST_CheckAndReplaceTranslationText(PrimaryProfessionText02, true, "Profession:Other", WOWTR_Font1,false, false, -15);
+      ST_CheckAndReplaceTranslationTextUI(PrimaryProfessionText02, true, "Profession:Other", WOWTR_Font1,false, false, -15);
       if (WoWTR_Localization.lang == 'AR') then
          PrimaryProfession1Text:SetFont(WOWTR_Font1, 11);
          PrimaryProfession1Text:SetJustifyH("RIGHT");
