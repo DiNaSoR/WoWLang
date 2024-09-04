@@ -105,6 +105,10 @@ function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse,
       local txt = obj:GetText();
       if (txt and string.find(txt," ")==nil) then
          local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
+
+         --print("Text:", txt)
+         --print("Hash:", ST_Hash)
+         --print("Translation exists:", ST_TooltipsHS[ST_Hash] ~= nil)
          
          if (ST_TooltipsHS[ST_Hash]) then
             local a1, a2, a3 = obj:GetFont();
@@ -150,8 +154,11 @@ function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)     -- obj
             end
          end
          
+         local a1, a2, a3 = obj:GetFont();  -- Get original font info
+         --print("Text:", txt)
+         --print("Hash:", ST_Hash)
+         --print("Translation exists:", ST_TooltipsHS[ST_Hash] ~= nil)
          if (ST_TooltipsHS[ST_Hash]) then             -- we have translation for this text
-            local a1, a2, a3 = obj:GetFont();
             local new_trans = ST_TooltipsHS[ST_Hash];
             if ((ST_Hash == 1479612176) or (ST_Hash == 1202097063)) then
                local pos_end = string.find(txt, "?");
@@ -166,8 +173,12 @@ function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)     -- obj
             else
                obj:SetFont(WOWTR_Font2, a2);
             end
-         elseif (sav and (TT_PS["saveui"] == "1")) then
-            ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
+         else
+            -- No translation, use original font
+            obj:SetFont(a1, a2);  -- Set back to original font
+            if (sav and (TT_PS["saveui"] == "1")) then
+               ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
+            end
          end
       end
    end
