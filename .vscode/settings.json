@@ -258,6 +258,9 @@
         "ItemSocketingSocketButton",
         "NORMAL_FONT_COLOR_CODE",
         "FONT_COLOR_CODE_CLOSE",
-        "StoreMicroButton"
+        "StoreMicroButton",
+        "PrimaryProfession1Missing",
+        "PrimaryProfession2Missing",
+        "ProfessionsBookFrame"
     ]
 }
