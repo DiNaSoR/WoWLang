@@ -713,7 +713,8 @@ function ST_GameTooltipOnShow()
 			"Leader: |cffffffff",
 			"Realm: |cffffffff",
 			"Waiting on: |cff",
-			"Reagents: |n"
+			"Reagents: |n",
+			"  |A:raceicon128"
 		}
 
 		local ignorePattern = "[Яа-яĄ-Źą-źŻ-żЀ-ӿΑ-Ωα-ω]"
@@ -991,38 +992,51 @@ function ST_TalentsTab_OnShow(talentsTab)
 end
 
 -------------------------------------------------------------------------------------------------------
+
 function ST_TalentsTranslate()
    local talentsFrame = PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame
    if not talentsFrame then return end
 
-   local function TranslateLabel(label, labelName)
-       if label and label.GetText then
-           local text = label:GetText()
-           if text then
-               local hash = StringHash(ST_UsunZbedneZnaki(text))
-               --print("Debug: " .. labelName .. " hash: " .. hash)  -- Print the hash
-               if ST_TooltipsHS[hash] then
-                   label:SetText(QTR_ReverseIfAR(ST_SetText(text)))
-                   label:SetFont(WOWTR_Font2, select(2, label:GetFont()))
-               elseif ST_PM["saveNW"] == "1" then
-                   ST_PH[hash] = "ui@" .. ST_PrzedZapisem(text)
-                   --print("Debug: Saved hash for untranslated " .. labelName)
-               end
-           end
-       end
-   end
+	local function TranslateLabel(label, labelName)
+		if label and label.GetText then
+			local text = label:GetText()
+			if text then
+				local hash = StringHash(ST_UsunZbedneZnaki(text))
+				if ST_TooltipsHS[hash] then
+					local translatedText = ST_TooltipsHS[hash]
+					
+					-- Process placeholders such as $1, $2, $3
+					translatedText = translatedText:gsub("%$(%d)", function(n)
+						local number = tonumber(n)
+						return number and tostring(select(number, text:match("(%d+)%.?"))) or "$"..n
+					end)
+					
+					label:SetText(QTR_ReverseIfAR(translatedText))
+					label:SetFont(WOWTR_Font2, select(2, label:GetFont()))
+					-- Cancel registration for translated texts.
+				elseif ST_PM["saveNW"] == "1" then
+					-- Save only untranslated texts
+					if not ST_PH[hash] then  -- If not previously recorded
+						ST_PH[hash] = "ui@" .. ST_PrzedZapisem(text)
+					end
+				end
+			end
+		end
+	end
+
 
    TranslateLabel(talentsFrame.HeroTalentsContainer and talentsFrame.HeroTalentsContainer.LockedLabel1, "LockedLabel1") -- Hero Talent Locked Title
    TranslateLabel(talentsFrame.HeroTalentsContainer and talentsFrame.HeroTalentsContainer.LockedLabel2, "LockedLabel2") -- Hero Talent Discription
-   TranslateLabel(talentsFrame.ClassCurrencyDisplay and talentsFrame.ClassCurrencyDisplay.CurrencyLabel, "ClassCurrencyDisplay.CurrencyLabel") -- Main Class Talent Title
-   TranslateLabel(talentsFrame.SpecCurrencyDisplay and talentsFrame.SpecCurrencyDisplay.CurrencyLabel, "SpecCurrencyDisplay.CurrencyLabel") -- Spec Class Talent Title
+   TranslateLabel(talentsFrame.ClassCurrencyDisplay and talentsFrame.ClassCurrencyDisplay.CurrencyLabel, "ClassCurrencyDisplay.CurrencyLabel")
+   TranslateLabel(talentsFrame.SpecCurrencyDisplay and talentsFrame.SpecCurrencyDisplay.CurrencyLabel, "SpecCurrencyDisplay.CurrencyLabel")
 end
+
 -------------------------------------------------------------------------------------------------------
 
 function ST_updateSpecContentsHook()
    for specContentFrame in PlayerSpellsFrame.SpecFrame.SpecContentFramePool:EnumerateActive() do
       local _, _, description, _, _, _ = GetSpecializationInfo(specContentFrame.specIndex, false, false, nil, WOWTR_player_sex)
-      if description and not description:find(" ") then
+      if description and not description:find(" ") then
          local ST_hash = StringHash(ST_UsunZbedneZnaki(description))
          if ST_TooltipsHS[ST_hash] then
             specContentFrame.Description:SetFont(WOWTR_Font2, select(2, specContentFrame.Description:GetFont()))
