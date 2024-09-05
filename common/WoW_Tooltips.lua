@@ -1061,7 +1061,30 @@ function ST_updateSpellBookFrame()
             SpellBookFrameTabButton3:SetText(text1);
          end
       end
-      
+
+      local SBPageText = SpellBookPageText;
+      ST_CheckAndReplaceTranslationText(SBPageText, true, "ui");
+   end
+end
+
+-------------------------------------------------------------------------------------------------------
+
+function ST_ProfessionEmptyText()
+   if (TT_PS["ui1"] == "1") then --Game Option UI
+      local PrimaryProfessionText01 = PrimaryProfession1Missing; -- First Profession
+      ST_CheckAndReplaceTranslationTextUI(PrimaryProfessionText01, true, "Profession:Other", WOWTR_Font1,false, false, -15);
+      if (WoWTR_Localization.lang == 'AR') then
+         PrimaryProfession1Text:SetFont(WOWTR_Font1, 11);
+         PrimaryProfession1Text:SetJustifyH("RIGHT");
+      end
+
+      local PrimaryProfessionText02 = PrimaryProfession2Missing; -- Second Profession
+      ST_CheckAndReplaceTranslationTextUI(PrimaryProfessionText02, true, "Profession:Other", WOWTR_Font1,false, false, -15);
+      if (WoWTR_Localization.lang == 'AR') then
+         PrimaryProfession1Text:SetFont(WOWTR_Font1, 11);
+         PrimaryProfession1Text:SetJustifyH("RIGHT");
+      end
+
       local PrimaryProfession1Text = PrimaryProfession1.missingText; -- https://imgur.com/amgQ7K7
       ST_CheckAndReplaceTranslationText(PrimaryProfession1Text, true, "Profession:Other",false, false, -15);
       if (WoWTR_Localization.lang == 'AR') then
@@ -1096,9 +1119,6 @@ function ST_updateSpellBookFrame()
          SecondaryProfession3Text:SetFont(WOWTR_Font2, 10);
          SecondaryProfession3Text:SetJustifyH("RIGHT");
       end
-
-      local SBPageText = SpellBookPageText;
-      ST_CheckAndReplaceTranslationText(SBPageText, true, "ui");
    end
 end
 
@@ -1159,9 +1179,13 @@ function WOWSTR_onEvent(_, event, addonName)
    elseif (addonName == 'Blizzard_AdventureMap') then
       ST_load10 = true;
       AdventureMapQuestChoiceDialog.Details.Child.DescriptionText:HookScript("OnShow", function() StartTicker(AdventureMapQuestChoiceDialog.Details.Child.DescriptionText, ST_AdvantureMapFrm, 0.2) end) 
+
+   elseif (addonName == 'Blizzard_ProfessionsBook') then
+      ST_load11 = true;
+      ProfessionsBookFrame:HookScript("OnShow", function() StartTicker(ProfessionsBookFrame, ST_ProfessionEmptyText, 0.02) end)
    end
 
-   if (ST_load1 and ST_load2 and ST_load3 and ST_load4 and ST_load5 and ST_load6 and ST_load7 and ST_load8 and ST_load9 and ST_load10) then    -- otworzono wszystkie dodatki Blizzarda
+   if (ST_load1 and ST_load2 and ST_load3 and ST_load4 and ST_load5 and ST_load6 and ST_load7 and ST_load8 and ST_load9 and ST_load10 and ST_load11) then    -- otworzono wszystkie dodatki Blizzarda
       WOWSTR:UnregisterEvent("ADDON_LOADED");      -- wyłącz  nasłuchiwanie
    end
 end
