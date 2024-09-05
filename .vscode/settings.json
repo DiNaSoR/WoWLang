@@ -254,6 +254,10 @@
         "RaidBossEmoteFrame",
         "REWARD_CHOICES",
         "REWARD_ITEMS",
-        "EXPERIENCE_COLON"
+        "EXPERIENCE_COLON",
+        "ItemSocketingSocketButton",
+        "NORMAL_FONT_COLOR_CODE",
+        "FONT_COLOR_CODE_CLOSE",
+        "StoreMicroButton"
     ]
 }

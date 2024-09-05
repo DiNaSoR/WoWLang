@@ -944,45 +944,72 @@ function ST_TalentsTab_OnShow(talentsTab)
 end
 
 -------------------------------------------------------------------------------------------------------
+function ST_TalentsTranslate()
+   local talentsFrame = PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame
+   if not talentsFrame then return end
+
+   local function TranslateLabel(label, labelName)
+       if label and label.GetText then
+           local text = label:GetText()
+           if text then
+               local hash = StringHash(ST_UsunZbedneZnaki(text))
+               --print("Debug: " .. labelName .. " hash: " .. hash)  -- Print the hash
+               if ST_TooltipsHS[hash] then
+                   label:SetText(QTR_ReverseIfAR(ST_SetText(text)))
+                   label:SetFont(WOWTR_Font2, select(2, label:GetFont()))
+               elseif ST_PM["saveNW"] == "1" then
+                   ST_PH[hash] = "ui@" .. ST_PrzedZapisem(text)
+                   --print("Debug: Saved hash for untranslated " .. labelName)
+               end
+           end
+       end
+   end
+
+   TranslateLabel(talentsFrame.HeroTalentsContainer and talentsFrame.HeroTalentsContainer.LockedLabel1, "LockedLabel1") -- Hero Talent Locked Title
+   TranslateLabel(talentsFrame.HeroTalentsContainer and talentsFrame.HeroTalentsContainer.LockedLabel2, "LockedLabel2") -- Hero Talent Discription
+   TranslateLabel(talentsFrame.ClassCurrencyDisplay and talentsFrame.ClassCurrencyDisplay.CurrencyLabel, "ClassCurrencyDisplay.CurrencyLabel") -- Main Class Talent Title
+   TranslateLabel(talentsFrame.SpecCurrencyDisplay and talentsFrame.SpecCurrencyDisplay.CurrencyLabel, "SpecCurrencyDisplay.CurrencyLabel") -- Spec Class Talent Title
+end
+-------------------------------------------------------------------------------------------------------
 
 function ST_updateSpecContentsHook()
    for specContentFrame in PlayerSpellsFrame.SpecFrame.SpecContentFramePool:EnumerateActive() do
-      local _, _, description, _, _, primaryStat = GetSpecializationInfo(specContentFrame.specIndex, false, false, nil, WOWTR_player_sex);
-      if (description and string.find(description," ")==nil) then    -- not already translated text (no hard space)
-         local ST_hash = StringHash(ST_UsunZbedneZnaki(description));
-         if (ST_TooltipsHS[ST_hash]) then            -- we have translation
-            ST_tlumaczenie = ST_TooltipsHS[ST_hash];
-            ST_tlumaczenie = ST_TranslatePrepare(description, ST_tlumaczenie);
-            local _font1, _size1, _1 = specContentFrame.Description:GetFont();    -- get current font and size
-            specContentFrame.Description:SetFont(WOWTR_Font2, _size1);
-            specContentFrame.Description:SetText(QTR_ExpandUnitInfo(ST_tlumaczenie,false,specContentFrame.Description,WOWTR_Font2));
-         elseif (ST_PM["saveNW"]=="1") then          -- permission to save
-            ST_origin = string.gsub(description,"(%d),(%d)","%1%2");      -- remove comma between digits (thousand separator)
-            ST_origin = string.gsub(ST_origin,"\r","");
-            ST_SpecName = specContentFrame.SpecName:GetText();
-            ST_PH[ST_hash] = "SpecTab:"..WOWTR_player_class..":"..ST_SpecName.."@"..ST_PrzedZapisem(description);
+      local _, _, description, _, _, _ = GetSpecializationInfo(specContentFrame.specIndex, false, false, nil, WOWTR_player_sex)
+      if description and not description:find(" ") then
+         local ST_hash = StringHash(ST_UsunZbedneZnaki(description))
+         if ST_TooltipsHS[ST_hash] then
+            specContentFrame.Description:SetFont(WOWTR_Font2, select(2, specContentFrame.Description:GetFont()))
+            local translatedText = QTR_ExpandUnitInfo(ST_TranslatePrepare(description, ST_TooltipsHS[ST_hash]), false, specContentFrame.Description, WOWTR_Font2)
+            specContentFrame.Description:SetText(translatedText)
+         elseif ST_PM["saveNW"] == "1" then
+            ST_PH[ST_hash] = "SpecTab:" .. WOWTR_player_class .. ":" .. specContentFrame.SpecName:GetText() .. "@" .. ST_PrzedZapisem(description:gsub("(%d),(%d)", "%1%2"):gsub("\r", ""))
          end
       end
-      local _font, _size, _ = specContentFrame.RoleName:GetFont();    -- get current font and size
-      if (ST_TooltipsHS[StringHash(ST_UsunZbedneZnaki(specContentFrame.RoleName:GetText()))]) then
-         specContentFrame.RoleName:SetText(QTR_ReverseIfAR(ST_SetText(specContentFrame.RoleName:GetText())));
-         specContentFrame.RoleName:SetFont(WOWTR_Font2, _size);
+
+      local function updateText(element, key, translationType, alignment)
+         local text = element:GetText()
+         local hash = StringHash(ST_UsunZbedneZnaki(text))
+         if ST_TooltipsHS[hash] then
+            local translatedText
+            if translationType == 2 then
+               translatedText = QTR_ExpandUnitInfo(ST_TranslatePrepare(text, ST_TooltipsHS[hash]), false, element, WOWTR_Font2)
+            else
+               translatedText = QTR_ReverseIfAR(ST_SetText(text))
+            end
+            element:SetText(translatedText)
+            element:SetFont(WOWTR_Font2, select(2, element:GetFont()))
+            
+            if alignment then
+               element:SetJustifyH(alignment)
+            end
+         end
       end
-      _font, _size, _ = specContentFrame.SampleAbilityText:GetFont();
-      if (ST_TooltipsHS[StringHash(ST_UsunZbedneZnaki(specContentFrame.SampleAbilityText:GetText()))]) then
-         specContentFrame.SampleAbilityText:SetText(QTR_ReverseIfAR(ST_SetText(specContentFrame.SampleAbilityText:GetText())));
-         specContentFrame.SampleAbilityText:SetFont(WOWTR_Font2, _size);
-      end
-      _font, _size, _ = specContentFrame.ActivatedText:GetFont();
-      if (ST_TooltipsHS[StringHash(ST_UsunZbedneZnaki(specContentFrame.ActivatedText:GetText()))]) then
-         specContentFrame.ActivatedText:SetText(QTR_ReverseIfAR(ST_SetText(specContentFrame.ActivatedText:GetText())));
-         specContentFrame.ActivatedText:SetFont(WOWTR_Font2, _size);
-      end
-      _font, _size, _ = specContentFrame.ActivateButton.Text:GetFont();
-      if (ST_TooltipsHS[StringHash(ST_UsunZbedneZnaki(specContentFrame.ActivateButton.Text:GetText()))]) then
-         specContentFrame.ActivateButton.Text:SetText(QTR_ReverseIfAR(ST_SetText(specContentFrame.ActivateButton.Text:GetText())));
-         specContentFrame.ActivateButton.Text:SetFont(WOWTR_Font2, _size);
-      end
+      
+      updateText(specContentFrame.RoleName, "RoleName", 1)
+      updateText(specContentFrame.SampleAbilityText, "SampleAbilityText", 1)
+      updateText(specContentFrame.ActivatedText, "ActivatedText", 1)
+      updateText(specContentFrame.ActivateButton.Text, "ActivateButton.Text", 1)
+      updateText(specContentFrame.Description, "Description", 2)
    end
 end
 
@@ -1089,6 +1116,7 @@ function WOWSTR_onEvent(_, event, addonName)
       ST_Load1 = true;
       PlayerSpellsFrame:HookScript("OnShow", ST_SpellBookTranslateButton);
       PlayerSpellsFrame.SpecFrame:HookScript("OnShow", ST_updateSpecContentsHook);
+      PlayerSpellsFrame.TalentsFrame:HookScript("OnShow", ST_TalentsTranslate);
       
    elseif (addonName == 'Blizzard_EncounterJournal') then
       ST_load2 = true;
@@ -1755,42 +1783,58 @@ end
 
 --GAME MENU
 
-function ST_GameMenuTranslate() -- https://imgur.com/drHJ9Yn
---print("ST_GameMenuTranslate");
-   if (TT_PS["ui1"] == "1") then
-      local gamemenu1 = GameMenuButtonHelpText;
-      ST_CheckAndReplaceTranslationTextUI(gamemenu1, false, "ui");
+function ST_GameMenuTranslate()
+   if TT_PS["ui1"] ~= "1" then return end
 
-      local gamemenu2 = GameMenuButtonStoreText;
-      ST_CheckAndReplaceTranslationTextUI(gamemenu2, false, "ui");
+   local function SafeUpdateText(textObject)
+       if not textObject or not textObject.GetText then return end
+       local originalText = textObject:GetText()
+       if not originalText then return end
 
-      local gamemenu3 = GameMenuButtonWhatsNewText;
-      ST_CheckAndReplaceTranslationTextUI(gamemenu3, false, "ui");
-
-      local gamemenu4 = GameMenuButtonSettingsText;
-      ST_CheckAndReplaceTranslationTextUI(gamemenu4, false, "ui");
-
-      local gamemenu5 = GameMenuButtonEditModeText;
-      ST_CheckAndReplaceTranslationTextUI(gamemenu5, false, "ui");
-
-      local gamemenu6 = GameMenuButtonMacrosText;
-      ST_CheckAndReplaceTranslationTextUI(gamemenu6, false, "ui");
-
-      local gamemenu7 = GameMenuButtonAddonsText;
-      ST_CheckAndReplaceTranslationTextUI(gamemenu7, false, "ui");
-
-      local gamemenu8 = GameMenuButtonLogoutText;
-      ST_CheckAndReplaceTranslationTextUI(gamemenu8, false, "ui");
-
-      local gamemenu9 = GameMenuButtonQuitText;
-      ST_CheckAndReplaceTranslationTextUI(gamemenu9, false, "ui");
-
-      local gamemenu10 = GameMenuButtonContinueText;
-      ST_CheckAndReplaceTranslationTextUI(gamemenu10, false, "ui");
-
-      local gamemenu11 = GameMenuFrame.Header.Text;
-      ST_CheckAndReplaceTranslationTextUI(gamemenu11, false, "ui");
+       local hash = StringHash(ST_UsunZbedneZnaki(originalText))
+       if ST_TooltipsHS[hash] then
+           local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash]) .. " "
+           C_Timer.After(0, function()
+               if textObject:GetText() == originalText then
+                   textObject:SetText(translatedText)
+                   if textObject.SetFont then
+                       textObject:SetFont(WOWTR_Font2, select(2, textObject:GetFont()))
+                   end
+               end
+           end)
+       elseif ST_PM["saveNW"] == "1" then
+           ST_PH[hash] = "ui@" .. ST_PrzedZapisem(originalText)
+       end
    end
+
+   local function SafeUpdateButton(button)
+       SafeUpdateText(button)
+       C_Timer.After(0, function()
+           if button.SetNormalFontObject then
+               local fontObject = button:GetNormalFontObject()
+               if fontObject then
+                   fontObject:SetFont(WOWTR_Font2, select(2, fontObject:GetFont()))
+                   button:SetNormalFontObject(fontObject)
+               end
+           end
+       end)
+   end
+
+   SafeUpdateText(GameMenuFrame.Header.Text)
+
+   local function SafeInitButtons()
+       C_Timer.After(0, function()
+           if GameMenuFrame.buttonPool then
+               for buttonFrame in GameMenuFrame.buttonPool:EnumerateActive() do
+                   SafeUpdateButton(buttonFrame)
+               end
+           end
+       end)
+   end
+
+   hooksecurefunc(GameMenuFrame, "InitButtons", SafeInitButtons)
+
+   SafeInitButtons()
 end
 
 -------------------------------------------------------------------------------------------------------
