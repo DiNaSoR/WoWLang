@@ -20,6 +20,7 @@ local ST_load7 = false;
 local ST_load8 = false;
 local ST_load9 = false;
 local ST_load10 = false;
+local ST_load11 = false;
 local ST_firstBoss = true;
 local ST_nameBoss = { };
 local ST_navBar1, ST_navBar2, ST_navBar3, ST_navBar4, ST_navBar5 = false;
@@ -907,6 +908,52 @@ end
     
 -------------------------------------------------------------------------------------------------------
 
+local function CreateToggleButton(parentFrame, settingsTable, settingKey, onText, offText, point, onClick)
+    local buttonOFF = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
+    local buttonON = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
+    
+    local function SetupButton(button, text)
+        button:SetSize(120, 22)
+        if WoWTR_Localization.lang == 'AR' then
+            button:SetText(QTR_ReverseIfAR(text))
+            button:GetFontString():SetFont(WOWTR_Font2, 13)
+        else
+            button:SetText(text)
+            button:GetFontString():SetFont(button:GetFontString():GetFont(), 13)
+        end
+        button:SetPoint(unpack(point))
+        button:SetFrameStrata("TOOLTIP")
+    end
+
+    SetupButton(buttonOFF, offText)
+    SetupButton(buttonON, onText)
+
+    local function UpdateVisibility()
+        if settingsTable[settingKey] == "1" then
+            buttonOFF:Show(); buttonON:Hide()
+        else
+            buttonOFF:Hide(); buttonON:Show()
+        end
+    end
+
+    buttonOFF:SetScript("OnClick", function()
+        settingsTable[settingKey] = "0"
+        UpdateVisibility()
+        if onClick then onClick() end
+    end)
+
+    buttonON:SetScript("OnClick", function()
+        settingsTable[settingKey] = "1"
+        UpdateVisibility()
+        if onClick then onClick() end
+    end)
+
+    UpdateVisibility()
+    return UpdateVisibility
+end
+
+-------------------------------------------------------------------------------------------------------
+
 function ST_UpdateFrameTitle(classTalentFrame)
    local ST_titleText;
    if (classTalentFrame:GetTab() == classTalentFrame.specTabID) then
@@ -1153,13 +1200,15 @@ function WOWSTR_onEvent(_, event, addonName)
       
    elseif (addonName == 'Blizzard_Collections') then
       ST_load4 = true;
-      CollectionsJournalTitleText:HookScript("OnShow", function() StartTicker(CollectionsJournalTitleText, ST_MountJournal, 0.2) end)
+      CollectionsJournalTitleText:HookScript("OnShow", function() StartTicker(CollectionsJournalTitleText, ST_MountJournal, 0.1) end)
       WardrobeCollectionFrame:HookScript("OnShow", function() StartTicker(WardrobeCollectionFrame, ST_HelpPlateTooltip, 0.2) end)
-      
+      MountJournalName:HookScript("OnShow", ST_MountJournalbutton)
+	  
    elseif (addonName == 'Blizzard_PVPUI') then
       ST_load5 = true;
       PVPQueueFrameCategoryButton1:HookScript("OnShow", function() StartTicker(PVPQueueFrameCategoryButton1, ST_GroupPVPFinder, 0.2) end)
-      
+      PVPQueueFrameCategoryButton1:HookScript("OnShow", ST_GroupPVPFinderbutton)
+	  
    elseif (addonName == 'Blizzard_ChallengesUI') then
       ST_load6 = true;
       ChallengesFrame:HookScript("OnShow", function() StartTicker(ChallengesFrame, ST_GroupMplusFinder, 0.2) end)
@@ -1404,71 +1453,27 @@ function ST_showProfessionDescription()
    end
 end
 
--- Global button variables
-local ProfDescbuttonOFF
-local ProfDescbuttonON
+function ST_ProfDescbutton()
+    TT_PS = TT_PS or { ui7 = "1" }
 
-local function UpdateButtonVisibility()
-    if TT_PS["ui7"] == "1" then
-        if ProfDescbuttonOFF then ProfDescbuttonOFF:Show() end
-        if ProfDescbuttonON then ProfDescbuttonON:Hide() end
-    else
-        if ProfDescbuttonOFF then ProfDescbuttonOFF:Hide() end
-        if ProfDescbuttonON then ProfDescbuttonON:Show() end
-    end
-end
-
-function ST_ProfDescbutton() -- Profession Descriptions Translate On Off Button
-    -- Check the TT_PS table, create it if it does not exist
-    TT_PS = TT_PS or { ui7 = "1" } -- Set default value
-
-    -- Create both buttons
-    if not ProfDescbuttonOFF then
-        ProfDescbuttonOFF = CreateFrame("Button", nil, ProfessionsFrame, "UIPanelButtonTemplate")
-        ProfDescbuttonOFF:SetSize(120, 22)
-        if (WoWTR_Localization.lang == 'AR') then
-            ProfDescbuttonOFF:SetText(QTR_ReverseIfAR(WoWTR_Localization.WoWTR_trDESC))
-            ProfDescbuttonOFF:GetFontString():SetFont(WOWTR_Font2, 13)
-        else
-            ProfDescbuttonOFF:SetText(WoWTR_Localization.WoWTR_trDESC)
-            ProfDescbuttonOFF:GetFontString():SetFont(ProfDescbuttonOFF:GetFontString():GetFont(), 13)
-        end
-        ProfDescbuttonOFF:SetPoint("TOPLEFT", ProfessionsFrame, "TOPRIGHT", -170, 0)
-        ProfDescbuttonOFF:SetFrameStrata("TOOLTIP")
-
-        ProfDescbuttonOFF:SetScript("OnClick", function()
-            TT_PS["ui7"] = "0"
+    local updateVisibility = CreateToggleButton(
+        ProfessionsFrame,
+        TT_PS,
+        "ui7",
+        WoWTR_Localization.WoWTR_enDESC,
+        WoWTR_Localization.WoWTR_trDESC,
+        {"TOPLEFT", ProfessionsFrame, "TOPRIGHT", -170, 0},
+        function()
             ST_showProfessionDescription()
             if ProfessionsFrame.CraftingPage.SchematicForm then
                 ProfessionsFrame.CraftingPage.SchematicForm:Hide()
                 ProfessionsFrame.CraftingPage.SchematicForm:Show()
             end
-            UpdateButtonVisibility()
-        end)
-    end
-
-    if not ProfDescbuttonON then
-        ProfDescbuttonON = CreateFrame("Button", nil, ProfessionsFrame, "UIPanelButtonTemplate")
-        ProfDescbuttonON:SetSize(120, 22)
-        if (WoWTR_Localization.lang == 'AR') then
-            ProfDescbuttonON:SetText(QTR_ReverseIfAR(WoWTR_Localization.WoWTR_enDESC))
-            ProfDescbuttonON:GetFontString():SetFont(WOWTR_Font2, 13)
-        else
-            ProfDescbuttonON:SetText(WoWTR_Localization.WoWTR_enDESC)
-            ProfDescbuttonON:GetFontString():SetFont(ProfDescbuttonON:GetFontString():GetFont(), 13)
         end
-        ProfDescbuttonON:SetPoint("TOPLEFT", ProfessionsFrame, "TOPRIGHT", -170, 0)
-        ProfDescbuttonON:SetFrameStrata("TOOLTIP")
-
-        ProfDescbuttonON:SetScript("OnClick", function()
-            TT_PS["ui7"] = "1"
-            ST_showProfessionDescription()
-            UpdateButtonVisibility()
-        end)
-    end
+    )
 
     -- Set visibility of buttons at startup
-    UpdateButtonVisibility()
+    updateVisibility()
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -1709,6 +1714,30 @@ function ST_GroupFinder()
    end
 end
 
+function ST_GroupFinderbutton()
+    TT_PS = TT_PS or { ui3 = "1" }
+
+    local updateVisibility = CreateToggleButton(
+        GroupFinderFrame,
+        TT_PS,
+        "ui3",
+        WoWTR_Localization.WoWTR_enDESC,
+        WoWTR_Localization.WoWTR_trDESC,
+        {"TOPLEFT", GroupFinderFrame, "TOPRIGHT", -170, 0},
+        function()
+            ST_GroupFinder()
+            if GroupFinderFrame then
+                GroupFinderFrame:Hide()
+                GroupFinderFrame:Show()
+                -- Butonun temizlenmesi için burada gerekli işlemleri yapabilirsiniz
+            end
+        end
+    )
+
+    -- Başlangıçta butonun görünürlüğünü ayarlayın
+    updateVisibility()
+end
+
 -------------------------------------------------------------------------------------------------------
 
 function ST_GroupPVPFinder()
@@ -1761,6 +1790,36 @@ function ST_GroupPVPFinder()
       ST_CheckAndReplaceTranslationTextUI(gfpvpobj15, true, "ui");
    end
 
+end
+
+local isButtonCreated = false
+local updateVisibility
+function ST_GroupPVPFinderbutton()
+    if not isButtonCreated then
+        TT_PS = TT_PS or { ui3 = "1" }
+
+        updateVisibility = CreateToggleButton(
+            PVPQueueFrame,
+            TT_PS,
+            "ui3",
+            WoWTR_Localization.WoWTR_enDESC,
+            WoWTR_Localization.WoWTR_trDESC,
+            {"TOPLEFT", PVPQueueFrame, "TOPRIGHT", -170, 0},
+            function()
+                ST_GroupPVPFinder()
+                if PVPQueueFrame then
+                    PVPUIFrame:Hide()
+                    PVPUIFrame:Show()
+                end
+            end
+        )
+
+        isButtonCreated = true -- Butonlar ilk kez oluşturulunca işaretleyin
+    end
+
+    if updateVisibility then
+        updateVisibility()
+    end
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -1981,6 +2040,35 @@ function ST_MountJournal()
          ST_CheckAndReplaceTranslationTextUI(CJToys, true, "toyname");
       end
    end
+end
+
+local isMountButtonCreated = false
+local mountUpdateVisibility
+
+function ST_MountJournalbutton()
+    if not isMountButtonCreated then
+        TT_PS = TT_PS or { ui4 = "1" }
+
+        mountUpdateVisibility = CreateToggleButton(
+            MountJournal,
+            TT_PS,
+            "ui4",
+            WoWTR_Localization.WoWTR_enDESC,
+            WoWTR_Localization.WoWTR_trDESC,
+            {"TOPLEFT", MountJournal, "TOPRIGHT", -170, 0},
+            function()
+                ST_MountJournal()
+                -- You can add any necessary refresh logic here for the mount journal.
+            end
+        )
+
+        isMountButtonCreated = true -- Mark that the button has been created to avoid duplication.
+    end
+
+    -- Adjust visibility of the existing button
+    if mountUpdateVisibility then
+        mountUpdateVisibility()
+    end
 end
 
 -------------------------------------------------------------------------------------------------------
