@@ -3318,12 +3318,12 @@ function WOW_ZmienKody(message, target)
             nr_1 = nr_1 + 1;
          end
          nr_2 =  nr_1 + 1;
-         while ((string.sub(msg, nr_2, nr_2) ~= ";") and (nr_2 - nr_1 < 50)) do     -- szukaj średnika
+         while ((string.sub(msg, nr_2, nr_2) ~= ";") and (nr_2 - nr_1 < 100)) do     -- szukaj średnika
             nr_2 = nr_2 + 1;
          end
          if (string.sub(msg, nr_2, nr_2) == ";") then
             nr_3 = nr_2 + 1;
-            while ((string.sub(msg, nr_3, nr_3) ~= "}") and (nr_3 - nr_2 < 50)) do  -- szukaj końca kodu
+            while ((string.sub(msg, nr_3, nr_3) ~= "}") and (nr_3 - nr_2 < 100)) do  -- szukaj końca kodu
                nr_3 = nr_3 + 1;
             end
             if (string.sub(msg, nr_3, nr_3) == "}") then
@@ -3356,12 +3356,12 @@ function WOW_ZmienKody(message, target)
             nr_1 = nr_1 + 1;
          end
          nr_2 =  nr_1 + 1;
-         while ((string.sub(msg, nr_2, nr_2) ~= ";") and (nr_2 - nr_1 < 50)) do
+         while ((string.sub(msg, nr_2, nr_2) ~= ";") and (nr_2 - nr_1 < 100)) do
             nr_2 = nr_2 + 1;
          end
          if (string.sub(msg, nr_2, nr_2) == ";") then
             nr_3 = nr_2 + 1;
-            while ((string.sub(msg, nr_3, nr_3) ~= "}") and (nr_3 - nr_2 < 50)) do
+            while ((string.sub(msg, nr_3, nr_3) ~= "}") and (nr_3 - nr_2 < 100)) do
                nr_3 = nr_3 + 1;
             end
             if (string.sub(msg, nr_3, nr_3) == "}") then
@@ -3394,12 +3394,12 @@ function WOW_ZmienKody(message, target)
             nr_1 = nr_1 + 1;
          end
          nr_2 =  nr_1 + 1;
-         while ((string.sub(msg, nr_2, nr_2) ~= ";") and (nr_2 - nr_1 < 50)) do
+         while ((string.sub(msg, nr_2, nr_2) ~= ";") and (nr_2 - nr_1 < 100)) do
             nr_2 = nr_2 + 1;
          end
          if (string.sub(msg, nr_2, nr_2) == ";") then
             nr_3 = nr_2 + 1;
-            while ((string.sub(msg, nr_3, nr_3) ~= "}") and (nr_3 - nr_2 < 50)) do
+            while ((string.sub(msg, nr_3, nr_3) ~= "}") and (nr_3 - nr_2 < 100)) do
                nr_3 = nr_3 + 1;
             end
             if (string.sub(msg, nr_3, nr_3) == "}") then
@@ -3433,12 +3433,12 @@ function WOW_ZmienKody(message, target)
          end
          if (string.sub(msg, nr_1, nr_1) == "(") then
             nr_2 =  nr_1 + 1;
-            while ((string.sub(msg, nr_2, nr_2) ~= ";") and (nr_2 - nr_1 < 50)) do
+            while ((string.sub(msg, nr_2, nr_2) ~= ";") and (nr_2 - nr_1 < 100)) do
                nr_2 = nr_2 + 1;
             end
             if (string.sub(msg, nr_2, nr_2) == ";") then
                nr_3 = nr_2 + 1;
-               while ((string.sub(msg, nr_3, nr_3) ~= ")") and (nr_3 - nr_2 < 50)) do
+               while ((string.sub(msg, nr_3, nr_3) ~= ")") and (nr_3 - nr_2 < 100)) do
                   nr_3 = nr_3 + 1;
                end
                if (string.sub(msg, nr_3, nr_3) == ")") then
@@ -3470,12 +3470,12 @@ function WOW_ZmienKody(message, target)
          end
          if (string.sub(msg, nr_1, nr_1) == "(") then
             nr_2 =  nr_1 + 1;
-            while ((string.sub(msg, nr_2, nr_2) ~= ";") and (nr_2 - nr_1 < 50)) do
+            while ((string.sub(msg, nr_2, nr_2) ~= ";") and (nr_2 - nr_1 < 100)) do
                nr_2 = nr_2 + 1;
             end
             if (string.sub(msg, nr_2, nr_2) == ";") then
                nr_3 = nr_2 + 1;
-               while ((string.sub(msg, nr_3, nr_3) ~= ")") and (nr_3 - nr_2 < 50)) do
+               while ((string.sub(msg, nr_3, nr_3) ~= ")") and (nr_3 - nr_2 < 100)) do
                   nr_3 = nr_3 + 1;
                end
                if (string.sub(msg, nr_3, nr_3) == ")") then
@@ -3506,12 +3506,12 @@ function WOW_ZmienKody(message, target)
          end
          if (string.sub(msg, nr_1, nr_1) == "(") then
             nr_2 =  nr_1 + 1;
-            while ((string.sub(msg, nr_2, nr_2) ~= ";") and (nr_2 - nr_1 < 50)) do
+            while ((string.sub(msg, nr_2, nr_2) ~= ";") and (nr_2 - nr_1 < 100)) do
                nr_2 = nr_2 + 1;
             end
             if (string.sub(msg, nr_2, nr_2) == ";") then
                nr_3 = nr_2 + 1;
-               while ((string.sub(msg, nr_3, nr_3) ~= ")") and (nr_3 - nr_2 < 50)) do
+               while ((string.sub(msg, nr_3, nr_3) ~= ")") and (nr_3 - nr_2 < 100)) do
                   nr_3 = nr_3 + 1;
                end
                if (string.sub(msg, nr_3, nr_3) == ")") then
