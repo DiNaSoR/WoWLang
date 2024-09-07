@@ -263,6 +263,7 @@
         "PrimaryProfession2Missing",
         "ProfessionsBookFrame",
         "GroupFinderFrame",
-        "PVPUIFrame"
+        "PVPUIFrame",
+        "DEFAULT"
     ]
 }
