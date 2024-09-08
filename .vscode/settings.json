@@ -261,6 +261,9 @@
         "StoreMicroButton",
         "PrimaryProfession1Missing",
         "PrimaryProfession2Missing",
-        "ProfessionsBookFrame"
+        "ProfessionsBookFrame",
+        "GroupFinderFrame",
+        "PVPUIFrame",
+        "DEFAULT"
     ]
 }

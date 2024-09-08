@@ -3122,42 +3122,49 @@ end
 
 -------------------------------------------------------------------------------------------------------------------
 -- New function to handle special WoW codes
-function HandleWoWSpecialCodes(msg)
-   local specialCodes = {}
-   local index = 1
-
-   -- Handle color codes separately
-   msg = msg:gsub("(|c%x%x%x%x%x%x%x%x)(.-)(|r)", function(colorStart, text, colorEnd)
-       specialCodes[index] = colorStart
-       local startPlaceholder = "\001" .. index .. "\002"
-       index = index + 1
-       specialCodes[index] = colorEnd
-       local endPlaceholder = "\001" .. index .. "\002"
-       index = index + 1
-       return startPlaceholder .. text .. endPlaceholder
-   end)
-
-   -- Find and store other special WoW codes
-   msg = msg:gsub("(|T.-|t)", function(code)
-       specialCodes[index] = code
-       index = index + 1
-       return "\001" .. (index-1) .. "\002"
-   end)
-
-   msg = msg:gsub("(|A.-|a)", function(code)
-      specialCodes[index] = code
-      index = index + 1
-      return "\001" .. (index-1) .. "\002"
-  end)
-
-   msg = msg:gsub("(|H.-|h%[.-%]|h)", function(code)
-       specialCodes[index] = code
-       index = index + 1
-       return "\001" .. (index-1) .. "\002"
-   end)
-
-   return msg, specialCodes
-end
+   function HandleWoWSpecialCodes(msg)
+      local specialCodes = {}
+      local index = 1
+      local prefix = ""
+   
+      -- Handle UE_COLOR prefix
+      msg = msg:gsub("^(UE_COLOR:)", function(ueColor)
+         prefix = ueColor
+         return ""
+      end)
+   
+      -- Handle color codes separately
+      msg = msg:gsub("(|c%x%x%x%x%x%x%x%x)(.-)(|r)", function(colorStart, text, colorEnd)
+          specialCodes[index] = colorStart
+          local startPlaceholder = "\001" .. index .. "\002"
+          index = index + 1
+          specialCodes[index] = colorEnd
+          local endPlaceholder = "\001" .. index .. "\002"
+          index = index + 1
+          return startPlaceholder .. text .. endPlaceholder
+      end)
+   
+      -- Find and store other special WoW codes
+      msg = msg:gsub("(|T.-|t)", function(code)
+          specialCodes[index] = code
+          index = index + 1
+          return "\001" .. (index-1) .. "\002"
+      end)
+   
+      msg = msg:gsub("(|A.-|a)", function(code)
+         specialCodes[index] = code
+         index = index + 1
+         return "\001" .. (index-1) .. "\002"
+     end)
+   
+      msg = msg:gsub("(|H.-|h%[.-%]|h)", function(code)
+          specialCodes[index] = code
+          index = index + 1
+          return "\001" .. (index-1) .. "\002"
+      end)
+   
+      return msg, specialCodes, prefix
+   end
 
 -- Function to restore special codes
 function RestoreWoWSpecialCodes(msg, specialCodes)
@@ -3555,7 +3562,7 @@ function QTR_ExpandUnitInfo(msg, OnObjectives, AR_obj, AR_font, AR_corr)
          _corr = AR_corr;
       end
 
-      msg, specialCodes = HandleWoWSpecialCodes(msg)
+      msg, specialCodes, prefix = HandleWoWSpecialCodes(msg)
 
       msg = string.gsub(msg, "{n}", "\n");
       msg = string.gsub(msg, "\n", "#");
@@ -3588,6 +3595,9 @@ function QTR_ExpandUnitInfo(msg, OnObjectives, AR_obj, AR_font, AR_corr)
       msg = AS_ReverseAndPrepareLineText(msg, AR_obj:GetWidth()+_corr, AR_font, AR_size);
 
       msg = RestoreWoWSpecialCodes(msg, specialCodes)
+
+      -- Reattach the prefix
+      msg = prefix .. msg
    end
    
    return msg;

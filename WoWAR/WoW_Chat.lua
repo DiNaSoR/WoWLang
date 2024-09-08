@@ -5,8 +5,6 @@
 
 local CH_on_debug = false;
 -- General Variables
-local GetAddOnMetadata = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
-local CH_version = GetAddOnMetadata("WoWinArabic_Chat", "Version");
 local CH_ctrFrame = CreateFrame("FRAME", "WoWinArabic-Chat");
 local CH_ED_mode = 0;           -- włączony tryb arabski, wyrównanie do prawej strony
 local CH_ED_cursor_move = 0;    -- tryb przesuwania kursora po wpisaniu litery (0-w prawo, 1-w lewo)
@@ -25,16 +23,6 @@ local CH_BSize = 14;            -- default size of chat bubbles
 
 -- fonty z arabskimi znakami
 CH_Font = WOWTR_Font2;
-
--- user interface in addon options
-local CH_Interface = {   
-   started     = "started",      -- started 
-   active      = "قم بتفعيل الإضافة",   -- Activate the addon 
-   settings    = "خيارات إضافية",      -- Addon settings 
-   font_activ  = "تفعيل وظيفة تغيير حجم الخط في الفقاعات",  -- activate the function of changing the font size in the bubbles 
-   font_size   = "حجم الخط",    -- font size  
-   }; 
-
 -------------------------------------------------------------------------------------------------------
 
 local function CH_bubblizeText()
@@ -381,14 +369,15 @@ end
    
 -------------------------------------------------------------------------------------------------------
 
-local function CH_GetIsolatedLetterForm(ch)
+function CH_GetIsolatedLetterForm(ch)
    local retu = ch;
-   if (CH_IsolatedLetter[ch]) then
-      retu = CH_IsolatedLetter[ch];
-      if (AS_UTF8len(retu) > 1) then   -- mamy 2 litery arabskie w formie izolowanej
+   local rules = AS_Reshaping_Rules[ch];
+   if rules then
+      retu = rules.isolated;
+      if AS_UTF8len(retu) > 1 then   -- we have 2 Arabic letters in isolated form
          CH_BuforLength = CH_BuforLength + 1;
-         CH_BuforEditBox[CH_BuforLength] = AS_UTF8sub(retu,1,1);
-         retu = AS_UTF8sub(retu,2,2);
+         CH_BuforEditBox[CH_BuforLength] = AS_UTF8sub(retu, 1, 1);
+         retu = AS_UTF8sub(retu, 2, 2);
       end
    end
    return retu;
@@ -498,7 +487,7 @@ local function CH_OnChar(self, character)    -- wprowadzono znak litery z klawia
          if (CH_ED_mode == 1) then        -- tryb arabski: reshaping text into editBox
             for i = CH_BuforLength, 1, -1 do
                if (string.sub(CH_BuforEditBox[i],1,1) == "|") then           -- mamy tu link do przedmiotu
-                  newtext = newtext .. CH_UTF8reverseRS(CH_BuforEditBox[i]);   -- trzeba odwrócić znaki w linku
+                  newtext = newtext .. CH_UTF8reverse(CH_BuforEditBox[i]);   -- trzeba odwrócić znaki w linku
                else
                   newtext = newtext .. CH_BuforEditBox[i];
                end
@@ -724,246 +713,6 @@ local function CH_CheckVars()
 --  end
 end
   
--------------------------------------------------------------------------------------------------------
-
-local function CH_SetCheckButtonState()
-  CHCheckButton1:SetValue(CH_PM["active"]=="1");
-  CHCheckSize:SetValue(CH_PM["setsize"]=="1");
-  local fontsize = tonumber(CH_PM["fontsize"]);
-  CHslider1:SetValue(fontsize);
-  CHOpis1:SetFont(CH_Font, fontsize);
-end
-
--------------------------------------------------------------------------------------------------------
-
-local function CH_createDropdown(opts)
---- Opts:
----     name (string): Name of the dropdown (lowercase)
----     parent (Frame): Parent frame of the dropdown.
----     items (Table): String table of the dropdown options.
----     defaultVal (String): String value for the dropdown to default to (empty otherwise).
----     changeFunc (Function): A custom function to be called, after selecting a dropdown option.
-   local dropdown_name = '$parent_' .. opts['name'] .. '_dropdown';
-   local menu_items = opts['items'] or {};
-   local title_text = opts['title'] or '';
-   local dropdown_width = 0;
-   local default_val = opts['defaultVal'] or '';
-   local change_func = opts['changeFunc'] or function (dropdown_val) end;
-
-   local dropdown = CreateFrame("Frame", dropdown_name, opts['parent'], 'UIDropDownMenuTemplate');
-   local dd_title = dropdown:CreateFontString(nil, 'OVERLAY', 'GameFontNormal');
-   dd_title:SetPoint("TOPLEFT", 20, 15);
-   dd_title:SetFont(CH_Font, 16);
-
-   for _, item in pairs(menu_items) do -- Sets the dropdown width to the largest item string width.
-      dd_title:SetText(item);
-      local text_width = dd_title:GetStringWidth() + 20;
-      if (text_width > dropdown_width) then
-         dropdown_width = text_width;
-      end
-   end
-
-   UIDropDownMenu_SetWidth(dropdown, dropdown_width);
-   UIDropDownMenu_SetSelectedValue(dropdown, default_val);
-   UIDropDownMenu_SetText(dropdown, default_val);
-   dd_title:SetText(title_text);
-
-   UIDropDownMenu_Initialize(dropdown, function(self, level, _)
-      local info = UIDropDownMenu_CreateInfo();
-      for key, val in pairs(menu_items) do
-         info.text = val;
-         info.checked = false;
-         info.menuList= key;
-         info.hasArrow = false;
-         info.func = function(b)
-            UIDropDownMenu_SetSelectedValue(dropdown, b.value, b.value);
-            UIDropDownMenu_SetText(dropdown, b.value);
-            b.checked = true;
-            change_func(dropdown, b.value);
-         end
-         UIDropDownMenu_AddButton(info);
-      end
-   end);
-
-   return dropdown;
-end
-
--------------------------------------------------------------------------------------------------------
-
-local function CH_BlizzardOptions()
-
--- Create main frame for information text
-local CHOptions = CreateFrame("FRAME", "WoWinArabicChatOptions");
-CHOptions.refresh = function (self) CH_SetCheckButtonState() end;
-CHOptions.name = "WoWinArabic-Chat";
-InterfaceOptions_AddCategory(CHOptions);
-
-local CHOptionsHeader = CHOptions:CreateFontString(nil, "ARTWORK");
-CHOptionsHeader:SetFontObject(GameFontNormalLarge);
-CHOptionsHeader:SetJustifyH("RIGHT"); 
-CHOptionsHeader:SetJustifyV("TOP");
-CHOptionsHeader:ClearAllPoints();
-CHOptionsHeader:SetText("2023 ﺔﻨﺴﻟ Platine ﺭﻮﻄﻤﻟﺍ "..CH_version.." ﺔﺨﺴﻧ WoWinArabic-Chat ﺔﻓﺎﺿﺇ");
-CHOptionsHeader:SetFont(CH_Font, 16);
-CHOptionsHeader:SetPoint("TOPRIGHT", -20, -16);
-
-local CHDateOfBase = CHOptions:CreateFontString(nil, "ARTWORK");
-CHDateOfBase:SetFontObject(GameFontNormalLarge);
-CHDateOfBase:SetJustifyH("RIGHT"); 
-CHDateOfBase:SetJustifyV("TOP");
-CHDateOfBase:ClearAllPoints();
-CHDateOfBase:SetText("DragonArab ﺔﻴﺑﺮﻌﻟﺍ ﺔﻐﻠﻟﺍ ﻞﻴﻜﺸﺗ ﺭﻮﻄﻣ");
-CHDateOfBase:SetFont(CH_Font, 16);
-CHDateOfBase:SetPoint("TOPRIGHT", -20, -45);
-
-local CHCheckButton1 = CreateFrame("CheckButton", "CHCheckButton1", CHOptions, "SettingsCheckBoxControlTemplate");
-CHCheckButton1.Text:SetJustifyH("RIGHT");
-CHCheckButton1.Text:SetFont(CH_Font, 18);
-CHCheckButton1.Text:SetText(AS_UTF8reverseRS(CH_Interface.active));     -- dodatek aktywny
-local okno_width = SettingsPanel.Container:GetWidth();
-local text_width = CHCheckButton1.Text:GetWidth();
-CHCheckButton1:SetPoint("TOPLEFT", okno_width-text_width-70, -90);     -- pozycja opisu przycisku CheckBox
-CHCheckButton1.CheckBox:SetPoint("TOPLEFT", text_width+10, 2);    -- pozycja przycisku CheckBox
-CHCheckButton1.CheckBox:SetScript("OnClick", function(self) if (CH_PM["active"]=="1") then CH_PM["active"]="0" else CH_PM["active"]="1" end; end);
-
-local CHOptionsMode = CHOptions:CreateFontString(nil, "ARTWORK");
-CHOptionsMode:SetFontObject(GameFontWhite);
-CHOptionsMode:SetJustifyH("RIGHT");
-CHOptionsMode:SetJustifyV("TOP");
-CHOptionsMode:ClearAllPoints();
-CHOptionsMode:SetPoint("TOPRIGHT", -70, -150);
-CHOptionsMode:SetFont(CH_Font, 18);
-CHOptionsMode:SetText(":"..AS_UTF8reverseRS(CH_Interface.settings));          -- Ustawienia dodatku
-
-local CHCheckSize = CreateFrame("CheckButton", "CHCheckSize", CHOptions, "SettingsCheckBoxControlTemplate");
-CHCheckSize.Text:SetJustifyH("RIGHT");
-CHCheckSize.Text:SetFont(CH_Font, 18);
-CHCheckSize.Text:SetText(AS_UTF8reverseRS(CH_Interface.font_activ));   
-text_width = CHCheckSize.Text:GetWidth();
-CHCheckSize:SetPoint("TOPLEFT", okno_width-text_width-105, -200);
-CHCheckSize.CheckBox:SetPoint("TOPLEFT",  text_width+10, 2);
-CHCheckSize.CheckBox:SetScript("OnClick", function(self) if (CH_PM["setsize"]=="1") then CH_PM["setsize"]="0" else CH_PM["setsize"]="1" end; end);
-
-local CHslider1 = CreateFrame("Slider", "CHslider1", CHOptions, "OptionsSliderTemplate");
-CHslider1:SetPoint("TOPRIGHT", CHCheckSize.CheckBox, "BOTTOMRIGHT", 0, -30);
-CHslider1:SetMinMaxValues(10, 25);
-CHslider1.minValue, CHslider1.maxValue = CHslider1:GetMinMaxValues();
-CHslider1.Low:SetText(CHslider1.minValue);
-CHslider1.High:SetText(CHslider1.maxValue);
-getglobal(CHslider1:GetName() .. 'Text'):SetText(AS_UTF8reverseRS(CH_Interface.font_size));
-getglobal(CHslider1:GetName() .. 'Text'):SetFont(CH_Font, 16);
-getglobal(CHslider1:GetName() .. 'Text'):SetJustifyH("RIGHT");
-CHslider1:SetValue(tonumber(CH_PM["fontsize"]));
-CHslider1:SetValueStep(1);
-CHslider1:SetScript("OnValueChanged", function(self,event,arg1) 
-                                      CH_PM["fontsize"]=string.format("%d",event); 
-                                      CHslider1Val:SetText(CH_PM["fontsize"]);
-                                      CHOpis1:SetFont(CH_Font, event);
-                                      end);
-CHslider1Val = CHOptions:CreateFontString(nil, "ARTWORK");
-CHslider1Val:SetFontObject(GameFontNormal);
-CHslider1Val:SetJustifyH("CENTER");
-CHslider1Val:SetJustifyV("TOP");
-CHslider1Val:ClearAllPoints();
-CHslider1Val:SetPoint("CENTER", CHslider1, "CENTER", 0, -12);
-CHslider1Val:SetText(CH_PM["fontsize"]);   
-CHslider1Val:SetFont(CH_Font, 16);
-
-CHOpis1 = CHOptions:CreateFontString(nil, "ARTWORK");
-CHOpis1:SetFontObject(GameFontNormalLarge);
-CHOpis1:SetJustifyH("LEFT");
-CHOpis1:SetJustifyV("TOP");
-CHOpis1:ClearAllPoints();
-CHOpis1:SetPoint("TOPLEFT", CHslider1, "BOTTOMLEFT", -260, 30);
-local fontsize = tonumber(CH_PM["fontsize"]);
-if (CH_PM["setsize"]=="1") then
-   CHOpis1:SetFont(CH_Font, fontsize);
-else
-   CHOpis1:SetFont(CH_Font, 18);
-end
-CHOpis1:SetText(AS_UTF8reverseRS("نموذج نص حجم الخط"));       -- przykładowy tekst
-CHOpis1:SetJustifyH("RIGHT");
-
-local select_opts = 
-   {
-   ['name'] = 'CHfontChoice',
-   ['parent'] = CHOptions,
-   ['title'] = AS_UTF8reverseRS('ملف اختيار الخط العربي:'),
-   ['items']= {'calibri.ttf', 'arial.ttf' },   -- nazwy plików z czcionkami arabskimi do wyboru przez gracza
-   ['defaultVal'] = CH_PM["fontname"], 
-   ['changeFunc'] = function(dropdown_frame, dropdown_val)
-      CH_PM["fontname"] = dropdown_val;
-      CH_Font = "Interface\\AddOns\\WoWinArabic_Chat\\Fonts\\" .. CH_PM["fontname"];
-      CHOptionsHeader:SetFont(CH_Font, 16);
---      CHOptionsHeader:SetText("2023 ﺔﻨﺴﻟ Platine ﺭﻮﻄﻤﻟﺍ "..CH_version.." ﺔﺨﺴﻧ WoWinArabic-Chat ﺔﻓﺎﺿﺇ");
-      CHDateOfBase:SetFont(CH_Font, 16);
---      CHDateOfBase:SetText("DragonArab ﺔﻴﺑﺮﻌﻟﺍ ﺔﻐﻠﻟﺍ ﻞﻴﻜﺸﺗ ﺭﻮﻄﻣ");
-      CHCheckButton1.Text:SetFont(CH_Font, 18);
-      CHCheckButton1.Text:SetText(AS_UTF8reverseRS(CH_Interface.active));
-      CHOptionsMode:SetText(":"..AS_UTF8reverseRS(CH_Interface.settings));          -- Ustawienia dodatku
-      CHOptionsMode:SetFont(CH_Font, 18);
-      CHCheckSize.Text:SetFont(CH_Font, 18);
-      CHCheckSize.Text:SetText(AS_UTF8reverseRS(CH_Interface.font_activ));   
-      getglobal(CHslider1:GetName() .. 'Text'):SetFont(CH_Font, 16);
-      getglobal(CHslider1:GetName() .. 'Text'):SetText(AS_UTF8reverseRS(CH_Interface.font_size));
-      if (CH_PM["setsize"]=="1") then
-         CHOpis1:SetFont(CH_Font, fontsize);
-      else
-         CHOpis1:SetFont(CH_Font, 18);
-      end
-      CHOpis1:SetText(AS_UTF8reverseRS("نموذج نص حجم الخط"));       -- przykładowy tekst
-      local okno_width = SettingsPanel.Container:GetWidth();
-      local text1_width = CHCheckButton1.Text:GetWidth();
-      local text2_width = CHCheckSize.Text:GetWidth();
-      CHCheckButton1:SetPoint("TOPLEFT", okno_width-text1_width-70, -90);
-      CHCheckButton1.CheckBox:SetPoint("TOPLEFT", text1_width+10, 2);
-      CHCheckSize:SetPoint("TOPLEFT", okno_width-text2_width-105, -200);
-      CHCheckSize.CheckBox:SetPoint("TOPLEFT",  text2_width+10, 2);
-      end
-   }
-local CHselectDD = CH_createDropdown(select_opts);    -- rozwijane w dół menu wyboru czcionki arabskiej
-CHselectDD:ClearAllPoints();
-CHselectDD:SetPoint("TOPRIGHT",  -50, -510);
-
-
-local CHText0 = CHOptions:CreateFontString(nil, "ARTWORK");
-CHText0:SetFontObject(GameFontWhite);
-CHText0:SetJustifyH("LEFT");
-CHText0:SetJustifyV("TOP");
-CHText0:ClearAllPoints();
-CHText0:SetPoint("BOTTOMLEFT", 16, 90);
-CHText0:SetFont(CH_Font, 13);
-CHText0:SetText("Quick commands from the chat line:");
-
-local CHText7 = CHOptions:CreateFontString(nil, "ARTWORK");
-CHText7:SetFontObject(GameFontWhite);
-CHText7:SetJustifyH("LEFT");
-CHText7:SetJustifyV("TOP");
-CHText7:ClearAllPoints();
-CHText7:SetPoint("TOPLEFT", CHText0, "BOTTOMLEFT", 0, -10);
-CHText7:SetFont(CH_Font, 13);
-CHText7:SetText("/archat   to bring up this addon settings window");
-
-local CHText1 = CHOptions:CreateFontString(nil, "ARTWORK");
-CHText1:SetFontObject(GameFontWhite);
-CHText1:SetJustifyH("LEFT");
-CHText1:SetJustifyV("TOP");
-CHText1:ClearAllPoints();
-CHText1:SetPoint("TOPLEFT", CHText7, "BOTTOMLEFT", 0, -10);
-CHText1:SetFont(CH_Font, 13);
-CHText1:SetText("/archat 1  or  /archat on   to activate the addon");
-
-local CHText2 = CHOptions:CreateFontString(nil, "ARTWORK");
-CHText2:SetFontObject(GameFontWhite);
-CHText2:SetJustifyH("LEFT");
-CHText2:SetJustifyV("TOP");
-CHText2:ClearAllPoints();
-CHText2:SetPoint("TOPLEFT", CHText1, "BOTTOMLEFT", 0, -4);
-CHText2:SetFont(CH_Font, 13);
-CHText2:SetText("/archat 0  or  /archat off   to deactivate the addon");
-
-end
-
 -------------------------------------------------------------------------------------------------------
 
 local function CH_SlashCommand(msg)
@@ -1309,56 +1058,3 @@ function CH_LineReverse(s, limit)
    end
 	return retstr;
 end 
-
--------------------------------------------------------------------------------------------------------
-
-CH_IsolatedLetter = {
-   ["form"] = "isolated",  -- form letters are in UTF-8 code > U+FE80,  isolated letters are in UTF-8 code < U+0650
-   
-   ["ﺍ"] = "ا",  ["ﺎ"] = "ا",  -- ALEF: isolated & initial, middle & final form
-   ["ﺁ"] = "آ",  ["ﺂ"] = "آ",  -- ALEF WITH MADA ABOVE:  isolated & initial, middle & final form
-   ["ﺃ"] = "أ",  ["ﺄ"] = "أ",  -- ALEF WITH HAMZA ABOVE: isolated & initial, middle & final form
-   ["ﺇ"] = "إ",  ["ﺈ"] = "إ",  -- ALEF WITH HAMZA BELOW: isolated & initial, middle & final form
-   ["ﺑ"] = "ب",  ["ﺒ"] = "ب",  ["ﺐ"] = "ب",  -- BA:  initial, middle, final form
-   ["ﺗ"] = "ت",  ["ﺜ"] = "ت",  ["ﺚ"] = "ت",  -- THA: initial, middle, final form
-   ["ﺟ"] = "ج",  ["ﺠ"] = "ج",  ["ﺞ"] = "ج",  -- JIM: initial, middle, final form
-   ["ﺣ"] = "ح",  ["ﺤ"] = "ح",  ["ﺢ"] = "ح",  -- HAH: initial, middle, final form
-   ["ﺧ"] = "خ",  ["ﺨ"] = "خ",  ["ﺦ"] = "خ",  -- KHAH:initial, middle, final form
-   ["ﺩ"] = "د",  ["ﺪ"] = "د",  -- DAL:  isolated & initial, middle & final form
-   ["ﺫ"] = "ذ",  ["ﺬ"] = "ذ",  -- DHAL: isolated & initial, middle & final form
-   ["ﺭ"] = "ر",  ["ﺮ"] = "ر",  -- RA:   isolated & initial, middle & final form
-   ["ﺯ"] = "ز",  ["ﺰ"] = "ز",  -- ZAIN: isolated & initial, middle & final form
-   ["ﺳ"] = "س",  ["ﺴ"] = "س",  ["ﺲ"] = "س",  -- SIN: initial, middle, final form
-   ["ﺷ"] = "ش",  ["ﺸ"] = "ش",  ["ﺶ"] = "ش",  -- SHIN: initial, middle, final form
-   ["ﺻ"] = "ص",  ["ﺼ"] = "ص",  ["ﺺ"] = "ص",  -- SAD: initial, middle, final form
-   ["ﺿ"] = "ض",  ["ﻀ"] = "ض",  ["ﺾ"] = "ض",  -- DAD: initial, middle, final form
-   ["ﻃ"] = "ط",  ["ﻂ"] = "ط",  -- TAH: initial, middle & final form
-   ["ﻇ"] = "ظ",  ["ﻈ"] = "ظ",  ["ﻆ"] = "ظ",  -- ZAH: initial, middle, final form
-   ["ﻋ"] = "ع",  ["ﻌ"] = "ع",  ["ﻊ"] = "ع",  -- AIN: initial, middle, final form
-   ["ﻏ"] = "غ",  ["ﻐ"] = "غ",  ["ﻎ"] = "غ",  -- GHAIN: initial, middle, final form
-   ["ﻓ"] = "ف",  ["ﻔ"] = "ف",  ["ﻒ"] = "ف",  -- FEH: initial, middle, final form
-   ["ﻗ"] = "ق",  ["ﻘ"] = "ق",  ["ﻖ"] = "ق",  -- QAF: initial, middle, final form
-   ["ﻛ"] = "ك",  ["ﻜ"] = "ك",  ["ﻚ"] = "ك",  -- KAF: initial, middle, final form
-   ["ﻟ"] = "ل",  ["ﻠ"] = "ل",  ["ﻞ"] = "ل",  -- LAM: initial, middle, final form
-   ["ﻣ"] = "م",  ["ﻤ"] = "م",  ["ﻢ"] = "م",  -- MIM: initial, middle, final form
-   ["ﻧ"] = "ن",  ["ﻨ"] = "ن",  ["ﻦ"] = "ن",  -- NUN: initial, middle, final form
-   ["ﻳ"] = "ي",  ["ﻴ"] = "ي",  ["ﻲ"] = "ي",  -- YA: initial, middle, final form
-   ["ﺉ"] = "ئ",  ["ﺋ"] = "ئ",  ["ﺌ"] = "ئ",  ["ﺊ"] = "ئ",  -- YEH WITH HAMZA ABOVE: isolated, initial, middle, final form
-   ["ﻯ"] = "ى",  ["ﻰ"] = "ى",  -- ALEF MAKSURA: isolated & initial & middle, final form
-   ["ﻭ"] = "و",  ["ﻮ"] = "و",  -- WAW: isolated & initial, middle & final form
-   ["ﺅ"] = "ؤ",  ["ﺆ"] = "ؤ",  -- WAW WITH HAMZA ABOVE: isolated & initial, middle & final form
-   ["ﻩ"] = "ه",  ["ﻫ"] = "ه", ["ﻬ"] = "ه", ["ﻪ"] = "ه",  -- HAH: isolated, initial, middle, final form
-   ["ﺓ"] = "ة",  ["ﺔ"] = "ة",  -- TAH: isolated & initial & middle, final form
-   ["ﻼ"] = "ﻻ",  -- LAM WITH ALEF: middle & final form
-   ["ﻶ"] = "ﻵ",  -- LAM WITH ALEF WITH MADDA: middle & final form
-   ["ﻸ"] = "لأ",  -- LAM WITH ALEF WITH HAMZA ABOVE: middle & final form
-   ["ﻺ"] = "لإ",  -- LAM WITH ALEF WITH HAMZA BELOW: middle & final form
-   ["ﺀ"] = "ء",  -- HAMZA: initial & middle & final form
-
-   ["ﻻ"] = "ل".."ا",  ["ﻼ"] = "ل".."ا",  -- Arabic ligature LAM with ALEF: isolated & initial, middle & final form
-   ["ﻷ"] = "ل".."أ",  ["ﻸ"] = "ل".."أ",  -- Arabic ligature LAM with ALEF with HAMZA above: isolated & initial, middle & final form
-   ["ﻹ"] = "ل".."إ",  ["ﻺ"] = "ل".."إ",  -- Arabic ligature LAM with ALEF with HAMZA below: isolated & initial, middle & final form
-   ["ﻵ"] = "ل".."آ",  ["ﻶ"] = "ل".."آ",  -- Arabic ligature LAM with ALEF with MADDA: isolated & initial, middle & final form
-
-   };
-   
