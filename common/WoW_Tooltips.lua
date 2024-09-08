@@ -1728,28 +1728,35 @@ function ST_GroupFinder()
    end
 end
 
+local isGFButtonCreated = false
+local GFupdateVisibility
 function ST_GroupFinderbutton()
-    TT_PS = TT_PS or { ui3 = "1" }
+    if not isGFButtonCreated then
+        TT_PS = TT_PS or { ui3 = "1" }
 
-    local updateVisibility = CreateToggleButton(
-        GroupFinderFrame,
-        TT_PS,
-        "ui3",
-        WoWTR_Localization.WoWTR_enDESC,
-        WoWTR_Localization.WoWTR_trDESC,
-        {"TOPLEFT", GroupFinderFrame, "TOPRIGHT", -170, 0},
-        function()
-            ST_GroupFinder()
-            if GroupFinderFrame then
-                GroupFinderFrame:Hide()
-                GroupFinderFrame:Show()
-                -- Butonun temizlenmesi için burada gerekli işlemleri yapabilirsiniz
-            end
-        end
-    )
+		GFupdateVisibility = CreateToggleButton(
+			GroupFinderFrame,
+			TT_PS,
+			"ui3",
+			WoWTR_Localization.WoWTR_enDESC,
+			WoWTR_Localization.WoWTR_trDESC,
+			{"TOPLEFT", GroupFinderFrame, "TOPRIGHT", -170, 0},
+			function()
+				ST_GroupFinder()
+				if GroupFinderFrame then
+					GroupFinderFrame:Hide()
+					GroupFinderFrame:Show()
+					-- Butonun temizlenmesi için burada gerekli işlemleri yapabilirsiniz
+				end
+			end
+        )
 
-    -- Başlangıçta butonun görünürlüğünü ayarlayın
-    updateVisibility()
+        isGFButtonCreated = true -- Butonlar ilk kez oluşturulunca işaretleyin
+    end
+
+    if GFupdateVisibility then
+       GFupdateVisibility()
+    end
 end
 
 -------------------------------------------------------------------------------------------------------
