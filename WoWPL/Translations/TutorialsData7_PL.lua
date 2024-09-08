@@ -2,11 +2,12 @@
 -- do dodatku WoWpoPolsku-Tutorials
 
 TT_lang = "PL";         -- translation language
-TT_date = "2024-08-27"; -- date of creation base
-TT_base = "411";      -- version (number of translations)
+TT_date = "2024-09-07"; -- date of creation base
+TT_base = "414";      -- version (number of translations)
 
 -- tutorial translation table: [Hash] = "translation text" 
 Tut_Data7 = {  
+[3891641]="Eklektyczne poganiacze Theotara są znane z organizowania wspaniałych, fantazyjnych herbatek. Porozmawiaj z Tubbins w Dzielnicy Żaru w Revendreth, aby zdobyć ten kontrakt.", 
 [4111365]="Najeźdźcy Warsong z Mok\'gol Watchpost terroryzują wszystko i wszystko nie za wysokim murem. Ostrzegaliśmy podróżników, aby nie błądzili sami, ale wielu nie słucha.|n|nGdybyśmy przypuścili atak na Posterunek Strażniczy Mok\'gol, prawie na pewno cofnęlibyśmy Wojenną Pieśń do defensywy, ograniczając większość ich jeźdźcy do Nagrand.", 
 [4992302]="Podstępna choroba spada na ziemie Feralas, podczas gdy Horda i taureni Ponurego Totemu atakują nasze obozy.|n|nZobacz, co można zrobić, aby stłumić zagrożenie Ponurego Totemu i wyleczyć kraj.", 
 [13489226]="Ekspedycja Smoczej Łuski odkryła tajemnicze zapieczętowane tytaniczne wrota w Thaldraszus. Po przybyciu tam z Naleideą i Toddym i eksplorowaniu obszaru, nie $G(byłeślbyłaś) wcale bliżej do odkrycia w jaki sposób je otworzyć. Naleidea poradziła ci, byś $G(wyruszył;wyruszyła) do Valdrakken i $G(porozmawiał;porozmawiała) z Obserwatorem Koranosem, by dowiedzieć się czy ma on jakiekolwiek informacje o zapieczętowanym obiekcie.", 
@@ -33,11 +34,13 @@ Tut_Data7 = {
 [187367824]="Altruis Cierpiąca to renegat, który bierze sprawy w swoje ręce.|n|nChociaż on i Illidan mają te same cele, często nie zgadzają się z metodami Illidana.|n|nUważając, że Illidan nie kontroluje już swoich demonicznych mocy, Altruis chce nowego przywództwa dla Illidari.|n\\ n|cFF7a0000Ten wybór historii nie wpłynie na moc twojej postaci.|r", 
 [193258699]="Wciśnij |cFF00FFFF2|r i użyj |cFF00FFFFShadow Bolt|r, gdy Corruption jest na twoim wrogu", 
 [204449394]="Użyj |cFF00FFFFBear Form|r aby zmienić kształt w niedźwiedzia", 
+[209929570]="Po zapoznaniu się z Kryjówką Tkaczki, oferuje ci pierwszą z jej przysług - jeśli zbadasz wydarzenia w i wokół głównego punktu wojskowego znanego jako Oblężnicza Twierdza, poda ci lokalizację niektórych twoich sojuszników. Tkaczka poszukuje sojuszników własnych, a jeśli pójdziesz za jej wskazówkami, być może znajdziesz innego nerubiana o podobnych poglądach, z którym możesz zawrzeć sojusz.", 
 [210638045]="Zbliż się do |cFFFFD200Wandering Boar|r", 
 [212495082]="Przeciągnij |cFF00FFFFHammer of Justice|r do Paska Akcji", 
 [218047511]="Pierścień Ziemi próbuje utrzymać chaotyczną energię wypływającą ze szczeliny między Deepholmem, a Azeroth w Maelstromie.|n|nWesprzyj Pierścień Ziemi w naprawie szczeliny i powstrzymaniu tego wyłomu przed rozerwaniem Azeroth.", 
 [226270994]="Otwórz swoją Księgę Zaklęć i znajdź |cFF00FFFFWord of Glory|r", 
 [232693689]="Wejdź do Mrocznego Portalu", 
+[248084521]="Amirdrassil nie jest wzmocniony w tym tygodniu.", 
 [256890103]="Wciśnij klawisz |cFF00FFFF[1]|r, aby zaatakować cel umiejętnością |cFF00FFFFTiger Palm|r |T606551:16|t", 
 [270215456]="Trenerów profesji znajdziesz w dużym mieście.|n|nNowym graczom polecamy nauczenie się Pierwszej Pomocy.", 
 [291618156]="Kliknij klawisz |cFF00FFFFM|r, aby otworzyć mapę.", 

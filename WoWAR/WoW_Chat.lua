@@ -350,9 +350,14 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CH_OnShow()       -- otworzony został editBox
-   if (not CH_ToggleButton:IsVisible()) then
+   if (CH_PM["active"]=="1") then
       CH_ToggleButton2:Show();
+   else
+      CH_ToggleButton2:Hide();
    end
+--   if (not CH_ToggleButton:IsVisible()) then
+--      CH_ToggleButton2:Show();
+--   end
    CH_BuforEditBox = {};
    CH_BuforLength = 0;
    CH_BuforCursor = 0;
@@ -1049,7 +1054,12 @@ function CHAT_START()
    
    SlashCmdList["WOWAR"] = function(msg) CH_SlashCommand(msg); end
    SLASH_WOWINARABIC_CHAT1 = "/archat";
-   CH_CheckVars();
+   if (CH_PM["active"]=="1") then
+      CH_ToggleButton:Show();
+   else
+      CH_ToggleButton:Hide();
+   end
+--   CH_CheckVars();
 --   CH_BlizzardOptions();
    
 end
