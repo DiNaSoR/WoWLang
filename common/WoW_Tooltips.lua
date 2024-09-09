@@ -102,15 +102,13 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse, ST_corr)
-   if (obj and obj:GetText()) then
+   if (obj and obj:GetText) then
       local txt = obj:GetText();
       if (txt and string.find(txt," ")==nil) then
          local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
-
          --print("Text:", txt)
          --print("Hash:", ST_Hash)
          --print("Translation exists:", ST_TooltipsHS[ST_Hash] ~= nil)
-         
          if (ST_TooltipsHS[ST_Hash]) then
             local a1, a2, a3 = obj:GetFont();
             if (not ST_corr) then
@@ -138,7 +136,9 @@ function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse,
       end
    end
 end
+
 -------------------------------------------------------------------------------------------------------
+
 function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)     -- obj=object with stingtext,  sav=permission to save untranstaled tekst (true/false)
    if (obj and obj.GetText) then                                          -- prefix=text to save group,  font1=if present:SetFont to given font file
       local txt = obj:GetText();                                          -- Font Files: WOWTR_Font1, Original_Font1, Original_Font2
@@ -1514,6 +1514,7 @@ function ST_showDelveDifficultFrame()
 end
 
 -------------------------------------------------------------------------------------------------------
+
 function ST_clickBosses()
    local navBarButtons = {
        EncounterJournalNavBarButton1,
@@ -1540,9 +1541,18 @@ function ST_clickBosses()
        ST_CheckAndReplaceTranslationText(ST_bossOverview, true, "Dungeon&Raid:Boss:"..ST_bossName);
        local ST_bossDescription2 = EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription;
        ST_CheckAndReplaceTranslationText(ST_bossDescription2, true, "Dungeon&Raid:Boss:"..ST_bossName);
+
+       local ST_bossoverviewDescription = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription.textString; -- https://imgur.com/oiZk66W
+       --print("Boss Description:", ST_bossoverviewDescription)
+       if ST_bossoverviewDescription then
+           ST_CheckAndReplaceTranslationText({
+               GetText = function() return ST_bossoverviewDescription end,
+               SetText = function(self, text) ST_bossoverviewDescription = text end
+           }, true, "Dungeon&Raid:Boss:"..ST_bossName);
+           ST_bossoverviewDescription = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription.textString;
+       end
    end
 end
-
 
 -------------------------------------------------------------------------------------------------------
 
