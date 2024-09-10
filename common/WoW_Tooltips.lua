@@ -1882,36 +1882,42 @@ function ST_GameMenuTranslate()
        local hash = StringHash(ST_UsunZbedneZnaki(originalText))
        if ST_TooltipsHS[hash] then
            local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash]) .. " "
-            if textObject:GetText() == originalText then
-                textObject:SetText(translatedText)
-                if textObject.SetFont then
-                    textObject:SetFont(WOWTR_Font2, select(2, textObject:GetFont()))
-                end
-            end
-       elseif ST_PM["saveNW"] == "1" then
-           ST_PH[hash] = "ui@" .. ST_PrzedZapisem(originalText)
+--           C_Timer.After(0.01, function()
+               if textObject:GetText() == originalText then
+                   textObject:SetText(translatedText)
+                   if textObject.SetFont then
+                       textObject:SetFont(WOWTR_Font2, select(2, textObject:GetFont()))
+                   end
+               end
+--           end)
+       -- elseif ST_PM["saveNW"] == "1" then
+           -- ST_PH[hash] = "ui@" .. ST_PrzedZapisem(originalText)
        end
    end
 
    local function SafeUpdateButton(button)
        SafeUpdateText(button)
-        if button.SetNormalFontObject then
-            local fontObject = button:GetNormalFontObject()
-            if fontObject then
-                fontObject:SetFont(WOWTR_Font2, select(2, fontObject:GetFont()))
-                button:SetNormalFontObject(fontObject)
-            end
-        end
+--       C_Timer.After(0.01, function()
+           if button.SetNormalFontObject then
+               local fontObject = button:GetNormalFontObject()
+               if fontObject then
+                   fontObject:SetFont(WOWTR_Font2, select(2, fontObject:GetFont()))
+                   button:SetNormalFontObject(fontObject)
+               end
+           end
+--       end)
    end
 
    SafeUpdateText(GameMenuFrame.Header.Text)
 
    local function SafeInitButtons()
-        if GameMenuFrame.buttonPool then
-            for buttonFrame in GameMenuFrame.buttonPool:EnumerateActive() do
-                SafeUpdateButton(buttonFrame)
-            end
-        end
+       C_Timer.After(0.01, function()
+           if GameMenuFrame.buttonPool then
+               for buttonFrame in GameMenuFrame.buttonPool:EnumerateActive() do
+                   SafeUpdateButton(buttonFrame)
+               end
+           end
+       end)
    end
 
    hooksecurefunc(GameMenuFrame, "InitButtons", SafeInitButtons)
