@@ -496,8 +496,8 @@ function WOWTR_onEvent(self, event, name, ...)
       if (QTR_PS["gossip"] == "1") then
          if (ElvUI and not isDUIQuestFrame()) then
             if (not isDUIQuestFrame()) then  
-               if (not WOWTR_wait(0.5, QTR_Gossip_Show)) then
-               -- opóźnienie 0.5 sek
+               if (not WOWTR_wait(0.02, QTR_Gossip_Show)) then
+               -- opóźnienie 0.02 sek
                end
             end
          else
