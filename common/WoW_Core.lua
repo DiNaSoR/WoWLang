@@ -455,7 +455,7 @@ function WOWTR_onEvent(self, event, name, ...)
 
       StaticPopup1:HookScript("OnShow", ST_StaticPopup1);
       StaticPopup2:HookScript("OnShow", ST_StaticPopup1);
-      GameMenuFrame:HookScript("OnShow", function() StartDelayedFunction(ST_GameMenuTranslate, 0.01) end)
+      GameMenuFrame:HookScript("OnShow", ST_GameMenuTranslate);
       MerchantFrame:HookScript("OnShow", ST_MerchantFrame);
       PVEFrame:HookScript("OnShow", function() StartTicker(PVEFrame, ST_GroupFinder, 0.01) end);
       PVEFrame:HookScript("OnShow", ST_GroupFinderbutton);
