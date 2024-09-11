@@ -134,6 +134,9 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CH_ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
+   if (CH_PM["active"]=="0") then
+      return false;     -- wyświetlaj tekst oryginalny w oknie czatu
+   end
    local colorText = "";
    local colorR, colorG, colorB;
    if (event == "CHAT_MSG_SAY") then
@@ -342,6 +345,7 @@ local function CH_OnShow()       -- otworzony został editBox
       CH_ToggleButton2:Show();
    else
       CH_ToggleButton2:Hide();
+      return;
    end
 --   if (not CH_ToggleButton:IsVisible()) then
 --      CH_ToggleButton2:Show();
@@ -362,6 +366,9 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CH_OnHide()       -- został zamknięty editBox
+   if (CH_PM["active"]=="0") then
+      return;
+   end
    CH_ToggleButton2:Hide();
    CH_ToggleButton:Enable();
    CH_ToggleButton2:Enable();
@@ -428,6 +435,9 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CH_OnChar(self, character)    -- wprowadzono znak litery z klawiatury
+   if (CH_PM["active"]=="0") then
+      return;
+   end
    if (CH_ToggleButton:IsEnabled()) then
       if (CH_highlight_text) then            -- mamy podświetlony tekst i wciśnięto cyfrę lub literę
          self:SetText(character);            -- wyzeruj pole edycji i wprowadź character
@@ -508,6 +518,9 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź czy wciśnięto BACKSPACE lub DELETE
+   if (CH_PM["active"]=="0") then
+      return;
+   end
    if ((key == "LCTRL") or (key == "RCTRL")) then        -- wciśnięta klawisz CONTROL
       CH_key_ctrl = true;
    elseif ((key == "LSHIFT") or (key == "RSHIFT")) then  -- wciśnięta klawisz SHIFT
@@ -624,6 +637,9 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CH_OnKeyUp(self, key)      -- puszczono klawisz key: sprawdź czy wciśnięto HOME, END, LEFT i RIGHT
+   if (CH_PM["active"]=="0") then
+      return;
+   end
    if ((CH_key_shift and ((key == "LALT") or (key == "RALT"))) or (CH_key_alt and ((key == "LSHIFT") or (key == "RSHIFT")))) then
       CH_AR_ON_OFF();                                    -- wciśnięto jednocześnie klawisze SHIFT+ALT
    end
