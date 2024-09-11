@@ -138,7 +138,9 @@ function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse,
       end
    end
 end
+
 -------------------------------------------------------------------------------------------------------
+
 function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)     -- obj=object with stingtext,  sav=permission to save untranstaled tekst (true/false)
    if (obj and obj.GetText) then                                          -- prefix=text to save group,  font1=if present:SetFont to given font file
       local txt = obj:GetText();                                          -- Font Files: WOWTR_Font1, Original_Font1, Original_Font2
@@ -155,11 +157,8 @@ function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)     -- obj
             end
          end
          
-         local a1, a2, a3 = obj:GetFont();  -- Get original font info
-         --print("Text:", txt)
-         --print("Hash:", ST_Hash)
-         --print("Translation exists:", ST_TooltipsHS[ST_Hash] ~= nil)
          if (ST_TooltipsHS[ST_Hash]) then             -- we have translation for this text
+            local a1, a2, a3 = obj:GetFont();
             local new_trans = ST_TooltipsHS[ST_Hash];
             if ((ST_Hash == 1479612176) or (ST_Hash == 1202097063)) then
                local pos_end = string.find(txt, "?");
@@ -174,12 +173,8 @@ function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)     -- obj
             else
                obj:SetFont(WOWTR_Font2, a2);
             end
-         else
-            -- No translation, use original font
-            obj:SetFont(a1, a2);  -- Set back to original font
-            if (sav and (TT_PS["saveui"] == "1")) then
-               ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
-            end
+         elseif (sav and (TT_PS["saveui"] == "1")) then
+            ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
          end
       end
    end
@@ -705,38 +700,38 @@ function ST_GameTooltipOnShow()
       GameTooltip:Show();   -- wyświetla ramkę podpowiedzi (zrobi także resize)
       ST_lastNumLines = GameTooltip:NumLines();
       
-		local ignoreWords = {
-			"Seller: |cffffffff",
-			"Sellers: |cffffffff",
-			"Equipment Sets: |cFFFFFFFF",
-			"|cff00ff00<Made by ",
-			"Leader: |cffffffff",
-			"Realm: |cffffffff",
-			"Waiting on: |cff",
-			"Reagents: |n",
-			"  |A:raceicon128"
-		}
+      local ignoreWords = {
+         "Seller: |cffffffff",
+         "Sellers: |cffffffff",
+         "Equipment Sets: |cFFFFFFFF",
+         "|cff00ff00<Made by ",
+         "Leader: |cffffffff",
+         "Realm: |cffffffff",
+         "Waiting on: |cff",
+         "Reagents: |n",
+         "  |A:raceicon128"
+      }
 
-		local ignorePattern = "[Яа-яĄ-Źą-źŻ-żЀ-ӿΑ-Ωα-ω]"
+      local ignorePattern = "[Яа-яĄ-Źą-źŻ-żЀ-ӿΑ-Ωα-ω]"
 
-		if ((ST_orygText or (ST_nh == 1)) and (ST_PM["saveNW"] == "1")) then
-			for _, ST_origin in ipairs(ST_orygText) do
-				ST_hash = StringHash(ST_UsunZbedneZnaki(ST_origin))
-				if (string.sub(ST_origin, 1, 11) ~= '|A:raceicon') then
-					local shouldSave = true
-					for _, word in ipairs(ignoreWords) do
-						if string.find(ST_origin, "^" .. word) then
-							shouldSave = false
-							break
-						end
-					end
-					if shouldSave and (not string.find(ST_origin, ignorePattern)) then
-						ST_PH[ST_hash] = ST_prefix .. "@" .. ST_PrzedZapisem(ST_origin)
-					end
-				end
-			end
-		end
-	  
+      if ((ST_orygText or (ST_nh == 1)) and (ST_PM["saveNW"] == "1")) then
+         for _, ST_origin in ipairs(ST_orygText) do
+            ST_hash = StringHash(ST_UsunZbedneZnaki(ST_origin))
+            if (string.sub(ST_origin, 1, 11) ~= '|A:raceicon') then
+               local shouldSave = true
+               for _, word in ipairs(ignoreWords) do
+                  if string.find(ST_origin, "^" .. word) then
+                     shouldSave = false
+                     break
+                  end
+               end
+               if shouldSave and (not string.find(ST_origin, ignorePattern)) then
+                  ST_PH[ST_hash] = ST_prefix .. "@" .. ST_PrzedZapisem(ST_origin)
+               end
+            end
+         end
+      end
+     
       
    end
 end
@@ -997,38 +992,18 @@ function ST_TalentsTranslate()
    local talentsFrame = PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame
    if not talentsFrame then return end
 
-	local function TranslateLabel(label, labelName)
-		if label and label.GetText then
-			local text = label:GetText()
-			if text then
-				local hash = StringHash(ST_UsunZbedneZnaki(text))
-				if ST_TooltipsHS[hash] then
-					local translatedText = ST_TooltipsHS[hash]
-					
-					-- Process placeholders such as $1, $2, $3
-					translatedText = translatedText:gsub("%$(%d)", function(n)
-						local number = tonumber(n)
-						return number and tostring(select(number, text:match("(%d+)%.?"))) or "$"..n
-					end)
-					
-					label:SetText(QTR_ReverseIfAR(translatedText))
-					label:SetFont(WOWTR_Font2, select(2, label:GetFont()))
-					-- Cancel registration for translated texts.
-				elseif ST_PM["saveNW"] == "1" then
-					-- Save only untranslated texts
-					if not ST_PH[hash] then  -- If not previously recorded
-						ST_PH[hash] = "ui@" .. ST_PrzedZapisem(text)
-					end
-				end
-			end
-		end
-	end
+   -- Use the predefined function to handle translation and recording
+   local lockedLabel1 = talentsFrame.HeroTalentsContainer and talentsFrame.HeroTalentsContainer.LockedLabel1
+   ST_CheckAndReplaceTranslationText(lockedLabel1, true, "ui")
 
+   local lockedLabel2 = talentsFrame.HeroTalentsContainer and talentsFrame.HeroTalentsContainer.LockedLabel2
+   ST_CheckAndReplaceTranslationText(lockedLabel2, true, "ui")
 
-   TranslateLabel(talentsFrame.HeroTalentsContainer and talentsFrame.HeroTalentsContainer.LockedLabel1, "LockedLabel1") -- Hero Talent Locked Title
-   TranslateLabel(talentsFrame.HeroTalentsContainer and talentsFrame.HeroTalentsContainer.LockedLabel2, "LockedLabel2") -- Hero Talent Discription
-   TranslateLabel(talentsFrame.ClassCurrencyDisplay and talentsFrame.ClassCurrencyDisplay.CurrencyLabel, "ClassCurrencyDisplay.CurrencyLabel")
-   TranslateLabel(talentsFrame.SpecCurrencyDisplay and talentsFrame.SpecCurrencyDisplay.CurrencyLabel, "SpecCurrencyDisplay.CurrencyLabel")
+   local classCurrencyLabel = talentsFrame.ClassCurrencyDisplay and talentsFrame.ClassCurrencyDisplay.CurrencyLabel
+   ST_CheckAndReplaceTranslationText(classCurrencyLabel, true, "ui")
+
+   local specCurrencyLabel = talentsFrame.SpecCurrencyDisplay and talentsFrame.SpecCurrencyDisplay.CurrencyLabel
+   ST_CheckAndReplaceTranslationText(specCurrencyLabel, true, "ui")
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -1186,72 +1161,72 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function WOWSTR_onEvent(_, event, addonName)
---print(addonName);
---QTR_PS["Test"] = Frame; -- search data
-   if (QTR_PS) then
-      C_Timer.After(1, function() 
-      QTR_ObjectiveTrackerFrame_Titles() -- Addon adds translations when it starts
-      end)
+   --print(addonName);
+   --QTR_PS["Test"] = Frame; -- search data
+      if (QTR_PS) then
+         C_Timer.After(1, function() 
+         QTR_ObjectiveTrackerFrame_Titles() -- Addon adds translations when it starts
+         end)
+      end
+      if (addonName == 'Blizzard_PlayerSpells') then
+         ST_Load1 = true;
+         PlayerSpellsFrame:HookScript("OnShow", ST_SpellBookTranslateButton);
+         PlayerSpellsFrame.SpecFrame:HookScript("OnShow", ST_updateSpecContentsHook);
+         PlayerSpellsFrame.TalentsFrame:HookScript("OnShow", ST_TalentsTranslate);
+         
+      elseif (addonName == 'Blizzard_EncounterJournal') then
+         ST_load2 = true;
+         EncounterJournalEncounterFrameInfo.BossesScrollBox:HookScript("OnShow", function() StartDelayedFunction(ST_openBossesList, 0.1) end)
+         EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription:HookScript("OnShow", function() StartTicker(EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription, ST_clickBosses, 0.1) end)
+         EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription:HookScript("OnShow", function() StartTicker(EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription, ST_ShowAbility, 0.1) end)
+         EncounterJournal:HookScript("OnShow", function() StartTicker(EncounterJournal, ST_SuggestTabClick, 0.1) end)
+         EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont:HookScript("OnShow", ST_showLoreDescription)
+         
+      elseif (addonName == 'Blizzard_Professions') then
+         ST_load3 = true;
+         ProfessionsFrame:HookScript("OnShow", function() StartTicker(ProfessionsFrame, ST_showProfessionDescription, 0.02) end)
+         ProfessionsFrame:HookScript("OnShow", ST_ProfDescbutton)
+         
+      elseif (addonName == 'Blizzard_Collections') then
+         ST_load4 = true;
+         CollectionsJournalTitleText:HookScript("OnShow", function() StartTicker(CollectionsJournalTitleText, ST_MountJournal, 0.1) end)
+         WardrobeCollectionFrame:HookScript("OnShow", function() StartTicker(WardrobeCollectionFrame, ST_HelpPlateTooltip, 0.2) end)
+         MountJournalName:HookScript("OnShow", ST_MountJournalbutton)
+        
+      elseif (addonName == 'Blizzard_PVPUI') then
+         ST_load5 = true;
+         PVPQueueFrameCategoryButton1:HookScript("OnShow", function() StartTicker(PVPQueueFrameCategoryButton1, ST_GroupPVPFinder, 0.02) end)
+         PVPQueueFrameCategoryButton1:HookScript("OnShow", ST_GroupPVPFinderbutton)
+        
+      elseif (addonName == 'Blizzard_ChallengesUI') then
+         ST_load6 = true;
+         ChallengesFrame:HookScript("OnShow", function() StartTicker(ChallengesFrame, ST_GroupMplusFinder, 0.2) end)
+         
+      elseif (addonName == 'Blizzard_DelvesDifficultyPicker') then
+         ST_load7 = true;
+         DelvesDifficultyPickerFrame:HookScript("OnShow", function() StartTicker(DelvesDifficultyPickerFrame, ST_showDelveDifficultFrame, 0.2) end)
+         
+      elseif (addonName == 'Blizzard_ItemUpgradeUI') then
+         ST_load8 = true;
+         ItemUpgradeFrame:HookScript("OnShow", function() StartTicker(ItemUpgradeFrame, ST_ItemUpgradeFrm, 0.2) end)
+         
+      elseif (addonName == 'Blizzard_WeeklyRewards') then
+         ST_load9 = true;
+         WeeklyRewardsFrame:HookScript("OnShow", function() StartTicker(WeeklyRewardsFrame, ST_WeeklyRewardsFrame, 0.2) end) 
+         
+      elseif (addonName == 'Blizzard_AdventureMap') then
+         ST_load10 = true;
+         AdventureMapQuestChoiceDialog.Details.Child.DescriptionText:HookScript("OnShow", function() StartTicker(AdventureMapQuestChoiceDialog.Details.Child.DescriptionText, ST_AdvantureMapFrm, 0.2) end) 
+   
+      elseif (addonName == 'Blizzard_ProfessionsBook') then
+         ST_load11 = true;
+         ProfessionsBookFrame:HookScript("OnShow", function() StartTicker(ProfessionsBookFrame, ST_ProfessionEmptyText, 0.02) end)
+      end
+   
+      if (ST_load1 and ST_load2 and ST_load3 and ST_load4 and ST_load5 and ST_load6 and ST_load7 and ST_load8 and ST_load9 and ST_load10 and ST_load11) then    -- otworzono wszystkie dodatki Blizzarda
+         WOWSTR:UnregisterEvent("ADDON_LOADED");      -- wyłącz  nasłuchiwanie
+      end
    end
-   if (addonName == 'Blizzard_PlayerSpells') then
-      ST_Load1 = true;
-      PlayerSpellsFrame:HookScript("OnShow", ST_SpellBookTranslateButton);
-      PlayerSpellsFrame.SpecFrame:HookScript("OnShow", ST_updateSpecContentsHook);
-      PlayerSpellsFrame.TalentsFrame:HookScript("OnShow", ST_TalentsTranslate);
-      
-   elseif (addonName == 'Blizzard_EncounterJournal') then
-      ST_load2 = true;
-      EncounterJournalEncounterFrameInfo.BossesScrollBox:HookScript("OnShow", function() StartDelayedFunction(ST_openBossesList, 0.2) end)
-      EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription:HookScript("OnShow", function() StartTicker(EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription, ST_clickBosses, 0.2) end)
-      EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription:HookScript("OnShow", function() StartTicker(EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription, ST_ShowAbility, 0.2) end)
-      EncounterJournal:HookScript("OnShow", function() StartTicker(EncounterJournal, ST_SuggestTabClick, 0.2) end)
-      EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont:HookScript("OnShow", ST_showLoreDescription)
-      
-   elseif (addonName == 'Blizzard_Professions') then
-      ST_load3 = true;
-      ProfessionsFrame:HookScript("OnShow", function() StartTicker(ProfessionsFrame, ST_showProfessionDescription, 0.02) end)
-      ProfessionsFrame:HookScript("OnShow", ST_ProfDescbutton)
-      
-   elseif (addonName == 'Blizzard_Collections') then
-      ST_load4 = true;
-      CollectionsJournalTitleText:HookScript("OnShow", function() StartTicker(CollectionsJournalTitleText, ST_MountJournal, 0.1) end)
-      WardrobeCollectionFrame:HookScript("OnShow", function() StartTicker(WardrobeCollectionFrame, ST_HelpPlateTooltip, 0.2) end)
-      MountJournalName:HookScript("OnShow", ST_MountJournalbutton)
-	  
-   elseif (addonName == 'Blizzard_PVPUI') then
-      ST_load5 = true;
-      PVPQueueFrameCategoryButton1:HookScript("OnShow", function() StartTicker(PVPQueueFrameCategoryButton1, ST_GroupPVPFinder, 0.2) end)
-      PVPQueueFrameCategoryButton1:HookScript("OnShow", ST_GroupPVPFinderbutton)
-	  
-   elseif (addonName == 'Blizzard_ChallengesUI') then
-      ST_load6 = true;
-      ChallengesFrame:HookScript("OnShow", function() StartTicker(ChallengesFrame, ST_GroupMplusFinder, 0.2) end)
-      
-   elseif (addonName == 'Blizzard_DelvesDifficultyPicker') then
-      ST_load7 = true;
-      DelvesDifficultyPickerFrame:HookScript("OnShow", function() StartTicker(DelvesDifficultyPickerFrame, ST_showDelveDifficultFrame, 0.2) end)
-      
-   elseif (addonName == 'Blizzard_ItemUpgradeUI') then
-      ST_load8 = true;
-      ItemUpgradeFrame:HookScript("OnShow", function() StartTicker(ItemUpgradeFrame, ST_ItemUpgradeFrm, 0.2) end)
-      
-   elseif (addonName == 'Blizzard_WeeklyRewards') then
-      ST_load9 = true;
-      WeeklyRewardsFrame:HookScript("OnShow", function() StartTicker(WeeklyRewardsFrame, ST_WeeklyRewardsFrame, 0.2) end) 
-      
-   elseif (addonName == 'Blizzard_AdventureMap') then
-      ST_load10 = true;
-      AdventureMapQuestChoiceDialog.Details.Child.DescriptionText:HookScript("OnShow", function() StartTicker(AdventureMapQuestChoiceDialog.Details.Child.DescriptionText, ST_AdvantureMapFrm, 0.2) end) 
-
-   elseif (addonName == 'Blizzard_ProfessionsBook') then
-      ST_load11 = true;
-      ProfessionsBookFrame:HookScript("OnShow", function() StartTicker(ProfessionsBookFrame, ST_ProfessionEmptyText, 0.02) end)
-   end
-
-   if (ST_load1 and ST_load2 and ST_load3 and ST_load4 and ST_load5 and ST_load6 and ST_load7 and ST_load8 and ST_load9 and ST_load10 and ST_load11) then    -- otworzono wszystkie dodatki Blizzarda
-      WOWSTR:UnregisterEvent("ADDON_LOADED");      -- wyłącz  nasłuchiwanie
-   end
-end
 
 -------------------------------------------------------------------------------------------------------
 
@@ -1282,7 +1257,7 @@ function ST_SpellBookTranslateButton()
       PlayerSpellsFrame:HookScript("OnHide", function() WOWTR_ToggleButtonS:Hide() end)
    end
 end
-	  
+     
 -------------------------------------------------------------------------------------------------------
    
 function ST_SuggestTabClick()
@@ -1318,7 +1293,7 @@ function ST_SuggestTabClick()
       local obj8 = EncounterJournalMonthlyActivitiesFrame.HeaderContainer.TimeLeft;      -- https://imgur.com/KE3uW72
       ST_CheckAndReplaceTranslationText(obj8, true, "ui");
 
-      local obj9 = EncounterJournalSuggestFrame.Suggestion1.button.Text; 				-- https://imgur.com/kkPedLC
+      local obj9 = EncounterJournalSuggestFrame.Suggestion1.button.Text;             -- https://imgur.com/kkPedLC
       ST_CheckAndReplaceTranslationText(obj9, true, "ui");
 
       local obj10 = EncounterJournalSuggestFrame.Suggestion2.centerDisplay.button.Text; -- https://imgur.com/kkPedLC
@@ -1329,7 +1304,7 @@ function ST_SuggestTabClick()
 
       local obj12 = EncounterJournalSuggestFrame.Suggestion1.reward.text;               -- https://imgur.com/kkPedLC
       ST_CheckAndReplaceTranslationText(obj12, true, "ui");
-	  
+     
       local obj13 = EncounterJournalMonthlyActivitiesFrame.BarComplete.PendingRewardsText;               -- https://imgur.com/kkPedLC
       ST_CheckAndReplaceTranslationText(obj13, true, "ui");
 
@@ -1540,6 +1515,16 @@ function ST_clickBosses()
        ST_CheckAndReplaceTranslationText(ST_bossOverview, true, "Dungeon&Raid:Boss:"..ST_bossName);
        local ST_bossDescription2 = EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription;
        ST_CheckAndReplaceTranslationText(ST_bossDescription2, true, "Dungeon&Raid:Boss:"..ST_bossName);
+
+       local ST_bossoverviewDescription = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription.textString; -- https://imgur.com/oiZk66W
+       --print("Boss Description:", ST_bossoverviewDescription)
+       if ST_bossoverviewDescription then
+           ST_CheckAndReplaceTranslationText({
+               GetText = function() return ST_bossoverviewDescription end,
+               SetText = function(self, text) ST_bossoverviewDescription = text end
+           }, true, "Dungeon&Raid:Boss:"..ST_bossName);
+           ST_bossoverviewDescription = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription.textString;
+       end
    end
 end
 
@@ -1728,28 +1713,35 @@ function ST_GroupFinder()
    end
 end
 
+local isGFButtonCreated = false
+local GFupdateVisibility
 function ST_GroupFinderbutton()
-    TT_PS = TT_PS or { ui3 = "1" }
+    if not isGFButtonCreated then
+        TT_PS = TT_PS or { ui3 = "1" }
 
-    local updateVisibility = CreateToggleButton(
-        GroupFinderFrame,
-        TT_PS,
-        "ui3",
-        WoWTR_Localization.WoWTR_enDESC,
-        WoWTR_Localization.WoWTR_trDESC,
-        {"TOPLEFT", GroupFinderFrame, "TOPRIGHT", -170, 0},
-        function()
+      GFupdateVisibility = CreateToggleButton(
+         GroupFinderFrame,
+         TT_PS,
+         "ui3",
+         WoWTR_Localization.WoWTR_enDESC,
+         WoWTR_Localization.WoWTR_trDESC,
+         {"TOPLEFT", GroupFinderFrame, "TOPRIGHT", -170, 0},
+         function()
             ST_GroupFinder()
             if GroupFinderFrame then
-                GroupFinderFrame:Hide()
-                GroupFinderFrame:Show()
-                -- Butonun temizlenmesi için burada gerekli işlemleri yapabilirsiniz
+               GroupFinderFrame:Hide()
+               GroupFinderFrame:Show()
+               -- Butonun temizlenmesi için burada gerekli işlemleri yapabilirsiniz
             end
-        end
-    )
+         end
+        )
 
-    -- Başlangıçta butonun görünürlüğünü ayarlayın
-    updateVisibility()
+        isGFButtonCreated = true -- Butonlar ilk kez oluşturulunca işaretleyin
+    end
+
+    if GFupdateVisibility then
+       GFupdateVisibility()
+    end
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -1879,7 +1871,6 @@ end
 -------------------------------------------------------------------------------------------------------
 
 --GAME MENU
-
 function ST_GameMenuTranslate()
    if TT_PS["ui1"] ~= "1" then return end
 
@@ -1891,22 +1882,22 @@ function ST_GameMenuTranslate()
        local hash = StringHash(ST_UsunZbedneZnaki(originalText))
        if ST_TooltipsHS[hash] then
            local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash]) .. " "
-           C_Timer.After(0, function()
+--           C_Timer.After(0.01, function()
                if textObject:GetText() == originalText then
                    textObject:SetText(translatedText)
                    if textObject.SetFont then
                        textObject:SetFont(WOWTR_Font2, select(2, textObject:GetFont()))
                    end
                end
-           end)
-       elseif ST_PM["saveNW"] == "1" then
-           ST_PH[hash] = "ui@" .. ST_PrzedZapisem(originalText)
+--           end)
+       -- elseif ST_PM["saveNW"] == "1" then
+           -- ST_PH[hash] = "ui@" .. ST_PrzedZapisem(originalText)
        end
    end
 
    local function SafeUpdateButton(button)
        SafeUpdateText(button)
-       C_Timer.After(0, function()
+--       C_Timer.After(0.01, function()
            if button.SetNormalFontObject then
                local fontObject = button:GetNormalFontObject()
                if fontObject then
@@ -1914,13 +1905,13 @@ function ST_GameMenuTranslate()
                    button:SetNormalFontObject(fontObject)
                end
            end
-       end)
+--       end)
    end
 
    SafeUpdateText(GameMenuFrame.Header.Text)
 
    local function SafeInitButtons()
-       C_Timer.After(0, function()
+       C_Timer.After(0.01, function()
            if GameMenuFrame.buttonPool then
                for buttonFrame in GameMenuFrame.buttonPool:EnumerateActive() do
                    SafeUpdateButton(buttonFrame)
@@ -2358,7 +2349,7 @@ end
 -------------------------------------------------------------------------------------------------------
 
 --TOOLTIPS FRAME (click on chat frame) 
-function ST_ItemRefTooltip()			-- https://imgur.com/a/5Ooqnb2
+function ST_ItemRefTooltip()         -- https://imgur.com/a/5Ooqnb2
     local ignorePatterns = {
         "^Achievement in progress by",
         "^Achievement earned by",
@@ -2390,24 +2381,24 @@ end
 -------------------------------------------------------------------------------------------------------
 
 --ITEM UPGRADE FRAME
-function ST_ItemUpgradeFrm()			-- https://imgur.com/a/Vy6wNjO
+function ST_ItemUpgradeFrm()         -- https://imgur.com/a/Vy6wNjO
    if (TT_PS["ui1"] == "1") then
-	local ItemUpFrm01 = ItemUpgradeFrameTitleText;
-	ST_CheckAndReplaceTranslationTextUI(ItemUpFrm01, false, "ui");
-	local ItemUpFrm02 = ItemUpgradeFrame.ItemInfo.MissingItemText;
-	ST_CheckAndReplaceTranslationTextUI(ItemUpFrm02, false, "ui");
-	local ItemUpFrm03 = ItemUpgradeFrame.MissingDescription;
-	ST_CheckAndReplaceTranslationTextUI(ItemUpFrm03, false, "ui");
-	local ItemUpFrm04 = ItemUpgradeFrame.UpgradeButton.Text;
-	ST_CheckAndReplaceTranslationTextUI(ItemUpFrm04, false, "ui");
-	local ItemUpFrm05 = ItemUpgradeFrame.UpgradeCostFrame.Label;
-	ST_CheckAndReplaceTranslationTextUI(ItemUpFrm05, false, "ui");
-	local ItemUpFrm06 = ItemUpgradeFrame.ItemInfo.UpgradeTo;
-	ST_CheckAndReplaceTranslationTextUI(ItemUpFrm06, false, "ui");
-	local ItemUpFrm07 = ItemUpgradeFrameLeftItemPreviewFrameTextLeft1;
-	ST_CheckAndReplaceTranslationTextUI(ItemUpFrm07, false, "ui");
-	local ItemUpFrm08 = ItemUpgradeFrameRightItemPreviewFrameTextLeft1;
-	ST_CheckAndReplaceTranslationTextUI(ItemUpFrm08, false, "ui");
+   local ItemUpFrm01 = ItemUpgradeFrameTitleText;
+   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm01, false, "ui");
+   local ItemUpFrm02 = ItemUpgradeFrame.ItemInfo.MissingItemText;
+   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm02, false, "ui");
+   local ItemUpFrm03 = ItemUpgradeFrame.MissingDescription;
+   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm03, false, "ui");
+   local ItemUpFrm04 = ItemUpgradeFrame.UpgradeButton.Text;
+   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm04, false, "ui");
+   local ItemUpFrm05 = ItemUpgradeFrame.UpgradeCostFrame.Label;
+   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm05, false, "ui");
+   local ItemUpFrm06 = ItemUpgradeFrame.ItemInfo.UpgradeTo;
+   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm06, false, "ui");
+   local ItemUpFrm07 = ItemUpgradeFrameLeftItemPreviewFrameTextLeft1;
+   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm07, false, "ui");
+   local ItemUpFrm08 = ItemUpgradeFrameRightItemPreviewFrameTextLeft1;
+   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm08, false, "ui");
    end
 end
 
@@ -2470,7 +2461,7 @@ end
 -- RAID BOSS EMOTE FRAME
 function ST_RaidBossEmoteFrame()
    if (TT_PS["ui1"] == "1") then
-	local RBossEmoteFrm04 = RaidBossEmoteFrame.slot1Text
+   local RBossEmoteFrm04 = RaidBossEmoteFrame.slot1Text
     ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm04, false, "Collections:Emote")
     local RBossEmoteFrm05 = RaidBossEmoteFrame.slot2Text
     ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm05, false, "Collections:Emote")
