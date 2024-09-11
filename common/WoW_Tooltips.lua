@@ -1945,7 +1945,6 @@ function ST_GameMenuTranslate()
        --C_Timer.After(0.01, function()
            if GameMenuFrame.buttonPool then
                for buttonFrame in GameMenuFrame.buttonPool:EnumerateActive() do
-                  print(buttonFrame)
                    SafeUpdateButton(buttonFrame)
                end
            end
