@@ -264,6 +264,7 @@
         "ProfessionsBookFrame",
         "GroupFinderFrame",
         "PVPUIFrame",
-        "DEFAULT"
+        "DEFAULT",
+        "EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild"
     ]
 }

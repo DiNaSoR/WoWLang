@@ -1309,19 +1309,39 @@ function ST_SuggestTabClick()
       ST_CheckAndReplaceTranslationText(obj13, true, "ui");
 
       local obj14 = EncounterJournalMonthlyActivitiesTab.Text;  -- Tab: Traveler's Log
-      ST_CheckAndReplaceTranslationText(obj14, true, "ui");
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationText(obj14, true, "ui", nil, true);
+      else
+         ST_CheckAndReplaceTranslationText(obj14, true, "ui");
+      end
 
       local obj15 = EncounterJournalSuggestTab.Text;            -- Tab: Suggested Content
-      ST_CheckAndReplaceTranslationText(obj15, true, "ui");
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationText(obj15, true, "ui", nil, true);
+      else
+         ST_CheckAndReplaceTranslationText(obj15, true, "ui");
+      end
 
       local obj16 = EncounterJournalDungeonTab.Text;            -- Tab: Dungeons
-      ST_CheckAndReplaceTranslationText(obj16, true, "ui");
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationText(obj16, true, "ui", nil, true);
+      else
+         ST_CheckAndReplaceTranslationText(obj16, true, "ui");
+      end
 
       local obj17 = EncounterJournalRaidTab.Text;               -- Tab: Raids
-      ST_CheckAndReplaceTranslationText(obj17, true, "ui");
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationText(obj17, true, "ui", nil, true);
+      else
+         ST_CheckAndReplaceTranslationText(obj17, true, "ui");
+      end
 
       local obj18 = EncounterJournalLootJournalTab.Text;        -- Tab: Item Sets
-      ST_CheckAndReplaceTranslationText(obj18, true, "ui");
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationText(obj18, true, "ui", nil, true);
+      else
+         ST_CheckAndReplaceTranslationText(obj18, true, "ui");
+      end
    end
 end
 
