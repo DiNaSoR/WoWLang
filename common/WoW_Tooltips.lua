@@ -102,7 +102,7 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse, ST_corr)
-   if (obj and obj:GetText()) then
+   if (obj and obj.GetText) then
       local txt = obj:GetText();
       if (txt and string.find(txt," ")==nil) then
          local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
