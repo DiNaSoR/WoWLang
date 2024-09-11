@@ -265,6 +265,11 @@
         "GroupFinderFrame",
         "PVPUIFrame",
         "DEFAULT",
-        "EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild"
+        "EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild",
+        "COMPLETE_QUEST",
+        "ACCEPT",
+        "DECLINE",
+        "CONTINUE",
+        "GOODBYE"
     ]
 }

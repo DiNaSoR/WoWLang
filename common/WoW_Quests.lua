@@ -598,8 +598,20 @@ function GossipOnQuestFrame()       -- frame: QuestFrame
    local QFGoodbyeBtext = QuestFrameGoodbyeButtonText;
    ST_CheckAndReplaceTranslationText(QFGoodbyeBtext, true, "ui",false,true);
 
-   local QFNoticetext = QuestInfoAccountCompletedNotice;
-   ST_CheckAndReplaceTranslationText(QFNoticetext, true, "ui",false,true);
+   if (WoWTR_Localization.lang == 'AR') then
+      local QFNoticetext = QuestInfoAccountCompletedNotice;
+      ST_CheckAndReplaceTranslationText(QFNoticetext, true, "ui",false,true);
+      QuestInfoAccountCompletedNotice:SetTextColor(0.5, 0, 0.5);
+      QuestInfoAccountCompletedNotice:SetJustifyH("RIGHT");
+      -- Get the current anchor point and offset
+      -- Adjust the x offset by -50 pixels (move to the left)
+      local point, relativeTo, relativePoint, xOfs, yOfs = QuestInfoAccountCompletedNotice:GetPoint(1);
+      QuestInfoAccountCompletedNotice:SetPoint(point, relativeTo, relativePoint, xOfs - 20, yOfs);
+   else  
+      local QFNoticetext = QuestInfoAccountCompletedNotice;
+      ST_CheckAndReplaceTranslationText(QFNoticetext, true, "ui",false,true);
+   end
+
 end
 
 -------------------------------------------------------------------------------------------------------------------
