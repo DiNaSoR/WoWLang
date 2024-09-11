@@ -1916,28 +1916,40 @@ function ST_GameMenuTranslate()
    end
 
    local function SafeUpdateButton(button)
-       SafeUpdateText(button)
---       C_Timer.After(0.01, function()
-           if button.SetNormalFontObject then
-               local fontObject = button:GetNormalFontObject()
-               if fontObject then
-                   fontObject:SetFont(WOWTR_Font2, select(2, fontObject:GetFont()))
-                   button:SetNormalFontObject(fontObject)
-               end
-           end
---       end)
-   end
+      SafeUpdateText(button)
+      
+      local fontStates = {
+          "Normal",
+          "Highlight",
+          "Disabled",
+          "Pushed"
+      }
+      
+      for _, state in ipairs(fontStates) do
+          local getFontObject = button["Get" .. state .. "FontObject"]
+          local setFontObject = button["Set" .. state .. "FontObject"]
+          
+          if getFontObject and setFontObject then
+              local fontObject = getFontObject(button)
+              if fontObject then
+                  fontObject:SetFont(WOWTR_Font2, select(2, fontObject:GetFont()))
+                  setFontObject(button, fontObject)
+              end
+          end
+      end
+  end
 
    SafeUpdateText(GameMenuFrame.Header.Text)
 
    local function SafeInitButtons()
-       C_Timer.After(0.01, function()
+       --C_Timer.After(0.01, function()
            if GameMenuFrame.buttonPool then
                for buttonFrame in GameMenuFrame.buttonPool:EnumerateActive() do
+                  print(buttonFrame)
                    SafeUpdateButton(buttonFrame)
                end
            end
-       end)
+       --end)
    end
 
    hooksecurefunc(GameMenuFrame, "InitButtons", SafeInitButtons)
