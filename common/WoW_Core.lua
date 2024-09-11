@@ -65,19 +65,22 @@ end
 
 local tickers = {}
 function StartTicker(frame, func, interval)
-    if not tickers[frame] then
-        --print("Ticker is activated: " .. tostring(frame:GetName()))
-        tickers[frame] = C_Timer.NewTicker(interval, function()
-            if frame:IsVisible() then
-                func()
-            else
-                --print("Ticker stopped: " .. tostring(frame:GetName()))
-                tickers[frame]:Cancel()
-                tickers[frame] = nil
-            end
-        end)
-    end
+   if not tickers[frame] then
+      -- Execute the function immediately for the first run
+      func()
+      -- Start the ticker for subsequent runs
+      tickers[frame] = C_Timer.NewTicker(interval, function()
+         if frame:IsVisible() then
+            func()
+         else
+            -- Stop the ticker if the frame is no longer visible
+            tickers[frame]:Cancel()
+            tickers[frame] = nil
+         end
+      end)
+   end
 end
+
 
 function StartDelayedFunction(func, delay)
     C_Timer.After(delay, func)
@@ -449,45 +452,23 @@ function WOWTR_onEvent(self, event, name, ...)
             end
          end );
       end
-      
-      -- -- przycisk do przełączania wersji TR - EN dla talentów
-      -- WOWTR_ToggleButtonS = CreateFrame("Button", nil, SpellBookFrame, "UIPanelButtonTemplate");
-      -- WOWTR_ToggleButtonS:SetWidth(150);
-      -- WOWTR_ToggleButtonS:SetHeight(22);
-      -- WOWTR_ToggleButtonS:SetFrameStrata("HIGH")
-      -- if (ST_PM["spell"] == "1") then
-         -- WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_trDESC);
-      -- else
-         -- WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_enDESC);
-      -- end
-      -- WOWTR_ToggleButtonS:ClearAllPoints();
-      -- WOWTR_ToggleButtonS:SetPoint("TOPLEFT", SpellBookFrame, "TOPLEFT", 210, -1);
-      -- WOWTR_ToggleButtonS:SetScript("OnClick", STspell_ON_OFF);
 
-      -- SpellBookFrame:HookScript("OnShow", function()
-         -- if (ST_PM["active"] == "1") then
-            -- WOWTR_ToggleButtonS:Show();
-         -- else
-            -- WOWTR_ToggleButtonS:Hide();
-         -- end
-      -- end);
-
-      StaticPopup1:HookScript("OnShow", function() StartTicker(StaticPopup1, ST_StaticPopup1, 0.1) end);
-      StaticPopup2:HookScript("OnShow", function() StartTicker(StaticPopup1, ST_StaticPopup1, 0.1) end);
+      StaticPopup1:HookScript("OnShow", ST_StaticPopup1);
+      StaticPopup2:HookScript("OnShow", ST_StaticPopup1);
       GameMenuFrame:HookScript("OnShow", ST_GameMenuTranslate);
       MerchantFrame:HookScript("OnShow", ST_MerchantFrame);
-      PVEFrame:HookScript("OnShow", function() StartTicker(PVEFrame, ST_GroupFinder, 0.1) end);
+      PVEFrame:HookScript("OnShow", function() StartTicker(PVEFrame, ST_GroupFinder, 0.01) end);
       PVEFrame:HookScript("OnShow", ST_GroupFinderbutton);
-      WorldMapFrame:HookScript("OnShow", function() StartTicker(WorldMapFrame, ST_WorldMapFunc, 0.2) end);
-      CharacterFrame:HookScript("OnShow", function() StartTicker(CharacterFrame, ST_CharacterFrame, 0.2) end);
-      FriendsFrame:HookScript("OnShow", function() StartTicker(FriendsFrame, ST_FriendsFrame, 0.2) end);
-      HelpPlateTooltip:HookScript("OnShow", function() StartTicker(HelpPlateTooltip, ST_HelpPlateTooltip, 0.2) end);
+      WorldMapFrame:HookScript("OnShow", function() StartTicker(WorldMapFrame, ST_WorldMapFunc, 0.1) end);
+      CharacterFrame:HookScript("OnShow", ST_CharacterFrame);
+      FriendsFrame:HookScript("OnShow", function() StartTicker(FriendsFrame, ST_FriendsFrame, 0.1) end);
+      HelpPlateTooltip:HookScript("OnShow", function() StartTicker(HelpPlateTooltip, ST_HelpPlateTooltip, 0.1) end);
       SplashFrame:HookScript("OnShow", function() StartTicker(SplashFrame, ST_SplashFrame, 0.1) end);
-      PingSystemTutorialTitleText:HookScript("OnShow", function() StartTicker(PingSystemTutorialTitleText, ST_PingSystemTutorial, 0.2) end);
-      BankFrame:HookScript("OnShow", function() StartTicker(BankFrame, ST_WarbandBankFrm, 0.2) end);
-      ItemRefTooltip:HookScript("OnShow", function() StartTicker(ItemRefTooltip, ST_ItemRefTooltip, 0.2) end);
-	  EventToastManagerFrame:HookScript("OnShow", function() StartTicker(EventToastManagerFrame, ST_EventToastManagerFrame, 0.2) end);
-	  RaidBossEmoteFrame:HookScript("OnShow", function() StartTicker(RaidBossEmoteFrame, ST_RaidBossEmoteFrame, 0.2) end);
+      PingSystemTutorialTitleText:HookScript("OnShow", function() StartTicker(PingSystemTutorialTitleText, ST_PingSystemTutorial, 0.1) end);
+      BankFrame:HookScript("OnShow", function() StartTicker(BankFrame, ST_WarbandBankFrm, 0.1) end);
+      ItemRefTooltip:HookScript("OnShow", function() StartTicker(ItemRefTooltip, ST_ItemRefTooltip, 0.02) end);
+      EventToastManagerFrame:HookScript("OnShow", function() StartTicker(EventToastManagerFrame, ST_EventToastManagerFrame, 0.1) end);
+      RaidBossEmoteFrame:HookScript("OnShow", function() StartTicker(RaidBossEmoteFrame, ST_RaidBossEmoteFrame, 0.1) end);
       BB_OknoTRonline();
       DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..WoWTR_Localization.addonName.."  ver. "..WOWTR_version.." - "..WoWTR_Localization.started);
       if ((not QTR_PS["welcome"]) and (string.len(WoWTR_Config_Interface.welcomeText) > 1)) then
@@ -515,8 +496,8 @@ function WOWTR_onEvent(self, event, name, ...)
       if (QTR_PS["gossip"] == "1") then
          if (ElvUI and not isDUIQuestFrame()) then
             if (not isDUIQuestFrame()) then  
-               if (not WOWTR_wait(0.5, QTR_Gossip_Show)) then
-               -- opóźnienie 0.5 sek
+               if (not WOWTR_wait(0.02, QTR_Gossip_Show)) then
+               -- opóźnienie 0.02 sek
                end
             end
          else

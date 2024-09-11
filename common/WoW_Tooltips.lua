@@ -1161,72 +1161,72 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function WOWSTR_onEvent(_, event, addonName)
---print(addonName);
---QTR_PS["Test"] = Frame; -- search data
-   if (QTR_PS) then
-      C_Timer.After(1, function() 
-      QTR_ObjectiveTrackerFrame_Titles() -- Addon adds translations when it starts
-      end)
+   --print(addonName);
+   --QTR_PS["Test"] = Frame; -- search data
+      if (QTR_PS) then
+         C_Timer.After(1, function() 
+         QTR_ObjectiveTrackerFrame_Titles() -- Addon adds translations when it starts
+         end)
+      end
+      if (addonName == 'Blizzard_PlayerSpells') then
+         ST_Load1 = true;
+         PlayerSpellsFrame:HookScript("OnShow", ST_SpellBookTranslateButton);
+         PlayerSpellsFrame.SpecFrame:HookScript("OnShow", ST_updateSpecContentsHook);
+         PlayerSpellsFrame.TalentsFrame:HookScript("OnShow", ST_TalentsTranslate);
+         
+      elseif (addonName == 'Blizzard_EncounterJournal') then
+         ST_load2 = true;
+         EncounterJournalEncounterFrameInfo.BossesScrollBox:HookScript("OnShow", function() StartDelayedFunction(ST_openBossesList, 0.1) end)
+         EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription:HookScript("OnShow", function() StartTicker(EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription, ST_clickBosses, 0.1) end)
+         EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription:HookScript("OnShow", function() StartTicker(EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription, ST_ShowAbility, 0.1) end)
+         EncounterJournal:HookScript("OnShow", function() StartTicker(EncounterJournal, ST_SuggestTabClick, 0.1) end)
+         EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont:HookScript("OnShow", ST_showLoreDescription)
+         
+      elseif (addonName == 'Blizzard_Professions') then
+         ST_load3 = true;
+         ProfessionsFrame:HookScript("OnShow", function() StartTicker(ProfessionsFrame, ST_showProfessionDescription, 0.02) end)
+         ProfessionsFrame:HookScript("OnShow", ST_ProfDescbutton)
+         
+      elseif (addonName == 'Blizzard_Collections') then
+         ST_load4 = true;
+         CollectionsJournalTitleText:HookScript("OnShow", function() StartTicker(CollectionsJournalTitleText, ST_MountJournal, 0.1) end)
+         WardrobeCollectionFrame:HookScript("OnShow", function() StartTicker(WardrobeCollectionFrame, ST_HelpPlateTooltip, 0.2) end)
+         MountJournalName:HookScript("OnShow", ST_MountJournalbutton)
+        
+      elseif (addonName == 'Blizzard_PVPUI') then
+         ST_load5 = true;
+         PVPQueueFrameCategoryButton1:HookScript("OnShow", function() StartTicker(PVPQueueFrameCategoryButton1, ST_GroupPVPFinder, 0.02) end)
+         PVPQueueFrameCategoryButton1:HookScript("OnShow", ST_GroupPVPFinderbutton)
+        
+      elseif (addonName == 'Blizzard_ChallengesUI') then
+         ST_load6 = true;
+         ChallengesFrame:HookScript("OnShow", function() StartTicker(ChallengesFrame, ST_GroupMplusFinder, 0.2) end)
+         
+      elseif (addonName == 'Blizzard_DelvesDifficultyPicker') then
+         ST_load7 = true;
+         DelvesDifficultyPickerFrame:HookScript("OnShow", function() StartTicker(DelvesDifficultyPickerFrame, ST_showDelveDifficultFrame, 0.2) end)
+         
+      elseif (addonName == 'Blizzard_ItemUpgradeUI') then
+         ST_load8 = true;
+         ItemUpgradeFrame:HookScript("OnShow", function() StartTicker(ItemUpgradeFrame, ST_ItemUpgradeFrm, 0.2) end)
+         
+      elseif (addonName == 'Blizzard_WeeklyRewards') then
+         ST_load9 = true;
+         WeeklyRewardsFrame:HookScript("OnShow", function() StartTicker(WeeklyRewardsFrame, ST_WeeklyRewardsFrame, 0.2) end) 
+         
+      elseif (addonName == 'Blizzard_AdventureMap') then
+         ST_load10 = true;
+         AdventureMapQuestChoiceDialog.Details.Child.DescriptionText:HookScript("OnShow", function() StartTicker(AdventureMapQuestChoiceDialog.Details.Child.DescriptionText, ST_AdvantureMapFrm, 0.2) end) 
+   
+      elseif (addonName == 'Blizzard_ProfessionsBook') then
+         ST_load11 = true;
+         ProfessionsBookFrame:HookScript("OnShow", function() StartTicker(ProfessionsBookFrame, ST_ProfessionEmptyText, 0.02) end)
+      end
+   
+      if (ST_load1 and ST_load2 and ST_load3 and ST_load4 and ST_load5 and ST_load6 and ST_load7 and ST_load8 and ST_load9 and ST_load10 and ST_load11) then    -- otworzono wszystkie dodatki Blizzarda
+         WOWSTR:UnregisterEvent("ADDON_LOADED");      -- wyłącz  nasłuchiwanie
+      end
    end
-   if (addonName == 'Blizzard_PlayerSpells') then
-      ST_Load1 = true;
-      PlayerSpellsFrame:HookScript("OnShow", ST_SpellBookTranslateButton);
-      PlayerSpellsFrame.SpecFrame:HookScript("OnShow", ST_updateSpecContentsHook);
-      PlayerSpellsFrame.TalentsFrame:HookScript("OnShow", ST_TalentsTranslate);
-      
-   elseif (addonName == 'Blizzard_EncounterJournal') then
-      ST_load2 = true;
-      EncounterJournalEncounterFrameInfo.BossesScrollBox:HookScript("OnShow", function() StartDelayedFunction(ST_openBossesList, 0.2) end)
-      EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription:HookScript("OnShow", function() StartTicker(EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription, ST_clickBosses, 0.2) end)
-      EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription:HookScript("OnShow", function() StartTicker(EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription, ST_ShowAbility, 0.2) end)
-      EncounterJournal:HookScript("OnShow", function() StartTicker(EncounterJournal, ST_SuggestTabClick, 0.2) end)
-      EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont:HookScript("OnShow", ST_showLoreDescription)
-      
-   elseif (addonName == 'Blizzard_Professions') then
-      ST_load3 = true;
-      ProfessionsFrame:HookScript("OnShow", function() StartTicker(ProfessionsFrame, ST_showProfessionDescription, 0.02) end)
-      ProfessionsFrame:HookScript("OnShow", ST_ProfDescbutton)
-      
-   elseif (addonName == 'Blizzard_Collections') then
-      ST_load4 = true;
-      CollectionsJournalTitleText:HookScript("OnShow", function() StartTicker(CollectionsJournalTitleText, ST_MountJournal, 0.1) end)
-      WardrobeCollectionFrame:HookScript("OnShow", function() StartTicker(WardrobeCollectionFrame, ST_HelpPlateTooltip, 0.2) end)
-      MountJournalName:HookScript("OnShow", ST_MountJournalbutton)
-     
-   elseif (addonName == 'Blizzard_PVPUI') then
-      ST_load5 = true;
-      PVPQueueFrameCategoryButton1:HookScript("OnShow", function() StartTicker(PVPQueueFrameCategoryButton1, ST_GroupPVPFinder, 0.2) end)
-      PVPQueueFrameCategoryButton1:HookScript("OnShow", ST_GroupPVPFinderbutton)
-     
-   elseif (addonName == 'Blizzard_ChallengesUI') then
-      ST_load6 = true;
-      ChallengesFrame:HookScript("OnShow", function() StartTicker(ChallengesFrame, ST_GroupMplusFinder, 0.2) end)
-      
-   elseif (addonName == 'Blizzard_DelvesDifficultyPicker') then
-      ST_load7 = true;
-      DelvesDifficultyPickerFrame:HookScript("OnShow", function() StartTicker(DelvesDifficultyPickerFrame, ST_showDelveDifficultFrame, 0.2) end)
-      
-   elseif (addonName == 'Blizzard_ItemUpgradeUI') then
-      ST_load8 = true;
-      ItemUpgradeFrame:HookScript("OnShow", function() StartTicker(ItemUpgradeFrame, ST_ItemUpgradeFrm, 0.2) end)
-      
-   elseif (addonName == 'Blizzard_WeeklyRewards') then
-      ST_load9 = true;
-      WeeklyRewardsFrame:HookScript("OnShow", function() StartTicker(WeeklyRewardsFrame, ST_WeeklyRewardsFrame, 0.2) end) 
-      
-   elseif (addonName == 'Blizzard_AdventureMap') then
-      ST_load10 = true;
-      AdventureMapQuestChoiceDialog.Details.Child.DescriptionText:HookScript("OnShow", function() StartTicker(AdventureMapQuestChoiceDialog.Details.Child.DescriptionText, ST_AdvantureMapFrm, 0.2) end) 
-
-   elseif (addonName == 'Blizzard_ProfessionsBook') then
-      ST_load11 = true;
-      ProfessionsBookFrame:HookScript("OnShow", function() StartTicker(ProfessionsBookFrame, ST_ProfessionEmptyText, 0.02) end)
-   end
-
-   if (ST_load1 and ST_load2 and ST_load3 and ST_load4 and ST_load5 and ST_load6 and ST_load7 and ST_load8 and ST_load9 and ST_load10 and ST_load11) then    -- otworzono wszystkie dodatki Blizzarda
-      WOWSTR:UnregisterEvent("ADDON_LOADED");      -- wyłącz  nasłuchiwanie
-   end
-end
 
 -------------------------------------------------------------------------------------------------------
 
@@ -1902,22 +1902,22 @@ function ST_GameMenuTranslate()
        local hash = StringHash(ST_UsunZbedneZnaki(originalText))
        if ST_TooltipsHS[hash] then
            local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash]) .. " "
-           C_Timer.After(0, function()
+--           C_Timer.After(0.01, function()
                if textObject:GetText() == originalText then
                    textObject:SetText(translatedText)
                    if textObject.SetFont then
                        textObject:SetFont(WOWTR_Font2, select(2, textObject:GetFont()))
                    end
                end
-           end)
-       --[[ elseif ST_PM["saveNW"] == "1" then
-           ST_PH[hash] = "ui@" .. ST_PrzedZapisem(originalText) ]]
+--           end)
+       -- elseif ST_PM["saveNW"] == "1" then
+           -- ST_PH[hash] = "ui@" .. ST_PrzedZapisem(originalText)
        end
    end
 
    local function SafeUpdateButton(button)
        SafeUpdateText(button)
-       C_Timer.After(0, function()
+--       C_Timer.After(0.01, function()
            if button.SetNormalFontObject then
                local fontObject = button:GetNormalFontObject()
                if fontObject then
@@ -1925,13 +1925,13 @@ function ST_GameMenuTranslate()
                    button:SetNormalFontObject(fontObject)
                end
            end
-       end)
+--       end)
    end
 
    SafeUpdateText(GameMenuFrame.Header.Text)
 
    local function SafeInitButtons()
-       C_Timer.After(0, function()
+       C_Timer.After(0.01, function()
            if GameMenuFrame.buttonPool then
                for buttonFrame in GameMenuFrame.buttonPool:EnumerateActive() do
                    SafeUpdateButton(buttonFrame)
