@@ -102,35 +102,40 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse, ST_corr)
-   if (obj and obj.GetText) then
+   if (obj and type(obj) == "table" and obj.GetText) then
       local txt = obj:GetText();
       if (txt and string.find(txt," ")==nil) then
          local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
-
-         --print("Text:", txt)
-         --print("Hash:", ST_Hash)
-         --print("Translation exists:", ST_TooltipsHS[ST_Hash] ~= nil)
          
          if (ST_TooltipsHS[ST_Hash]) then
-            local a1, a2, a3 = obj:GetFont();
+            local a1, a2, a3
+            if type(obj.GetFont) == "function" then
+               a1, a2, a3 = obj:GetFont();
+            else
+               -- Set default font size
+               a2 = 12 -- or another appropriate value
+            end
+            
             if (not ST_corr) then
                ST_corr = 0;
             end
-            -- Use WOWTR_Font2 for translations
-            obj:SetFont(WOWTR_Font2, a2);
+            
+            -- Font adjustment
+            if type(obj.SetFont) == "function" then
+               obj:SetFont(WOWTR_Font2, a2);
+            end
+            
+            -- Text adjustment
             if (onlyReverse) then
                obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, ST_TooltipsHS[ST_Hash])).." ");
             else
                obj:SetText(QTR_ExpandUnitInfo(ST_TranslatePrepare(txt, ST_TooltipsHS[ST_Hash]),false,obj,WOWTR_Font2,ST_corr).." ");
             end
-            -- Don't save when we have a translation
             return
          else
-            -- Use original font if no translation
-            if (font1) then
+            if (font1 and type(obj.SetFont) == "function") then
                obj:SetFont(font1, a2);
             end
-            -- Save only if we don't have a translation and saving is enabled
             if (sav and (ST_PM["saveNW"]=="1")) then
                ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
             end
@@ -1901,15 +1906,15 @@ function ST_GameMenuTranslate()
 
        local hash = StringHash(ST_UsunZbedneZnaki(originalText))
        if ST_TooltipsHS[hash] then
-           local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash]) .. " "
---           C_Timer.After(0.01, function()
+           local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash]) .. " "
+           C_Timer.After(0.01, function()
                if textObject:GetText() == originalText then
                    textObject:SetText(translatedText)
                    if textObject.SetFont then
                        textObject:SetFont(WOWTR_Font2, select(2, textObject:GetFont()))
                    end
                end
---           end)
+           end)
        -- elseif ST_PM["saveNW"] == "1" then
            -- ST_PH[hash] = "ui@" .. ST_PrzedZapisem(originalText)
        end
@@ -1942,13 +1947,13 @@ function ST_GameMenuTranslate()
    SafeUpdateText(GameMenuFrame.Header.Text)
 
    local function SafeInitButtons()
-       --C_Timer.After(0.01, function()
+       C_Timer.After(0.01, function()
            if GameMenuFrame.buttonPool then
                for buttonFrame in GameMenuFrame.buttonPool:EnumerateActive() do
                    SafeUpdateButton(buttonFrame)
                end
            end
-       --end)
+       end)
    end
 
    hooksecurefunc(GameMenuFrame, "InitButtons", SafeInitButtons)
