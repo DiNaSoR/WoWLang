@@ -270,6 +270,7 @@
         "ACCEPT",
         "DECLINE",
         "CONTINUE",
-        "GOODBYE"
+        "GOODBYE",
+        "NUM_CHAT_WINDOWS"
     ]
 }
