@@ -71,6 +71,7 @@ function GS_ON_OFF()
    if (QTR_curr_goss=="1") then         -- wyłącz tłumaczenie - pokaż oryginalny tekst
       QTR_curr_goss="0";
       GossipGreetingText:SetText(QTR_GS[QTR_curr_hash]);
+      GossipGreetingText:SetJustifyH("LEFT");
 --    GossipGreetingText:SetFont(Original_Font2, 12);
       QTR_ToggleButtonGS1:SetText("Gossip-Hash="..tostring(QTR_curr_hash).." EN");
       if (QTR_goss_optionsEN) then
@@ -123,6 +124,7 @@ function GS_ON_OFF()
       end
       if (WoWTR_Localization.lang == 'AR') then
          GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GossipGreetingText,WOWTR_Font2,-5));    -- dodano na końcu twardą spację
+         GossipGreetingText:SetJustifyH("RIGHT");
       else
          GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GossipGreetingText,WOWTR_Font2));    -- dodano na końcu twardą spację
       end
@@ -220,7 +222,7 @@ function QTR_Gossip_Show()
       table.insert(gossip2DUI_EN, fontString:GetText());   -- english version
       local _font1, _size1, _1 = fontString:GetFont();     -- odczytaj aktualną czcionkę i rozmiar
       fontString:SetFont(WOWTR_Font2,_size1);
---      buttonString:HookScript("OnClick", QTR_DUIGossipFrame);
+      --buttonString:HookScript("OnClick", QTR_DUIGossipFrame);
       if (string.sub(GOptionText,1,2) == "|c") then
          prefix = string.sub(GOptionText, 1, 10);
          sufix = "|r";
@@ -337,6 +339,7 @@ function QTR_Gossip_Show()
                local GO_height = GossipGreetingText:GetHeight();
                if (WoWTR_Localization.lang == 'AR') then
                   GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GossipGreetingText,WOWTR_Font2,-5));    -- dodano na końcu twardą spację
+                  GossipGreetingText:SetJustifyH("RIGHT");
                else
                   GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GossipGreetingText,WOWTR_Font2));    -- dodano na końcu twardą spację
                end
@@ -3198,7 +3201,7 @@ function WOW_ZmienKody(message, target)
       msg = string.gsub(msg, "{FFFF00FFc}", "{cFF00FFFF}");
       msg = string.gsub(msg, "{0000FFFFc}", "{cFFFF0000}");
       msg = string.gsub(msg, "{ffffffffc}", "{cffffffff}");
-      msg = string.gsub(msg, "ROLOC_EU:", "UE_COLOR:");
+      msg = string.gsub(msg, "EU_ROLOC:", "UE_COLOR:");
       --msg = string.gsub(msg, "{002DFFFFc}", "{cFFFFD200}");
 
    else
