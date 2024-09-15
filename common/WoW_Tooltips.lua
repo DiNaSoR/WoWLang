@@ -1603,7 +1603,7 @@ function ST_clickBosses2()
        local ST_bossOverviewTitle = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle;
        ST_CheckAndReplaceTranslationText(ST_bossOverviewTitle, true, "ui");
    end
-       --ST_UpdateBossOverviewDescription(ST_bossName);
+       ST_UpdateBossOverviewDescription(ST_bossName);
    end
 end
 
