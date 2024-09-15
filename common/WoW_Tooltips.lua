@@ -1215,6 +1215,7 @@ function WOWSTR_onEvent(_, event, addonName)
          EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription:HookScript("OnShow", ST_clickBosses)
          EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription:HookScript("OnShow", function() StartTicker(EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription, ST_ShowAbility, 0.1) end)
          EncounterJournal:HookScript("OnShow", function() StartTicker(EncounterJournal, ST_SuggestTabClick, 0.1) end)
+         EncounterJournal:HookScript("OnShow", ST_AdventureGuidebutton)
          EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont:HookScript("OnShow", ST_showLoreDescription)
          
       elseif (addonName == 'Blizzard_Professions') then
@@ -1384,9 +1385,11 @@ end
 
 function ST_showLoreDescription()
 --print("show LoreDescription");
+ if (TT_PS["ui5"] == "1") then
    local ST_Dungeon_Raid_zone = EncounterJournalEncounterFrameInstanceFrame.title:GetText() or "?";
    local ST_loreDescription = EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox.FontStringContainer.FontString;
    ST_CheckAndReplaceTranslationText(ST_loreDescription, true, "Dungeon&Raid:Zone:"..ST_Dungeon_Raid_zone);
+ end
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -1526,7 +1529,7 @@ function ST_UpdateBossOverviewDescription(ST_bossName) -- https://imgur.com/Rt4b
     local ST_bossName = EncounterJournalEncounterFrameInfoEncounterTitle:GetText()
     local ST_bossoverviewDescription = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription.textString
     local ST_bossoverviewDescriptionText = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription.Text
-    
+    if (TT_PS["ui5"] == "1") then
     --print("Description:", ST_bossoverviewDescription)
     if ST_bossoverviewDescription then
         local tempObj = {
@@ -1542,6 +1545,7 @@ function ST_UpdateBossOverviewDescription(ST_bossName) -- https://imgur.com/Rt4b
         
         ST_CheckAndReplaceTranslationText(tempObj, true, "Dungeon&Raid:Boss:"..ST_bossName)
     end
+	end
 end
 
 function ST_UpdateBossDescriptionFont(textObject)
@@ -1589,20 +1593,54 @@ end
 function ST_clickBosses2()
    local ST_bossName = EncounterJournalEncounterFrameInfoEncounterTitle:GetText();
    if ST_bossName then
+      if (TT_PS["ui5"] == "1") then
        local ST_bossDescription = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription;
        ST_CheckAndReplaceTranslationText(ST_bossDescription, true, "Dungeon&Raid:Boss:"..ST_bossName);
        local ST_bossOverview = EncounterJournalEncounterFrameInfo.overviewScroll.child.overviewDescription;
        ST_CheckAndReplaceTranslationText(ST_bossOverview, true, "Dungeon&Raid:Boss:"..ST_bossName);
        local ST_bossDescription2 = EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription;
        ST_CheckAndReplaceTranslationText(ST_bossDescription2, true, "Dungeon&Raid:Boss:"..ST_bossName);
-
-       ST_UpdateBossOverviewDescription(ST_bossName);
+       local ST_bossOverviewTitle = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle;
+       ST_CheckAndReplaceTranslationText(ST_bossOverviewTitle, true, "ui");
+   end
+       --ST_UpdateBossOverviewDescription(ST_bossName);
    end
 end
 
+local isEJournalButtonCreated = false
+local EncounterJournalupdateVisibility
+function ST_AdventureGuidebutton()
+    if not isEJournalButtonCreated then
+        TT_PS = TT_PS or { ui5 = "1" }
+
+      EncounterJournalupdateVisibility = CreateToggleButton(
+         EncounterJournal,
+         TT_PS,
+         "ui5",
+         WoWTR_Localization.WoWTR_enDESC,
+         WoWTR_Localization.WoWTR_trDESC,
+         {"TOPLEFT", EncounterJournal, "TOPRIGHT", -170, 0},
+         function()
+            ST_clickBosses()
+            if EncounterJournal then
+               EncounterJournal:Hide()
+               EncounterJournal:Show()
+               -- Butonun temizlenmesi için burada gerekli işlemleri yapabilirsiniz
+            end
+         end
+        )
+
+        isEJournalButtonCreated = true -- Butonlar ilk kez oluşturulunca işaretleyin
+    end
+
+    if EncounterJournalupdateVisibility then
+       EncounterJournalupdateVisibility()
+    end
+end
 -------------------------------------------------------------------------------------------------------
 
 function ST_ShowAbility()            -- sprawdzanie tekstów Ability
+  if (TT_PS["ui5"] == "1") then
    for i = 1, 99, 1 do
       if (_G["EncounterJournalInfoHeader"..i.."Description"]) then
          local obj = _G["EncounterJournalInfoHeader"..i.."Description"];
@@ -1615,6 +1653,7 @@ function ST_ShowAbility()            -- sprawdzanie tekstów Ability
          ST_CheckAndReplaceTranslationText(ST_bossDescription2, false);
       end
    end
+  end
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -2039,21 +2078,6 @@ function ST_MountJournal()
       local CJobj07 = MountJournalMountButton.Text;
       ST_CheckAndReplaceTranslationTextUI(CJobj07, false, "ui");
 
-      local CJobj08 = CollectionsJournalTab1.Text;
-      ST_CheckAndReplaceTranslationTextUI(CJobj08, false, "ui");
-
-      local CJobj09 = CollectionsJournalTab2.Text;
-      ST_CheckAndReplaceTranslationTextUI(CJobj09, false, "ui");
-
-      local CJobj10 = CollectionsJournalTab3.Text;
-      ST_CheckAndReplaceTranslationTextUI(CJobj10, false, "ui");
-
-      local CJobj11 = CollectionsJournalTab4.Text;
-      ST_CheckAndReplaceTranslationTextUI(CJobj11, false, "ui");
-
-      local CJobj12 = CollectionsJournalTab5.Text;
-      ST_CheckAndReplaceTranslationTextUI(CJobj12, false, "ui");
-
       local CJobj13 = WardrobeCollectionFrameTab1.Text;
       ST_CheckAndReplaceTranslationTextUI(CJobj13, false, "ui");
 
@@ -2126,6 +2150,23 @@ function ST_MountJournal()
          local CJToys = ToyBox.iconsFrame["spellButton"..i].name;
          ST_CheckAndReplaceTranslationTextUI(CJToys, true, "toyname");
       end
+   end
+   
+   if (TT_PS["ui5"] == "1") then
+      local CJobj08 = CollectionsJournalTab1.Text;
+      ST_CheckAndReplaceTranslationTextUI(CJobj08, false, "ui");
+
+      local CJobj09 = CollectionsJournalTab2.Text;
+      ST_CheckAndReplaceTranslationTextUI(CJobj09, false, "ui");
+
+      local CJobj10 = CollectionsJournalTab3.Text;
+      ST_CheckAndReplaceTranslationTextUI(CJobj10, false, "ui");
+
+      local CJobj11 = CollectionsJournalTab4.Text;
+      ST_CheckAndReplaceTranslationTextUI(CJobj11, false, "ui");
+
+      local CJobj12 = CollectionsJournalTab5.Text;
+      ST_CheckAndReplaceTranslationTextUI(CJobj12, false, "ui");
    end
 end
 
