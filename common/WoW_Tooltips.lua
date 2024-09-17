@@ -1389,6 +1389,8 @@ function ST_showLoreDescription()
    local ST_Dungeon_Raid_zone = EncounterJournalEncounterFrameInstanceFrame.title:GetText() or "?";
    local ST_loreDescription = EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox.FontStringContainer.FontString;
    ST_CheckAndReplaceTranslationText(ST_loreDescription, true, "Dungeon&Raid:Zone:"..ST_Dungeon_Raid_zone);
+   local ST_loreShowmap = EncounterJournalEncounterFrameInstanceFrameMapButtonText;
+   ST_CheckAndReplaceTranslationText(ST_loreShowmap, true, "ui");
  end
 end
 
