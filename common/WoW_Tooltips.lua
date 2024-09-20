@@ -101,43 +101,23 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
--- function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse, ST_corr)
-   -- if (obj and obj.GetText) then
-      -- local txt = obj:GetText();
-      -- if (txt and string.find(txt," ")==nil) then
-         -- local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
-
-         -- --print("Text:", txt)
-         -- --print("Hash:", ST_Hash)
-         -- --print("Translation exists:", ST_TooltipsHS[ST_Hash] ~= nil)
-         
-         -- if (ST_TooltipsHS[ST_Hash]) then
-            -- local a1, a2, a3 = obj:GetFont();
-            -- if (not ST_corr) then
-               -- ST_corr = 0;
-            -- end
-            -- -- Use WOWTR_Font2 for translations
-            -- obj:SetFont(WOWTR_Font2, a2);
-            -- if (onlyReverse) then
-               -- obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, ST_TooltipsHS[ST_Hash])).." ");
-            -- else
-               -- obj:SetText(QTR_ExpandUnitInfo(ST_TranslatePrepare(txt, ST_TooltipsHS[ST_Hash]),false,obj,WOWTR_Font2,ST_corr).." ");
-            -- end
-            -- -- Don't save when we have a translation
-            -- return
-         -- else
-            -- -- Use original font if no translation
-            -- if (font1) then
-               -- obj:SetFont(font1, a2);
-            -- end
-            -- -- Save only if we don't have a translation and saving is enabled
-            -- if (sav and (ST_PM["saveNW"]=="1")) then
-               -- ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
-            -- end
-         -- end
-      -- end
-   -- end
--- end
+local ignoreSettings = {
+    words = {
+        "Seller: |cffffffff",
+        "Sellers: |cffffffff",
+        "Equipment Sets: |cFFFFFFFF",
+        "|cff00ff00<Made by ",
+        "Leader: |cffffffff",
+        "Realm: |cffffffff",
+        "Waiting on: |cff",
+        "Reagents: |n",
+        "  |A:raceicon128",
+        "Achievement in progress by",
+        "Achievement earned by",
+        "You completed this on "
+    },
+    pattern = "[Яа-яĄ-Źą-źŻ-żЀ-ӿΑ-Ωα-ω]"
+}
 
 function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse, ST_corr)
    if (obj and obj.GetText) then
@@ -178,42 +158,52 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)     -- obj=object with stingtext,  sav=permission to save untranstaled tekst (true/false)
-   if (obj and obj.GetText) then                                          -- prefix=text to save group,  font1=if present:SetFont to given font file
-      local txt = obj:GetText();                                          -- Font Files: WOWTR_Font1, Original_Font1, Original_Font2
-      if (txt and string.find(txt, " ") == nil) then
-         local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
-         local destroyText = "Do you want to destroy";
-         local deleteText = "DELETE";
-         
-         if (string.sub(txt, 1, #destroyText) == destroyText) then
-            if (string.find(txt, deleteText)) then
-               ST_Hash = 1479612176;
-            else
-               ST_Hash = 1202097063;
+    if (obj and obj.GetText) then                                         -- prefix=text to save group,  font1=if present:SetFont to given font file
+        local txt = obj:GetText();                                        -- Font Files: WOWTR_Font1, Original_Font1, Original_Font2
+
+        local function shouldIgnore(text)
+            for _, pattern in ipairs(ignoreSettings.words) do
+                if text:find(pattern) then
+                    return true
+                end
             end
-         end
-         
-         if (ST_TooltipsHS[ST_Hash]) then             -- we have translation for this text
-            local a1, a2, a3 = obj:GetFont();
-            local new_trans = ST_TooltipsHS[ST_Hash];
-            if ((ST_Hash == 1479612176) or (ST_Hash == 1202097063)) then
-               local pos_end = string.find(txt, "?");
-               if (pos_end) then
-                  local new_item = string.sub(txt, #destroyText + 2, pos_end - 1);
-                  new_trans = string.gsub(new_trans, "$I", new_item);                   -- change name of item in the place of code $I in translation
-               end
+            return false
+        end
+        
+        if (txt and string.find(txt, " ") == nil and not shouldIgnore(txt)) then
+            local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
+            local destroyText = "Do you want to destroy";
+            local deleteText = "DELETE";
+
+            if (string.sub(txt, 1, #destroyText) == destroyText) then
+                if (string.find(txt, deleteText)) then
+                    ST_Hash = 1479612176;
+                else
+                    ST_Hash = 1202097063;
+                end
             end
-            obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, new_trans)).." ");     -- hard space at the end of translation
-            if (font1) then
-               obj:SetFont(font1, a2);
-            else
-               obj:SetFont(WOWTR_Font2, a2);
+            
+            if (ST_TooltipsHS[ST_Hash]) then             -- we have translation for this text
+                local a1, a2, a3 = obj:GetFont();
+                local new_trans = ST_TooltipsHS[ST_Hash];
+                if ((ST_Hash == 1479612176) or (ST_Hash == 1202097063)) then
+                    local pos_end = string.find(txt, "?");
+                    if (pos_end) then
+                        local new_item = string.sub(txt, #destroyText + 2, pos_end - 1);
+                        new_trans = string.gsub(new_trans, "$I", new_item);                   -- change name of item in the place of code $I in translation
+                    end
+                end
+                obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, new_trans)).." ");     -- hard space at the end of translation
+                if (font1) then
+                    obj:SetFont(font1, a2);
+                else
+                    obj:SetFont(WOWTR_Font2, a2);
+                end
+            elseif (sav and (TT_PS["saveui"] == "1")) then
+                ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
             end
-         elseif (sav and (TT_PS["saveui"] == "1")) then
-            ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
-         end
-      end
-   end
+        end
+    end
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -735,40 +725,30 @@ function ST_GameTooltipOnShow()
       end
       GameTooltip:Show();   -- wyświetla ramkę podpowiedzi (zrobi także resize)
       ST_lastNumLines = GameTooltip:NumLines();
-      
-      local ignoreWords = {
-         "Seller: |cffffffff",
-         "Sellers: |cffffffff",
-         "Equipment Sets: |cFFFFFFFF",
-         "|cff00ff00<Made by ",
-         "Leader: |cffffffff",
-         "Realm: |cffffffff",
-         "Waiting on: |cff",
-         "Reagents: |n",
-         "  |A:raceicon128"
-      }
-
-      local ignorePattern = "[Яа-яĄ-Źą-źŻ-żЀ-ӿΑ-Ωα-ω]"
 
       if ((ST_orygText or (ST_nh == 1)) and (ST_PM["saveNW"] == "1")) then
-         for _, ST_origin in ipairs(ST_orygText) do
-            ST_hash = StringHash(ST_UsunZbedneZnaki(ST_origin))
-            if (string.sub(ST_origin, 1, 11) ~= '|A:raceicon') then
-               local shouldSave = true
-               for _, word in ipairs(ignoreWords) do
-                  if string.find(ST_origin, "^" .. word) then
-                     shouldSave = false
-                     break
+          for _, ST_origin in ipairs(ST_orygText) do
+              local ST_hash = StringHash(ST_UsunZbedneZnaki(ST_origin))
+              if (string.sub(ST_origin, 1, 11) ~= '|A:raceicon') then
+                  local shouldSave = true
+                  
+                  for _, word in ipairs(ignoreSettings.words) do
+                      if string.find(ST_origin, word) then
+                          shouldSave = false
+                          break
+                      end
                   end
-               end
-               if shouldSave and (not string.find(ST_origin, ignorePattern)) then
-                  ST_PH[ST_hash] = ST_prefix .. "@" .. ST_PrzedZapisem(ST_origin)
-               end
-            end
-         end
+
+                  if shouldSave and string.find(ST_origin, ignoreSettings.pattern) then
+                      shouldSave = false
+                  end
+
+                  if shouldSave then
+                      ST_PH[ST_hash] = ST_prefix .. "@" .. ST_PrzedZapisem(ST_origin)
+                  end
+              end
+          end
       end
-     
-      
    end
 end
 
@@ -941,24 +921,24 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CreateToggleButton(parentFrame, settingsTable, settingKey, onText, offText, point, onClick)
-   local buttonOFF = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
-   local buttonON = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
-   
-   local function SetupButton(button, text)
-       button:SetSize(120, 22)
-       if WoWTR_Localization.lang == 'AR' and text == WoWTR_Localization.WoWTR_trDESC then
-           button:SetText(QTR_ReverseIfAR(text))
-           button:GetFontString():SetFont(WOWTR_Font2, 13)
-       else
-           button:SetText(text)
-           button:GetFontString():SetFont(button:GetFontString():GetFont(), 13)
-       end
-       button:SetPoint(unpack(point))
-       button:SetFrameStrata("TOOLTIP")
-   end
+    local buttonOFF = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
+    local buttonON = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
+    
+    local function SetupButton(button, text)
+        button:SetSize(120, 22)
+        if WoWTR_Localization.lang == 'AR' and text == WoWTR_Localization.WoWTR_trDESC then
+            button:SetText(QTR_ReverseIfAR(text))
+            button:GetFontString():SetFont(WOWTR_Font2, 13)
+        else
+            button:SetText(text)
+            button:GetFontString():SetFont(button:GetFontString():GetFont(), 13)
+        end
+        button:SetPoint(unpack(point))
+        button:SetFrameStrata("TOOLTIP")
+    end
 
-   SetupButton(buttonOFF, offText)
-   SetupButton(buttonON, onText)
+    SetupButton(buttonOFF, offText)
+    SetupButton(buttonON, onText)
 
     local function UpdateVisibility()
         if settingsTable[settingKey] == "1" then
@@ -2475,29 +2455,14 @@ end
 
 --TOOLTIPS FRAME (click on chat frame) 
 function ST_ItemRefTooltip()         -- https://imgur.com/a/5Ooqnb2
-    local ignorePatterns = {
-        "^Achievement in progress by",
-        "^Achievement earned by",
-        "You completed this on "
-    }
-
-    local function shouldIgnore(text)
-        for _, pattern in ipairs(ignorePatterns) do
-            if text:find(pattern) then
-                return true
-            end
-        end
-        return false
-    end
-
     for i = 2, 20 do
         local itemRefLeft = _G["ItemRefTooltipTextLeft" .. i];
-        if itemRefLeft and itemRefLeft:GetText() and not shouldIgnore(itemRefLeft:GetText()) then
+        if itemRefLeft and itemRefLeft:GetText() then
             ST_CheckAndReplaceTranslationTextUI(itemRefLeft, true, "other");
         end
 
         local itemRefRight = _G["ItemRefTooltipTextRight" .. i];
-        if itemRefRight and itemRefRight:GetText() and not shouldIgnore(itemRefRight:GetText()) then
+        if itemRefRight and itemRefRight:GetText() then
             ST_CheckAndReplaceTranslationTextUI(itemRefRight, true, "other");
         end
     end
