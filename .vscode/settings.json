@@ -272,6 +272,7 @@
         "CONTINUE",
         "GOODBYE",
         "NUM_CHAT_WINDOWS",
-        "EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle"
+        "EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle",
+        "EncounterJournalEncounterFrameInstanceFrameMapButtonText"
     ]
 }
