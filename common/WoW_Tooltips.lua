@@ -941,24 +941,24 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CreateToggleButton(parentFrame, settingsTable, settingKey, onText, offText, point, onClick)
-    local buttonOFF = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
-    local buttonON = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
-    
-    local function SetupButton(button, text)
-        button:SetSize(120, 22)
-        if WoWTR_Localization.lang == 'AR' then
-            button:SetText(QTR_ReverseIfAR(text))
-            button:GetFontString():SetFont(WOWTR_Font2, 13)
-        else
-            button:SetText(text)
-            button:GetFontString():SetFont(button:GetFontString():GetFont(), 13)
-        end
-        button:SetPoint(unpack(point))
-        button:SetFrameStrata("TOOLTIP")
-    end
+   local buttonOFF = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
+   local buttonON = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
+   
+   local function SetupButton(button, text)
+       button:SetSize(120, 22)
+       if WoWTR_Localization.lang == 'AR' and text == WoWTR_Localization.WoWTR_trDESC then
+           button:SetText(QTR_ReverseIfAR(text))
+           button:GetFontString():SetFont(WOWTR_Font2, 13)
+       else
+           button:SetText(text)
+           button:GetFontString():SetFont(button:GetFontString():GetFont(), 13)
+       end
+       button:SetPoint(unpack(point))
+       button:SetFrameStrata("TOOLTIP")
+   end
 
-    SetupButton(buttonOFF, offText)
-    SetupButton(buttonON, onText)
+   SetupButton(buttonOFF, offText)
+   SetupButton(buttonON, onText)
 
     local function UpdateVisibility()
         if settingsTable[settingKey] == "1" then
