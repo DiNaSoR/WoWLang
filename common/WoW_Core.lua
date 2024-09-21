@@ -469,6 +469,7 @@ function WOWTR_onEvent(self, event, name, ...)
       ItemRefTooltip:HookScript("OnShow", function() StartTicker(ItemRefTooltip, ST_ItemRefTooltip, 0.02) end);
       EventToastManagerFrame:HookScript("OnShow", function() StartTicker(EventToastManagerFrame, ST_EventToastManagerFrame, 0.1) end);
       RaidBossEmoteFrame:HookScript("OnShow", function() StartTicker(RaidBossEmoteFrame, ST_RaidBossEmoteFrame, 0.1) end);
+      ReputationFrame.ReputationDetailFrame:HookScript("OnShow", function() StartTicker(ReputationFrame.ReputationDetailFrame, ST_CharacterFrame, 0.1) end);
       BB_OknoTRonline();
       DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..WoWTR_Localization.addonName.."  ver. "..WOWTR_version.." - "..WoWTR_Localization.started);
       if ((not QTR_PS["welcome"]) and (string.len(WoWTR_Config_Interface.welcomeText) > 1)) then
