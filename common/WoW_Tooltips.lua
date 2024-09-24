@@ -1693,6 +1693,7 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function ST_BossHeaderTabText()
+   if (TT_PS["ui5"] == "1") then
     local ST_bossName = EncounterJournalNavBarButton3Text:GetText()
 
     local headers = {
@@ -1744,6 +1745,7 @@ function ST_BossHeaderTabText()
       ST_CheckAndReplaceTranslationText(HeaderTitle2, true, "ui");
       local HeaderTitle3 = EncounterJournalOverviewInfoHeader3HeaderButtonTitle;
       ST_CheckAndReplaceTranslationText(HeaderTitle3, true, "ui");
+   end
 end
 
 -------------------------------------------------------------------------------------------------------
