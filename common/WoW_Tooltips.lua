@@ -1087,7 +1087,7 @@ function ST_updateHeroTalentHook()
                     end
                 end
             end
-			      local function updateText(element, key, translationType, alignment)
+         local function updateText(element, key, translationType, alignment)
          local text = element:GetText()
          local hash = StringHash(ST_UsunZbedneZnaki(text))
          if ST_TooltipsHS[hash] then
@@ -1110,7 +1110,7 @@ function ST_updateHeroTalentHook()
       updateText(frame.ActivatedText, "ActivatedText", 1)
       updateText(frame.ActivateButton.Text, "ActivateButton.Text", 1)
       updateText(frame.Description, "Description", 2)
-	  
+      
         end
     end
 end
@@ -1559,7 +1559,7 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function ST_UpdateBossOverviewDescription(ST_bossName) -- https://imgur.com/Rt4b07f
-    local ST_bossName = EncounterJournalEncounterFrameInfoEncounterTitle:GetText()
+    local ST_bossName = EncounterJournalNavBarButton3Text:GetText()
     local ST_bossoverviewDescription = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription.textString
     local ST_bossoverviewDescriptionText = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription.Text
     if (TT_PS["ui5"] == "1") then
@@ -1578,7 +1578,7 @@ function ST_UpdateBossOverviewDescription(ST_bossName) -- https://imgur.com/Rt4b
         
         ST_CheckAndReplaceTranslationText(tempObj, true, "Dungeon&Raid:Boss:"..ST_bossName)
     end
-	end
+    end
 end
 
 function ST_UpdateBossDescriptionFont(textObject)
@@ -1624,7 +1624,7 @@ frame:SetScript("OnUpdate", OnUpdateHandler)
 end
 
 function ST_clickBosses2()
-   local ST_bossName = EncounterJournalEncounterFrameInfoEncounterTitle:GetText();
+   local ST_bossName = EncounterJournalNavBarButton3Text:GetText();
    if ST_bossName then
       if (TT_PS["ui5"] == "1") then
        local ST_bossDescription = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription;
@@ -1637,6 +1637,7 @@ function ST_clickBosses2()
        ST_CheckAndReplaceTranslationText(ST_bossOverviewTitle, true, "ui");
    end
        ST_UpdateBossOverviewDescription(ST_bossName);
+       ST_BossHeaderTabText();
    end
 end
 
@@ -1687,6 +1688,62 @@ function ST_ShowAbility()            -- sprawdzanie tekstów Ability
       end
    end
   end
+end
+
+-------------------------------------------------------------------------------------------------------
+
+function ST_BossHeaderTabText()
+    local ST_bossName = EncounterJournalNavBarButton3Text:GetText()
+
+    local headers = {
+        EncounterJournalOverviewInfoHeader1,
+        EncounterJournalOverviewInfoHeader2,
+        EncounterJournalOverviewInfoHeader3
+    }
+
+    for index, header in ipairs(headers) do
+        if header then
+            local bulletsTable = header.Bullets
+
+            if bulletsTable then
+                for _, bulletData in ipairs(bulletsTable) do
+                    if bulletData.Text and bulletData.Text.GetTextData then
+                        local textData = bulletData.Text:GetTextData()
+                        if textData then
+                            for text_index, textInfo in ipairs(textData) do
+                                if textInfo.text then
+                                    local metin = textInfo.text
+                                    
+                                    -- Create a temporary object to handle text replacement
+                                    local tempObj = {
+                                        GetText = function() return metin end,
+                                        SetText = function(self, text)
+                                            bulletData.Text:SetText(text)
+                                            -- Update font/style if needed
+                                            ST_UpdateBossDescriptionFont(bulletData.Text)
+                                        end
+                                    }
+                                    
+                                    local prefix = "Dungeon&Raid:Boss:" .. ST_bossName
+                                    ST_CheckAndReplaceTranslationText(tempObj, true, prefix, nil, false, nil)
+                                end
+                            end
+                        end
+                    end
+                end
+            else
+                -- Uncomment for debugging: print("Bullets table not found for Header " .. index)
+            end
+        else
+            -- Uncomment for debugging: print("Header " .. index .. " not found.")
+        end
+    end
+      local HeaderTitle1 = EncounterJournalOverviewInfoHeader1HeaderButtonTitle;
+      ST_CheckAndReplaceTranslationText(HeaderTitle1, true, "ui");
+      local HeaderTitle2 = EncounterJournalOverviewInfoHeader2HeaderButtonTitle;
+      ST_CheckAndReplaceTranslationText(HeaderTitle2, true, "ui");
+      local HeaderTitle3 = EncounterJournalOverviewInfoHeader3HeaderButtonTitle;
+      ST_CheckAndReplaceTranslationText(HeaderTitle3, true, "ui");
 end
 
 -------------------------------------------------------------------------------------------------------
