@@ -1065,6 +1065,56 @@ function ST_updateSpecContentsHook()
    end
 end
 
+function ST_updateHeroTalentHook()
+    if not HeroTalentsSelectionDialog or not HeroTalentsSelectionDialog.SpecContentFramePool then
+        print("HeroTalentsSelectionDialog veya SpecContentFramePool mevcut değil.")
+        return
+    end
+
+    local activeFrameFunction = HeroTalentsSelectionDialog.SpecContentFramePool:EnumerateActive()
+    if activeFrameFunction then
+        for frame in activeFrameFunction do
+            if frame and frame.Description then
+                local description = frame.Description:GetText()
+                if description and not description:find(" ") then
+                    local ST_hash = StringHash(ST_UsunZbedneZnaki(description))
+                    if ST_TooltipsHS[ST_hash] then
+                        frame.Description:SetFont(WOWTR_Font2, select(2, frame.Description:GetFont()))
+                        local translatedText = QTR_ExpandUnitInfo(ST_TranslatePrepare(description, ST_TooltipsHS[ST_hash]), false, frame.Description, WOWTR_Font2)
+                        frame.Description:SetText(translatedText)
+                    elseif ST_PM["saveNW"] == "1" then
+                        ST_PH[ST_hash] = "SpecTab:" .. WOWTR_player_class .. ":" .. frame.SpecName:GetText() .. "@" .. ST_PrzedZapisem(description:gsub("(%d),(%d)", "%1%2"):gsub("\r", ""))
+                    end
+                end
+            end
+			      local function updateText(element, key, translationType, alignment)
+         local text = element:GetText()
+         local hash = StringHash(ST_UsunZbedneZnaki(text))
+         if ST_TooltipsHS[hash] then
+            local translatedText
+            if translationType == 2 then
+               translatedText = QTR_ExpandUnitInfo(ST_TranslatePrepare(text, ST_TooltipsHS[hash]), false, element, WOWTR_Font2)
+            else
+               translatedText = QTR_ReverseIfAR(ST_SetText(text))
+            end
+            element:SetText(translatedText)
+            element:SetFont(WOWTR_Font2, select(2, element:GetFont()))
+            
+            if alignment then
+               element:SetJustifyH(alignment)
+            end
+         end
+      end
+      
+      updateText(frame.CurrencyFrame.LabelText, "CurrencyFrame.LabelText", 1)
+      updateText(frame.ActivatedText, "ActivatedText", 1)
+      updateText(frame.ActivateButton.Text, "ActivateButton.Text", 1)
+      updateText(frame.Description, "Description", 2)
+	  
+        end
+    end
+end
+
 -------------------------------------------------------------------------------------------------------
 
 function ST_updateSpellBookFrame()
@@ -1189,6 +1239,7 @@ function WOWSTR_onEvent(_, event, addonName)
          PlayerSpellsFrame:HookScript("OnShow", ST_SpellBookTranslateButton);
          PlayerSpellsFrame.SpecFrame:HookScript("OnShow", ST_updateSpecContentsHook);
          PlayerSpellsFrame.TalentsFrame:HookScript("OnShow", ST_TalentsTranslate);
+         HeroTalentsSelectionDialog.SpecOptionsContainer:HookScript("OnShow", ST_updateHeroTalentHook);
          
       elseif (addonName == 'Blizzard_EncounterJournal') then
          ST_load2 = true;
