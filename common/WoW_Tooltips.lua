@@ -220,14 +220,26 @@ function ST_TranslatePrepare(ST_origin, ST_tlumacz)
    ST_origin = string.gsub(ST_origin,"(%d),(%d)","%1%2");            -- usuń przecinek tysięczny przy liczbach
    for w in string.gmatch(ST_origin, "%d+") do
       arg0 = arg0 + 1;                                               -- formatowanie do postaci: 99.123.456
-      if (math.floor(w)>999999) then
-         wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2."):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-      elseif (math.floor(w)>99999) then
-         wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2"):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-      elseif (math.floor(w)>999) then
-         wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)", "%1."):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-      else   
-         wartab[arg0] = tostring(math.floor(w));
+      if (WoWTR_Localization.lang == 'JP') then                      -- formatowanie do postaci: 99,123,456 (JP)
+         if (math.floor(w)>999999) then
+            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1,%2,"):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
+         elseif (math.floor(w)>99999) then
+            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1,%2"):gsub("(%-?)$", "%1"):reverse();    -- tu mamy kolejne cyfry z oryginału
+         elseif (math.floor(w)>999) then
+            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)", "%1,"):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
+         else   
+            wartab[arg0] = tostring(math.floor(w));
+         end
+      else                                                           -- formatowanie do postaci: 99.123.456 (Europe)
+         if (math.floor(w)>999999) then
+            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2."):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
+         elseif (math.floor(w)>99999) then
+            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2"):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
+         elseif (math.floor(w)>999) then
+            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)", "%1."):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
+         else   
+            wartab[arg0] = tostring(math.floor(w));
+         end
       end
    end;
    if (arg0>19) then
