@@ -273,6 +273,7 @@
         "GOODBYE",
         "NUM_CHAT_WINDOWS",
         "EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle",
-        "EncounterJournalEncounterFrameInstanceFrameMapButtonText"
+        "EncounterJournalEncounterFrameInstanceFrameMapButtonText",
+        "HeroTalentsSelectionDialog"
     ]
 }
