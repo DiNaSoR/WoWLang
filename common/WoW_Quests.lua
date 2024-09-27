@@ -3561,7 +3561,7 @@ function QTR_ExpandUnitInfo(msg, OnObjectives, AR_obj, AR_font, AR_corr)
    msg = WOW_ZmienKody(msg);
    
    if ((WoWTR_Localization.lang == 'AR') and (AR_obj)) then    -- prepare the text for proper display
-      local _font = WOW_Font2;
+      local _font = WOWTR_Font2;
       local AR_size = 13;
       if (AR_obj.GetFont) then
          _font, AR_size, _3 = AR_obj:GetFont("P");             -- read current font and size of the object
