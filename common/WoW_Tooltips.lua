@@ -1635,6 +1635,26 @@ function ST_UpdateJournalEncounterBossInfo(ST_bossName)
    ST_BossHeaderTabText()
 end
 
+function ST_UpdateBossDescriptionFont(textObject)
+    if not textObject then return end
+    
+    -- Create a custom font object
+    local fontName = "WOWTRBossDescFont"
+    local font = CreateFont(fontName)
+    font:SetFont(WOWTR_Font2, 12, "")
+    
+    -- Set the font for each text type of the SimpleHTML object
+    local textTypes = {"p", "h1", "h2", "h3"}
+    for _, textType in ipairs(textTypes) do
+        if textObject.SetFont then
+            textObject:SetFont(textType, WOWTR_Font2, 12, "")
+        end
+        if textObject.SetFontObject then
+            textObject:SetFontObject(textType, font)
+        end
+    end
+end
+
 function ST_clickBosses()
    local previousText = ""
    local function OnUpdateHandler()
