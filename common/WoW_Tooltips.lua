@@ -225,8 +225,7 @@ function ST_TranslatePrepare(ST_origin, ST_tlumacz)
               -- Protect leading zeros, example 002
               return num:match("^0*") .. tonumber(num)
          end)
-      else
-      if (WoWTR_Localization.lang == 'JP') then                      -- formatowanie do postaci: 99,123,456 (JP)
+      elseif (WoWTR_Localization.lang == 'JP') then                      -- formatowanie do postaci: 99,123,456 (JP)
          if (math.floor(w)>999999) then
             wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1,%2,"):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
          elseif (math.floor(w)>99999) then
