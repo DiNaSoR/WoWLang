@@ -1580,68 +1580,102 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function ST_UpdateJournalEncounterBossInfo(ST_bossName)
-   if not ST_bossName or TT_PS["ui5"] ~= "1" then return end
+    if not ST_bossName or TT_PS["ui5"] ~= "1" then return end
 
-   local function updateElement(element, prefix, ST_corr)
-       ST_CheckAndReplaceTranslationText(element, true, prefix .. ST_bossName, WOWTR_Font2, false, ST_corr)
-   end
+    local function updateElement(element, prefix, ST_corr)
+        ST_CheckAndReplaceTranslationText(element, true, prefix .. ST_bossName, WOWTR_Font2, false, ST_corr)
+    end
 
-   local elements = {
-       {EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription, "Dungeon&Raid:Boss:",-5},
-       {EncounterJournalEncounterFrameInfo.overviewScroll.child.overviewDescription, "Dungeon&Raid:Boss:"},
-       {EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription, "Dungeon&Raid:Boss:"},
-       {EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle, "ui"}
-   }
+    local elements = {
+        {EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription, "Dungeon&Raid:Boss:", -5},
+        {EncounterJournalEncounterFrameInfo.overviewScroll.child.overviewDescription, "Dungeon&Raid:Boss:"},
+        {EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription, "Dungeon&Raid:Boss:"},
+        {EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle, "ui"}
+    }
 
-   for _, element in ipairs(elements) do
-       updateElement(element[1], element[2], element[3])
-   end
+    for _, element in ipairs(elements) do
+        updateElement(element[1], element[2], element[3])
+    end
 
-   local overviewDesc = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription
-   local descText = overviewDesc.Text
-   local originalText = overviewDesc.textString
+    local overviewDesc = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription
+    local descText = overviewDesc.Text
+    local originalText = overviewDesc.textString
 
-   if originalText then
-       local hash = StringHash(ST_UsunZbedneZnaki(originalText))
-       if ST_TooltipsHS[hash] then
-           local tempObj = {
-               originalText = originalText,
-               GetText = function(self) return self.originalText end,
-               SetText = function(self, text)
-                   descText:SetText(text)
-                   local translationApplied = (text ~= self.originalText)
-                   local textTypes = {"p", "h1", "h2", "h3"}
-                   for _, textType in ipairs(textTypes) do
-                       local alignment = translationApplied and ((WoWTR_Localization.lang == 'AR') and "RIGHT" or "LEFT") or "LEFT"
-                       descText:SetJustifyH(textType, alignment)
-                       local font = translationApplied and WOWTR_Font2 or STANDARD_TEXT_FONT
-                       if descText.SetFont then
-                           descText:SetFont(textType, font, 12, "")
-                       end
-                       if descText.SetFontObject and translationApplied then
-                           local fontName = "WOWTRBossDescFont"
-                           local fontObj = CreateFont(fontName)
-                           fontObj:SetFont(font, 12, "")
-                           descText:SetFontObject(textType, fontObj)
-                       end
-                   end
-               end,
-               GetWidth = function() return descText:GetWidth() end,
-               GetRegions = function() return descText:GetRegions() end
-           }
-           ST_CheckAndReplaceTranslationText(tempObj, true, "Dungeon&Raid:Boss:" .. ST_bossName, WOWTR_Font2, false, -120)
-       else
-           local textTypes = {"p", "h1", "h2", "h3"}
-           for _, textType in ipairs(textTypes) do
-               descText:SetJustifyH(textType, "LEFT")
-               if descText.SetFont then
-                   descText:SetFont(textType, STANDARD_TEXT_FONT, 12, "")
-               end
-           end
-       end
-   end
+    if originalText then
+        -- Save the original text
+        ST_SaveOriginalText(ST_bossName, originalText)
 
-   ST_BossHeaderTabText()
+        local tempObj = {
+            GetText = function() return originalText end,
+            SetText = function(self, text) 
+                descText:SetText(text)
+                ST_UpdateBossDescriptionFont(descText)
+            end
+        }
+        
+        ST_CheckAndReplaceTranslationText(tempObj, true, "Dungeon&Raid:Boss:" .. ST_bossName, WOWTR_Font2, false, -120)
+    end
+
+    -- Customizations for Arabic language
+    if WoWTR_Localization.lang == 'AR' then
+        EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle:SetJustifyH("RIGHT")
+        EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription:SetJustifyH("RIGHT")
+        EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription:SetJustifyH("RIGHT")
+        ST_UpdateBossDescriptionFont(EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription)
+        local rootButton = EncounterJournalEncounterFrameInfoRootButton
+        if rootButton then
+            rootButton:SetText(">")
+        end
+    else
+        EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle:SetJustifyH("LEFT")
+        EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription:SetJustifyH("LEFT")
+        EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription:SetJustifyH("LEFT")
+        ST_UpdateBossDescriptionFont(EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription)
+        local rootButton = EncounterJournalEncounterFrameInfoRootButton
+        if rootButton then
+            rootButton:SetText("<")
+        end
+    end
+
+    ST_BossHeaderTabText()
+end
+
+function ST_SaveOriginalText(bossName, text)
+    if not ST_OriginalTexts then
+        ST_OriginalTexts = {}
+    end
+    ST_OriginalTexts[bossName] = text
+    -- Here you can save the text permanently, for example, to a file or database
+end
+
+function ST_BossHeaderTabText()
+    local tabs = {
+        EncounterJournalEncounterFrameInfoOverviewTab,
+        EncounterJournalEncounterFrameInfoLootTab,
+        EncounterJournalEncounterFrameInfoBossTab,
+        EncounterJournalEncounterFrameInfoModelTab
+    }
+
+    for _, tab in ipairs(tabs) do
+        ST_CheckAndReplaceTranslationText(tab, false, "ui", WOWTR_Font2, false, 0)
+    end
+end
+
+function ST_UpdateBossDescriptionFont(descText)
+    local textTypes = {"p", "h1", "h2", "h3"}
+    for _, textType in ipairs(textTypes) do
+        local alignment = (WoWTR_Localization.lang == 'AR') and "RIGHT" or "LEFT"
+        descText:SetJustifyH(textType, alignment)
+        if descText.SetFont then
+            descText:SetFont(textType, WOWTR_Font2, 12, "")
+        end
+        if descText.SetFontObject then
+            local fontName = "WOWTRBossDescFont"
+            local fontObj = CreateFont(fontName)
+            fontObj:SetFont(WOWTR_Font2, 12, "")
+            descText:SetFontObject(textType, fontObj)
+        end
+    end
 end
 
 function ST_UpdateBossDescriptionFont(textObject)
