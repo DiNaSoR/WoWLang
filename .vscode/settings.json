@@ -274,6 +274,11 @@
         "NUM_CHAT_WINDOWS",
         "EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle",
         "EncounterJournalEncounterFrameInstanceFrameMapButtonText",
-        "HeroTalentsSelectionDialog"
+        "HeroTalentsSelectionDialog",
+        "STANDARD_TEXT_FONT",
+        "EncounterJournalEncounterFrameInfoOverviewTab",
+        "EncounterJournalEncounterFrameInfoLootTab",
+        "EncounterJournalEncounterFrameInfoBossTab",
+        "EncounterJournalEncounterFrameInfoModelTab"
     ]
 }

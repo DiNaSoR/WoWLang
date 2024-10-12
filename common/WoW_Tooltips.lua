@@ -1606,12 +1606,16 @@ function ST_UpdateJournalEncounterBossInfo(ST_bossName)
         ST_SaveOriginalText(ST_bossName, originalText)
 
         local tempObj = {
-            GetText = function() return originalText end,
-            SetText = function(self, text) 
-                descText:SetText(text)
-                ST_UpdateBossDescriptionFont(descText)
-            end
-        }
+               GetText = function() return originalText end,
+               SetText = function(self, text) 
+                  if descText then
+                     descText:SetText(text)
+                     ST_UpdateBossDescriptionFont(descText)
+                  end
+               end,
+               GetWidth = function() return descText and descText:GetWidth() end,
+               GetRegions = function() return descText and descText:GetRegions() end
+         }
         
         ST_CheckAndReplaceTranslationText(tempObj, true, "Dungeon&Raid:Boss:" .. ST_bossName, WOWTR_Font2, false, -120)
     end
@@ -1662,20 +1666,25 @@ function ST_BossHeaderTabText()
 end
 
 function ST_UpdateBossDescriptionFont(descText)
-    local textTypes = {"p", "h1", "h2", "h3"}
-    for _, textType in ipairs(textTypes) do
-        local alignment = (WoWTR_Localization.lang == 'AR') and "RIGHT" or "LEFT"
-        descText:SetJustifyH(textType, alignment)
-        if descText.SetFont then
-            descText:SetFont(textType, WOWTR_Font2, 12, "")
-        end
-        if descText.SetFontObject then
-            local fontName = "WOWTRBossDescFont"
-            local fontObj = CreateFont(fontName)
-            fontObj:SetFont(WOWTR_Font2, 12, "")
-            descText:SetFontObject(textType, fontObj)
-        end
-    end
+   if not descText then return end
+   
+   local textTypes = {"p", "h1", "h2", "h3"}
+   for _, textType in ipairs(textTypes) do
+       local alignment = (WoWTR_Localization.lang == 'AR') and "RIGHT" or "LEFT"
+       if descText.SetJustifyH then
+           descText:SetJustifyH(textType, alignment)
+       end
+       if descText.SetFont then
+           descText:SetFont(textType, WOWTR_Font2, 12, "")
+       end
+       if descText.SetFontObject then
+           local fontName = "WOWTRBossDescFont_" .. textType
+           local fontObj = CreateFont(fontName)
+           fontObj:SetFont(WOWTR_Font2, 12, "")
+           fontObj:SetJustifyH(alignment)
+           descText:SetFontObject(textType, fontObj)
+       end
+   end
 end
 
 function ST_UpdateBossDescriptionFont(textObject)
