@@ -1661,7 +1661,7 @@ function ST_UpdateJournalEncounterBossInfo(ST_bossName)
            GetRegions = function() return descText and descText:GetRegions() end
        }
        
-       ST_CheckAndReplaceTranslationText(tempObj, true, "Dungeon&Raid:Boss:" .. ST_bossName, WOWTR_Font2, false, -20)
+       ST_CheckAndReplaceTranslationText(tempObj, true, "Dungeon&Raid:Boss:" .. ST_bossName, WOWTR_Font2, false, -120)
    end
 
    local rootButton = EncounterJournalEncounterFrameInfoRootButton
