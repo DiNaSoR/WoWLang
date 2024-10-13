@@ -221,14 +221,13 @@ function ST_TranslatePrepare(ST_origin, ST_tlumacz)
    for w in string.gmatch(ST_origin, "%d+") do
       arg0 = arg0 + 1;                                               -- formatowanie do postaci: 99.123.456
       if (WoWTR_Localization.lang == 'TR') then
-      wartab[arg0] = w:gsub("(%d+)", function(num)
-         if num == "0" then
-            return "0"
-         else
-            -- Protect leading zeros, example 002
-            return num:match("^0*") .. tonumber(num)
-         end
-      end)
+         wartab[arg0] = w:gsub("(%d+)%.?(%d*)", function(whole, decimal)
+           local formatted = whole:gsub("^0*(%d)", "%1")
+           if decimal ~= "" then
+             formatted = formatted .. "," .. decimal
+           end
+           return formatted
+   	   end)
       elseif (WoWTR_Localization.lang == 'JP') then                      -- formatowanie do postaci: 99,123,456 (JP)
          if (math.floor(w)>999999) then
             wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1,%2,"):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
