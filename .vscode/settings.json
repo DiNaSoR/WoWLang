@@ -279,6 +279,7 @@
         "EncounterJournalEncounterFrameInfoOverviewTab",
         "EncounterJournalEncounterFrameInfoLootTab",
         "EncounterJournalEncounterFrameInfoBossTab",
-        "EncounterJournalEncounterFrameInfoModelTab"
+        "EncounterJournalEncounterFrameInfoModelTab",
+        "EncounterJournalEncounterFrame"
     ]
 }
