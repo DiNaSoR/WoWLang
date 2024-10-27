@@ -401,7 +401,7 @@ if ((GetLocale()=="enUS") or (GetLocale()=="enGB")) then
 
 -- funkcja wywoływana po wyświetleniu się oryginalnego okienka Tooltip
    GameTooltip:HookScript('OnUpdate', function(self, ...)
-      if (not WOWTR_wait(0.01, ST_GameTooltipOnShow)) then
+      if (not WOWTR_wait(0, ST_GameTooltipOnShow)) then
       -- opóźnienie 0.01 sek
       end
    end );
@@ -1271,7 +1271,7 @@ function WOWSTR_onEvent(_, event, addonName)
          
       elseif (addonName == 'Blizzard_Professions') then
          ST_load3 = true;
-         ProfessionsFrame:HookScript("OnShow", function() StartTicker(ProfessionsFrame, ST_showProfessionDescription, 0.02) end)
+         ProfessionsFrame:HookScript("OnShow", function() StartTicker(ProfessionsFrame, ST_showProfessionDescription, 0) end)
          ProfessionsFrame:HookScript("OnShow", ST_ProfDescbutton)
          
       elseif (addonName == 'Blizzard_Collections') then
@@ -1445,6 +1445,32 @@ function ST_showLoreDescription()
  end
 end
 
+-------------------------------------------------------------------------------------------------------
+-- PROFESSION FRAME - Function to work in harmony with the CraftSim plugin.
+local professionFrameCheckTimer
+local function CheckAndHookProfessionsFrame()
+    if ProfessionsFrame and not ProfessionsFrame.hooked then
+        ProfessionsFrame:HookScript("OnShow", function() 
+            StartTicker(ProfessionsFrame, ST_showProfessionDescription, 0) 
+        end)
+        ProfessionsFrame:HookScript("OnShow", ST_ProfDescbutton)
+        ProfessionsFrame.hooked = true
+        return true
+    end
+    return false
+end
+local function StartProfessionsFrameCheck()
+    professionFrameCheckTimer = C_Timer.NewTicker(1, function()
+        if CheckAndHookProfessionsFrame() then
+            -- ProfessionsFrame bulundu ve hook'landı, ticker'ı durdurabiliriz
+            if professionFrameCheckTimer then
+                professionFrameCheckTimer:Cancel()
+                professionFrameCheckTimer = nil
+            end
+        end
+    end)
+end
+StartProfessionsFrameCheck()
 -------------------------------------------------------------------------------------------------------
 
 --PROFESSION FRAME, TEXT and OTHER TRANSLATE-----------------------------------------------------------
