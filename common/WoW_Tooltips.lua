@@ -1265,7 +1265,7 @@ function WOWSTR_onEvent(_, event, addonName)
          ST_load2 = true;
          EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription:HookScript("OnShow", ST_clickBosses)
          EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription:HookScript("OnShow", function() StartTicker(EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription, ST_ShowAbility, 0.1) end)
-         EncounterJournal:HookScript("OnShow", function() StartTicker(EncounterJournal, ST_SuggestTabClick, 0.1) end)
+         EncounterJournal:HookScript("OnShow", function() StartTicker(EncounterJournal, ST_SuggestTabClick, 0) end)
          EncounterJournal:HookScript("OnShow", ST_AdventureGuidebutton)
          EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont:HookScript("OnShow", ST_showLoreDescription)
          
@@ -1287,7 +1287,7 @@ function WOWSTR_onEvent(_, event, addonName)
         
       elseif (addonName == 'Blizzard_ChallengesUI') then
          ST_load6 = true;
-         ChallengesFrame:HookScript("OnShow", function() StartTicker(ChallengesFrame, ST_GroupMplusFinder, 0.2) end)
+         ChallengesFrame:HookScript("OnShow", function() StartTicker(ChallengesFrame, ST_GroupMplusFinder, 0) end)
          
       elseif (addonName == 'Blizzard_DelvesDifficultyPicker') then
          ST_load7 = true;
@@ -2057,6 +2057,48 @@ function ST_GroupFinder()
 
       local GFobj36 = LFDQueueFrameFollowerDescription;
       ST_CheckAndReplaceTranslationTextUI(GFobj36, true, "ui");
+
+      local GFobj37 = LFGListFrame.EntryCreation.ListGroupButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(GFobj37, true, "ui");
+
+      local GFobj38 = LFGListFrame.SearchPanel.ScrollBox.StartGroupButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(GFobj38, true, "ui");
+
+      local GFobj39 = LFGListFrame.SearchPanel.SearchBox.Instructions;
+      ST_CheckAndReplaceTranslationTextUI(GFobj39, true, "ui");
+
+      local GFobj40 = LFGListFrame.SearchPanel.ScrollBox.NoResultsFound;
+      ST_CheckAndReplaceTranslationTextUI(GFobj40, true, "ui");
+
+      local GFobj41 = LFGListFrame.EntryCreation.PlayStyleLabel;
+      ST_CheckAndReplaceTranslationTextUI(GFobj41, true, "ui");
+
+      local GFobj42 = LFGListCreationDescription.EditBox.Instructions;
+      ST_CheckAndReplaceTranslationTextUI(GFobj42, true, "ui");
+
+      local GFobj43 = LFGListFrame.EntryCreation.MythicPlusRating.Label;
+      ST_CheckAndReplaceTranslationTextUI(GFobj43, true, "ui");
+
+      local GFobj44 = LFGListFrame.EntryCreation.ItemLevel.Label;
+      ST_CheckAndReplaceTranslationTextUI(GFobj44, true, "ui");
+
+      local GFobj45 = LFGListFrame.EntryCreation.VoiceChat.Label;
+      ST_CheckAndReplaceTranslationTextUI(GFobj45, true, "ui");
+
+      local GFobj46 = LFGListFrame.EntryCreation.PrivateGroup.Label;
+      ST_CheckAndReplaceTranslationTextUI(GFobj46, true, "ui");
+
+      local GFobj47 = LFGListFrame.EntryCreation.CrossFactionGroup.Label;
+      ST_CheckAndReplaceTranslationTextUI(GFobj47, true, "ui");
+
+      local GFobj48 = LFGListFrame.EntryCreation.Name.Instructions;
+      ST_CheckAndReplaceTranslationTextUI(GFobj48, true, "ui");
+
+      local GFobj49 = LFGListFrame.EntryCreation.ItemLevel.EditBox.Instructions;
+      ST_CheckAndReplaceTranslationTextUI(GFobj49, true, "ui");
+
+      local GFobj50 = LFGListFrame.EntryCreation.VoiceChat.EditBox.Instructions;
+      ST_CheckAndReplaceTranslationTextUI(GFobj50, true, "ui");
    end
 end
 
@@ -2709,16 +2751,40 @@ end
 -------------------------------------------------------------------------------------------------------
 
 --TOOLTIPS FRAME (click on chat frame) 
+local ignoreList = {}  -- The texts in the list will not be translated.
+if WoWTR_Localization.lang == 'TR' then
+    ignoreList = {
+        "Head", "Neck", "Shoulder", "Back", "Chest", "Tabard", "Wrist", "Hands", "Waist", "Legs", "Feet", "Finger", "Trinket"
+    }
+else
+    -- For other languages, the ignore list empty.
+end
+
+local function shouldIgnore(text)
+    for _, ignoreText in ipairs(ignoreList) do
+        if text:find(ignoreText) then
+            return true
+        end
+    end
+    return false
+end
+
 function ST_ItemRefTooltip()         -- https://imgur.com/a/5Ooqnb2
-    for i = 2, 20 do
-        local itemRefLeft = _G["ItemRefTooltipTextLeft" .. i];
+    for i = 2, 30 do
+        local itemRefLeft = _G["ItemRefTooltipTextLeft" .. i]
         if itemRefLeft and itemRefLeft:GetText() then
-            ST_CheckAndReplaceTranslationTextUI(itemRefLeft, true, "other");
+            local text = itemRefLeft:GetText()
+            if not shouldIgnore(text) then
+                ST_CheckAndReplaceTranslationTextUI(itemRefLeft, true, "other")
+            end
         end
 
-        local itemRefRight = _G["ItemRefTooltipTextRight" .. i];
+        local itemRefRight = _G["ItemRefTooltipTextRight" .. i]
         if itemRefRight and itemRefRight:GetText() then
-            ST_CheckAndReplaceTranslationTextUI(itemRefRight, true, "other");
+            local text = itemRefRight:GetText()
+            if not shouldIgnore(text) then
+                ST_CheckAndReplaceTranslationTextUI(itemRefRight, true, "other")
+            end
         end
     end
 end
