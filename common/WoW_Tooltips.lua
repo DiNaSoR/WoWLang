@@ -2099,7 +2099,9 @@ function ST_GroupFinder()
 
       local GFobj50 = LFGListFrame.EntryCreation.VoiceChat.EditBox.Instructions;
       ST_CheckAndReplaceTranslationTextUI(GFobj50, true, "ui");
-   end
+
+      local GFobj51 = LFGListFrame.EntryCreation.CancelButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(GFobj51, true, "ui");   end
 end
 
 local isGFButtonCreated = false
