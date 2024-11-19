@@ -2101,7 +2101,72 @@ function ST_GroupFinder()
       ST_CheckAndReplaceTranslationTextUI(GFobj50, true, "ui");
 
       local GFobj51 = LFGListFrame.EntryCreation.CancelButton.Text;
-      ST_CheckAndReplaceTranslationTextUI(GFobj51, true, "ui");   end
+      ST_CheckAndReplaceTranslationTextUI(GFobj51, true, "ui");
+
+      local GFobj52 = LFGListApplicationDialogDescription.EditBox.Instructions;
+      ST_CheckAndReplaceTranslationTextUI(GFobj52, true, "ui");
+
+      local GFobj53 = LFGListFrame.ApplicationViewer.ScrollBox.NoApplicants;
+      ST_CheckAndReplaceTranslationTextUI(GFobj53, true, "ui");
+
+      local GFobj54 = LFGListFrame.ApplicationViewer.BrowseGroupsButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(GFobj54, true, "ui");
+
+      local GFobj55 = LFGListFrame.ApplicationViewer.RemoveEntryButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(GFobj55, true, "ui");
+
+      local GFobj56 = LFGListFrame.ApplicationViewer.EditButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(GFobj56, true, "ui");
+
+      local GFobj57 = LFGListFrame.SearchPanel.BackToGroupButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(GFobj57, true, "ui");
+
+      local GFobj58 = LFGListFrame.ApplicationViewer.NameColumnHeader.Label;
+      ST_CheckAndReplaceTranslationTextUI(GFobj58, true, "ui");
+
+      local GFobj59 = LFGListFrame.ApplicationViewer.RoleColumnHeader.Label;
+      ST_CheckAndReplaceTranslationTextUI(GFobj59, true, "ui");
+
+
+-- Utility function for applying translations to UI elements with custom font
+local function ApplyTranslationToElement(element, prefix, alignment)
+    if element and element.GetText and element.SetText then
+        local originalText = element:GetText()  -- Mevcut metni al
+        if originalText then
+            local hash = StringHash(ST_UsunZbedneZnaki(originalText))  -- Metnin hash değerini hesapla
+            
+            -- Eğer çeviri mevcutsa, metni güncelle
+            if ST_TooltipsHS[hash] then
+                local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash])
+                element:SetText(translatedText)  -- Çeviriyi ayarla
+                if element.SetFont then
+                    element:SetFont(WOWTR_Font2, select(2, element:GetFont()))  -- Fontu ayarla
+                end
+            end
+            
+            -- Mesajın hizasını ayarla
+            if alignment and element.SetJustifyH then
+                element:SetJustifyH(alignment)
+            end
+        end
+    end
+end
+
+-- Iterate through the category buttons and apply translations
+local categoryButtons = {
+    LFGListFrame.CategorySelection.CategoryButtons[1],
+    LFGListFrame.CategorySelection.CategoryButtons[2],
+    LFGListFrame.CategorySelection.CategoryButtons[3],
+    LFGListFrame.CategorySelection.CategoryButtons[4],
+    LFGListFrame.CategorySelection.CategoryButtons[5],
+    LFGListFrame.CategorySelection.CategoryButtons[6]
+}
+
+for _, button in ipairs(categoryButtons) do
+    ApplyTranslationToElement(button, "ui", WOWTR_Font2, nil)
+end
+
+   end
 end
 
 local isGFButtonCreated = false
