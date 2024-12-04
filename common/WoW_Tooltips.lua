@@ -177,16 +177,16 @@ function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)     -- obj
 
             if (string.sub(txt, 1, #destroyText) == destroyText) then
                 if (string.find(txt, deleteText)) then
-                    ST_Hash = 1479612176;
+                    ST_Hash = 2437810493;
                 else
-                    ST_Hash = 1202097063;
+                    ST_Hash = 219524473;
                 end
             end
             
             if (ST_TooltipsHS[ST_Hash]) then             -- we have translation for this text
                 local a1, a2, a3 = obj:GetFont();
                 local new_trans = ST_TooltipsHS[ST_Hash];
-                if ((ST_Hash == 1479612176) or (ST_Hash == 1202097063)) then
+                if ((ST_Hash == 2437810493) or (ST_Hash == 219524473)) then
                     local pos_end = string.find(txt, "?");
                     if (pos_end) then
                         local new_item = string.sub(txt, #destroyText + 2, pos_end - 1);
