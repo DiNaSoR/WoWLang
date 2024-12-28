@@ -114,7 +114,13 @@ local ignoreSettings = {
         "  |A:raceicon128",
         "Achievement in progress by",
         "Achievement earned by",
-        "You completed this on "
+        "You completed this on ",
+        "AllTheThings",
+        "|cffb4b4ffATT|r",
+        "|cff0070dd",
+        "|Hachievement:",
+        "  |T",
+        "   |c"
     },
     pattern = "[Яа-яĄ-Źą-źŻ-żЀ-ӿΑ-Ωα-ω]"
 }
