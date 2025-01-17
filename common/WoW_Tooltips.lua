@@ -256,14 +256,14 @@ function ST_TranslatePrepare(ST_origin, ST_tlumacz)
          end
       end
    end;
-	for i = 40, 1, -1 do
-		local pattern = string.format("{%02d}", i)
-		local dollarPattern = "$" .. i
-		if arg0 >= i then
-			tlumaczenie = string.gsub(tlumaczenie, pattern, WOWTR_AnsiReverse(wartab[i]))
-			tlumaczenie = string.gsub(tlumaczenie, dollarPattern, WOWTR_AnsiReverse(wartab[i]))
-		end
-	end
+   for i = 1, 40 do
+      if (arg0 >= i) then
+         -- Reverse "i" to match the curly-brace pattern (e.g. 12 => "{21}")
+         local reversedI = tostring(i):reverse()
+         tlumaczenie = string.gsub(tlumaczenie, "{" .. reversedI .. "}", WOWTR_AnsiReverse(wartab[i]))
+         tlumaczenie = string.gsub(tlumaczenie, "$"  .. i,           WOWTR_AnsiReverse(wartab[i]))
+      end
+   end
    if (WoWTR_Localization.lang ~= 'AR') then
       tlumaczenie = string.gsub(tlumaczenie, "$o", "$O");
       local nr_1, nr_2, nr_3 = 0;
