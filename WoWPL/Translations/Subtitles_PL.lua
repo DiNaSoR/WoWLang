@@ -2,8 +2,8 @@
 -- do dodatku WoWpoPolsku
 
 MF_lang = "PL";          -- translation language
-MF_date = "2024-11-06";  -- date of creation base
-MF_base = "2668";        -- version (number of hash translations)
+MF_date = "2024-12-26";  -- date of creation base
+MF_base = "2669";        -- version (number of hash translations)
 
 -- intro translation table 
 MF_Data = {  
@@ -3145,6 +3145,7 @@ MF_Data = {
 -- subtitles translation table: [Hash] = "translation text" 
 MF_Hash = {  
 [873057]="niedostępne przez tysiące lat." ,
+[909225]="[Alexstrasza] Świat się uzdrawia..." ,
 [1352854]="Wysoki mówca Eirich: Więc kto to jest? Brinthe?" ,
 [2346939]="Nie wiedziałaś?" ,
 [4722852]="[świst energii]" ,

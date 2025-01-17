@@ -1,4 +1,4 @@
-﻿## Interface: 110005
+﻿## Interface: 110007
 ## Title: WoWpoPolsku |cff8080ff11.05|r
 ## Version: 11.05
 ## Notes: Dodatek wyswietla przetlumaczone teksty po polsku
