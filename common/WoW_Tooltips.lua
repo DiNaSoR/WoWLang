@@ -125,6 +125,7 @@ local ignoreSettings = {
     pattern = "[Яа-яĄ-Źą-źŻ-żЀ-ӿΑ-Ωα-ω]"
 }
 
+-- ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse, ST_corr)
 function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse, ST_corr)
    if (obj and obj.GetText) then
       local txt = obj:GetText();
@@ -148,9 +149,10 @@ function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse,
             end
             return
          else
-            -- Use original font if no translation and object supports it
-            if (font1 and obj.SetFont) then
-               obj:SetFont(font1, select(2, obj:GetFont()));
+            -- >>> Modified Part: No translation => revert to object's original font <<<
+            if obj.SetFont then
+               local originalFont, originalSize, originalFlags = obj:GetFont();
+               obj:SetFont(originalFont, originalSize, originalFlags);
             end
             -- Save only if we don't have a translation and saving is enabled
             if (sav and (ST_PM["saveNW"]=="1")) then
@@ -161,55 +163,68 @@ function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse,
    end
 end
 
+
 -------------------------------------------------------------------------------------------------------
+-- obj=object with stingtext,  sav=permission to save untranstaled tekst (true/false)
+-- prefix=text to save group,  font1=if present:SetFont to given font file
+-- Font Files: WOWTR_Font1, Original_Font1, Original_Font2
+-- ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)
 
-function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)     -- obj=object with stingtext,  sav=permission to save untranstaled tekst (true/false)
-    if (obj and obj.GetText) then                                         -- prefix=text to save group,  font1=if present:SetFont to given font file
-        local txt = obj:GetText();                                        -- Font Files: WOWTR_Font1, Original_Font1, Original_Font2
+function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)
+   if (obj and obj.GetText) then
+       local txt = obj:GetText();
 
-        local function shouldIgnore(text)
-            for _, pattern in ipairs(ignoreSettings.words) do
-                if text:find(pattern) then
-                    return true
-                end
-            end
-            return false
-        end
-        
-        if (txt and string.find(txt, " ") == nil and not shouldIgnore(txt)) then
-            local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
-            local destroyText = "Do you want to destroy";
-            local deleteText = "DELETE";
+       local function shouldIgnore(text)
+           for _, pattern in ipairs(ignoreSettings.words) do
+               if text:find(pattern) then
+                   return true
+               end
+           end
+           return false
+       end
+       
+       if (txt and string.find(txt, " ") == nil and not shouldIgnore(txt)) then
+           local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
+           local destroyText = "Do you want to destroy";
+           local deleteText = "DELETE";
 
-            if (string.sub(txt, 1, #destroyText) == destroyText) then
-                if (string.find(txt, deleteText)) then
-                    ST_Hash = 2437810493;
-                else
-                    ST_Hash = 219524473;
-                end
-            end
-            
-            if (ST_TooltipsHS[ST_Hash]) then             -- we have translation for this text
-                local a1, a2, a3 = obj:GetFont();
-                local new_trans = ST_TooltipsHS[ST_Hash];
-                if ((ST_Hash == 2437810493) or (ST_Hash == 219524473)) then
-                    local pos_end = string.find(txt, "?");
-                    if (pos_end) then
-                        local new_item = string.sub(txt, #destroyText + 2, pos_end - 1);
-                        new_trans = string.gsub(new_trans, "$I", new_item);                   -- change name of item in the place of code $I in translation
-                    end
-                end
-                obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, new_trans)).." ");     -- hard space at the end of translation
-                if (font1) then
-                    obj:SetFont(font1, a2);
-                else
-                    obj:SetFont(WOWTR_Font2, a2);
-                end
-            elseif (sav and (TT_PS["saveui"] == "1")) then
-                ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
-            end
-        end
-    end
+           if (string.sub(txt, 1, #destroyText) == destroyText) then
+               if (string.find(txt, deleteText)) then
+                   ST_Hash = 2437810493;
+               else
+                   ST_Hash = 219524473;
+               end
+           end
+           
+           if (ST_TooltipsHS[ST_Hash]) then
+               local a1, a2, a3 = obj:GetFont();
+               local new_trans = ST_TooltipsHS[ST_Hash];
+               if ((ST_Hash == 2437810493) or (ST_Hash == 219524473)) then
+                   local pos_end = string.find(txt, "?");
+                   if (pos_end) then
+                       local new_item = string.sub(txt, #destroyText + 2, pos_end - 1);
+                       new_trans = string.gsub(new_trans, "$I", new_item);
+                   end
+               end
+               obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, new_trans)).." ");
+               if (font1) then
+                   obj:SetFont(font1, a2);
+               else
+                   obj:SetFont(WOWTR_Font2, a2);
+               end
+
+           elseif (sav and (TT_PS["saveui"] == "1")) then
+               ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
+
+           else
+               -- >>> Modified Part: No translation => revert to object's original font <<<
+               if obj.SetFont then
+                  local originalFont, originalSize, originalFlags = obj:GetFont();
+                  obj:SetFont(originalFont, originalSize, originalFlags);
+               end
+           end
+       end
+   end
 end
 
 -------------------------------------------------------------------------------------------------------
