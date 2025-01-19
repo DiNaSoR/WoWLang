@@ -707,27 +707,6 @@ local function CH_OnKeyUp(self, key)      -- puszczono klawisz key: sprawdź czy
       print("BuforLength="..CH_BuforLength,"BuforCursor="..CH_BuforCursor,"Data:"..aaa);
    end
 end
-
--------------------------------------------------------------------------------------------------------
-
-local function CH_CheckVars()
-  if (not CH_PM) then
-     CH_PM = {};
-  end
-  -- initialize check options
-  if (not CH_PM["active"] ) then    -- dodatek aktywny
-     CH_PM["active"] = "1";   
-  end
-  if (not CH_PM["setsize"] ) then   -- uaktywnij zmiany wielkości czcionki
-     CH_PM["setsize"] = "0";   
-  end
-  if (not CH_PM["fontsize"] ) then  -- wielkość czcionki
-     CH_PM["fontsize"] = "14";
-  end
---  if (not CH_PM["fontname"] ) then  -- nazwa czcionki
---     CH_PM["fontname"] = "calibri.ttf";
---  end
-end
   
 -------------------------------------------------------------------------------------------------------
 

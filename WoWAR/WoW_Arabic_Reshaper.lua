@@ -690,54 +690,8 @@ function AS_AddSpaces(txt, width, fontfile, fontsize)
    end
    return (txt);
 end
--------------------------------------------------------------------------------------------------------
--- Reverses the order of UTF-8 letters in lines of 35 or 32 characters (limit)
--- Reverses lines in a string, with optional line length limit.
--- The function takes a string 's' and a limit 'limit' as arguments.
--- It iterates through the string, reversing each line and removing unnecessary characters.
--- The reversed lines are then concatenated and returned as a new string.
 
--- @param s The input string to be processed.
--- @param limit The maximum length of each line. Lines longer than this limit will be split.
--- @return The reversed string with lines limited to the specified length.
--------------------------------------------------------------------------------------------------------
-function QTR_LineReverse(s, limit)
-   local retstr = "";
-   if (s and limit) then -- check if arguments are not empty (nil)
-      local bytes = strlen(s);
-      local pos = 1;
-      local charbytes;
-      local newstr = "";
-      local counter = 0;
-      local char1;
-      while pos <= bytes do
-         c = strbyte(s, pos);                  -- read the character (odczytaj znak)
-         charbytes = AS_UTF8charbytes(s, pos); -- count of bytes (liczba bajtów znaku)
-         char1 = strsub(s, pos, pos + charbytes - 1);
-         newstr = newstr .. char1;
-         pos = pos + charbytes;
 
-         counter = counter + 1;
-         if ((char1 >= "A") and (char1 <= "Z")) then
-            counter = counter + 2; -- latin letters are 2x wider, then Arabic
-         end
-         if ((char1 == "#") or ((char1 == " ") and (counter > limit))) then
-            newstr = string.gsub(newstr, "#", "");
-            retstr = retstr .. AS_UTF8reverse(newstr) .. "\n";
-            newstr = "";
-            counter = 0;
-         end
-      end
-      retstr = retstr .. AS_UTF8reverse(newstr);
-      retstr = string.gsub(retstr, "#", "");
-      retstr = string.gsub(retstr, "\n ", "\n");      -- space after newline code is useless
-      retstr = string.gsub(retstr, "\n\n\n", "\n\n"); -- elimination of redundant newline codes
-   end
-   return retstr;
-end
-
--------------------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------
 function BB_LineChat(txt, font_size, more_chars)
    local retstr = "";
@@ -780,7 +734,7 @@ function BB_LineChat(txt, font_size, more_chars)
    return retstr;
 end
 
-
+--------------------------------------------------------------------------------------------------------
 function BB_AddSpaces(txt, snd)                                 -- snd = second or next line (interspace 2 on right)
    local _fontC, _sizeC, _C = DEFAULT_CHAT_FRAME:GetFont();     -- read current font, size and flag of the chat object
    local chat_widthC = DEFAULT_CHAT_FRAME:GetWidth();           -- width of 1 chat line
@@ -811,7 +765,7 @@ function BB_AddSpaces(txt, snd)                                 -- snd = second 
    return(txt);
 end
 
-
+--------------------------------------------------------------------------------------------------------
 function BB_CreateTestLine()
    BB_TestLine = CreateFrame("Frame", "BB_TestLine", UIParent, "BasicFrameTemplateWithInset");
    BB_TestLine:SetHeight(150);
