@@ -776,6 +776,11 @@ function QTR_START()
    isClassicQuestLog()
    isImmersion()
    isStoryline()
+   
+   hooksecurefunc(QuestObjectiveTracker, "UpdateSingle", function(self, quest)
+      QTR_OverrideObjectiveTrackerHeader(self, quest)
+  end)
+
 end
 
 
@@ -3749,5 +3754,44 @@ function ST_AdvantureMapFrm()			-- https://imgur.com/a/uQElPgm
 	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm06, false, "ui");
 	local AdvMapFrm07 = AdventureMapQuestChoiceDialog.DeclineButton.Text;
 	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm07, false, "ui");
+   end
+end
+
+-- --------------------------------------------------------------------------
+-- Overwrite the QuestObjectiveTracker.ContentsFrame.HeaderText each time
+-- the game updates the objective tracker
+-- --------------------------------------------------------------------------
+function QTR_OverrideObjectiveTrackerHeader(tracker, quest)
+   -- 1) Grab questID from the 'quest' object
+   local questID = quest and tonumber(quest:GetID())
+   if not questID or questID == 0 then
+       return
+   end
+
+   -- 2) Locate the correct quest block from the tracker's usedBlocks
+   local template = tracker.blockTemplate or "ObjectiveTrackerBlockTemplate"
+   local questBlocks = tracker.usedBlocks and tracker.usedBlocks[template]
+   if not questBlocks then
+       return
+   end
+
+   local block = questBlocks[questID]
+   if not (block and block.HeaderText) then
+       return
+   end
+
+   -- 3) Look up your translation. Example: QTR_quest_LG[questID].title
+   local questData = QTR_quest_LG[questID]
+   if questData and questData.title then
+       -- 4) Assign your localized title to the block's header
+       block.HeaderText:SetFont(WOWTR_Font1, 14)
+       block.HeaderText:SetText( QTR_ExpandUnitInfo(questData.title, false, block.HeaderText, WOWTR_Font1, -50) )
+
+       -- Example: if Arabic, justify to the right, otherwise left
+       if WoWTR_Localization.lang == "AR" then
+           block.HeaderText:SetJustifyH("RIGHT")
+       else
+           block.HeaderText:SetJustifyH("LEFT")
+       end
    end
 end
