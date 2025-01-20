@@ -271,12 +271,23 @@ function ST_TranslatePrepare(ST_origin, ST_tlumacz)
          end
       end
    end;
-   for i = 1, 40 do
-      if (arg0 >= i) then
-         -- Reverse "i" to match the curly-brace pattern (e.g. 12 => "{21}")
-         local reversedI = tostring(i):reverse()
-         tlumaczenie = string.gsub(tlumaczenie, "{" .. reversedI .. "}", WOWTR_AnsiReverse(wartab[i]))
-         tlumaczenie = string.gsub(tlumaczenie, "$"  .. i,           WOWTR_AnsiReverse(wartab[i]))
+   if (WoWTR_Localization.lang == 'TR') then
+      for i = 40, 1, -1 do
+        local pattern = string.format("{%02d}", i)
+        local dollarPattern = "$" .. i
+        if arg0 >= i then
+          tlumaczenie = string.gsub(tlumaczenie, pattern, WOWTR_AnsiReverse(wartab[i]))
+          tlumaczenie = string.gsub(tlumaczenie, dollarPattern, WOWTR_AnsiReverse(wartab[i]))
+        end
+      end
+   else
+      for i = 1, 40 do
+         if (arg0 >= i) then
+            -- Reverse "i" to match the curly-brace pattern (e.g. 12 => "{21}")
+            local reversedI = tostring(i):reverse()
+            tlumaczenie = string.gsub(tlumaczenie, "{" .. reversedI .. "}", WOWTR_AnsiReverse(wartab[i]))
+            tlumaczenie = string.gsub(tlumaczenie, "$"  .. i,           WOWTR_AnsiReverse(wartab[i]))
+         end
       end
    end
    if (WoWTR_Localization.lang ~= 'AR') then
@@ -1231,7 +1242,6 @@ function WOWSTR_onEvent(_, event, addonName)
       elseif (addonName == 'Blizzard_PVPUI') then
          ST_load5 = true;
          PVPQueueFrameCategoryButton1:HookScript("OnShow", function() StartTicker(PVPQueueFrameCategoryButton1, ST_GroupPVPFinder, 0.02) end)
-         PVPQueueFrameCategoryButton1:HookScript("OnShow", ST_GroupPVPFinderbutton)
         
       elseif (addonName == 'Blizzard_ChallengesUI') then
          ST_load6 = true;
@@ -2117,37 +2127,6 @@ end
    end
 end
 
-local isGFButtonCreated = false
-local GFupdateVisibility
-function ST_GroupFinderbutton()
-    if not isGFButtonCreated then
-        TT_PS = TT_PS or { ui3 = "1" }
-
-      GFupdateVisibility = CreateToggleButton(
-         GroupFinderFrame,
-         TT_PS,
-         "ui3",
-         WoWTR_Localization.WoWTR_enDESC,
-         WoWTR_Localization.WoWTR_trDESC,
-         {"TOPLEFT", GroupFinderFrame, "TOPRIGHT", -170, 0},
-         function()
-            ST_GroupFinder()
-            if GroupFinderFrame then
-               GroupFinderFrame:Hide()
-               GroupFinderFrame:Show()
-               -- Butonun temizlenmesi için burada gerekli işlemleri yapabilirsiniz
-            end
-         end
-        )
-
-        isGFButtonCreated = true -- Butonlar ilk kez oluşturulunca işaretleyin
-    end
-
-    if GFupdateVisibility then
-       GFupdateVisibility()
-    end
-end
-
 -------------------------------------------------------------------------------------------------------
 
 function ST_GroupPVPFinder()
@@ -2200,36 +2179,6 @@ function ST_GroupPVPFinder()
       ST_CheckAndReplaceTranslationTextUI(gfpvpobj15, true, "ui");
    end
 
-end
-
-local isButtonCreated = false
-local updateVisibility
-function ST_GroupPVPFinderbutton()
-    if not isButtonCreated then
-        TT_PS = TT_PS or { ui3 = "1" }
-
-        updateVisibility = CreateToggleButton(
-            PVPQueueFrame,
-            TT_PS,
-            "ui3",
-            WoWTR_Localization.WoWTR_enDESC,
-            WoWTR_Localization.WoWTR_trDESC,
-            {"TOPLEFT", PVPQueueFrame, "TOPRIGHT", -170, 0},
-            function()
-                ST_GroupPVPFinder()
-                if PVPQueueFrame then
-                    PVPUIFrame:Hide()
-                    PVPUIFrame:Show()
-                end
-            end
-        )
-
-        isButtonCreated = true -- Butonlar ilk kez oluşturulunca işaretleyin
-    end
-
-    if updateVisibility then
-        updateVisibility()
-    end
 end
 
 -------------------------------------------------------------------------------------------------------
