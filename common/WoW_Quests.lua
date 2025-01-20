@@ -771,8 +771,18 @@ function QTR_START()
    QuestFrameAcceptButton:HookScript("OnClick", QTR_QuestFrameButton_OnClick)
    QuestFrameCompleteQuestButton:HookScript("OnClick", QTR_QuestFrameButton_OnClick)
    QuestLogPopupDetailFrame:HookScript("OnShow", QTR_QuestLogPopupShow)
-   QuestMapFrame.CampaignOverview:HookScript("OnShow", function() StartDelayedFunction(TT_CampaignOverview, 0.5) end)
-   
+
+   local versionString = select(4, GetBuildInfo())
+   local versionNumber = tonumber(versionString)
+   if versionNumber then
+      if versionNumber <= 110007 then
+         QuestMapFrame.CampaignOverview:HookScript("OnShow", function() StartDelayedFunction(TT_CampaignOverview, 0.5) end)
+      else
+         QuestMapFrame.QuestsFrame.CampaignOverview:HookScript("OnShow", function() StartDelayedFunction(TT_CampaignOverview, 0.5) end)
+      end
+   else
+   end
+
    isClassicQuestLog()
    isImmersion()
    isStoryline()
@@ -3690,9 +3700,12 @@ function WOWTR_DetectAndReplacePlayerName(txt,target,part)
    if (part==nil) or (part=='$B') then
       text = string.gsub(text, '\n', "$B");
    end
-   if (part==nil) or (part=='$N') then
-      text = WOWTR_ReplaceOnlyWholeWords(text, WOWTR_player_name, "$N");
-      text = WOWTR_ReplaceOnlyWholeWords(text, string.upper(WOWTR_player_name), '$N$');
+   local playerName = WOWTR_player_name;
+   local upperCaseName = string.upper(playerName);
+   local lowerCaseName = string.lower(playerName);
+   if (part == nil) or (part == '$N') then
+      text = string.gsub(text, playerName, "$N");  --Match lowercase
+      text = string.gsub(text, upperCaseName, "$N"); --Match uppercase
    end
    if (part==nil) or (part=='$R') then
       text = WOWTR_ReplaceOnlyWholeWords(text, WOWTR_player_race, '$R');
@@ -3784,8 +3797,8 @@ function QTR_OverrideObjectiveTrackerHeader(tracker, quest)
    local questData = QTR_quest_LG[questID]
    if questData and questData.title then
        -- 4) Assign your localized title to the block's header
-       block.HeaderText:SetFont(WOWTR_Font1, 14)
-       block.HeaderText:SetText( QTR_ExpandUnitInfo(questData.title, false, block.HeaderText, WOWTR_Font1, -50) )
+       block.HeaderText:SetFont(WOWTR_Font2, 14)
+       block.HeaderText:SetText( QTR_ExpandUnitInfo(questData.title, false, block.HeaderText, WOWTR_Font2, -50) )
 
        -- Example: if Arabic, justify to the right, otherwise left
        if WoWTR_Localization.lang == "AR" then

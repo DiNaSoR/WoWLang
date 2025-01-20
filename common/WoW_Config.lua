@@ -2601,6 +2601,26 @@ end
 WOWTR_Panel9Email2:SetText("platine.wow@gmail.com");                  -- platine.wow@gmail.com
 WOWTR_Panel9Email2:SetFont(WOWTR_Font2, 13);
 
+if (WoWTR_Localization.lang == 'TR') then
+local WOWTR_Panel9Author2 = WOWTR_OptionPanel9:CreateFontString(nil, "ARTWORK");
+WOWTR_Panel9Author2:SetFontObject(GameFontWhite);
+WOWTR_Panel9Author2:SetJustifyV("TOP");
+WOWTR_Panel9Author2:ClearAllPoints();
+WOWTR_Panel9Author2:SetJustifyH("LEFT"); 
+WOWTR_Panel9Author2:SetPoint("TOPLEFT", WOWTR_Panel9Header1, "BOTTOMLEFT", 350, -15);
+WOWTR_Panel9Author2:SetText("Hakan YILMAZ");                               -- hknylmz
+WOWTR_Panel9Author2:SetFont(WOWTR_Font2, 13);
+
+local WOWTR_Panel9Email3 = WOWTR_OptionPanel9:CreateFontString(nil, "ARTWORK");
+WOWTR_Panel9Email3:SetFontObject(GameFontWhite);
+WOWTR_Panel9Email3:SetJustifyH("LEFT"); 
+WOWTR_Panel9Email3:SetJustifyV("TOP");
+WOWTR_Panel9Email3:ClearAllPoints();
+WOWTR_Panel9Email3:SetPoint("TOPLEFT", WOWTR_Panel9Header1, "BOTTOMLEFT", 350, -35);
+WOWTR_Panel9Email3:SetText("hknylmz@gmail.com");                  -- hknylmz@gmail.com
+WOWTR_Panel9Email3:SetFont(WOWTR_Font2, 13);
+end
+
 WOWTR_ResetButton1 = CreateFrame("BUTTON", nil, WOWTR_OptionPanel9, "UIPanelButtonTemplate");
 WOWTR_ResetButton1:SetWidth(300);
 WOWTR_ResetButton1:SetHeight(32);

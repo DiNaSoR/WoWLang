@@ -457,8 +457,7 @@ function WOWTR_onEvent(self, event, name, ...)
       StaticPopup2:HookScript("OnShow", ST_StaticPopup1);
       GameMenuFrame:HookScript("OnShow", ST_GameMenuTranslate);
       MerchantFrame:HookScript("OnShow", ST_MerchantFrame);
-      PVEFrame:HookScript("OnShow", function() StartTicker(PVEFrame, ST_GroupFinder, 0.01) end);
-      PVEFrame:HookScript("OnShow", ST_GroupFinderbutton);
+      PVEFrame:HookScript("OnShow", function() StartTicker(PVEFrame, ST_GroupFinder, 0) end);
       WorldMapFrame:HookScript("OnShow", function() StartTicker(WorldMapFrame, ST_WorldMapFunc, 0.1) end);
       CharacterFrame:HookScript("OnShow", ST_CharacterFrame);
       FriendsFrame:HookScript("OnShow", function() StartTicker(FriendsFrame, ST_FriendsFrame, 0.1) end);

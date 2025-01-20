@@ -35,181 +35,193 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function BB_bubblizeText()
-   if (TalkingHeadFrame and TalkingHeadFrame:IsVisible()) then
-      for idx, iArray in ipairs(BB_BubblesArray) do      -- sprawdź, czy dane są właściwe (tekst oryg. się zgadza z zapisaną w tablicy)
-         if (TalkingHeadFrame.TextFrame.Text:GetText() ==  iArray[1]) then
-            local _font1, _size1, _3 = TalkingHeadFrame.TextFrame.Text:GetFont(); -- odczytaj aktualną czcionkę i rozmiar
-            TalkingHeadFrame.TextFrame.Text:SetFont(WOWTR_Font2, _size1);         -- wpisz czcionkę
-            TalkingHeadFrame.TextFrame.Text:SetText(QTR_ExpandUnitInfo(iArray[2],false,TalkingHeadFrame.TextFrame.Text,WOWTR_Font2,-15));  -- wpisz tłumaczenie
-            tremove(BB_BubblesArray, idx);               -- usuń zapamiętane dane z tablicy
-         end
-      end
-   else
-      if (#C_ChatBubbles.GetAllChatBubbles(true) == #C_ChatBubbles.GetAllChatBubbles()) then      -- normalny dymek, nie w lochach
-         for _, bubble in pairs(C_ChatBubbles.GetAllChatBubbles(true)) do
-         -- Iterate the children, as the actual bubble content 
-         -- has been placed in a nameless subframe in 9.0.1.
-            for i = 1, bubble:GetNumChildren() do
-               local child = select(i, select(i, bubble:GetChildren()))
-               if not child:IsForbidden() then                       -- czy ramka nie jest zabroniona?
-                  if child and (child:GetObjectType() == "Frame") and (child.String) and (child.Center) then
-                  -- This is hopefully the frame with the content
-                     for i = 1, child:GetNumRegions() do
-                        local region = select(i, child:GetRegions());
-                        for idx, iArray in ipairs(BB_BubblesArray) do      -- sprawdź, czy dane są właściwe (tekst oryg. się zgadza z zapisaną w tablicy)
-                           if region and not region:GetName() and region:IsVisible() and region.GetText and (region:GetText() == iArray[1]) then
-                              local oldTextWidth = region:GetStringWidth() -- dotychczasowa szerokość okna dymku
-                              local oldBubbleWidth = region:GetWidth();
-                              local _font1, _size1, _3 = region:GetFont(); -- odczytaj aktualną czcionkę i rozmiar
-                              if (BB_PM["setsize"]=="1") then              -- jest włączona wielkość czcionki dymku
-                                 region:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]));   -- ustaw turecką czcionkę oraz zmienioną wielkość
---                                 region:SetWidth(region:GetWidth() * (region:GetStringWidth() / oldTextWidth) * (tonumber(_size1) / tonumber(BB_PM["fontsize"])));  -- określ nową szer. okna
-                              else
-                                 region:SetFont(WOWTR_Font2, _size1);             -- ustaw turecką czcionkę oraz niezmienioną wielkość (13)
+   -- Bubble çevirilerini hemen işle
+   if (#C_ChatBubbles.GetAllChatBubbles(true) == #C_ChatBubbles.GetAllChatBubbles()) then
+      for _, bubble in pairs(C_ChatBubbles.GetAllChatBubbles(true)) do
+         for i = 1, bubble:GetNumChildren() do
+            local child = select(i, bubble:GetChildren())
+            if not child:IsForbidden() then
+               if child and (child:GetObjectType() == "Frame") and (child.String) and (child.Center) then
+                  for i = 1, child:GetNumRegions() do
+                     local region = select(i, child:GetRegions())
+                     for idx, iArray in ipairs(BB_BubblesArray) do
+                        if region and not region:GetName() and region:IsVisible() and region.GetText and (region:GetText() == iArray[1]) then
+                           -- Bubble çevirisini hemen uygula
+                           --C_Timer.After(0, function()
+                              if region:IsVisible() then
+                                 local _font1, _size1, _3 = region:GetFont()
+                                 if (BB_PM["setsize"]=="1") then
+                                    region:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]))
+                                 else
+                                    region:SetFont(WOWTR_Font2, _size1)
+                                 end
+                                 
+                                 if (region:GetWidth() < 100) then
+                                    region:SetWidth(100)
+                                 end
+                                 
+                                 if (region:GetWidth() > 200) then
+                                    region:SetText(QTR_ExpandUnitInfo(iArray[2],false,region,WOWTR_Font2,-50))
+                                 else
+                                    region:SetText(QTR_ReverseIfAR(iArray[2]))
+                                 end
+                                 
+                                 region:SetJustifyH("CENTER")
                               end
-                              if (region:GetWidth() < 100) then
-                                 region:SetWidth(100);
-                              end
-                              if (region:GetWidth()>200) then
-                                 region:SetText(QTR_ExpandUnitInfo(iArray[2],false,region,WOWTR_Font2,-50));         -- wpisz tu nasze tłumaczenie
-                              else
-                                 region:SetText(QTR_ReverseIfAR(iArray[2]));             -- wpisz tu nasze krótkie tłumaczenie
-                              end
-                              region:SetJustifyH("CENTER");
---                              print(oldTextWidth, region:GetStringWidth());
---                              region:SetWidth(region:GetWidth() * (region:GetStringWidth() / oldTextWidth));  -- określ nową szer. okna
---                              if (region:GetWidth() < region:GetHeight()) then
---                                 region:SetWidth(oldBubbleWidth);
---                              end
-                              tremove(BB_BubblesArray, idx);               -- usuń zapamiętane dane z tablicy
-                           end
+                           --end)
+                           tremove(BB_BubblesArray, idx)
                         end
                      end
                   end
                end
             end
          end
-      elseif (BB_PM["dungeon"] == "1") then           -- dymek w lochach, trzeba użyć własnych okien do wyświetlenia tłumaczenia, jest pozwolenie
-         for idx, iArray in ipairs(BB_BubblesArray) do      -- pobierz zapisane w tablicy teksty
+      end
+   -- Dungeon bubble çevirileri
+   elseif (BB_PM["dungeon"] == "1") then
+      for idx, iArray in ipairs(BB_BubblesArray) do
+         C_Timer.After(0, function()
             if (not WOWBB1:IsVisible()) then
-               WOWBB1:SetOwner(UIParent, "ANCHOR_NONE" );
-               WOWBB1:ClearAllPoints();
-               WOWBB1:SetPoint("CENTER", 0, WOWBB1.vertical);
-               WOWBB1:ClearLines();
-               WOWBB1:AddLine(QTR_ExpandUnitInfo(iArray[2],false,WOWBB1,WOWTR_Font2), 1, 1, 1, true);
-               if (BB_PM["setsize"]=="1") then              -- jest włączona wielkość czcionki dymku
-                  _G["WOWBB1TextLeft1"]:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]));      -- wielkość czcionki
+               WOWBB1:SetOwner(UIParent, "ANCHOR_NONE")
+               WOWBB1:ClearAllPoints()
+               WOWBB1:SetPoint("CENTER", 0, WOWBB1.vertical)
+               WOWBB1:ClearLines()
+               WOWBB1:AddLine(QTR_ExpandUnitInfo(iArray[2],false,WOWBB1,WOWTR_Font2), 1, 1, 1, true)
+               if (BB_PM["setsize"]=="1") then
+                  _G["WOWBB1TextLeft1"]:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]))
                else
-                  _G["WOWBB1TextLeft1"]:SetFont(WOWTR_Font2, 13);   -- ustaw turecką czcionkę oraz niezmienioną wielkość (13)
+                  _G["WOWBB1TextLeft1"]:SetFont(WOWTR_Font2, 13)
                end
-               WOWBB1:Show();
+               WOWBB1:Show()
                if (WoWTR_Localization.lang == 'AR') then
-                  _G["WOWBB1TextLeft1"]:SetText(QTR_ExpandUnitInfo(iArray[2],false,_G["WOWBB1TextLeft1"],WOWTR_Font2));     -- jeszcze raz ustaw tekst w szerokości ramki
---                  WOWBB1:Show();
+                  _G["WOWBB1TextLeft1"]:SetText(QTR_ExpandUnitInfo(iArray[2],false,_G["WOWBB1TextLeft1"],WOWTR_Font2))
                end
-               WOWBB1.header:SetText(iArray[4]..":");
-               WOWBB1.header:ClearAllPoints();
-               WOWBB1.header:SetPoint("CENTER", 0, WOWBB1:GetHeight()/2+6);
-               C_Timer.After(tonumber(BB_PM["timeDisplay"]), function() WOWBB1:Hide(); end);
+               WOWBB1.header:SetText(iArray[4]..":")
+               WOWBB1.header:ClearAllPoints()
+               WOWBB1.header:SetPoint("CENTER", 0, WOWBB1:GetHeight()/2+6)
+               C_Timer.After(tonumber(BB_PM["timeDisplay"]), function() WOWBB1:Hide() end)
             elseif (not WOWBB2:IsVisible()) then
-               WOWBB2:SetOwner(UIParent, "ANCHOR_NONE" );
-               WOWBB2:ClearAllPoints();
-               WOWBB2:SetPoint("CENTER", 250, WOWBB2.vertical);
-               WOWBB2:ClearLines();
-               WOWBB2:AddLine(QTR_ExpandUnitInfo(iArray[2],false,WOWBB1,WOWTR_Font2), 1, 1, 1, true);
-               if (BB_PM["setsize"]=="1") then              -- jest włączona wielkość czcionki dymku
-                  _G["WOWBB2TextLeft1"]:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]));      -- wielkość czcionki
+               WOWBB2:SetOwner(UIParent, "ANCHOR_NONE")
+               WOWBB2:ClearAllPoints()
+               WOWBB2:SetPoint("CENTER", 250, WOWBB2.vertical)
+               WOWBB2:ClearLines()
+               WOWBB2:AddLine(QTR_ExpandUnitInfo(iArray[2],false,WOWBB1,WOWTR_Font2), 1, 1, 1, true)
+               if (BB_PM["setsize"]=="1") then
+                  _G["WOWBB2TextLeft1"]:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]))
                else
-                  _G["WOWBB2TextLeft1"]:SetFont(WOWTR_Font2, 13);   -- ustaw turecką czcionkę oraz niezmienioną wielkość (13)
+                  _G["WOWBB2TextLeft1"]:SetFont(WOWTR_Font2, 13)
                end
-               WOWBB2:Show();
+               WOWBB2:Show()
                if (WoWTR_Localization.lang == 'AR') then
-                  _G["WOWBB2TextLeft1"]:SetText(QTR_ExpandUnitInfo(iArray[2],false,_G["WOWBB1TextLeft1"],WOWTR_Font2));     -- jeszcze raz ustaw tekst w szerokości ramki
---                  WOWBB2:Show();
+                  _G["WOWBB2TextLeft1"]:SetText(QTR_ExpandUnitInfo(iArray[2],false,_G["WOWBB1TextLeft1"],WOWTR_Font2))
                end
-               WOWBB2.header:SetText(iArray[4]..":");
-               WOWBB2.header:ClearAllPoints();
-               WOWBB2.header:SetPoint("CENTER", 0, WOWBB2:GetHeight()/2+6);
-               C_Timer.After(tonumber(BB_PM["timeDisplay"]), function() WOWBB2:Hide(); end);
+               WOWBB2.header:SetText(iArray[4]..":")
+               WOWBB2.header:ClearAllPoints()
+               WOWBB2.header:SetPoint("CENTER", 0, WOWBB2:GetHeight()/2+6)
+               C_Timer.After(tonumber(BB_PM["timeDisplay"]), function() WOWBB2:Hide() end)
             elseif (not WOWBB3:IsVisible()) then
-               WOWBB3:SetOwner(UIParent, "ANCHOR_NONE" );
-               WOWBB3:ClearAllPoints();
-               WOWBB3:SetPoint("CENTER", -250, WOWBB3.vertical);
-               WOWBB3:ClearLines();
-               WOWBB3:AddLine(QTR_ExpandUnitInfo(iArray[2],false,WOWBB1,WOWTR_Font2), 1, 1, 1, true);
-               if (BB_PM["setsize"]=="1") then              -- jest włączona wielkość czcionki dymku
-                  _G["WOWBB3TextLeft1"]:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]));      -- wielkość czcionki
+               WOWBB3:SetOwner(UIParent, "ANCHOR_NONE")
+               WOWBB3:ClearAllPoints()
+               WOWBB3:SetPoint("CENTER", -250, WOWBB3.vertical)
+               WOWBB3:ClearLines()
+               WOWBB3:AddLine(QTR_ExpandUnitInfo(iArray[2],false,WOWBB1,WOWTR_Font2), 1, 1, 1, true)
+               if (BB_PM["setsize"]=="1") then
+                  _G["WOWBB3TextLeft1"]:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]))
                else
-                  _G["WOWBB3TextLeft1"]:SetFont(WOWTR_Font2, 13);   -- ustaw turecką czcionkę oraz niezmienioną wielkość (13)
+                  _G["WOWBB3TextLeft1"]:SetFont(WOWTR_Font2, 13)
                end
-               WOWBB3:Show();
+               WOWBB3:Show()
                if (WoWTR_Localization.lang == 'AR') then
-                  _G["WOWBB3TextLeft1"]:SetText(QTR_ExpandUnitInfo(iArray[2],false,_G["WOWBB1TextLeft1"],WOWTR_Font2));     -- jeszcze raz ustaw tekst w szerokości ramki
---                  WOWBB3:Show();
+                  _G["WOWBB3TextLeft1"]:SetText(QTR_ExpandUnitInfo(iArray[2],false,_G["WOWBB1TextLeft1"],WOWTR_Font2))
                end
-               WOWBB3.header:SetText(iArray[4]..":");
-               WOWBB3.header:ClearAllPoints();
-               WOWBB3.header:SetPoint("CENTER", 0, WOWBB3:GetHeight()/2+6);
-               C_Timer.After(tonumber(BB_PM["timeDisplay"]), function() WOWBB3:Hide(); end);
+               WOWBB3.header:SetText(iArray[4]..":")
+               WOWBB3.header:ClearAllPoints()
+               WOWBB3.header:SetPoint("CENTER", 0, WOWBB3:GetHeight()/2+6)
+               C_Timer.After(tonumber(BB_PM["timeDisplay"]), function() WOWBB3:Hide() end)
             elseif (not WOWBB4:IsVisible()) then
-               WOWBB4:SetOwner(UIParent, "ANCHOR_NONE" );
-               WOWBB4:ClearAllPoints();
-               WOWBB4:SetPoint("CENTER", 500, WOWBB4.vertical);
-               WOWBB4:ClearLines();
-               WOWBB4:AddLine(QTR_ExpandUnitInfo(iArray[2],false,WOWBB1,WOWTR_Font2), 1, 1, 1, true);
-               if (BB_PM["setsize"]=="1") then              -- jest włączona wielkość czcionki dymku
-                  _G["WOWBB4TextLeft1"]:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]));      -- wielkość czcionki
+               WOWBB4:SetOwner(UIParent, "ANCHOR_NONE")
+               WOWBB4:ClearAllPoints()
+               WOWBB4:SetPoint("CENTER", 500, WOWBB4.vertical)
+               WOWBB4:ClearLines()
+               WOWBB4:AddLine(QTR_ExpandUnitInfo(iArray[2],false,WOWBB1,WOWTR_Font2), 1, 1, 1, true)
+               if (BB_PM["setsize"]=="1") then
+                  _G["WOWBB4TextLeft1"]:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]))
                else
-                  _G["WOWBB4TextLeft1"]:SetFont(WOWTR_Font2, 13);   -- ustaw turecką czcionkę oraz niezmienioną wielkość (13)
+                  _G["WOWBB4TextLeft1"]:SetFont(WOWTR_Font2, 13)
                end
-               WOWBB4:Show();
+               WOWBB4:Show()
                if (WoWTR_Localization.lang == 'AR') then
-                  _G["WOWBB4TextLeft1"]:SetText(QTR_ExpandUnitInfo(iArray[2],false,_G["WOWBB1TextLeft1"],WOWTR_Font2));     -- jeszcze raz ustaw tekst w szerokości ramki
---                  WOWBB4:Show();
+                  _G["WOWBB4TextLeft1"]:SetText(QTR_ExpandUnitInfo(iArray[2],false,_G["WOWBB1TextLeft1"],WOWTR_Font2))
                end
-               WOWBB4.header:SetText(iArray[4]..":");
-               WOWBB4.header:ClearAllPoints();
-               WOWBB4.header:SetPoint("CENTER", 0, WOWBB4:GetHeight()/2+6);
-               C_Timer.After(tonumber(BB_PM["timeDisplay"]), function() WOWBB4:Hide(); end);
+               WOWBB4.header:SetText(iArray[4]..":")
+               WOWBB4.header:ClearAllPoints()
+               WOWBB4.header:SetPoint("CENTER", 0, WOWBB4:GetHeight()/2+6)
+               C_Timer.After(tonumber(BB_PM["timeDisplay"]), function() WOWBB4:Hide() end)
             elseif (not WOWBB5:IsVisible()) then
-               WOWBB5:SetOwner(UIParent, "ANCHOR_NONE" );
-               WOWBB5:ClearAllPoints();
-               WOWBB5:SetPoint("CENTER", -500, WOWBB5.vertical);
-               WOWBB5:ClearLines();
-               WOWBB5:AddLine(QTR_ExpandUnitInfo(iArray[2],false,WOWBB1,WOWTR_Font2), 1, 1, 1, true);
-               if (BB_PM["setsize"]=="1") then              -- jest włączona wielkość czcionki dymku
-                  _G["WOWBB5TextLeft1"]:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]));      -- wielkość czcionki
+               WOWBB5:SetOwner(UIParent, "ANCHOR_NONE")
+               WOWBB5:ClearAllPoints()
+               WOWBB5:SetPoint("CENTER", -500, WOWBB5.vertical)
+               WOWBB5:ClearLines()
+               WOWBB5:AddLine(QTR_ExpandUnitInfo(iArray[2],false,WOWBB1,WOWTR_Font2), 1, 1, 1, true)
+               if (BB_PM["setsize"]=="1") then
+                  _G["WOWBB5TextLeft1"]:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]))
                else
-                  _G["WOWBB5TextLeft1"]:SetFont(WOWTR_Font2, 13);   -- ustaw turecką czcionkę oraz niezmienioną wielkość (13)
+                  _G["WOWBB5TextLeft1"]:SetFont(WOWTR_Font2, 13)
                end
-               WOWBB5:Show();
+               WOWBB5:Show()
                if (WoWTR_Localization.lang == 'AR') then
-                  _G["WOWBB5TextLeft1"]:SetText(QTR_ExpandUnitInfo(iArray[2],false,_G["WOWBB1TextLeft1"],WOWTR_Font2));     -- jeszcze raz ustaw tekst w szerokości ramki
---                  WOWBB5:Show();
+                  _G["WOWBB5TextLeft1"]:SetText(QTR_ExpandUnitInfo(iArray[2],false,_G["WOWBB1TextLeft1"],WOWTR_Font2))
                end
-               WOWBB5.header:SetText(iArray[4]..":");
-               WOWBB5.header:ClearAllPoints();
-               WOWBB5.header:SetPoint("CENTER", 0, WOWBB5:GetHeight()/2+6);
-               C_Timer.After(tonumber(BB_PM["timeDisplay"]), function() WOWBB5:Hide(); end);
+               WOWBB5.header:SetText(iArray[4]..":")
+               WOWBB5.header:ClearAllPoints()
+               WOWBB5.header:SetPoint("CENTER", 0, WOWBB5:GetHeight()/2+6)
+               C_Timer.After(tonumber(BB_PM["timeDisplay"]), function() WOWBB5:Hide() end)
             end
-            tremove(BB_BubblesArray, idx);               -- usuń zapamiętane dane z tablicy
-         end
+         end)
+         tremove(BB_BubblesArray, idx)
       end
    end
 
-   for idx, iArray in ipairs(BB_BubblesArray) do            -- przeszukaj jeszcze raz tablicę
-      if (iArray[3] >= 100) then                            -- licznik osiągnął 100
-         tremove(BB_BubblesArray, idx);                     -- usuń zapamiętane dane z tablicy
+   -- TalkingHead frame çevirisi ayrı bir zamanlayıcıda
+   if (TalkingHeadFrame and TalkingHeadFrame:IsVisible()) then
+      --C_Timer.After(0.01, function()
+         for idx, iArray in ipairs(BB_BubblesArray) do
+            if (TalkingHeadFrame.TextFrame.Text:GetText() == iArray[1]) then
+               local _font1, _size1, _3 = TalkingHeadFrame.TextFrame.Text:GetFont()
+               TalkingHeadFrame.TextFrame.Text:SetFont(WOWTR_Font2, _size1)
+               TalkingHeadFrame.TextFrame.Text:SetText(QTR_ExpandUnitInfo(iArray[2],false,TalkingHeadFrame.TextFrame.Text,WOWTR_Font2,-15))
+               tremove(BB_BubblesArray, idx)
+            end
+         end
+      --end)
+   end
+
+   -- Temizlik işlemleri
+   for idx, iArray in ipairs(BB_BubblesArray) do
+      if (iArray[3] >= 100) then
+         tremove(BB_BubblesArray, idx)
       else
-         iArray[3] = iArray[3]+1;                           -- zwiększ licznik (nie pokazał się dymek?)
-      end;
-   end;
-   if (#(BB_BubblesArray) == 0) then
-      BB_ctrFrame:SetScript("OnUpdate", nil);               -- wyłącz metodę Update, bo tablica pusta
-   end;
-end;
+         iArray[3] = iArray[3] + 1
+      end
+   end
+
+   -- OnUpdate kontrolü
+   if (#BB_BubblesArray == 0) then
+      --C_Timer.After(0.02, function()
+         BB_ctrFrame:SetScript("OnUpdate", nil)
+      --end)
+   end
+end
 
 -------------------------------------------------------------------------------------------------------
+function WOWTR_DetectAndReplacePlayerNameForBubble(txt,target,part)
+   if (txt == nil) then return ""; end
+   local text = string.gsub(txt, '\r', "");
+   if (part==nil) or (part=='$B') then
+      text = string.gsub(text, '\n', "$B");
+   end
+   return text;
+end
 
 function BB_ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)     -- wywoływana, gdy na chat ma pojawić się tekst od NPC
    if (TT_onTutorialShow) then
@@ -248,7 +260,7 @@ function BB_ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)     -- wywo�
          Origin_Text = WOWTR_DetectAndReplacePlayerName(Origin_Text);
       end
       local Czysty_Text = WOWTR_DeleteSpecialCodes(Origin_Text);
-      if (string.sub(name_NPC,1,17) == "Bronze Timekeeper") then    -- wyścigi na smokach - wyjątek z sekundami
+      if (string.sub(name_NPC,1,17) == "Bronze Timekeeper" or string.sub(name_NPC, 1, 16) == "Grimy Timekeeper") then    -- wyścigi na smokach - wyjątek z sekundami
          Czysty_Text = string.gsub(Czysty_Text, "0", "");
          Czysty_Text = string.gsub(Czysty_Text, "1", "");
          Czysty_Text = string.gsub(Czysty_Text, "2", "");
@@ -262,16 +274,17 @@ function BB_ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)     -- wywo�
       elseif ((name_NPC == "General Hammond Clay") and (string.sub(Czysty_Text,1,27) == "For their courage, we honor")) then   -- exception
          exceptionHash = 4192543970;
       end
-      local HashCode;
-      if (exceptionHash) then
-         HashCode = exceptionHash;
-      else
-         HashCode = StringHash(Czysty_Text);
-      end
+local HashCode;
+if (exceptionHash) then
+   HashCode = exceptionHash;
+else
+   HashCode = StringHash(Czysty_Text);
+end
       if (BB_Bubbles[HashCode]) then         -- jest tłumaczenie tureckie
          newMessage = BB_Bubbles[HashCode];
          newMessage = WOW_ZmienKody(newMessage,arg5);
-         if (string.sub(name_NPC,1,17) == "Bronze Timekeeper") then       -- wyścigi na smokach - wyjątej z sekundami: $1.$2 oraz $3.$4
+         if (string.sub(name_NPC,1,17) == "Bronze Timekeeper" or string.sub(name_NPC, 1, 16) == "Grimy Timekeeper") then   -- wyścigi na smokach - wyjątej z sekundami: $1.$2 oraz $3.$4
+
             local wartab = {0,0,0,0,0,0};                                 -- max. 6 liczb całkowitych w tekście
             local arg0 = 0;
             for w in string.gmatch(strtrim(arg1), "%d+") do
