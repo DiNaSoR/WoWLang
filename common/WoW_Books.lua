@@ -18,7 +18,7 @@ function BookTranslator_ShowTranslation()
       BT_ToggleButton0:SetWidth(40);
       BT_act_tr = "0";
       BT_tytul_en=ItemTextGetItem();
-      BT_tekst_en=ItemTextGetText();
+      BT_tekst_en=WOWTR_DetectAndReplacePlayerName(ItemTextGetText(), nil, "$N");
       BT_nr_str=tostring(ItemTextGetPage());
       if (BT_nr_str == nil) then
          BT_nr_str = '1';
