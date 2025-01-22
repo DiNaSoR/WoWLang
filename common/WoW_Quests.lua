@@ -740,13 +740,7 @@ function QTR_START()
    end)
    GoQ_IconAI:Hide()
 
-   -- Ensure QUEST_TRACKER_MODULE exists before hooking functions (QUEST TRACKER IS NOT SERVICES)
-   if QUEST_TRACKER_MODULE then
---      -- Function called on clicking a quest name in QuestTracker   
---      hooksecurefunc(QUEST_TRACKER_MODULE, "OnBlockHeaderClick", QTR_PrepareReload)
-      -- Function called on updating QuestTracker
-      hooksecurefunc(QUEST_TRACKER_MODULE, "EnumQuestWatchData", QTR_ObjectiveTracker_Check)
-   end
+   --hooksecurefunc(QuestObjectiveTracker, "Update", QTR_ObjectiveTracker_Check);
 
    WorldMapFrame:HookScript("OnHide", function() 
       if (not WOWTR_wait(0.01, QTR_ObjectiveTrackerFrame_Titles)) then
@@ -788,8 +782,8 @@ function QTR_START()
    isStoryline()
    
    hooksecurefunc(QuestObjectiveTracker, "UpdateSingle", function(self, quest)
-      QTR_OverrideObjectiveTrackerHeader(self, quest)
-  end)
+      QTR_OverrideObjectiveTrackerHeader(self, quest);
+      end);
 
 end
 
@@ -1124,14 +1118,15 @@ function QTR_ObjectiveTracker_Check()
       -- --11.00
       -- QuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.quests));   -- może: QTR_ExpandUnitInfo ?
 
---      for questID, block in pairs(QUEST_TRACKER_MODULE.usedBlocks.ObjectiveTrackerBlockTemplate) do
+--      for questID, block in pairs(QuestObjectiveTracker.ContentsFrame) do
+--         QTR_OverrideObjectiveTrackerHeader(QuestObjectiveTracker.ContentsFrame, questID);
 --         local str_ID = tostring(questID);
 --         if (str_ID and QTR_PS["transtitle"]=="1" and QTR_QuestData[str_ID] and block.HeaderText) then  -- tłumaczenie tytułu
 --            block.HeaderText:SetText(QTR_ReverseIfAR(QTR_ExpandUnitInfo(QTR_QuestData[str_ID]["Title"]),false,block.HeaderText,WOWTR_Font2));
 --            if (WoWTR_Localization.lang == 'AR') then
 --               block.HeaderText:SetFont(WOWTR_Font2, 14);
 --            else
---               block.HeaderText:SetFont(WOWTR_Font2, 11);
+--               block.HeaderText:SetFont(WOWTR_Font2, 12);
 --            end
 --            QTR_ResizeBlock(block.HeaderText);
 --         end
@@ -1170,6 +1165,7 @@ function QTR_ObjectiveTracker_Check()
 --            end
 --         end
 --      end
+      
    end
 end
 
