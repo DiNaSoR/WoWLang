@@ -3700,12 +3700,10 @@ function WOWTR_DetectAndReplacePlayerName(txt,target,part)
    if (part==nil) or (part=='$B') then
       text = string.gsub(text, '\n', "$B");
    end
-   local playerName = WOWTR_player_name;
-   local upperCaseName = string.upper(playerName);
-   local lowerCaseName = string.lower(playerName);
    if (part == nil) or (part == '$N') then
-      text = string.gsub(text, playerName, "$N");  --Match lowercase
-      text = string.gsub(text, upperCaseName, "$N"); --Match uppercase
+      local upperCaseName = string.upper(WOWTR_player_name);
+      text = string.gsub(text, WOWTR_player_name, "$N");  --Match lowercase
+      text = string.gsub(text, upperCaseName, "$N$");     --Match uppercase
    end
    if (part==nil) or (part=='$R') then
       text = WOWTR_ReplaceOnlyWholeWords(text, WOWTR_player_race, '$R');
@@ -3797,7 +3795,11 @@ function QTR_OverrideObjectiveTrackerHeader(tracker, quest)
    local questData = QTR_quest_LG[questID]
    if questData and questData.title then
        -- 4) Assign your localized title to the block's header
-       block.HeaderText:SetFont(WOWTR_Font2, 14)
+       if WoWTR_Localization.lang == "AR" then
+          block.HeaderText:SetFont(WOWTR_Font2, 14);
+       else
+          block.HeaderText:SetFont(WOWTR_Font2, 12);
+       end
        block.HeaderText:SetText( QTR_ExpandUnitInfo(questData.title, false, block.HeaderText, WOWTR_Font2, -50) )
 
        -- Example: if Arabic, justify to the right, otherwise left
