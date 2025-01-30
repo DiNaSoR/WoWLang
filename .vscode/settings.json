@@ -14,6 +14,35 @@
     "Lua.workspace.library": [
         "c:\\Users\\user\\.cursor\\extensions\\ketho.wow-api-0.18.2\\Annotations"
     ],
+    "Lua.workspace.ignoreDir": [
+        "node_modules",
+        ".git",
+        ".github",
+        "common/Libs",
+        "WoWAR/Fonts",
+        "WoWAR/Images",
+        "WoWAR/Translations",
+        "WoWHU/Fonts",
+        "WoWHU/Images",
+        "WoWHU/Translations",
+        "WoWJP/Fonts",
+        "WoWJP/Images",
+        "WoWJP/Translations",
+        "WoWPL/Fonts",
+        "WoWPL/Images",
+        "WoWPL/Translations",
+        "WoWTR/Fonts",
+        "WoWTR/Images",
+        "WoWTR/Translations",
+        "WoWUA/Fonts",
+        "WoWUA/Images",
+        "WoWUA/Translations",
+        "**/build/**",
+        "**/output/**"
+    ],
+    "Lua.workspace.maxPreload": 100,
+    "Lua.workspace.preloadFileSize": 200,
+    "Lua.diagnostics.workspaceDelay": 30000,
     "Lua.diagnostics.globals": [
         "QuestFrameCompleteQuestButtonText",
         "QuestFrameAcceptButtonText",
@@ -311,5 +340,29 @@
         "FAILED",
         "WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL",
         "QUEST_WATCH_QUEST_COMPLETE"
-    ]
+    ],
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/.git": true,
+        "**/.github": true,
+        "common/Libs/**": true,
+        "WoWAR/Fonts/**": true,
+        "WoWAR/Images/**": true,
+        "WoWAR/Translations/**": true,
+        "WoWHU/Fonts/**": true,
+        "WoWHU/Images/**": true,
+        "WoWHU/Translations/**": true,
+        "WoWJP/Fonts/**": true,
+        "WoWJP/Images/**": true,
+        "WoWJP/Translations/**": true,
+        "WoWPL/Fonts/**": true,
+        "WoWPL/Images/**": true,
+        "WoWPL/Translations/**": true,
+        "WoWTR/Fonts/**": true,
+        "WoWTR/Images/**": true,
+        "WoWTR/Translations/**": true,
+        "WoWUA/Fonts/**": true,
+        "WoWUA/Images/**": true,
+        "WoWUA/Translations/**": true
+    }  
 }

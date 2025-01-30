@@ -76,13 +76,13 @@ function WOWTR_SetCheckButtonState()
       WOWTR_CheckButton6A:SetChecked(ST_PM["transtitle"]=="1");
    end
    
-   local fontsize1 = tonumber(BB_PM["fontsize"]);
+   local fontsize1 = tonumber(BB_PM["fontsize"]) or 13;
    WOWTR_Opis1:SetFont(WOWTR_Font2, fontsize1);
  
-   local fontsize2 = tonumber(BT_PM["fontsize"]);
+   local fontsize2 = tonumber(BT_PM["fontsize"]) or 13;
    WOWTR_Opis2:SetFont(WOWTR_Font2, fontsize2);
  
-   local fontsize4 = tonumber(QTR_PS["fontsize"]);      -- gossip font size
+   local fontsize4 = tonumber(QTR_PS["fontsize"]) or 13;      -- gossip font size
    WOWTR_Opis4:SetFont(WOWTR_Font2, fontsize4);
  
    WOWTR_slider1:SetValue(tonumber(BB_PM["fontsize"]));

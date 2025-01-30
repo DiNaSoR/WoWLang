@@ -345,15 +345,15 @@ local QTR_race = UnitRace("player");
 local QTR_class = UnitClass("player");
 
 if (p_race[QTR_race]) then
-   player_race_table = { M=p_race[QTR_race].M, F=p_race[QTR_race].F };
-else   
-   player_race_table = { M=QTR_race, F=QTR_race };
+   _G.player_race_table = { M=p_race[QTR_race].M, F=p_race[QTR_race].F };
+else
+   _G.player_race_table = { M=QTR_race, F=QTR_race };
 end
 
 if (p_class[QTR_class]) then
-   player_class_table = { M=p_class[QTR_class].M, F=p_class[QTR_class].F };
+   _G.player_class_table = { M=p_class[QTR_class].M, F=p_class[QTR_class].F };
 else
-   player_class_table = { M=QTR_class, F=QTR_class };
+   _G.player_class_table = { M=QTR_class, F=QTR_class };
 end
 
 ---------------------------------------------------------------------------------------------------------
@@ -362,5 +362,4 @@ end
 WOWTR_Font1 = WoWTR_Localization.mainFolder.."\\Fonts\\font1.ttf";
 WOWTR_Font2 = WoWTR_Localization.mainFolder.."\\Fonts\\font2.ttf";
 WOWTR_Fonts = {"font2.ttf"};
-local GetAddOnMetadata = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata;
-WOWTR_version = GetAddOnMetadata(WoWTR_Localization.addonFolder, "Version");
+WOWTR_version = C_AddOns.GetAddOnMetadata(WoWTR_Localization.addonFolder, "Version");

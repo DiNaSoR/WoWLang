@@ -708,7 +708,7 @@ function BB_LineChat(txt, font_size, more_chars)
       local newstrR;
       local char1;
       while (pos <= bytes) do
-         c = strbyte(txt, pos);                      -- read the character (odczytaj znak)
+         local c = strbyte(txt, pos);                      -- read the character (odczytaj znak)
          charbytes = AS_UTF8charbytes(txt, pos);    -- count of bytes (liczba bajtów znaku)
          char1 = strsub(txt, pos, pos + charbytes - 1);
          newstr = newstr .. char1;
