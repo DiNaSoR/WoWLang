@@ -391,7 +391,20 @@ function TT_CampaignOverview()
    local frame;
    local frames_tab = { };
    local height_tab = { };
-   for frame in QuestMapFrame.CampaignOverview.linePool:EnumerateActive() do
+   local linePool
+   local versionString = select(4, GetBuildInfo())
+   local versionNumber = tonumber(versionString)
+
+   if versionNumber then
+      if versionNumber <= 110007 then
+        linePool = QuestMapFrame.CampaignOverview.linePool
+      else
+        linePool = QuestMapFrame.QuestsFrame.CampaignOverview.linePool
+      end
+   else
+   end
+
+   for frame in linePool:EnumerateActive() do
       local txt = frame:GetText();
       local HashCode = StringHash(txt);
       local point, relativeTo, relativePoint, xOfs, yOfs = frame:GetPoint(1);

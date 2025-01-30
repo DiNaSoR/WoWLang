@@ -740,13 +740,7 @@ function QTR_START()
    end)
    GoQ_IconAI:Hide()
 
-   -- Ensure QUEST_TRACKER_MODULE exists before hooking functions (QUEST TRACKER IS NOT SERVICES)
-   if QUEST_TRACKER_MODULE then
---      -- Function called on clicking a quest name in QuestTracker   
---      hooksecurefunc(QUEST_TRACKER_MODULE, "OnBlockHeaderClick", QTR_PrepareReload)
-      -- Function called on updating QuestTracker
-      hooksecurefunc(QUEST_TRACKER_MODULE, "EnumQuestWatchData", QTR_ObjectiveTracker_Check)
-   end
+   --hooksecurefunc(QuestObjectiveTracker, "Update", QTR_ObjectiveTracker_Check);
 
    WorldMapFrame:HookScript("OnHide", function() 
       if (not WOWTR_wait(0.01, QTR_ObjectiveTrackerFrame_Titles)) then
@@ -771,15 +765,25 @@ function QTR_START()
    QuestFrameAcceptButton:HookScript("OnClick", QTR_QuestFrameButton_OnClick)
    QuestFrameCompleteQuestButton:HookScript("OnClick", QTR_QuestFrameButton_OnClick)
    QuestLogPopupDetailFrame:HookScript("OnShow", QTR_QuestLogPopupShow)
-   QuestMapFrame.CampaignOverview:HookScript("OnShow", function() StartDelayedFunction(TT_CampaignOverview, 0.5) end)
-   
+
+   local versionString = select(4, GetBuildInfo())
+   local versionNumber = tonumber(versionString)
+   if versionNumber then
+      if versionNumber <= 110007 then
+         QuestMapFrame.CampaignOverview:HookScript("OnShow", function() StartDelayedFunction(TT_CampaignOverview, 0.5) end)
+      else
+         QuestMapFrame.QuestsFrame.CampaignOverview:HookScript("OnShow", function() StartDelayedFunction(TT_CampaignOverview, 0.5) end)
+      end
+   else
+   end
+
    isClassicQuestLog()
    isImmersion()
    isStoryline()
    
    hooksecurefunc(QuestObjectiveTracker, "UpdateSingle", function(self, quest)
-      QTR_OverrideObjectiveTrackerHeader(self, quest)
-  end)
+      QTR_OverrideObjectiveTrackerHeader(self, quest);
+      end);
 
 end
 
@@ -1114,14 +1118,15 @@ function QTR_ObjectiveTracker_Check()
       -- --11.00
       -- QuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.quests));   -- może: QTR_ExpandUnitInfo ?
 
---      for questID, block in pairs(QUEST_TRACKER_MODULE.usedBlocks.ObjectiveTrackerBlockTemplate) do
+--      for questID, block in pairs(QuestObjectiveTracker.ContentsFrame) do
+--         QTR_OverrideObjectiveTrackerHeader(QuestObjectiveTracker.ContentsFrame, questID);
 --         local str_ID = tostring(questID);
 --         if (str_ID and QTR_PS["transtitle"]=="1" and QTR_QuestData[str_ID] and block.HeaderText) then  -- tłumaczenie tytułu
 --            block.HeaderText:SetText(QTR_ReverseIfAR(QTR_ExpandUnitInfo(QTR_QuestData[str_ID]["Title"]),false,block.HeaderText,WOWTR_Font2));
 --            if (WoWTR_Localization.lang == 'AR') then
 --               block.HeaderText:SetFont(WOWTR_Font2, 14);
 --            else
---               block.HeaderText:SetFont(WOWTR_Font2, 11);
+--               block.HeaderText:SetFont(WOWTR_Font2, 12);
 --            end
 --            QTR_ResizeBlock(block.HeaderText);
 --         end
@@ -1160,6 +1165,7 @@ function QTR_ObjectiveTracker_Check()
 --            end
 --         end
 --      end
+      
    end
 end
 
@@ -1423,13 +1429,13 @@ function QTR_QuestPrepare(zdarzenie)
                QTR_quest_LG[QTR_quest_ID].itemreceive = QTR_Messages.itemreceiv0;
             end
             if (strlen(QTR_quest_EN[QTR_quest_ID].details)>0 and strlen(QTR_quest_LG[QTR_quest_ID].details)==0) then
-               QTR_MISSING[QTR_quest_ID.." DESCRIPTION"]=QTR_quest_EN[QTR_quest_ID].details;    -- save missing translation part
+               QTR_MISSING[QTR_quest_ID.." DESCRIPTION"]=WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].details);    -- save missing translation part
             end
             if (strlen(QTR_quest_LG[QTR_quest_ID].details)==0) then
                QTR_quest_LG[QTR_quest_ID].details = QTR_quest_EN[QTR_quest_ID].details;         -- If the translation is missing, the original text appears.
             end
             if (strlen(QTR_quest_EN[QTR_quest_ID].objectives)>0 and strlen(QTR_quest_LG[QTR_quest_ID].objectives)==0) then
-               QTR_MISSING[QTR_quest_ID.." OBJECTIVE"]=QTR_quest_EN[QTR_quest_ID].objectives;   -- save missing translation part
+               QTR_MISSING[QTR_quest_ID.." OBJECTIVE"]=WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].objectives);   -- save missing translation part
             end
             if (strlen(QTR_quest_LG[QTR_quest_ID].objectives)==0) then
                QTR_quest_LG[QTR_quest_ID].objectives = QTR_quest_EN[QTR_quest_ID].objectives;   -- If the translation is missing, the original text appears.
@@ -1475,7 +1481,7 @@ function QTR_QuestPrepare(zdarzenie)
                QTR_quest_LG[QTR_quest_ID].progress = QTR_QuestData[str_ID]["Progress"];
             end
             if (strlen(QTR_quest_EN[QTR_quest_ID].progress)>0 and strlen(QTR_quest_LG[QTR_quest_ID].progress)==0) then
-               QTR_MISSING[QTR_quest_ID.." PROGRESS"]=QTR_quest_EN[QTR_quest_ID].progress;     -- save missing translation part
+               QTR_MISSING[QTR_quest_ID.." PROGRESS"]=WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].progress);     -- save missing translation part
             end
             if (strlen(QTR_quest_LG[QTR_quest_ID].progress)==0) then
                QTR_quest_LG[QTR_quest_ID].progress = QTR_quest_EN[QTR_quest_ID].progress;   -- If the translation is missing, the original text appears.
@@ -1506,7 +1512,7 @@ function QTR_QuestPrepare(zdarzenie)
                QTR_quest_LG[QTR_quest_ID].itemreceive = QTR_Messages.itemreceiv2;
             end
             if (strlen(QTR_quest_EN[QTR_quest_ID].completion)>0 and strlen(QTR_quest_LG[QTR_quest_ID].completion)==0) then
-               QTR_MISSING[QTR_quest_ID.." COMPLETE"]=QTR_quest_EN[QTR_quest_ID].completion;     -- save missing translation part
+               QTR_MISSING[QTR_quest_ID.." COMPLETE"]=WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].completion);     -- save missing translation part
             end
             if (strlen(QTR_quest_LG[QTR_quest_ID].completion)==0) then
                QTR_quest_LG[QTR_quest_ID].completion = QTR_quest_EN[QTR_quest_ID].completion;    -- If the translation is missing, the original text appears.
@@ -3690,9 +3696,10 @@ function WOWTR_DetectAndReplacePlayerName(txt,target,part)
    if (part==nil) or (part=='$B') then
       text = string.gsub(text, '\n', "$B");
    end
-   if (part==nil) or (part=='$N') then
-      text = WOWTR_ReplaceOnlyWholeWords(text, WOWTR_player_name, "$N");
-      text = WOWTR_ReplaceOnlyWholeWords(text, string.upper(WOWTR_player_name), '$N$');
+   if (part == nil) or (part == '$N') then
+      local upperCaseName = string.upper(WOWTR_player_name);
+      text = string.gsub(text, WOWTR_player_name, "$N");  --Match lowercase
+      text = string.gsub(text, upperCaseName, "$N$");     --Match uppercase
    end
    if (part==nil) or (part=='$R') then
       text = WOWTR_ReplaceOnlyWholeWords(text, WOWTR_player_race, '$R');
@@ -3784,8 +3791,12 @@ function QTR_OverrideObjectiveTrackerHeader(tracker, quest)
    local questData = QTR_quest_LG[questID]
    if questData and questData.title then
        -- 4) Assign your localized title to the block's header
-       block.HeaderText:SetFont(WOWTR_Font1, 14)
-       block.HeaderText:SetText( QTR_ExpandUnitInfo(questData.title, false, block.HeaderText, WOWTR_Font1, -50) )
+       if WoWTR_Localization.lang == "AR" then
+          block.HeaderText:SetFont(WOWTR_Font2, 14);
+       else
+          block.HeaderText:SetFont(WOWTR_Font2, 12);
+       end
+       block.HeaderText:SetText( QTR_ExpandUnitInfo(questData.title, false, block.HeaderText, WOWTR_Font2, -50) )
 
        -- Example: if Arabic, justify to the right, otherwise left
        if WoWTR_Localization.lang == "AR" then
