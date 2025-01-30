@@ -1429,13 +1429,13 @@ function QTR_QuestPrepare(zdarzenie)
                QTR_quest_LG[QTR_quest_ID].itemreceive = QTR_Messages.itemreceiv0;
             end
             if (strlen(QTR_quest_EN[QTR_quest_ID].details)>0 and strlen(QTR_quest_LG[QTR_quest_ID].details)==0) then
-               QTR_MISSING[QTR_quest_ID.." DESCRIPTION"]=QTR_quest_EN[QTR_quest_ID].details;    -- save missing translation part
+               QTR_MISSING[QTR_quest_ID.." DESCRIPTION"]=WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].details);    -- save missing translation part
             end
             if (strlen(QTR_quest_LG[QTR_quest_ID].details)==0) then
                QTR_quest_LG[QTR_quest_ID].details = QTR_quest_EN[QTR_quest_ID].details;         -- If the translation is missing, the original text appears.
             end
             if (strlen(QTR_quest_EN[QTR_quest_ID].objectives)>0 and strlen(QTR_quest_LG[QTR_quest_ID].objectives)==0) then
-               QTR_MISSING[QTR_quest_ID.." OBJECTIVE"]=QTR_quest_EN[QTR_quest_ID].objectives;   -- save missing translation part
+               QTR_MISSING[QTR_quest_ID.." OBJECTIVE"]=WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].objectives);   -- save missing translation part
             end
             if (strlen(QTR_quest_LG[QTR_quest_ID].objectives)==0) then
                QTR_quest_LG[QTR_quest_ID].objectives = QTR_quest_EN[QTR_quest_ID].objectives;   -- If the translation is missing, the original text appears.
@@ -1481,7 +1481,7 @@ function QTR_QuestPrepare(zdarzenie)
                QTR_quest_LG[QTR_quest_ID].progress = QTR_QuestData[str_ID]["Progress"];
             end
             if (strlen(QTR_quest_EN[QTR_quest_ID].progress)>0 and strlen(QTR_quest_LG[QTR_quest_ID].progress)==0) then
-               QTR_MISSING[QTR_quest_ID.." PROGRESS"]=QTR_quest_EN[QTR_quest_ID].progress;     -- save missing translation part
+               QTR_MISSING[QTR_quest_ID.." PROGRESS"]=WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].progress);     -- save missing translation part
             end
             if (strlen(QTR_quest_LG[QTR_quest_ID].progress)==0) then
                QTR_quest_LG[QTR_quest_ID].progress = QTR_quest_EN[QTR_quest_ID].progress;   -- If the translation is missing, the original text appears.
@@ -1512,7 +1512,7 @@ function QTR_QuestPrepare(zdarzenie)
                QTR_quest_LG[QTR_quest_ID].itemreceive = QTR_Messages.itemreceiv2;
             end
             if (strlen(QTR_quest_EN[QTR_quest_ID].completion)>0 and strlen(QTR_quest_LG[QTR_quest_ID].completion)==0) then
-               QTR_MISSING[QTR_quest_ID.." COMPLETE"]=QTR_quest_EN[QTR_quest_ID].completion;     -- save missing translation part
+               QTR_MISSING[QTR_quest_ID.." COMPLETE"]=WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].completion);     -- save missing translation part
             end
             if (strlen(QTR_quest_LG[QTR_quest_ID].completion)==0) then
                QTR_quest_LG[QTR_quest_ID].completion = QTR_quest_EN[QTR_quest_ID].completion;    -- If the translation is missing, the original text appears.
