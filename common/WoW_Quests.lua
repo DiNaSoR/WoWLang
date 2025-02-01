@@ -3699,7 +3699,7 @@ function WOWTR_DetectAndReplacePlayerName(txt,target,part)
    if (part == nil) or (part == '$N') then
       local upperCaseName = string.upper(WOWTR_player_name);
       text = string.gsub(text, WOWTR_player_name, "$N");  --Match lowercase
-      text = string.gsub(text, upperCaseName, "$N$");     --Match uppercase
+      text = string.gsub(text, upperCaseName, "$N");     --Match uppercase
    end
    if (part==nil) or (part=='$R') then
       text = WOWTR_ReplaceOnlyWholeWords(text, WOWTR_player_race, '$R');
