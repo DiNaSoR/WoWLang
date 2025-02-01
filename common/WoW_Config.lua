@@ -3091,7 +3091,7 @@ WOWTR_Confirmation1 = CreateFrame("Frame", nil, WOWTR_OptionPanel9, "UIPanelDial
 WOWTR_Confirmation1:SetWidth(305);
 WOWTR_Confirmation1:SetHeight(120);
 WOWTR_Confirmation1:ClearAllPoints();
-WOWTR_Confirmation1:SetPoint("BOTTOMLEFT", WOWTR_ResetButton1, "TOPLEFT", -5, 5);
+WOWTR_Confirmation1:SetPoint("CENTER", WOWTR_OptionPanel9, "CENTER", 0, 108);
 WOWTR_Confirmation1:SetFrameStrata("TOOLTIP");
 WOWTR_Confirmation1.Title:SetText(WoWTR_Localization.confirmationHeader);       -- Confirmation Header
 WOWTR_Confirmation1.Title:SetFont(WOWTR_Font2, 13);
