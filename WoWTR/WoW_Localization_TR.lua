@@ -134,6 +134,8 @@ WoWTR_Config_Interface = {
    translateDialogueUI = "Çevirileri DialogueUI eklentisinde göster",                                 -- Display translations in DialogueUI addon
    translateDialogueUIDESC = "Kapatıldığında, DialogueUI orjinal dilde görünecektir",                 -- If enabled, texts in DialogueUI addon will be translated
    sampleGossipText = "Gossip NPC Konuşma|nÖrnek Font Büyüklüğü",                                     -- Sample Gossip font size text
+   displayENfirst = "Metni önce göster EN",                                                           -- display EN text first on Quests and Gossip
+   displayENfirstDESC = "İşaretlenirse, önce İngilizce metin görüntülenecektir",                      -- If enabled, English text will display first on Quests and Gossip
 
    titleTab2 = "Baloncuklar",                                                                         -- Bubbles (TR:Baloncuklar)
    generalMainHeaderBB = "KONUŞMA BALONCUKLARI - Bubbles",                                            -- Bubbles translations (TR:KONUŞMA BALONCUKLARI)

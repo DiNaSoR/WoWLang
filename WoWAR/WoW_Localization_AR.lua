@@ -134,7 +134,9 @@ WoWTR_Config_Interface = {
    translateDialogueUI = "ﻋﺮﺽ ﺍﻟﺘﺮﺟﻤﺎﺕ ﻓﻲ ﺇﺿﺎﻓﺔ IUeuqolaiD",
    translateDialogueUIDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﺳﺘﻈﻬﺮ IUeuqolaiD ﺑﺎﻟﻠﻐﺔ ﺍﻷﺻﻠﻴﺔ",
    sampleGossipText = "ﻧﻤﻮﺫﺝ ﺣﺠﻢ ﺍﻟﺨﻂ ﻟﻨﺺ ﺍﻟﺤﻮﺍﺭﺍﺕ CPN",
-   
+   displayENfirst = "عرض النص أولاً EN",                                                           -- display EN text first on Quests and Gossip
+   displayENfirstDESC = "إذا تم تحديد هذا المربع، فسيتم عرض النص الإنجليزي أولاً",                  -- If enabled, English text will display first on Quests and Gossip
+
    titleTab2 = "ﺍﻟﻔﻘﺎﻋﺎﺕ",
    generalMainHeaderBB = "ﺗﺮﺟﻤﺎﺕ ﺍﻟﻔﻘﺎﻋﺎﺕ - selbbuB",
    activateBubblesTranslations = "ﺗﻔﻌﻴﻞ ﺗﺮﺟﻤﺎﺕ ﺍﻟﻔﻘﺎﻋﺎﺕ",

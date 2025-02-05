@@ -131,6 +131,8 @@ WoWTR_Config_Interface = {
    translateDialogueUI = "Fordítások megjelenítése DialogueUI addon esetén",                         -- Display translations in DialogueUI addon
    translateDialogueUIDESC = "Ha elérhető, a DialogueUI addon szövegeinek fordítása",                -- If enabled, texts in DialogueUI addon will be translated
    sampleGossipText = "Minta Gossip|nbetűméret szöveg",                                              -- Sample Gossip font size text (TR:Gossip Örnek yazı tipi boyutu metni)
+   displayENfirst = "Szöveg megjelenítése először EN",                                               -- display EN text first on Quests and Gossip
+   displayENfirstDESC = "Ha be van jelölve, először az angol szöveg jelenik meg",                    -- If enabled, English text will display first on Quests and Gossip
 
    titleTab2 = "Buborékok",                                                                          -- Bubbles 
    generalMainHeaderBB = "Szövegbuborékok fordítása",                                                -- Bubbles translations

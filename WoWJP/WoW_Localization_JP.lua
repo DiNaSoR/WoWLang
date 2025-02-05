@@ -133,6 +133,8 @@ WoWTR_Config_Interface = {
    translateDialogueUI = "DialogueUIアドオンでの翻訳を表示",                                    -- Display translations in DialogueUI addon
    translateDialogueUIDESC = "有効にすると、DialogueUIアドオンでテキストが翻訳されます",                  -- If enabled, texts in DialogueUI addon will be translated
    sampleGossipText = "ゴシップフォントサイズのサンプルテキスト",                                        -- Sample Gossip font size text (TR:Gossip Örnek yazı tipi boyutu metni)
+   displayENfirst = "テキストを最初に表示 EN",                                                 -- display EN text first on Quests and Gossip
+   displayENfirstDESC = "チェックすると、英語のテキストが最初に表示されます",                               -- If enabled, English text will display first on Quests and Gossip
 
    titleTab2 = "吹き出し",                                                                 -- Bubbles 
    generalMainHeaderBB = "吹き出しの翻訳",                                                   -- Bubbles translations

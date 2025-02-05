@@ -26,7 +26,7 @@ WoWTR_Localization = {
    worldquests = "Światowe Zadania",                                 -- World Quests 
    campaignquests = "Zadania Kampanii",                              -- Campaign Quests
    scenariodung = "Scenariusz",                                      -- Scenario/Dungeon
-   objectives = "Cele zadanie",                                      -- Objectives 
+   objectives = "Cele zadań",                                        -- Objectives 
    bonusobjective = "Cel bonusowy",                                  -- Bonus Objective
    rewards = "Nagrody",                                              -- Rewards 
    storyLineProgress = "Postęp historii",                            -- Story Progress 
@@ -134,6 +134,8 @@ WoWTR_Config_Interface = {
    translateDialogueUI = "Wyświetlaj tłumaczenia w dodatku DialogueUI",                            -- Display translations in DialogueUI addon
    translateDialogueUIDESC = "Jeśli zaznaczono, tłumaczenia będą wyświetlane w dodatku DialogueUI",   -- If enabled, texts in DialogueUI addon will be translated
    sampleGossipText = "Przykładowy tekst|nrozmiaru czcionki Gossip",                               -- Sample Gossip font size text (TR:Gossip Örnek yazı tipi boyutu metni)
+   displayENfirst = "Wyświetlaj najpierw tekst EN",                                                -- display EN text first on Quests and Gossip
+   displayENfirstDESC = "Jeśli zaznaczono, tekst angielski będzie wyświetlany jako pierwszy",      -- If enabled, English text will display first on Quests and Gossip
 
    titleTab2 = "Dymki",                                                                            -- Bubbles 
    generalMainHeaderBB = "TŁUMACZENIA DYMKÓW",                                                     -- Bubbles translations

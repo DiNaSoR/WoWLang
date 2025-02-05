@@ -134,6 +134,8 @@ WoWTR_Config_Interface = {
    translateDialogueUI = "Відображати переклади у доповненні DialogueUI",                         -- Display translations in DialogueUI addon
    translateDialogueUIDESC = "Якщо позначено, переклади буде показано у доповненні DialogueUI",   -- If enabled, texts in DialogueUI addon will be translated
    sampleGossipText = "Зразок тексту|розмір шрифту плиток",
+   displayENfirst = "WВідображення тексту спочатку EN",                                           -- display EN text first on Quests and Gossip
+   displayENfirstDESC = "Якщо позначено, спочатку відображатиметься англійський текст",           -- If enabled, English text will display first on Quests and Gossip
 
    titleTab2 = "Бульбашки", 
    generalMainHeaderBB = "Переклади бульбашок", 

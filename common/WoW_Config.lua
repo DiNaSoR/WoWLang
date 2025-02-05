@@ -20,6 +20,7 @@ function WOWTR_SetCheckButtonState()
    WOWTR_CheckButton19:SetChecked(QTR_PS["questlog"]=="1");
    WOWTR_CheckButton1a:SetChecked(QTR_PS["ownnames"]=="1");
    WOWTR_CheckButton1b:SetChecked(QTR_PS["dialogueui"]=="1");
+   WOWTR_CheckButton1c:SetChecked(QTR_PS["en_first"]=="1");
  
    WOWTR_CheckButton21:SetChecked(BB_PM["active"]=="1");
    WOWTR_CheckButton22:SetChecked(BB_PM["chat-en"]=="1");
@@ -688,6 +689,29 @@ local fontsize = tonumber(QTR_PS["fontsize"]);
 WOWTR_Opis4:SetFont(WOWTR_Font2, fontsize);
 WOWTR_Opis4:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.sampleGossipText));
 
+local WOWTR_CheckButton1c = CreateFrame("CheckButton", "WOWTR_CheckButton1c", WOWTR_OptionPanel1, "UICheckButtonTemplate");
+WOWTR_CheckButton1c:SetScript("OnClick", function(self) if (QTR_PS["en_first"]=="1") then QTR_PS["en_first"]="0" else QTR_PS["en_first"]="1" end; end);
+if (WoWTR_Localization.lang == 'AR') then
+   WOWTR_CheckButton1c:SetPoint("TOPLEFT", WOWTR_Opis4, "TOPLEFT", 110, -100);
+   WOWTR_CheckButton1c.Text:SetPoint("TOPLEFT", WOWTR_Opis4, "TOPLEFT", -105, -110);
+else
+   WOWTR_CheckButton1c:SetPoint("TOPLEFT", WOWTR_Opis4, "TOPLEFT", 200, 0);
+end
+WOWTR_CheckButton1c.Text:SetText("|cffffffff"..QTR_ReverseIfAR(WoWTR_Config_Interface.displayENfirst).."|r");   -- Display text in English first
+WOWTR_CheckButton1c.Text:SetFont(WOWTR_Font2, 15);
+WOWTR_CheckButton1c:SetScript("OnEnter", function(self)
+   GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
+   GameTooltip:ClearLines();
+   GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.displayENfirst).." ", false);                -- red color, no wrap
+   getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
+   GameTooltip:AddLine(QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayENfirstDESC,false,getglobal("GameTooltipTextLeft1"),WOWTR_Font2).." ", 1, 1, 1, true);   -- white color, wrap
+   getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
+   GameTooltip:Show()   -- Show the tooltip
+   end);
+WOWTR_CheckButton1c:SetScript("OnLeave", function(self)
+   GameTooltip:Hide()   -- Hide the tooltip
+   end);
+ 
 local WOWTR_Panel1Header2 = WOWTR_OptionPanel1:CreateFontString(nil, "ARTWORK");
 WOWTR_Panel1Header2:SetFontObject(GameFontNormal);
 WOWTR_Panel1Header2:SetJustifyH("LEFT"); 

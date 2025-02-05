@@ -367,6 +367,9 @@ function QTR_Gossip_Show()
                QTR_ToggleButton6:Enable();
                QTR_DUIGossipFrame();
             end
+            if ( QTR_PS["en_first"]=="1" ) then   -- przełącz na angielski
+               GS_ON_OFF();
+            end
          else              -- nie mamy tłumaczenia
             QTR_ToggleButtonGS1:SetText("Gossip-Hash="..tostring(Hash).." (EN)");
             QTR_ToggleButtonGS1:Disable();
@@ -1532,15 +1535,9 @@ function QTR_QuestPrepare(zdarzenie)
             QTR_ToggleButton5:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
          end
          QTR_Translate_On(1,zdarzenie);
---         if (QTR_first_show==0) then      -- pierwsze wyświetlenie, daj opóźnienie i przełączaj, bo nie wyświetla danych stałych 
---            if (not WOWTR_wait(0.2,QTR_ON_OFF)) then    -- przeładuj wpierw na OFF
---            ---
---            end
---            if (not WOWTR_wait(0.2,QTR_ON_OFF)) then    -- przeładuj ponownie na ON
---            ---
---            end
---            QTR_first_show=1;
---         end
+         if ( QTR_PS["en_first"]=="1" ) then   -- przełącz na angielski
+            QTR_ON_OFF();
+         end
       else        -- nie ma przetłumaczonego takiego questu
          QTR_ToggleButton0:Disable();     -- przycisk w ramce QuestFrame (NPC)
          QTR_ToggleButton1:Disable();     -- przycisk w ramce QuestLogPopupDetailFrame

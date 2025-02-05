@@ -177,6 +177,10 @@ function WOWTR_CheckVars()
    if (not QTR_PS["dialogueui"] ) then
       QTR_PS["dialogueui"] = "1";   
    end
+   -- display EN text first on Quests and Gossip
+   if (not QTR_PS["en_first"] ) then
+      QTR_PS["en_first"] = "0";   
+   end
    -- current font file
    if (not QTR_PS["FontFile"] ) then
       QTR_PS["FontFile"] = WOWTR_Fonts[1];   
