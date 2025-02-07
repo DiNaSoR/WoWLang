@@ -258,6 +258,7 @@ function QTR_Gossip_Show()
       Nazwa_NPC = UnitName("target");
    end
    QTR_curr_hash = 0;
+   local QTR_first_ok = false;
    if (Nazwa_NPC) then
       local GossipTextFrame;
       Greeting_Text = C_GossipInfo:GetText();
@@ -368,7 +369,7 @@ function QTR_Gossip_Show()
                QTR_DUIGossipFrame();
             end
             if ( QTR_PS["en_first"]=="1" ) then   -- przełącz na angielski
-               GS_ON_OFF();
+               QTR_first_ok = true;
             end
          else              -- nie mamy tłumaczenia
             QTR_ToggleButtonGS1:SetText("Gossip-Hash="..tostring(Hash).." (EN)");
@@ -458,6 +459,9 @@ function QTR_Gossip_Show()
          end
       end
       
+      if ( QTR_first_ok ) then   -- przełącz na angielski
+         GS_ON_OFF();
+      end
    end
    
    -- Gossip Frame Buttons - Goodbye,
