@@ -1514,10 +1514,13 @@ function ST_showProfessionDescription()
    end
 end
 
+local isProfButtonCreated = false
+local ProfupdateVisibility
 function ST_ProfDescbutton()
-    TT_PS = TT_PS or { ui7 = "1" }
+    if not isProfButtonCreated then
+        TT_PS = TT_PS or { ui7 = "1" }
 
-    local updateVisibility = CreateToggleButton(
+    local ProfupdateVisibility = CreateToggleButton(
         ProfessionsFrame,
         TT_PS,
         "ui7",
@@ -1532,9 +1535,13 @@ function ST_ProfDescbutton()
             end
         end
     )
+        isProfButtonCreated = true -- Mark that the button has been created to avoid duplication.
+    end
 
-    -- Set visibility of buttons at startup
-    updateVisibility()
+    -- Adjust visibility of the existing button
+    if ProfupdateVisibility then
+        ProfupdateVisibility()
+    end
 end
 
 -------------------------------------------------------------------------------------------------------
