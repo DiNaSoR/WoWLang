@@ -794,8 +794,6 @@ function QTR_START()
 
 end
 
-
-
 -------------------------------------------------------------------------------------------------------------------
 
 function QTR_QuestLogPopupShow()
@@ -3769,41 +3767,49 @@ end
 -- Overwrite the QuestObjectiveTracker.ContentsFrame.HeaderText each time
 -- the game updates the objective tracker
 -- --------------------------------------------------------------------------
-function QTR_OverrideObjectiveTrackerHeader(tracker, quest)
+function QTR_OverrideObjectiveTrackerHeader(tracker, quest, directID)
    -- 1) Grab questID from the 'quest' object
-   local questID = quest and tonumber(quest:GetID())
+   local questID;
+   if ( directID ) then    -- true, if the quest ID is entered directly
+      questID = quest;
+   else
+      questID = quest and tonumber(quest:GetID());
+   end
    if not questID or questID == 0 then
-       return
+       return;
    end
 
    -- 2) Locate the correct quest block from the tracker's usedBlocks
-   local template = tracker.blockTemplate or "ObjectiveTrackerBlockTemplate"
-   local questBlocks = tracker.usedBlocks and tracker.usedBlocks[template]
+   local template = tracker.blockTemplate or "ObjectiveTrackerBlockTemplate";
+   local questBlocks = tracker.usedBlocks and tracker.usedBlocks[template];
    if not questBlocks then
-       return
+       return;
    end
 
-   local block = questBlocks[questID]
+   local block = questBlocks[questID];
    if not (block and block.HeaderText) then
-       return
+       return;
    end
 
-   -- 3) Look up your translation. Example: QTR_quest_LG[questID].title
-   local questData = QTR_quest_LG[questID]
-   if questData and questData.title then
-       -- 4) Assign your localized title to the block's header
-       if WoWTR_Localization.lang == "AR" then
-          block.HeaderText:SetFont(WOWTR_Font2, 14);
-       else
-          block.HeaderText:SetFont(WOWTR_Font2, 12);
-       end
-       block.HeaderText:SetText( QTR_ExpandUnitInfo(questData.title, false, block.HeaderText, WOWTR_Font2, -50) )
+   -- 3) Look up your translation. Example: QTR_quest_LG[questID].title  --!!-- wrong: QTR_quest_LG[questID].title is available only AFTER displaying quest details
+   if ( QTR_QuestData[tostring(questID)] ) and (QTR_PS["transtitle"] == "1") then    -- wyświetlaj tylko, gdy istnieje tłumaczenie
+      local questDataTitle = QTR_QuestData[tostring(questID)]["Title"];
+      if questDataTitle then
+      
+         -- 4) Assign your localized title to the block's header
+         if WoWTR_Localization.lang == "AR" then
+            block.HeaderText:SetFont(WOWTR_Font2, 14);
+         else
+            block.HeaderText:SetFont(WOWTR_Font2, 12);
+         end
+         block.HeaderText:SetText( QTR_ExpandUnitInfo(questDataTitle, false, block.HeaderText, WOWTR_Font2, -50) );
 
-       -- Example: if Arabic, justify to the right, otherwise left
-       if WoWTR_Localization.lang == "AR" then
-           block.HeaderText:SetJustifyH("RIGHT")
-       else
-           block.HeaderText:SetJustifyH("LEFT")
-       end
+         -- Example: if Arabic, justify to the right, otherwise left
+         if WoWTR_Localization.lang == "AR" then
+            block.HeaderText:SetJustifyH("RIGHT");
+         else
+            block.HeaderText:SetJustifyH("LEFT");
+         end
+      end
    end
 end
