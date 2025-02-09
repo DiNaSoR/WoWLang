@@ -61,6 +61,7 @@ WoWTR_Localization = {
    confirmationText1 = "保存された未翻訳のテキストをすべてクリアしますか？",              -- Do you want to clear all saved untranslated texts?
    confirmationText2 = "アドオンのデフォルト設定を復元しますか？",                    -- Do you want to restore the default settings of the addon?
    moveFrameUpDown = "ウィンドウを上下に移動",                                 -- Move the window up or down
+   newVersionAvailable = "アドオンの新しいバージョンが利用可能です:",                -- new version of addon is available
 };
 
 ---------------------------------------------------------------------------------------------------------

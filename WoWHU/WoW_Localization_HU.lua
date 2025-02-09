@@ -59,6 +59,7 @@ WoWTR_Localization = {
    confirmationText1 = "Törölni szeretné az összes mentett lefordítatlan szöveget?",           -- Do you want to clear all saved untranslated texts?
    confirmationText2 = "Szeretné visszaállítani a kiegészítő alapértelmezett beállításait?",   -- Do you want to restore the default settings of the addon?
    moveFrameUpDown = "Mozgassa az ablakot felfelé vagy lefelé",      -- Move the window up or down
+   newVersionAvailable = "elérhető a kiegészítő új verziója:",       -- new version of addon is available
 }
 
 ---------------------------------------------------------------------------------------------------------

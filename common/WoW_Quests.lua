@@ -792,6 +792,10 @@ function QTR_START()
       QTR_OverrideObjectiveTrackerHeader(self, quest);
       end);
 
+   WOWTR_ADDON_PREFIX = WoWTR_Localization.addonName .. "_ver";
+   WOWTR:RegisterEvent("CHAT_MSG_ADDON");      -- ukryty kanał addonu
+   C_ChatInfo.RegisterAddonMessagePrefix(WOWTR_ADDON_PREFIX);
+   
 end
 
 -------------------------------------------------------------------------------------------------------------------

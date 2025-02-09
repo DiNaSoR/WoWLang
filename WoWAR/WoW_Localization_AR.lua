@@ -62,6 +62,7 @@ WoWTR_Localization = {
    confirmationText1 = "ﻫﻞ ﺗﺮﻏﺐ ﻓﻲ ﻣﺴﺢ ﺟﻤﻴﻊ ﺍﻟﺴﺠﻼﺕ ﺍﻟﻤﺤﻔﻮﻇﺔ؟",          -- Do you want to clear all saved untranslated texts?
    confirmationText2 = "ﻫﻞ ﺗﺮﻏﺐ ﻓﻲ ﺇﻋﺎﺩﺓ ﺗﺤﻤﻴﻞ ﺍﻹﺿﺎﻓﺔ ﺇﻟﻰ ﺇﻋﺪﺍﺩﺍﺗﻬﺎ ﺍﻻﻓﺘﺮﺍﺿﻴﺔ؟\n(ﺳﻴﺘﻢ ﺇﻋﺎﺩﺓ ﺗﺤﻤﻴﻞ ﺍﻟﻮﺍﺟﻬﺔ)",   -- Do you want to restore the addon's default settings?
    moveFrameUpDown = "ﺣﺮﻙ ﺍﻟﻨﺎﻓﺬﺓ ﻷﻋﻠﻰ ﺃﻭ ﻷﺳﻔﻞ",                        -- Move the window up or down
+   newVersionAvailable = "إصدار جديد من الوظيفة الإضافية متاح:",         -- new version of addon is available
 };
 
 ---------------------------------------------------------------------------------------------------------

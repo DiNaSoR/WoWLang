@@ -62,6 +62,7 @@ WoWTR_Localization = {
    confirmationText1 = "Kaydedilmiş tüm kayıtları \nsilmek istiyor musunuz?",     -- Czy chcesz wyczyścić wszystkie zapisane, nieprzetłumaczone teksty?
    confirmationText2 = "Eklentiyi varsayılan ayarlarına \ngeri yüklemek istiyor musunuz?\n(Arayüz yeniden yüklenecek)",   -- Czy chcesz przywrócić ustawienia domyślne dodatku?
    moveFrameUpDown = "Pencereyi yukarı veya aşağı hareket ettirin",  -- Move the window up or down
+   newVersionAvailable = "eklentisinin yeni bir sürümü mevcut:",     -- new version of addon is available
 };
 
 ---------------------------------------------------------------------------------------------------------

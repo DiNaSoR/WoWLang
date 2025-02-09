@@ -10,6 +10,9 @@ WOWTR_player_class = UnitClass("player");
 WOWTR_player_sex = UnitSex("player");     -- 1:neutral,  2:male,  3:female
 WOWTR_waitTable = {};
 WOWTR_waitFrame = nil;
+WOWTR_time_ver = GetTime() - 15*60;
+WOWTR_lastNotificationTime = 0;      -- Son bildirim zamanını sakla
+WOWTR_notificationCooldown = 10800;  -- 3 saat (10800 saniye) cooldown süresi
 
 ---------------------------------------------------------------------------------------------------------
 
@@ -522,6 +525,11 @@ function WOWTR_onEvent(self, event, name, ...)
       TT_onTutorialShow();
    elseif (isImmersion() and event=="QUEST_ACCEPTED") then
       QTR_delayed3();
+   elseif (event == "CHAT_MSG_ADDON") then        -- ukryty kanał addonu
+      local msg, method, who = select (1, ...);
+      if (name == WOWTR_ADDON_PREFIX) then 
+         WOWTR_onChatMsgAddon(who,msg);
+      end
    elseif (GameTooltip:IsShown() and (event=="MODIFIER_STATE_CHANGED") and (name == "LSHIFT" or name == "RSHIFT") and (ST_PM["active"]=="1")) then
       if (GameTooltip.processingInfo and GameTooltip.processingInfo.tooltipData.id and (ST_PM["item"] == "1")) then
          if (GameTooltip.processingInfo.tooltipData.type == 0) then           -- items
@@ -538,6 +546,41 @@ function WOWTR_onEvent(self, event, name, ...)
    end
    if (TT_onTutorialShow) then
       TT_onTutorialShow();
+   end
+   WOWTR_SendVersion();
+end
+
+-------------------------------------------------------------------------------------------------------
+
+function WOWTR_SendVersion()
+   local now = GetTime();
+   if (WOWTR_time_ver + 15*60 < now) then    -- every 15 minutes
+      if ( IsInGuild() ) then                -- the player is in the Guild
+         C_ChatInfo.SendAddonMessage(WOWTR_ADDON_PREFIX, WOWTR_version, "GUILD");
+      end
+      if ( IsInRaid() ) then                 -- the player is in the Raid
+         C_ChatInfo.SendAddonMessage(WOWTR_ADDON_PREFIX, WOWTR_version, "RAID");
+      end
+      WOWTR_time_ver = now;
+   end
+end
+
+-------------------------------------------------------------------------------------------------------
+
+function WOWTR_onChatMsgAddon(who,msg)       -- received message from hidden addon channel
+--print('QTR - MSG od '..who..': '..msg);
+   if (tonumber(msg) > tonumber(WOWTR_version)) then
+      local currentTime = GetTime();
+      if (currentTime - WOWTR_lastNotificationTime) > WOWTR_notificationCooldown then
+         print("|cffffff00"..WoWTR_Localization.addonName.."|r - "..WoWTR_Localization.newVersionAvailable.." |cffffff00"..msg.."|r");
+         UIErrorsFrame:SetTimeVisible(10);
+         if (WoWTR_Localization.lang == 'AR') then
+            UIErrorsFrame:AddMessage(QTR_ReverseIfAR(WoWTR_Localization.addonName .. " - " .. WoWTR_Localization.newVersionAvailable .. WOWTR_AnsiReverse(msg)), 1,0.5,1);
+         else
+            UIErrorsFrame:AddMessage(WoWTR_Localization.addonName .. " - " .. WoWTR_Localization.newVersionAvailable .. msg, 1,0.5,1);
+         end
+         WOWTR_lastNotificationTime = currentTime;    -- save current time
+      end
    end
 end
 
