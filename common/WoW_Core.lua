@@ -478,6 +478,11 @@ function WOWTR_onEvent(self, event, name, ...)
       ReputationFrame.ReputationDetailFrame:HookScript("OnShow", function() StartTicker(ReputationFrame.ReputationDetailFrame, ST_CharacterFrame, 0.1) end);
       PlayerChoiceFrame:HookScript("OnShow", function() StartTicker(PlayerChoiceFrame, TT_onChoiceShow, 0.1) end)
       BB_OknoTRonline();
+      
+      WOWTR_ADDON_PREFIX = WoWTR_Localization.addonName .. "_ver";
+      WOWTR:RegisterEvent("CHAT_MSG_ADDON");      -- ukryty kanał addonu
+      C_ChatInfo.RegisterAddonMessagePrefix(WOWTR_ADDON_PREFIX);
+   
       DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..WoWTR_Localization.addonName.."  ver. "..WOWTR_version.." - "..WoWTR_Localization.started);
       if ((not QTR_PS["welcome"]) and (string.len(WoWTR_Config_Interface.welcomeText) > 1)) then
          WOWTR_WelcomePanel();
