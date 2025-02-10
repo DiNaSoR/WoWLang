@@ -459,8 +459,12 @@ function QTR_Gossip_Show()
          end
       end
       
-      if ( QTR_first_ok ) then   -- przełącz na angielski
-         GS_ON_OFF();
+      if ( QTR_first_ok ) then   -- switch to english
+         if (isDUIQuestFrame()) then
+            gossipDUI_ON_OF();
+         else
+            GS_ON_OFF();
+         end
       end
    end
    
