@@ -2473,9 +2473,16 @@ function ST_CharacterFrame() -- https://imgur.com/FV5MXvb
       local ChFrame6 = CharacterFrameTab3.Text;                       -- Currency Tab
       ST_CheckAndReplaceTranslationTextUI(ChFrame6, true, "ui");
 
-      local ChFrame7 = ReputationFrame.ReputationDetailFrame.Description;            -- https://imgur.com/A77RwLM
-      local RDFactionName = ReputationFrame.ReputationDetailFrame.Title:GetText();    -- Faction Name
-      ST_CheckAndReplaceTranslationTextUI(ChFrame7, true, "Factions:"..ST_RenkKoduSil(RDFactionName));
+      local ChFrame7 = ReputationFrame.ReputationDetailFrame.ScrollingDescription.ScrollBox.ScrollTarget; -- https://imgur.com/A77RwLM
+      local childFrame = select(1, ChFrame7:GetChildren())  -- Get the first child frame 
+      if childFrame and childFrame.FontString and childFrame.FontString.GetText then
+         local text = childFrame.FontString:GetText()  -- Get the text
+         --print("ChFrame7 text: " .. text)  -- Print the text to the console
+         local RDFactionName = ReputationFrame.ReputationDetailFrame.Title:GetText(); -- Get the Faction Name
+         ST_CheckAndReplaceTranslationTextUI(childFrame.FontString, true, "Factions:" .. ST_RenkKoduSil(RDFactionName));
+      else
+         --print("ChFrame7 text not found.");
+      end
 
       local ChFrame8 = ReputationDetailAtWarCheckBoxText;             -- Check Box Text - At War
       ST_CheckAndReplaceTranslationTextUI(ChFrame8, true, "ui");
