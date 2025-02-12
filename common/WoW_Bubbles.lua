@@ -35,49 +35,32 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function BB_bubblizeText()
-   -- Bubble çevirilerini hemen işle
+   -- Process Bubble translations immediately
    if (#C_ChatBubbles.GetAllChatBubbles(true) == #C_ChatBubbles.GetAllChatBubbles()) then
       for _, bubble in pairs(C_ChatBubbles.GetAllChatBubbles(true)) do
          for i = 1, bubble:GetNumChildren() do
             local child = select(i, bubble:GetChildren())
-            if not child:IsForbidden() then
-               if child and (child:GetObjectType() == "Frame") and (child.String) and (child.Center) then
-                  for i = 1, child:GetNumRegions() do
-                     local region = select(i, child:GetRegions())
-                     for idx, iArray in ipairs(BB_BubblesArray) do
-                        if region and not region:GetName() and region:IsVisible() and region.GetText and (region:GetText() == iArray[1]) then
-                           -- Bubble çevirisini hemen uygula
-                           --C_Timer.After(0, function()
-                              if region:IsVisible() then
-                                 local _font1, _size1, _3 = region:GetFont()
-                                 if (BB_PM["setsize"]=="1") then
-                                    region:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"]))
-                                 else
-                                    region:SetFont(WOWTR_Font2, _size1)
-                                 end
-                                 
-                                 if (region:GetWidth() < 100) then
-                                    region:SetWidth(100)
-                                 end
-                                 
-                                 if (region:GetWidth() > 200) then
-                                    region:SetText(QTR_ExpandUnitInfo(iArray[2],false,region,WOWTR_Font2,-50))
-                                 else
-                                    region:SetText(QTR_ReverseIfAR(iArray[2]))
-                                 end
-                                 
-                                 region:SetJustifyH("CENTER")
-                              end
-                           --end)
-                           tremove(BB_BubblesArray, idx)
-                        end
+            if child and not child:IsForbidden() and child:GetObjectType() == "Frame" and child.String and child.Center then
+               for i = 1, child:GetNumRegions() do
+                  local region = select(i, child:GetRegions())
+                  for idx, iArray in ipairs(BB_BubblesArray) do
+                     if region and region:IsVisible() and region.GetText and (region:GetText() == iArray[1]) then
+                        -- Apply translation immediately if visible
+                        local _font1, _size1, _3 = region:GetFont()
+                        region:SetFont(WOWTR_Font2, (BB_PM["setsize"] == "1") and tonumber(BB_PM["fontsize"]) or _size1)
+                        region:SetWidth(math.max(region:GetWidth(), 100))
+                        region:SetText((region:GetWidth() < 200) and QTR_ExpandUnitInfo(iArray[2], false, region, WOWTR_Font2, -50) or QTR_ReverseIfAR(iArray[2]))
+                        region:SetJustifyH("CENTER")
+                        tremove(BB_BubblesArray, idx)  -- Remove translation from BubblesArray
                      end
                   end
                end
             end
          end
       end
-   -- Dungeon bubble çevirileri
+   elseif (BB_PM["dungeon"] == "1") then
+
+   -- Dungeon bubble translations
    elseif (BB_PM["dungeon"] == "1") then
       for idx, iArray in ipairs(BB_BubblesArray) do
          C_Timer.After(0, function()
@@ -182,34 +165,31 @@ function BB_bubblizeText()
       end
    end
 
-   -- TalkingHead frame çevirisi ayrı bir zamanlayıcıda
+   -- TalkingHead frame translation
    if (TalkingHeadFrame and TalkingHeadFrame:IsVisible()) then
-      --C_Timer.After(0.01, function()
-         for idx, iArray in ipairs(BB_BubblesArray) do
-            if (TalkingHeadFrame.TextFrame.Text:GetText() == iArray[1]) then
-               local _font1, _size1, _3 = TalkingHeadFrame.TextFrame.Text:GetFont()
-               TalkingHeadFrame.TextFrame.Text:SetFont(WOWTR_Font2, _size1)
-               TalkingHeadFrame.TextFrame.Text:SetText(QTR_ExpandUnitInfo(iArray[2],false,TalkingHeadFrame.TextFrame.Text,WOWTR_Font2,-15))
-               tremove(BB_BubblesArray, idx)
-            end
+      for idx, iArray in ipairs(BB_BubblesArray) do
+         if (TalkingHeadFrame.TextFrame.Text:GetText() == iArray[1]) then
+            local _font1, _size1, _3 = TalkingHeadFrame.TextFrame.Text:GetFont()
+            TalkingHeadFrame.TextFrame.Text:SetFont(WOWTR_Font2, _size1)
+            TalkingHeadFrame.TextFrame.Text:SetText(QTR_ExpandUnitInfo(iArray[2], false, TalkingHeadFrame.TextFrame.Text, WOWTR_Font2, -15))
+            tremove(BB_BubblesArray, idx)
+            break  -- Exit the loop after finding first
          end
-      --end)
-   end
-
-   -- Temizlik işlemleri
-   for idx, iArray in ipairs(BB_BubblesArray) do
-      if (iArray[3] >= 100) then
-         tremove(BB_BubblesArray, idx)
-      else
-         iArray[3] = iArray[3] + 1
       end
    end
 
-   -- OnUpdate kontrolü
+   -- Cleaning
+   for idx = #BB_BubblesArray, 1, -1 do -- We're going in a reverse loop so that the indexes don't shift
+      if (BB_BubblesArray[idx][3] >= 100) then
+         tremove(BB_BubblesArray, idx)
+      else
+         BB_BubblesArray[idx][3] = BB_BubblesArray[idx][3] + 1
+      end
+   end
+
+   -- OnUpdate control
    if (#BB_BubblesArray == 0) then
-      --C_Timer.After(0.02, function()
-         BB_ctrFrame:SetScript("OnUpdate", nil)
-      --end)
+      BB_ctrFrame:SetScript("OnUpdate", nil)
    end
 end
 
