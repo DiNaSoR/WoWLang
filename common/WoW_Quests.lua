@@ -461,7 +461,7 @@ function QTR_Gossip_Show()
       
       if ( QTR_first_ok ) then   -- switch to english
          if (isDUIQuestFrame()) then
-            gossipDUI_ON_OF();
+            gossipDUI_ON_OFF();
          else
             GS_ON_OFF();
          end
