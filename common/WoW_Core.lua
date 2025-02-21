@@ -466,6 +466,7 @@ function WOWTR_onEvent(self, event, name, ...)
       MerchantFrame:HookScript("OnShow", ST_MerchantFrame);
       PVEFrame:HookScript("OnShow", function() StartTicker(PVEFrame, ST_GroupFinder, 0) end);
       WorldMapFrame:HookScript("OnShow", function() StartTicker(WorldMapFrame, ST_WorldMapFunc, 0.1) end);
+      QuestScrollFrame:HookScript("OnShow", function() StartTicker(QuestScrollFrame, QTR_Quest_Next, 0.02) end);
       CharacterFrame:HookScript("OnShow", ST_CharacterFrame);
       FriendsFrame:HookScript("OnShow", function() StartTicker(FriendsFrame, ST_FriendsFrame, 0.1) end);
       HelpPlateTooltip:HookScript("OnShow", function() StartTicker(HelpPlateTooltip, ST_HelpPlateTooltip, 0.1) end);
