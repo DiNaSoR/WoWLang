@@ -3817,3 +3817,31 @@ function QTR_OverrideObjectiveTrackerHeader(tracker, quest, directID)
       end
    end
 end
+
+-------------------------------------------------------------------------------------------------------
+
+--Map Next Quest Objective
+function QTR_Quest_Next() -- https://imgur.com/a/qamjwMN
+   if (TT_PS["ui1"] == "1") then
+      local QuestMapNextObj = QuestScrollFrame.Contents;
+      local children = {QuestMapNextObj:GetChildren()};
+      local foundQuestText = nil
+
+      for i = 1, 20 do
+         if children[i] and children[i].NextObjective and children[i].NextObjective.Text then
+            local questText = children[i].NextObjective.Text:GetText()
+            if questText and questText ~= "" then
+               foundQuestText = children[i].NextObjective.Text
+               break
+            end
+         end
+      end
+
+      if foundQuestText then
+         --print("Attempting to translate: " .. foundQuestText:GetText())  -- Added for Debug
+         ST_CheckAndReplaceTranslationTextUI(foundQuestText, true, "Collections:Quest");
+      else
+         --print("No valid quest text found in any child.")  -- Added for Debug
+      end
+   end
+end
