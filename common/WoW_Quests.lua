@@ -3827,22 +3827,23 @@ function QTR_Quest_Next() -- https://imgur.com/a/qamjwMN
    if (TT_PS["ui1"] == "1") then
       local QuestMapNextObj = QuestScrollFrame.Contents;
       local children = {QuestMapNextObj:GetChildren()};
-      local foundQuestText = nil
+      local foundQuestTexts = {}
 
-      for i = 1, 20 do
+      for i = 1, #children do
          if children[i] and children[i].NextObjective and children[i].NextObjective.Text then
             local questText = children[i].NextObjective.Text:GetText()
             if questText and questText ~= "" then
-               foundQuestText = children[i].NextObjective.Text
-               break
+               table.insert(foundQuestTexts, children[i].NextObjective.Text)
             end
          end
       end
 
-      if foundQuestText then
+      for _, foundQuestText in ipairs(foundQuestTexts) do
          --print("Attempting to translate: " .. foundQuestText:GetText())  -- Added for Debug
          ST_CheckAndReplaceTranslationTextUI(foundQuestText, true, "Collections:Quest");
-      else
+      end
+
+      if #foundQuestTexts == 0 then
          --print("No valid quest text found in any child.")  -- Added for Debug
       end
    end
