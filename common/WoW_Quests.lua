@@ -975,9 +975,10 @@ function isDUIQuestFrame()
          QTR_ToggleButton6:SetHeight(20)
          QTR_ToggleButton6:SetText("Gossip-Hash=?")
          QTR_ToggleButton6:ClearAllPoints()
-         QTR_ToggleButton6:SetPoint("TOPLEFT", DUIQuestFrame, "TOPLEFT", 140, -16)
+         QTR_ToggleButton6:SetPoint("TOPLEFT", DUIQuestFrame, "TOPLEFT", 25, -16)
          QTR_ToggleButton6:SetScript("OnClick", gossipDUI_ON_OFF)
          QTR_ToggleButton6:Disable()          -- nie można na razie przyciskać przycisku
+         QTR_ToggleButton6:Hide()
 
          -- Set smaller font size by modifying the FontString
          local font = QTR_ToggleButton6:GetFontString()
@@ -987,28 +988,26 @@ function isDUIQuestFrame()
       if (QTR_ToggleButton7 == nil) then    -- przycisk w oknie zadania
          -- przycisk z nr ID questu
          QTR_ToggleButton7 = CreateFrame("Button", nil, DUIQuestFrame, "UIPanelButtonTemplate")
-         QTR_ToggleButton7:SetWidth(100)
+         QTR_ToggleButton7:SetWidth(120)
          QTR_ToggleButton7:SetHeight(20)
          QTR_ToggleButton7:SetText("Quest ID=?")
          QTR_ToggleButton7:ClearAllPoints()
-         QTR_ToggleButton7:SetPoint("TOPLEFT", DUIQuestFrame, "TOPLEFT", 180, -16)
+         QTR_ToggleButton7:SetPoint("TOPLEFT", DUIQuestFrame, "TOPLEFT", 295, -16)
          QTR_ToggleButton7:SetScript("OnClick", DUI_ON_OFF)
          QTR_ToggleButton7:Disable()          -- nie można na razie przyciskać przycisku
+         QTR_ToggleButton7:Hide()
 
          -- Set smaller font size by modifying the FontString
          local font = QTR_ToggleButton7:GetFontString()
          font:SetFont("Fonts\\FRIZQT__.TTF", 8, "OUTLINE")
          
-         DUIQuestFrame:HookScript("OnHide", function() QTR_ToggleButton6:Hide(); QTR_ToggleButton7:Hide(); end)
       end
-
+      
+      DUIQuestFrame:HookScript("OnHide", function() QTR_ToggleButton6:Hide(); QTR_ToggleButton7:Hide(); end)
+      
       if (QTR_PS["dialogueui"] == "0") then      -- jest aktywny DialogueUI, ale nie zezwolono na tłumaczenie
-         QTR_ToggleButton6:Hide()
-         QTR_ToggleButton7:Hide()
          return false
       else
-         QTR_ToggleButton6:Show()
-         QTR_ToggleButton7:Show()
          return true
       end
    else
@@ -1346,9 +1345,9 @@ function QTR_QuestPrepare(zdarzenie)
          return;
       end      
    end
-   if (isDUIQuestFrame()) then
-      QTR_ToggleButton6:Hide();     -- przycisk w ramce DUIQuestFrame (gossip)
-   end
+--   if (isDUIQuestFrame()) then
+--      QTR_ToggleButton6:Hide();     -- przycisk w ramce DUIQuestFrame (gossip)
+--   end
    
    q_ID = QTR_GetQuestID();         -- uzyskaj aktualne ID questu
    if (q_ID==0) then
@@ -1764,6 +1763,9 @@ function QTR_Translate_On(typ,event)
 --      end
       if (isDUIQuestFrame()) then
          QTR_DUIQuestFrame(event);
+         if ( QTR_PS["en_first"]=="1" ) then   -- switch to english
+            DUI_ON_OFF();
+         end
       end
    else
       if (QTR_curr_trans == "1") then
