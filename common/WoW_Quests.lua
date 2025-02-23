@@ -248,6 +248,7 @@ function QTR_Gossip_Show()
          Nazwa_NPC = ImmersionFrame.TalkBox.NameFrame.Name:GetText();
       end
       QTR_ToggleButton4:SetText(QTR_ReverseIfAR(WoWTR_Localization.gossipText));
+      QTR_ToggleButton4:Disable();   -- this button is only for quest information 
    elseif (isStoryline()) then       -- jest aktywny StoryLine
       if (Nazwa_NPC==nil) then
          Nazwa_NPC = Storyline_NPCFrameChatName:GetText();
@@ -462,6 +463,9 @@ function QTR_Gossip_Show()
       if ( QTR_first_ok ) then   -- switch to english
          if (isDUIQuestFrame()) then
             gossipDUI_ON_OFF();
+         elseif (isImmersion()) then       -- addon Immersion is active
+            ImmersionFrame.TalkBox.TextFrame.Text:SetFont(Original_Font2, 12);
+            ImmersionFrame.TalkBox.TextFrame.Text:SetText(Greeting_Text);     
          else
             GS_ON_OFF();
          end
