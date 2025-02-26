@@ -2,8 +2,8 @@
 -- do dodatku WoWpoPolsku-Tutorials
 
 TT_lang = "PL";         -- translation language
-TT_date = "2024-11-06"; -- date of creation base
-TT_base = "1353";      -- version (number of translations)
+TT_date = "2025-02-26"; -- date of creation base
+TT_base = "1354";      -- version (number of translations)
 
 -- tutorial translation table: [Hash] = "translation text" 
 Tut_Data7 = {  
@@ -1117,6 +1117,7 @@ Tut_Data7 = {
 [3494529070]="Specjalizacja, której się uczysz, wpływa na to, jakie otrzymasz podstawowe umiejętności.", 
 [3497009654]="Wciśnij |cFF00FFFF1|r i użyj |cFF00FFFFSlam|r", 
 [3500340126]="Kurenai z Telaar zostali oskarżeni o zniszczenie posterunku orków przez plemię Murkblood!|n|nPomóż Kurenai przywrócić swoją reputację i odnaleźć pokój na Outland.", 
+[3506238163]="|nKampania Zandalaru", 
 [3517023579]="Soridormi z Brązowego Lotu Smoków robi wszystko, co w jej mocy, aby utrzymać czasoprzestrzeń w porządku, ale potrzebuje awanturników, aby poradzić sobie z ewentualnymi niefortunnymi rozdarciami czasu.Pomóż Soridormi zamknąć Szczelinę Czasu. Szczeliny Czasu pojawiają się raz na godzinę w Thaldraszus, na wschód od Valdrakken.", 
 [3520721255]="Botani i stworzenia roślinne, które przywołują, stopniowo zaczynają nacierać na nasze placówki na północy. Za każdą zabicie rośliny, wydaje się, że pojawiają się nowe.|n|nBodrick Szary opracował plan uderzenia w serce ich ziem, w Dzikich Kwiatach Wieczności. Uważa, że to spowoduje ich powrót do dziczy Gorgrondu, dając nam więcej miejsca do manewrowania wokół nich.", 
 [3525036994]="|cFFFF0000Nie jesteś jeszcze wystarczająco wysokim poziomem, aby wziąć udział w Superbloom.|r", 
