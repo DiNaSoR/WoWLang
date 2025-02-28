@@ -359,9 +359,13 @@ function QTR_Gossip_Show()
                ImmersionFrame.TalkBox.TextFrame.Text:SetFont(WOWTR_Font2, 14);
                ImmersionFrame.TalkBox.TextFrame.Text:SetText(QTR_ExpandUnitInfo(Greeting_TR,false,ImmersionFrame.TalkBox.TextFrame.Text,WOWTR_Font2));     
             elseif (isStoryline()) then   -- jest aktywny StoryLine i zezwolono na tłumaczenia
-               txt0txt = QTR_ExpandUnitInfo(Greeting_TR,false,Storyline_NPCFrameChat.texts[0],WOWTR_Font2);
-               if (not WOWTR_wait(1.0, QTR_Storyline_Gossip)) then
-                 -- opóźnienie 1.0 sek
+               if (Storyline_NPCFrameChat.texts == nil) then
+                  C_Timer.After(1.0, function() txt0txt = QTR_ExpandUnitInfo(Greeting_TR,false,Storyline_NPCFrameChat.texts[0],WOWTR_Font2); QTR_Storyline_Gossip(); end);
+               else
+                  txt0txt = QTR_ExpandUnitInfo(Greeting_TR,false,Storyline_NPCFrameChat.texts[0],WOWTR_Font2);
+                  if (not WOWTR_wait(1.0, QTR_Storyline_Gossip)) then
+                  -- opóźnienie 1.0 sek
+                  end
                end
             end
             if (isDUIQuestFrame()) then   -- jest aktywny dodatek DialogueUI i zezwolono na tłumaczenia
