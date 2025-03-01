@@ -15,4 +15,4 @@ Desktop.ini
 .luarocks/
 lua_modules/
 
-settings.json
+.vscode/settings.json
