@@ -49,7 +49,7 @@ function BB_bubblizeText()
                         local _font1, _size1, _3 = region:GetFont()
                         region:SetFont(WOWTR_Font2, (BB_PM["setsize"] == "1") and tonumber(BB_PM["fontsize"]) or _size1)
                         region:SetWidth(math.max(region:GetWidth(), 100))
-                        region:SetText((region:GetWidth() < 200) and QTR_ExpandUnitInfo(iArray[2], false, region, WOWTR_Font2, -50) or QTR_ReverseIfAR(iArray[2]))
+                        region:SetText((region:GetWidth() > 200) and QTR_ExpandUnitInfo(iArray[2], false, region, WOWTR_Font2, -50) or QTR_ReverseIfAR(iArray[2]))
                         region:SetJustifyH("CENTER")
                         tremove(BB_BubblesArray, idx)  -- Remove translation from BubblesArray
                      end
