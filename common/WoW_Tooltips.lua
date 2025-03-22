@@ -1551,7 +1551,11 @@ function ST_showDelveDifficultFrame()
 --print("show DelveDifficultFrame");
    -- if (TT_PS["ui7"] == "1") then
       local DelveDF01 = DelvesDifficultyPickerFrame.Description; -- https://imgur.com/a/SAyXuiR
-      ST_CheckAndReplaceTranslationTextUI(DelveDF01, true, "Dungeon&Raid:Zone:DelvesFrame");       -- save untranslated text
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationText(DelveDF01, true, "Dungeon&Raid:Zone:DelvesFrame",false,false);       -- save untranslated text
+      else
+         ST_CheckAndReplaceTranslationTextUI(DelveDF01, true, "Dungeon&Raid:Zone:DelvesFrame");       -- save untranslated text
+      end
       
       local DelveDF02 = DelvesDifficultyPickerFrame.EnterDelveButton.Text; -- https://imgur.com/a/SAyXuiR
       ST_CheckAndReplaceTranslationTextUI(DelveDF02, false, "ui");       -- dont save untranslated text

@@ -3186,6 +3186,17 @@ end
           index = index + 1
           return startPlaceholder .. text .. endPlaceholder
       end)
+
+      -- Handle named color constants format |cnCOLOR_NAME:text|r
+      msg = msg:gsub("(|cn[%w_]+:)(.-)(|r)", function(colorStart, text, colorEnd)
+         specialCodes[index] = colorStart
+         local startPlaceholder = "\001" .. index .. "\002"
+         index = index + 1
+         specialCodes[index] = colorEnd
+         local endPlaceholder = "\001" .. index .. "\002"
+         index = index + 1
+         return startPlaceholder .. text .. endPlaceholder
+      end)
    
       -- Find and store other special WoW codes
       msg = msg:gsub("(|T.-|t)", function(code)
@@ -3626,6 +3637,7 @@ function QTR_ExpandUnitInfo(msg, OnObjectives, AR_obj, AR_font, AR_corr)
             end
          end
       end
+      
 
       handleCode("{c", "}")
       handleCode("{T", "{t}")
@@ -3652,16 +3664,65 @@ end
 -- jeśli tekst jest arabski - odwróć kolejność wszystkich liter (znaków)
 function QTR_ReverseIfAR(txt)
    if (txt and (WoWTR_Localization.lang == 'AR')) then
-      local msg = string.gsub(txt, "{r}", "r|");
+      -- First, apply localization-specific transformations
+      local msg = WOW_ZmienKody(txt);
+      
+      -- Handle WoW special codes using HandleWoWSpecialCodes
+      msg, specialCodes, prefix = HandleWoWSpecialCodes(msg)
+      
+      -- Apply simple text replacements
       msg = string.gsub(msg, "{n}", "\n");
+      msg = string.gsub(msg, "{r}", "r|");
       msg = string.gsub(msg, "|n|n", "n|n|");
-      local nr_poz1, nr_poz2 = string.find(msg, "{c");    -- znajdź kod koloru {c , gdy nie znalazł, jest: nil
-      while (nr_poz1) do
-         local pomoc = string.sub(msg, nr_poz2+1, nr_poz2+8);  -- odczytaj składowe koloru
-         msg = string.gsub(msg, "{c"..pomoc.."}", string.reverse(pomoc).."c|");
-         nr_poz1, nr_poz2 = string.find(msg, "{c");       -- znajdź kod koloru {c , gdy nie znalazł, jest: nil
+      
+      -- Handle {c}, {T}, {A}, {H} codes - same approach as QTR_ExpandUnitInfo
+      local function handleCode(startCode, endCode)
+         local nr_poz1 = string.find(msg, startCode)
+         local iteration_count = 0
+         local max_iterations = 100  -- Safety limit
+         
+         while (nr_poz1 and iteration_count < max_iterations) do
+            iteration_count = iteration_count + 1
+            local nr_poz2 = string.find(msg, endCode, nr_poz1)
+            if (nr_poz2) then
+               local pomoc = string.sub(msg, nr_poz1+2, nr_poz2-1)
+               local old_pattern = startCode..pomoc..endCode
+               local new_pattern = string.reverse(pomoc)..string.sub(startCode, 2, 2).."|"
+               
+               -- Replace only the first occurrence to avoid infinite loop
+               msg = string.gsub(msg, old_pattern, new_pattern, 1)
+               nr_poz1 = string.find(msg, startCode)
+            else
+               break
+            end
+         end
+         
+         if iteration_count >= max_iterations then
+            print("Warning: handleCode in QTR_ReverseIfAR hit maximum iteration count for pattern:", startCode)
+         end
       end
-      return AS_UTF8reverse(msg);
+      
+      -- Process each type of formatting code
+      handleCode("{c", "}")
+      handleCode("{cn", "}")  -- Special handling for {cn...} format
+      
+      -- Convert remaining markers
+      msg = string.gsub(msg, "{t}", "t|");
+      msg = string.gsub(msg, "{a}", "a|");
+      msg = string.gsub(msg, "{h}", "h|");
+      
+      -- Reverse the text for Arabic
+      msg = AS_UTF8reverse(msg);
+      
+      -- Restore the special codes
+      msg = RestoreWoWSpecialCodes(msg, specialCodes)
+      
+      -- Reattach the prefix if any
+      if prefix and prefix ~= "" then
+         msg = prefix .. msg
+      end
+      
+      return msg;
    end
    return txt;
 end
