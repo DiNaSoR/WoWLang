@@ -23,7 +23,7 @@ WoWTR_Localization = {
    addressBlik = "",                                                 -- telephon number for BLIK payment
    gossipText = "ﻧﺺ ﺍﻟﺸﺎﺋﻌﺎﺕ",                                       -- gossip text
    quests = "ﺍﻟﻤﻬﺎﻡ",                                                -- Quests
-   worldquests = "المهام العالمية",									          -- World Quests
+   worldquests = "اﻟﻤﻬﺎم اﻟﻌﺎﻟﻤﻴﺔ",									          -- World Quests
    campaignquests = "ﺍﻟﺤﻤﻼﺕ",                                       -- Campaign Quests
    scenariodung = "ﺍﻟﺪﻫﻠﻴﺰ",                                         -- Scenario/Dungeon
    objectives = "اﻷﻫﺪاف",                                             -- Objectives
@@ -135,7 +135,7 @@ WoWTR_Config_Interface = {
    translateDialogueUI = "ﻋﺮﺽ ﺍﻟﺘﺮﺟﻤﺎﺕ ﻓﻲ ﺇﺿﺎﻓﺔ IUeuqolaiD",
    translateDialogueUIDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﺳﺘﻈﻬﺮ IUeuqolaiD ﺑﺎﻟﻠﻐﺔ ﺍﻷﺻﻠﻴﺔ",
    sampleGossipText = "ﻧﻤﻮﺫﺝ ﺣﺠﻢ ﺍﻟﺨﻂ ﻟﻨﺺ ﺍﻟﺤﻮﺍﺭﺍﺕ CPN",
-   displayENfirst = "عرض النص أولاً EN",                                                           -- display EN text first on Quests and Gossip
+   displayENfirst = "ﻋﺮض اﻟﻨﺺ أوﻻ NE",                                                           -- display EN text first on Quests and Gossip
    displayENfirstDESC = "إذا تم تحديد هذا المربع، فسيتم عرض النص الإنجليزي أولاً",                  -- If enabled, English text will display first on Quests and Gossip
 
    titleTab2 = "ﺍﻟﻔﻘﺎﻋﺎﺕ",
