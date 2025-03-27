@@ -2097,44 +2097,88 @@ function ST_GroupFinder()
       ST_CheckAndReplaceTranslationTextUI(GFobj59, true, "ui");
 
 
--- Utility function for applying translations to UI elements with custom font
-local function ApplyTranslationToElement(element, prefix, alignment)
-    if element and element.GetText and element.SetText then
-        local originalText = element:GetText()  -- Mevcut metni al
-        if originalText then
-            local hash = StringHash(ST_UsunZbedneZnaki(originalText))  -- Metnin hash değerini hesapla
-            
-            -- Eğer çeviri mevcutsa, metni güncelle
-            if ST_TooltipsHS[hash] then
-                local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash])
-                element:SetText(translatedText)  -- Çeviriyi ayarla
-                if element.SetFont then
-                    element:SetFont(WOWTR_Font2, select(2, element:GetFont()))  -- Fontu ayarla
-                end
-            end
-            
-            -- Mesajın hizasını ayarla
-            if alignment and element.SetJustifyH then
-                element:SetJustifyH(alignment)
-            end
-        end
-    end
-end
+      -- Utility function for applying translations to UI elements with custom font
+      local function ApplyTranslationToElement(element, alignment)
+         -- Check if the element is valid and has the necessary text methods
+         if element and element.GetText and element.SetText then
+               local originalText = element:GetText()  -- Get the current text
+      
+               if originalText then
+                  -- --- START: Debug code to print font information ---
+                  if element.GetFont then -- Check if the element supports getting font info
+                     local fontFile, fontHeight, fontFlags = element:GetFont()
+                     local elementName = element:GetName() -- Try to get the element's name for context
+                     local parentName = element:GetParent() and element:GetParent():GetName() -- Get parent name too
+      
+                     --print("--- ApplyTranslationToElement Debug ---")
+                     if elementName then
+                           --print("Element Name:", elementName)
+                     end
+                     if parentName then
+                           --print("Parent Name:", parentName)
+                     end
+                     -- If no name, maybe show the first few chars of text for context
+                     if not elementName then
+                           --print("Element (no name): Text starts with ->", string.sub(originalText, 1, 30))
+                     end
+                     --print("Original Font File:", fontFile or "N/A")
+                     --print("Original Font Size:", fontHeight or "N/A")
+                     -- print("Original Font Flags:", fontFlags or "N/A") -- Optional: Uncomment if you need flags
+                     --print("---------------------------------------")
+                  else
+                        -- Optionally print if GetFont isn't supported
+                        local elementName = element:GetName()
+                        --print("ApplyTranslationToElement:", elementName or "Unnamed Element", "does not support GetFont()")
+                  end
+                  -- --- END: Debug code ---
+      
+                  local hash = StringHash(ST_UsunZbedneZnaki(originalText))  -- Calculate the hash
+      
+                  -- If a translation exists, update the text and font
+                  if ST_TooltipsHS[hash] then
+                     local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash])
+                     element:SetText(translatedText)  -- Set the translated text
+      
+                     if element.SetFont then
+                           -- Use select(2,...) which is safer if GetFont returns nil
+                           element:SetFont(WOWTR_Font1, select(2, element:GetFont()))
+                     end
+                  -- else -- No translation found
+                     -- Ensure original font remains if needed (usually not necessary unless something else modified it)
+                     -- if element.SetFont and fontFile and fontHeight then
+                     --    element:SetFont(fontFile, fontHeight, fontFlags)
+                     -- end
+                  end
+      
+                  -- Adjust text alignment if specified
+                  if alignment and element.SetJustifyH then
+                     element:SetJustifyH(alignment)
+                  end
+               end
+         end
+      end
 
--- Iterate through the category buttons and apply translations
-local categoryButtons = {
-    LFGListFrame.CategorySelection.CategoryButtons[1],
-    LFGListFrame.CategorySelection.CategoryButtons[2],
-    LFGListFrame.CategorySelection.CategoryButtons[3],
-    LFGListFrame.CategorySelection.CategoryButtons[4],
-    LFGListFrame.CategorySelection.CategoryButtons[5],
-    LFGListFrame.CategorySelection.CategoryButtons[6]
-}
+      -- Iterate through the category buttons and apply translations
+      local categoryButtons = {
+         LFGListFrame.CategorySelection.CategoryButtons[1],
+         LFGListFrame.CategorySelection.CategoryButtons[2],
+         LFGListFrame.CategorySelection.CategoryButtons[3],
+         LFGListFrame.CategorySelection.CategoryButtons[4],
+         LFGListFrame.CategorySelection.CategoryButtons[5],
+         LFGListFrame.CategorySelection.CategoryButtons[6]
+      }
 
-for _, button in ipairs(categoryButtons) do
-    ApplyTranslationToElement(button, "ui", WOWTR_Font2, nil)
-end
-
+      for _, button in ipairs(categoryButtons) do
+         -- MODIFICATION: Check for the .Label child and pass THAT to the function
+         if button and button.Label then
+             -- Pass the actual Label element which holds the text and font info
+             ApplyTranslationToElement(button.Label)
+         elseif button then
+             -- Fallback: If no Label child, try applying to the button itself (might not work for font)
+             --print("Warning: Button", button:GetName(), "does not have a .Label child. Applying to button itself.")
+             ApplyTranslationToElement(button)
+         end
+     end
    end
 end
 

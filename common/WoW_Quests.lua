@@ -3877,11 +3877,11 @@ function QTR_OverrideObjectiveTrackerHeader(tracker, quest, directID)
       
          -- 4) Assign your localized title to the block's header
          if WoWTR_Localization.lang == "AR" then
-            block.HeaderText:SetFont(WOWTR_Font2, 14);
+            block.HeaderText:SetFont(WOWTR_Font1, 14);
          else
             block.HeaderText:SetFont(WOWTR_Font2, 12);
          end
-         block.HeaderText:SetText( QTR_ExpandUnitInfo(questDataTitle, false, block.HeaderText, WOWTR_Font2, -50) );
+         block.HeaderText:SetText( QTR_ExpandUnitInfo(questDataTitle, false, block.HeaderText, WOWTR_Font1, -50) );
 
          -- Example: if Arabic, justify to the right, otherwise left
          if WoWTR_Localization.lang == "AR" then
