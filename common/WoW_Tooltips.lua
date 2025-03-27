@@ -1152,54 +1152,78 @@ end
 
 function ST_ProfessionEmptyText()
    if (TT_PS["ui1"] == "1") then --Game Option UI
-      local PrimaryProfessionText01 = PrimaryProfession1Missing; -- First Profession
-      ST_CheckAndReplaceTranslationTextUI(PrimaryProfessionText01, true, "Profession:Other", WOWTR_Font1,false, false, -15);
-      if (WoWTR_Localization.lang == 'AR') then
-         PrimaryProfession1Text:SetFont(WOWTR_Font1, 11);
-         PrimaryProfession1Text:SetJustifyH("RIGHT");
+
+      -- Handle PrimaryProfession1Missing (Global Frame Name - Seems OK based on error context)
+      local PrimaryProfessionText01 = PrimaryProfession1Missing;
+      ST_CheckAndReplaceTranslationTextUI(PrimaryProfessionText01, true, "Profession:Other");
+      -- Removed the Font/Justify calls for PrimaryProfession1Text here as they were misplaced
+
+      -- Handle PrimaryProfession2Missing (Global Frame Name - Seems OK based on error context)
+      local PrimaryProfessionText02 = PrimaryProfession2Missing;
+      ST_CheckAndReplaceTranslationTextUI(PrimaryProfessionText02, true, "Profession:Other");
+       -- Removed the Font/Justify calls for PrimaryProfession1Text here as they were misplaced
+
+
+      -- Handle PrimaryProfession1.missingText (Object Property Access - Where the error occurred)
+      if PrimaryProfession1 and PrimaryProfession1.missingText then -- ADD THIS CHECK
+         local PrimaryProfession1TextElement = PrimaryProfession1.missingText -- Use a different variable name for clarity
+         ST_CheckAndReplaceTranslationText(PrimaryProfession1TextElement, true, "Profession:Other", false, false, -15);
+         if (WoWTR_Localization.lang == 'AR') then
+            PrimaryProfession1TextElement:SetFont(WOWTR_Font2, 11);
+            PrimaryProfession1TextElement:SetJustifyH("RIGHT");
+         end
+      -- else -- Optional: uncomment to see if it's consistently missing
+         -- print("DEBUG: PrimaryProfession1.missingText not found or nil")
       end
 
-      local PrimaryProfessionText02 = PrimaryProfession2Missing; -- Second Profession
-      ST_CheckAndReplaceTranslationTextUI(PrimaryProfessionText02, true, "Profession:Other", WOWTR_Font1,false, false, -15);
-      if (WoWTR_Localization.lang == 'AR') then
-         PrimaryProfession1Text:SetFont(WOWTR_Font1, 11);
-         PrimaryProfession1Text:SetJustifyH("RIGHT");
+      -- Handle PrimaryProfession2.missingText (Apply the same check)
+      if PrimaryProfession2 and PrimaryProfession2.missingText then -- ADD THIS CHECK
+         local PrimaryProfession2TextElement = PrimaryProfession2.missingText
+         ST_CheckAndReplaceTranslationText(PrimaryProfession2TextElement, true, "Profession:Other", false, false, -15);
+         if (WoWTR_Localization.lang == 'AR') then
+            PrimaryProfession2TextElement:SetFont(WOWTR_Font2, 11);
+            PrimaryProfession2TextElement:SetJustifyH("RIGHT");
+         end
+      -- else
+         -- print("DEBUG: PrimaryProfession2.missingText not found or nil")
       end
 
-      local PrimaryProfession1Text = PrimaryProfession1.missingText; -- https://imgur.com/amgQ7K7
-      ST_CheckAndReplaceTranslationText(PrimaryProfession1Text, true, "Profession:Other",false, false, -15);
-      if (WoWTR_Localization.lang == 'AR') then
-         PrimaryProfession1Text:SetFont(WOWTR_Font2, 11);
-         PrimaryProfession1Text:SetJustifyH("RIGHT");
+       -- Handle SecondaryProfession1.missingText (Apply the same check)
+      if SecondaryProfession1 and SecondaryProfession1.missingText then -- ADD THIS CHECK
+         local SecondaryProfession1TextElement = SecondaryProfession1.missingText
+         ST_CheckAndReplaceTranslationText(SecondaryProfession1TextElement, true, "Profession:Other", false, false, -15);
+         if (WoWTR_Localization.lang == 'AR') then
+            SecondaryProfession1TextElement:SetFont(WOWTR_Font2, 10);
+            SecondaryProfession1TextElement:SetJustifyH("RIGHT");
+         end
+      -- else
+         -- print("DEBUG: SecondaryProfession1.missingText not found or nil")
       end
 
-      local PrimaryProfession2Text = PrimaryProfession2.missingText; -- https://imgur.com/amgQ7K7
-      ST_CheckAndReplaceTranslationText(PrimaryProfession2Text, true, "Profession:Other",false, false, -15);
-      if (WoWTR_Localization.lang == 'AR') then
-         PrimaryProfession2Text:SetFont(WOWTR_Font2, 11);
-         PrimaryProfession2Text:SetJustifyH("RIGHT");
+      -- Handle SecondaryProfession2.missingText (Apply the same check)
+      if SecondaryProfession2 and SecondaryProfession2.missingText then -- ADD THIS CHECK
+         local SecondaryProfession2TextElement = SecondaryProfession2.missingText
+         ST_CheckAndReplaceTranslationText(SecondaryProfession2TextElement, true, "Profession:Other", false, false, -15);
+         if (WoWTR_Localization.lang == 'AR') then
+            SecondaryProfession2TextElement:SetFont(WOWTR_Font2, 10);
+            SecondaryProfession2TextElement:SetJustifyH("RIGHT");
+         end
+      -- else
+          -- print("DEBUG: SecondaryProfession2.missingText not found or nil")
       end
 
-      local SecondaryProfession1Text = SecondaryProfession1.missingText; -- https://imgur.com/amgQ7K7
-      ST_CheckAndReplaceTranslationText(SecondaryProfession1Text, true, "Profession:Other", false, false, -15);
-      if (WoWTR_Localization.lang == 'AR') then
-         SecondaryProfession1Text:SetFont(WOWTR_Font2, 10);
-         SecondaryProfession1Text:SetJustifyH("RIGHT");
+      -- Handle SecondaryProfession3.missingText (Apply the same check)
+      if SecondaryProfession3 and SecondaryProfession3.missingText then -- ADD THIS CHECK
+         local SecondaryProfession3TextElement = SecondaryProfession3.missingText
+         ST_CheckAndReplaceTranslationText(SecondaryProfession3TextElement, true, "Profession:Other", false, false, -15);
+         if (WoWTR_Localization.lang == 'AR') then
+            SecondaryProfession3TextElement:SetFont(WOWTR_Font2, 10);
+            SecondaryProfession3TextElement:SetJustifyH("RIGHT");
+         end
+      -- else
+         -- print("DEBUG: SecondaryProfession3.missingText not found or nil")
       end
 
-      local SecondaryProfession2Text = SecondaryProfession2.missingText; -- https://imgur.com/amgQ7K7
-      ST_CheckAndReplaceTranslationText(SecondaryProfession2Text, true, "Profession:Other", false, false, -15);
-      if (WoWTR_Localization.lang == 'AR') then
-         SecondaryProfession2Text:SetFont(WOWTR_Font2, 10);
-         SecondaryProfession2Text:SetJustifyH("RIGHT");
-      end
-
-      local SecondaryProfession3Text = SecondaryProfession3.missingText; -- https://imgur.com/amgQ7K7
-      ST_CheckAndReplaceTranslationText(SecondaryProfession3Text, true, "Profession:Other", false, false, -15);
-      if (WoWTR_Localization.lang == 'AR') then
-         SecondaryProfession3Text:SetFont(WOWTR_Font2, 10);
-         SecondaryProfession3Text:SetJustifyH("RIGHT");
-      end
    end
 end
 

@@ -864,7 +864,7 @@ function QTR_QuestScrollFrame_OnShow()
    if (TT_PS["ui1"]=="1") then
       local QuestScrollFrameText01 = QuestScrollFrame.EmptyText;
       if QuestScrollFrameText01 then
-         ST_CheckAndReplaceTranslationTextUI(QuestScrollFrameText01, true, "ui"); -- https://imgur.com/4joWH6I
+         ST_CheckAndReplaceTranslationText(QuestScrollFrameText01, true, "ui"); -- https://imgur.com/4joWH6I
       end
    end
 end
@@ -1267,69 +1267,131 @@ end
 -------------------------------------------------------------------------------------------------------------------
 
 function QTR_QuestLogQuests_Update()
-   if ( QTR_PS["active"]=="1" and QTR_PS["tracker"]=="1" ) then   -- tłumaczenia włączone
-      for button in QuestScrollFrame.titleFramePool:EnumerateActive() do
-         local str_ID = tostring(button.questID);
-         if (QTR_PS["transtitle"]=="1" and QTR_QuestData[str_ID]) then           -- tłumaczenie tytułu
-            local _font1, _size1, _3 = button.Text:GetFont();                      -- odczytaj aktualną czcionkę i rozmiar
-            button.Text:SetText(QTR_ReverseIfAR(QTR_QuestData[str_ID]["Title"]));    -- może: QTR_ExpandUnitInfo ?
-            button.Text:SetFont(WOWTR_Font2, _size1);
-         end
-      end
-         for frame in QuestScrollFrame.objectiveFramePool:EnumerateActive() do
-            local str_ID = tostring(frame.questID);
-            local qtr_obj_original = frame.Text:GetText();  -- Store the original text
-            local qtr_obj_translated = qtr_obj_original;    -- Start with the original text for translation attempts
-      
-            if (strfind(qtr_obj_original, "/") and (strfind(qtr_obj_original, "/") > 0)) then
-               for qtr_en, qtr_pl in pairsByKeys(QTR_Tlumacz_Online) do
-                  qtr_obj_translated = string.gsub(qtr_obj_translated, qtr_en, qtr_pl);
-               end
-               local _font1, _size1, _3 = frame.Text:GetFont();  -- read current font and size
-               frame.Text:SetText((qtr_obj_translated));        -- Set the text objective in the Quest Scroll Frame
-               frame.Text:SetFont(WOWTR_Font2, _size1);
-            else
-               if ((qtr_obj_original == QUEST_WATCH_QUEST_READY) or (qtr_obj_original == "Ready for turn-in")) then
-                  frame.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.readyForTurnIn));  -- Ready for turn-in
-               else
-                  local _font1, _size1, _3 = frame.Text:GetFont();  -- Read the current font and size
-                  if (QTR_quest_EN[frame.questID] and QTR_quest_EN[frame.questID].objectives) then
-                        local obj = QTR_quest_EN[frame.questID].objectives;
-                        local obj1 = strsplit("\n\n", obj);
-                        if (qtr_obj_original == obj1) then
-                           obj = QTR_ExpandUnitInfo(QTR_QuestData[str_ID]["Objectives"], true, frame.Text, WOWTR_Font2);
-                           obj1 = strsplit("\n\n", obj);
-                           frame.Text:SetText(QTR_ReverseIfAR(obj1));      
-                           frame.Text:SetFont(WOWTR_Font2, _size1);
-                        else
-                           for qtr_en, qtr_pl in pairsByKeys(QTR_Tlumacz_Online) do
-                              qtr_obj_translated = string.gsub(qtr_obj_translated, qtr_en, qtr_pl);
-                           end
-                           -- Check if the translation is the same as the original
-                           if qtr_obj_translated == qtr_obj_original then
-                              frame.Text:SetText(qtr_obj_original);  -- revert to the original text
-                           else
-                              frame.Text:SetText(QTR_ReverseIfAR(qtr_obj_translated));
-                           end
-                           frame.Text:SetFont(WOWTR_Font2, _size1);
-                        end
-                  else
-                        for qtr_en, qtr_pl in pairsByKeys(QTR_Tlumacz_Online) do
-                           qtr_obj_translated = string.gsub(qtr_obj_translated, qtr_en, qtr_pl);
-                        end
-                        -- Check if the translation is the same as the original
-                        if qtr_obj_translated == qtr_obj_original then
-                           frame.Text:SetText(qtr_obj_original);  -- revert to the original text
-                        else
-                           frame.Text:SetText(QTR_ReverseIfAR(qtr_obj_translated));  -- Not using QTR_ExpandUnitInfo here as per your instruction
-                        end
-                        frame.Text:SetFont(WOWTR_Font2, _size1);
-                  end
-               end
-            end
-      end
-      QTR_QuestScrollFrame_OnShow();     -- Story Progress
+   -- Exit early if translations are disabled
+   if not (QTR_PS["active"] == "1" and QTR_PS["tracker"] == "1") then
+       return
    end
+
+   local isArabic = (WoWTR_Localization.lang == 'AR')
+   local defaultJustification = "LEFT"
+   local arabicJustification = "RIGHT"
+
+   -- Helper function to apply text, font, and justification
+   local function ApplyFormatting(element, textToSet, fontToSet, size, justification)
+       element:SetText(textToSet)
+       element:SetFont(fontToSet, size)
+       element:SetJustifyH(justification)
+   end
+
+   -- 1. Process Quest Titles
+   for button in QuestScrollFrame.titleFramePool:EnumerateActive() do
+       local questID = button.questID
+       local str_ID = tostring(questID)
+       local textElement = button.Text
+       local originalFont, originalSize, _ = textElement:GetFont() -- Store original font/size
+
+       local textToSet = nil -- Default to no change initially
+       local fontToSet = originalFont
+       local justification = defaultJustification
+       local applyReversal = false
+
+       -- Check for valid translation from QTR_QuestData
+       local hasQuestDataTranslation = (QTR_QuestData and QTR_QuestData[str_ID] and QTR_QuestData[str_ID]["Title"])
+
+       if QTR_PS["transtitle"] == "1" and hasQuestDataTranslation then
+           textToSet = QTR_QuestData[str_ID]["Title"]
+           fontToSet = WOWTR_Font2
+           justification = isArabic and arabicJustification or defaultJustification
+           applyReversal = isArabic -- Titles from QuestData are reversed if Arabic
+       end
+
+       -- Apply reversal if needed
+       if applyReversal and textToSet then
+           -- Using QTR_ExpandUnitInfo as per your last version for potential better code handling
+           textToSet = QTR_ExpandUnitInfo(textToSet, false, textElement, fontToSet, -5)
+       end
+
+       -- Apply formatting (only sets text if textToSet is not nil, otherwise uses original)
+       ApplyFormatting(textElement, textToSet or textElement:GetText(), fontToSet, originalSize, justification)
+   end
+
+   -- 2. Process Objective Summaries
+   for frame in QuestScrollFrame.objectiveFramePool:EnumerateActive() do
+       local questID = frame.questID
+       local str_ID = tostring(questID)
+       local textElement = frame.Text
+       local originalText = textElement:GetText()
+       local originalFont, originalSize, _ = textElement:GetFont() -- Store original font/size
+
+       local textToSet = nil -- Default to no change
+       local fontToSet = originalFont
+       local justification = defaultJustification
+       local translationSourceIsQuestData = false
+       local applyTranslationFormatting = false -- Should we use WOWTR_Font2?
+
+       -- Determine the translated text based on objective type
+       if (strfind(originalText, "/") and strfind(originalText, "/") > 0) then
+           -- A: Progress Objective - No reversal, potential fallback for words
+           local tempText = originalText
+           for qtr_en, qtr_pl in pairsByKeys(QTR_Tlumacz_Online or {}) do
+               tempText = string.gsub(tempText, qtr_en, qtr_pl)
+           end
+           if tempText ~= originalText then
+               textToSet = tempText
+               applyTranslationFormatting = true
+           end
+       elseif ((originalText == QUEST_WATCH_QUEST_READY) or (originalText == "Ready for turn-in")) then
+           -- B: Ready for turn-in - Use constant, no reversal usually needed
+           textToSet = WoWTR_Localization.readyForTurnIn
+           applyTranslationFormatting = true
+       else
+           -- C: Standard Text Objective - Check QuestData first, then fallback
+           if QTR_QuestData and QTR_QuestData[str_ID] and QTR_QuestData[str_ID]["Objectives"] then
+               textToSet = QTR_QuestData[str_ID]["Objectives"]
+               translationSourceIsQuestData = true
+               applyTranslationFormatting = true
+           else
+               -- Fallback only if QuestData didn't provide text
+               local tempText = originalText
+               for qtr_en, qtr_pl in pairsByKeys(QTR_Tlumacz_Online or {}) do
+                   tempText = string.gsub(tempText, qtr_en, qtr_pl)
+               end
+               if tempText ~= originalText then
+                   textToSet = tempText
+                   applyTranslationFormatting = true
+               end
+           end
+       end
+
+       -- Set font and justification if a translation was applied
+       if applyTranslationFormatting then
+            fontToSet = WOWTR_Font2
+            justification = isArabic and arabicJustification or defaultJustification
+       end
+
+       -- Process the final text (cleaning, reversal) if translation exists
+       if textToSet then
+           -- Clean line breaks for summary view
+           local cleanedText = string.gsub(textToSet, "\r", "")
+           cleanedText = string.gsub(cleanedText, "\n", " ")
+           cleanedText = string.gsub(cleanedText, "$B", " ")
+
+           local finalText = cleanedText
+
+           -- Apply reversal ONLY if source was QTR_QuestData and language is AR
+           if translationSourceIsQuestData and isArabic then
+                finalText = QTR_ExpandUnitInfo(cleanedText, false, textElement, fontToSet, -5)
+           end
+           -- Apply the potentially modified text
+           ApplyFormatting(textElement, finalText, fontToSet, originalSize, justification)
+       else
+           -- No translation applied, ensure original formatting
+           ApplyFormatting(textElement, originalText, originalFont, originalSize, defaultJustification)
+       end
+   end
+
+   -- 3. Update Story Header (if applicable)
+   QTR_QuestScrollFrame_OnShow()
 end
 
 -------------------------------------------------------------------------------------------------------------------
@@ -2332,12 +2394,8 @@ function QTR_ResetQuestToOriginal()
       MapQuestInfoRewardsFrame.ItemReceiveText:SetJustifyH("LEFT"); 
       QuestInfoRewardsFrame.PlayerTitleText:SetJustifyH("LEFT");
       QuestInfoRewardsFrame.QuestSessionBonusReward:SetJustifyH("LEFT");
-      if (QTR_QuestDetail_ItemReceiveText) then         -- własne obiekty
-         QTR_QuestDetail_ItemReceiveText:Hide();
-      end
-      if (QTR_QuestReward_ItemReceiveText) then
-         QTR_QuestReward_ItemReceiveText:Hide();
-      end
+      QTR_QuestDetail_ItemReceiveText:Hide();
+      QTR_QuestReward_ItemReceiveText:Hide();
    end
    
    -- Reset fonts and text for various quest elements

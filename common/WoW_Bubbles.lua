@@ -311,12 +311,20 @@ end
                DEFAULT_CHAT_FRAME:SetFont(WOWTR_Font2, _sizeC, _C);       -- załaduj narodową czcionkę
             end
             if (nr_poz>0) then           -- mamy formę opisową dymku %s np. NPC_name wpada w szał!
+               local fixed_message = ""
                if (nr_poz==1) then
-                  newMessage = name_NPC..strsub(newMessage, 3);
+                  -- Apply WOWTR_AnsiReverse only to name_NPC, not the whole message
+                  fixed_message = WOWTR_AnsiReverse(name_NPC)..strsub(newMessage, 3);
                else
-                  newMessage = strsub(newMessage,1,nr_poz-1)..name_NPC..strsub(newMessage, nr_poz+2);
+                  -- Apply WOWTR_AnsiReverse only to name_NPC, not the whole message
+                  fixed_message = strsub(newMessage,1,nr_poz-1)..WOWTR_AnsiReverse(name_NPC)..strsub(newMessage, nr_poz+2);
                end
-               DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(newMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-50)..mark_AI);
+               -- Use the regular name_NPC for the header, but the fixed message for content
+               if (WoWTR_Localization.lang == 'AR') then
+                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(fixed_message,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-10));
+               else
+                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(newMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-50)..mark_AI);
+               end 
             elseif (strsub(newMessage,1,2)=="%o") then         -- jest forma '%o'
                newMessage = strsub(newMessage, 3);
                DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(newMessage:gsub("^%s*", ""),false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-50)..mark_AI); -- usuń białe spacje na początku
