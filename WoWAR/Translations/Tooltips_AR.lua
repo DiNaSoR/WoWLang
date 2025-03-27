@@ -3,7 +3,7 @@
 
 ST_lang = "AR";         -- translation language
 ST_type = "Reshaped";   -- type of saving text
-ST_date = "2025-03-26"; -- date of creation base
+ST_date = "2025-03-27"; -- date of creation base
 ST_base = "91";      -- version (number of translations)
 
 -- tooltips translation table: [Hash] = "translation text" 
@@ -25,7 +25,7 @@ ST_TooltipsHS = {
 [442396665]="إﻏﻼق", 
 [460068014]="ﻣﺎﻛﺮو", 
 [497442567]="وﺳﻊ ﺧﻴﺎل ﻓﺌﺘﻚ وﻗﻢ ﺑﺘﺨﺼﻴﺺ ﺑﻨﺎء ﻣﻮاﻫﺒﻚ!", 
-[578515764]="ﻳﺤﺎول أوﻟﺠﺮاك اﺑﺘﻼع اﻟﻼﻋﺒﻴﻦ ﻣﻦ ﺧﻼل اﻟﻤﺸﺎرﻛﺔ ﻓﻲ {r}|Hspell:434799|h[Carnivorous Contest]|h{cFF2959D3} وﻳﻀﻊ ﻛﺘﻼ ﻣﻦ {r}|Hspell:439502|h[Stalker\'s Webbing]|h{cFF2959D3} ﻓﻲ ﺟﻤﻴﻊ أﻧﺤﺎء اﻟﺴﺎﺣﺔ.{B}{B}ﻋﻨﺪﻣﺎ ﻳﻜﻮن ﻃﺎﻗﺔ أوﻟﺠﺮاك ﺻﻔﺮ، ﻳﺼﺒﺢ ﺟﺎﺋﻌﺎ ﺑﺠﻨﻮن، وﻳﻬﺎﺟﻢ اﻟﻼﻋﺒﻴﻦ ﺑـ {r}|Hspell:436217|h[Juggernaut Charge]|h{cFF2959D3} . ﺛﻢ ﻳﻄﺎﻟﺐ أوﻟﺠﺮاك ﺑﺎﻟﻄﻌﺎم، ﻣﻄﻠﻘﺎ {r}|Hspell:458074|h[Hungering Bellows]|h{cFF2959D3} ﺣﺘﻰ ﻳﺘﻢ ﺷﺤﻦ ﻃﺎﻗﺘﻪ ﺑﺎﻟﻜﺎﻣﻞ.", 
+[578515764]="ﻳﺤﺎول أوﻟﺠﺮاك اﺑﺘﻼع اﻟﻼﻋﺒﻴﻦ ﻣﻦ ﺧﻼل اﻟﻤﺸﺎرﻛﺔ ﻓﻲ {cFF2959D3}|Hspell:434799|h[Carnivorous Contest]|h {r} وﻳﻀﻊ ﻛﺘﻼ ﻣﻦ {r} |Hspell:439502|h[Stalker\'s Webbing]|h{cFF2959D3} ﻓﻲ ﺟﻤﻴﻊ أﻧﺤﺎء اﻟﺴﺎﺣﺔ.{B}{B}ﻋﻨﺪﻣﺎ ﻳﻜﻮن ﻃﺎﻗﺔ أوﻟﺠﺮاك ﺻﻔﺮ، ﻳﺼﺒﺢ ﺟﺎﺋﻌﺎ ﺑﺠﻨﻮن، وﻳﻬﺎﺟﻢ اﻟﻼﻋﺒﻴﻦ ﺑـ {r} |Hspell:436217|h[Juggernaut Charge]|h{cFF2959D3}. ﺛﻢ ﻳﻄﺎﻟﺐ أوﻟﺠﺮاك ﺑﺎﻟﻄﻌﺎم، ﻣﻄﻠﻘﺎ {r} |Hspell:458074|h[Hungering Bellows]|h{cFF2959D3} ﺣﺘﻰ ﻳﺘﻢ ﺷﺤﻦ ﻃﺎﻗﺘﻪ ﺑﺎﻟﻜﺎﻣﻞ.", 
 [703264099]="ﺗﺼﺎدم اﻟﻘﺮاﺻﻨﺔ ﻓﻲ ﻣﻌﺮﻛﺔ روﻳﺎل ﻋﻈﻴﻤﺔ!", 
 [748778216]="ﻋﺪم ﺗﺘﺒﻊ", 
 [774092106]="زر ﻣﺮﺷﺪ اﻟﻤﻬﻦ ﻓﻲ أﺣﺪ اﻟﻤﺪن اﻟﺮﺋﻴﺴﻴﺔ ﻟﺘﺘﻌﻠﻢ ﻣﻬﻨﺔ ﺟﺪﻳﺪة. ﻳﻤﻜﻨﻚ اﻣﺘﻼك ﻣﻬﻨﺘﻴﻦ، واﺧﺘﻴﺎر أي ﺗﻮﻟﻴﻔﺔ ﻣﻦ ﻣﻬﻦ اﻟﺠﻤﻊ واﻹﻧﺘﺎج.", 
