@@ -22,10 +22,10 @@ WoWTR_Localization = {
    addressPayPal = "https://www.paypal.com/donate/?hosted_button_id=FC2NVQ5DN7GVA",   -- address of PayPal page
    addressBlik = "",                                                 -- telephon number for BLIK payment
    gossipText = "ﻧﺺ ﺍﻟﺸﺎﺋﻌﺎﺕ",                                       -- gossip text
-   quests = "ﺍﻟﻤﻬﺎﻡ",                                                -- Quests
+   quests = "اﻟﻤﻬﺎم",                                                -- Quests
    worldquests = "اﻟﻤﻬﺎم اﻟﻌﺎﻟﻤﻴﺔ",									          -- World Quests
-   campaignquests = "ﺍﻟﺤﻤﻼﺕ",                                       -- Campaign Quests
-   scenariodung = "ﺍﻟﺪﻫﻠﻴﺰ",                                         -- Scenario/Dungeon
+   campaignquests = "اﻟﺤﻤﻼت",                                       -- Campaign Quests
+   scenariodung = "اﻟﺪﻫﻠﻴﺰ",                                         -- Scenario/Dungeon
    objectives = "اﻷﻫﺪاف",                                             -- Objectives
    bonusobjective = "ﻫﺪف اﻟﻤﻜﺎﻓﺄة",                             -- Bonus Objective
    travelerlog = "ﺳﺠﻞ اﻟﻤﺴﺎﻓﺮ",                               -- Traveler's Log

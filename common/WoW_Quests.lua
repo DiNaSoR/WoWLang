@@ -804,9 +804,59 @@ function QTR_START()
    isImmersion()
    isStoryline()
    
-   hooksecurefunc(QuestObjectiveTracker, "UpdateSingle", function(self, quest)
-      QTR_OverrideObjectiveTrackerHeader(self, quest);
+      -- Original hook for standard quests (UpdateSingle for individual quest blocks)
+      hooksecurefunc(QuestObjectiveTracker, "UpdateSingle", function(self, quest)
+         QTR_OverrideObjectiveTrackerHeader(self, quest); -- For individual quest titles within this tracker
       end);
+
+      -- Helper function to process updates for INDIVIDUAL QUEST TITLES within trackers using the 'Update' method
+      local function ProcessTrackerBlockUpdates(tracker)
+         -- Iterate through all blocks managed by this specific tracker
+         local template = tracker.blockTemplate or "ObjectiveTrackerBlockTemplate";
+         local questBlocks = tracker.usedBlocks and tracker.usedBlocks[template];
+         if questBlocks then
+            for questID, block in pairs(questBlocks) do
+                  if block and block:IsVisible() and block.HeaderText then
+                     -- The 'true' flag tells QTR_OverrideObjectiveTrackerHeader it's getting a direct ID
+                     QTR_OverrideObjectiveTrackerHeader(tracker, questID, true);
+                  end
+            end
+         end
+      end
+
+      -- Hook specific tracker updates for their internal quest block titles
+      hooksecurefunc(CampaignQuestObjectiveTracker, "Update", function(self)
+         ProcessTrackerBlockUpdates(self);
+      end);
+      hooksecurefunc(WorldQuestObjectiveTracker, "Update", function(self)
+         ProcessTrackerBlockUpdates(self);
+      end);
+      hooksecurefunc(BonusObjectiveTracker, "Update", function(self)
+         ProcessTrackerBlockUpdates(self);
+      end);
+      hooksecurefunc(MonthlyActivitiesObjectiveTracker, "Update", function(self)
+         ProcessTrackerBlockUpdates(self);
+      end);
+      -- Scenario tracker might also use Update for its internal blocks if it ever shows multiple scenarios
+      hooksecurefunc(ScenarioObjectiveTracker, "Update", function(self)
+         ProcessTrackerBlockUpdates(self);
+      end);
+
+      -- Hook the MAIN ObjectiveTrackerFrame's Update function
+      -- This runs frequently and is a good place to ensure the CATEGORY HEADERS are correct.
+      hooksecurefunc(ObjectiveTrackerFrame, "Update", function(self)
+         -- 1. Update the main category headers ("Quests", "Scenario", "World Quests", etc.)
+         --    This will re-apply the translation AFTER potential Blizzard resets.
+         QTR_ObjectiveTrackerFrame_Titles();
+      end);
+
+      -- Ensure the hook for QTR_QuestScrollFrame_OnShow remains if you still need it for the map scroll frame
+      WorldMapFrame:HookScript("OnShow", function()
+         if (not WOWTR_wait(0.2, QTR_QuestScrollFrame_OnShow)) then
+            -- opóźnienie 0.2 sek
+         end
+      end);
+
 
 end
 
@@ -1202,26 +1252,26 @@ function QTR_ObjectiveTrackerFrame_Titles()                       -- Translation
 			 BonusObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 14);
 			 MonthlyActivitiesObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.travelerlog));
 			 MonthlyActivitiesObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 14);
+          ScenarioObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.scenariodung));
+          ScenarioObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 14);
 
 			if (WoWTR_Localization.lang == 'AR') then
 			 --Added New Translation Campaign and Scenario for Arabic only
-			 ObjectiveTrackerFrame.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.objectives));
-			 ObjectiveTrackerFrame.Header.Text:SetFont(WOWTR_Font2, 16);
-			 QuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.quests));
-			 QuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 16);
-			 WorldQuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.worldquests));
-			 WorldQuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 16);
-			 CampaignQuestObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.campaignquests));
-			 CampaignQuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 16);
-			 BonusObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.bonusobjective));
-			 BonusObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 16);
-			 MonthlyActivitiesObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.travelerlog));
-			 MonthlyActivitiesObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 16);
+			 ObjectiveTrackerFrame.Header.Text:SetFont(WOWTR_Font1, 14);
+			 QuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font1, 14);
+			 WorldQuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font1, 14);
+			 CampaignQuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font1, 14);
+			 BonusObjectiveTracker.Header.Text:SetFont(WOWTR_Font1, 14);
+			 MonthlyActivitiesObjectiveTracker.Header.Text:SetFont(WOWTR_Font1, 14);
+          ScenarioObjectiveTracker.Header.Text:SetFont(WOWTR_Font1, 14);
 			 --Make LEFT
 			 ObjectiveTrackerFrame.Header.Text:SetJustifyH("LEFT");
 			 QuestObjectiveTracker.Header.Text:SetJustifyH("LEFT");
 			 WorldQuestObjectiveTracker.Header.Text:SetJustifyH("LEFT");
 			 CampaignQuestObjectiveTracker.Header.Text:SetJustifyH("LEFT");
+          BonusObjectiveTracker.Header.Text:SetJustifyH("LEFT");
+          MonthlyActivitiesObjectiveTracker.Header.Text:SetJustifyH("LEFT");
+          ScenarioObjectiveTracker.Header.Text:SetJustifyH("LEFT");
 			end
 	end
 end
