@@ -2165,7 +2165,7 @@ function ST_GroupFinder()
       
                      if element.SetFont then
                            -- Use select(2,...) which is safer if GetFont returns nil
-                           element:SetFont(WOWTR_Font1, select(2, element:GetFont()))
+                           element:SetFont(WOWTR_Font2, select(2, element:GetFont()))
                      end
                   -- else -- No translation found
                      -- Ensure original font remains if needed (usually not necessary unless something else modified it)
