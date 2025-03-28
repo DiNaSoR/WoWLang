@@ -1059,63 +1059,61 @@ end
 
 -------------------------------------------------------------------------------------------------------------------
 
-objectiveSpecials = {
-   ClickComplete = function(fontString)
-      fontString:SetText("("..QTR_ReverseIfAR(WoWTR_Localization.clickToComplete)..")");   -- (click to complete),  może: QTR_ExpandUnitInfo ?
-      fontString:SetFont(WOWTR_Font2, 13);   
-   end,
- 
-   Failed = function(fontString)
-      fontString:SetText(QTR_ReverseIfAR(WoWTR_Localization.failed));                      -- failed,  może: QTR_ExpandUnitInfo ?
-   end,
- 
-   QuestComplete = function(fontString, questID)
-      if ((fontString:GetText() == QUEST_WATCH_QUEST_READY) or (fontString:GetText() == "Ready for turn-in")) then
-         fontString:SetText(QTR_ReverseIfAR(WoWTR_Localization.readyForTurnIn));           -- Ready for turn-in,  może: QTR_ExpandUnitInfo ?
-      else
-         if (QTR_quest_EN[questID] and QTR_quest_EN[questID].objectives) then
-            local obj = QTR_quest_EN[questID].objectives;
-            local obj1= strsplit("\n\n", obj);
-            if (QTR_QuestData[tostring(questID)] and (fontString:GetText() == obj1)) then
-               obj = QTR_ExpandUnitInfo(QTR_QuestData[tostring(questID)]["Objectives"],true,fontString,WOWTR_Font2);
-               obj1= strsplit("\n\n", obj);
-               fontString:SetText(QTR_ReverseIfAR(obj1));      -- może: QTR_ExpandUnitInfo ?
-               fontString:SetFont(WOWTR_Font2, 12);
-               QTR_ResizeBlock(fontString);
-            elseif (string.find(fontString:GetText()," ") == nil) then   -- nie jest to przetłumaczony tekst
-               local qtr_obj = fontString:GetText();
-               for qtr_en, qtr_pl in pairsByKeys(QTR_Tlumacz_Online) do
-                  qtr_obj = string.gsub(qtr_obj, qtr_en, qtr_pl);
-               end
-               fontString:SetText(QTR_ReverseIfAR(qtr_obj).." ");         -- może: QTR_ExpandUnitInfo ?
-               fontString:SetFont(WOWTR_Font2, 12);
-               QTR_ResizeBlock(fontString);
-            end
-         elseif (string.find(fontString:GetText()," ") == nil) then   -- nie jest to przetłumaczony tekst
-            local qtr_obj = fontString:GetText();
-            for qtr_en, qtr_pl in pairsByKeys(QTR_Tlumacz_Online) do
-               qtr_obj = string.gsub(qtr_obj, qtr_en, qtr_pl);
-            end
-            fontString:SetText((qtr_obj).." ");            -- może: QTR_ExpandUnitInfo ?
-            fontString:SetFont(WOWTR_Font2, 12);
-            QTR_ResizeBlock(fontString);
-         end
-      end
-   end,
- 
-   Waypoint = function(fontString, questID)
-      local waypointText = C_QuestLog.GetNextWaypointText(questID);
-      if (waypointText) then
-         fontString:SetText(("0/1 %s ("..QTR_ReverseIfAR(WoWTR_Localization.optional)..")"):format(waypointText));    -- 0/1 %s (Optional)
-         fontString:SetFont(WOWTR_Font2, 12);   
-      end
-   end
-}
+--objectiveSpecials = {
+--   ClickComplete = function(fontString)
+--      fontString:SetText("("..QTR_ReverseIfAR(WoWTR_Localization.clickToComplete)..")");   -- (click to complete),  może: QTR_ExpandUnitInfo ?
+--      fontString:SetFont(WOWTR_Font2, 13);   
+--   end,
+--   Failed = function(fontString)
+--      fontString:SetText(QTR_ReverseIfAR(WoWTR_Localization.failed));                      -- failed,  może: QTR_ExpandUnitInfo ?
+--   end,
+--   QuestComplete = function(fontString, questID)
+--      if ((fontString:GetText() == QUEST_WATCH_QUEST_READY) or (fontString:GetText() == "Ready for turn-in")) then
+--         fontString:SetText(QTR_ReverseIfAR(WoWTR_Localization.readyForTurnIn));           -- Ready for turn-in,  może: QTR_ExpandUnitInfo ?
+--      else
+--         if (QTR_quest_EN[questID] and QTR_quest_EN[questID].objectives) then
+--            local obj = QTR_quest_EN[questID].objectives;
+--            local obj1= strsplit("\n\n", obj);
+--            if (QTR_QuestData[tostring(questID)] and (fontString:GetText() == obj1)) then
+--               obj = QTR_ExpandUnitInfo(QTR_QuestData[tostring(questID)]["Objectives"],true,fontString,WOWTR_Font2);
+--               obj1= strsplit("\n\n", obj);
+--               fontString:SetText(QTR_ReverseIfAR(obj1));      -- może: QTR_ExpandUnitInfo ?
+--               fontString:SetFont(WOWTR_Font2, 12);
+--               QTR_ResizeBlock(fontString);
+--            elseif (string.find(fontString:GetText()," ") == nil) then   -- nie jest to przetłumaczony tekst
+--               local qtr_obj = fontString:GetText();
+--                for qtr_en, qtr_pl in pairsByKeys(QTR_Tlumacz_Online) do
+--                  qtr_obj = string.gsub(qtr_obj, qtr_en, qtr_pl);
+--               end
+--               fontString:SetText(QTR_ReverseIfAR(qtr_obj).." ");         -- może: QTR_ExpandUnitInfo ?
+--               fontString:SetFont(WOWTR_Font2, 12);
+--               QTR_ResizeBlock(fontString);
+--            end
+--            elseif (string.find(fontString:GetText()," ") == nil) then   -- nie jest to przetłumaczony tekst
+--               local qtr_obj = fontString:GetText();
+--               for qtr_en, qtr_pl in pairsByKeys(QTR_Tlumacz_Online) do
+--                  qtr_obj = string.gsub(qtr_obj, qtr_en, qtr_pl);
+--               end
+--            end
+--            fontString:SetText((qtr_obj).." ");            -- może: QTR_ExpandUnitInfo ?
+--            fontString:SetFont(WOWTR_Font2, 12);
+--            QTR_ResizeBlock(fontString);
+--         end
+--      end
+--   end,
+--   Waypoint = function(fontString, questID)
+--      local waypointText = C_QuestLog.GetNextWaypointText(questID);
+--      if (waypointText) then
+--         fontString:SetText(("0/1 %s ("..QTR_ReverseIfAR(WoWTR_Localization.optional)..")"):format(waypointText));    -- 0/1 %s (Optional)
+--         fontString:SetFont(WOWTR_Font2, 12);   
+--      end
+--   end
+--}
 
 -------------------------------------------------------------------------------------------------------------------
 
-function QTR_ObjectiveTracker_Check()
-   if ( QTR_PS["active"]=="1" and QTR_PS["tracker"]=="1" ) then   -- tłumaczenia włączone
+--function QTR_ObjectiveTracker_Check()
+--   if ( QTR_PS["active"]=="1" and QTR_PS["tracker"]=="1" ) then   -- tłumaczenia włączone
       -- ObjectiveTrackerFrame.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.objectives));
       -- ObjectiveTrackerFrame.Header.Text:SetFont(WOWTR_Font2, 16);
       -- QuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 16);
@@ -1184,10 +1182,9 @@ function QTR_ObjectiveTracker_Check()
 --               QTR_ResizeBlock(objectives[index].Text);
 --            end
 --         end
---      end
-      
-   end
-end
+--      end     
+--   end
+--end
 
 -------------------------------------------------------------------------------------------------------------------
 
@@ -1342,7 +1339,7 @@ function QTR_QuestLogQuests_Update()
            end
        elseif ((originalText == QUEST_WATCH_QUEST_READY) or (originalText == "Ready for turn-in")) then
            -- B: Ready for turn-in - Use constant, no reversal usually needed
-           textToSet = WoWTR_Localization.readyForTurnIn
+           textToSet = QTR_ExpandUnitInfo(WoWTR_Localization.readyForTurnIn, false, textElement, WOWTR_Font2, -5)
            applyTranslationFormatting = true
        else
            -- C: Standard Text Objective - Check QuestData first, then fallback
