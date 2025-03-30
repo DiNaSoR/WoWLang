@@ -807,6 +807,9 @@ function GossipOnQuestFrame()       -- frame: QuestFrame
    local QFCompleteQBtext = QuestFrameCompleteQuestButtonText;
    ST_CheckAndReplaceTranslationText(QFCompleteQBtext, true, "ui",false,true);
 
+   local QFCompleteQBtext2 = QuestFrameCompleteButtonText;
+   ST_CheckAndReplaceTranslationText(QFCompleteQBtext2, true, "ui",false,true);
+
    local QFAcceptBtext = QuestFrameAcceptButtonText;
    ST_CheckAndReplaceTranslationText(QFAcceptBtext, true, "ui",false,true);
 
@@ -818,6 +821,9 @@ function GossipOnQuestFrame()       -- frame: QuestFrame
 
    local QFGoodbyeBtext = QuestFrameGreetingGoodbyeButtonText;
    ST_CheckAndReplaceTranslationText(QFGoodbyeBtext, true, "ui",false,true);
+
+   local QFGoodbyeBtext2 = QuestFrameGoodbyeButtonText;
+   ST_CheckAndReplaceTranslationText(QFGoodbyeBtext2, true, "ui",false,true);
 
    if (WoWTR_Localization.lang == 'AR') then
       if QuestInfoAccountCompletedNotice then -- Check if the element exists
@@ -2354,13 +2360,14 @@ function QTR_display_constants(lg)
                      elseif text == REWARD_TITLE then translatedText = QTR_Messages.reward_title 
                      elseif text == REWARD_TRADESKILL then translatedText = QTR_Messages.reward_tradeskill 
                      elseif text == "This quest line is part of unlocking:" then translatedText = QTR_Messages.reward_unlock 
+                     elseif text == "You will unlock access to the following:" then translatedText = QTR_Messages.reward_unlock 
                      elseif text == REWARD_BONUS then translatedText = QTR_Messages.reward_bonus 
                      end 
                      if translatedText then 
                         fontString:SetFont(WOWTR_Font2, 13); 
                         fontString:SetJustifyH("RIGHT"); 
                         fontString:SetText(AS_UTF8reverse(translatedText)); 
-                        if text == "This quest line is part of unlocking:" then 
+                        if text == "This quest line is part of unlocking:" or text == "You will unlock access to the following:" then 
                            fontString:SetWidth(260); 
                         end 
                      end 
@@ -2379,13 +2386,14 @@ function QTR_display_constants(lg)
                      elseif text == REWARD_TITLE then translatedText = QTR_Messages.reward_title 
                      elseif text == REWARD_TRADESKILL then translatedText = QTR_Messages.reward_tradeskill 
                      elseif text == "This quest line is part of unlocking:" then translatedText = QTR_Messages.reward_unlock
+                     elseif text == "You will unlock access to the following:" then translatedText = QTR_Messages.reward_unlock 
                      elseif text == REWARD_BONUS then translatedText = QTR_Messages.reward_bonus 
                      end 
                      if translatedText then 
                         fontString:SetFont(WOWTR_Font2, fontSize); 
                         fontString:SetJustifyH("RIGHT"); 
                         fontString:SetText(AS_UTF8reverse(translatedText)); 
-                        if text == "This quest line is part of unlocking:" then 
+                        if text == "This quest line is part of unlocking:" or text == "You will unlock access to the following:" then 
                            fontString:SetWidth(260);
                         end
                      end 
@@ -2441,6 +2449,7 @@ function QTR_display_constants(lg)
                      elseif text == REWARD_TITLE then translatedText = QTR_Messages.reward_title 
                      elseif text == REWARD_TRADESKILL then translatedText = QTR_Messages.reward_tradeskill 
                      elseif text == "This quest line is part of unlocking:" then translatedText = QTR_Messages.reward_unlock 
+                     elseif text == "You will unlock access to the following:" then translatedText = QTR_Messages.reward_unlock 
                      elseif text == REWARD_BONUS then translatedText = QTR_Messages.reward_bonus 
                      end 
                      if translatedText then 
@@ -2463,6 +2472,7 @@ function QTR_display_constants(lg)
                      elseif text == REWARD_TITLE then translatedText = QTR_Messages.reward_title 
                      elseif text == REWARD_TRADESKILL then translatedText = QTR_Messages.reward_tradeskill 
                      elseif text == "This quest line is part of unlocking:" then translatedText = QTR_Messages.reward_unlock 
+                     elseif text == "You will unlock access to the following:" then translatedText = QTR_Messages.reward_unlock 
                      elseif text == REWARD_BONUS then translatedText = QTR_Messages.reward_bonus 
                      end 
                      if translatedText then 
