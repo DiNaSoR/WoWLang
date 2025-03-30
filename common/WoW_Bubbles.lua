@@ -261,8 +261,8 @@ else
    HashCode = StringHash(Czysty_Text);
 end
       if (BB_Bubbles[HashCode]) then         -- jest tłumaczenie tureckie
-         newMessage = BB_Bubbles[HashCode];
-         newMessage = WOW_ZmienKody(newMessage,arg5);
+         NewMessage = BB_Bubbles[HashCode];
+         NewMessage = WOW_ZmienKody(NewMessage,arg5);
          if (string.sub(name_NPC,1,17) == "Bronze Timekeeper" or string.sub(name_NPC, 1, 16) == "Grimy Timekeeper") then   -- wyścigi na smokach - wyjątej z sekundami: $1.$2 oraz $3.$4
 
             local wartab = {0,0,0,0,0,0};                                 -- max. 6 liczb całkowitych w tekście
@@ -280,26 +280,26 @@ end
                end
             end;
             if (arg0>5) then
-               newMessage=string.gsub(newMessage, "$6", wartab[6]);
+               NewMessage=string.gsub(NewMessage, "$6", wartab[6]);
             end
             if (arg0>4) then
-               newMessage=string.gsub(newMessage, "$5", wartab[5]);
+               NewMessage=string.gsub(NewMessage, "$5", wartab[5]);
             end
             if (arg0>3) then
-               newMessage=string.gsub(newMessage, "$4", wartab[4]);
+               NewMessage=string.gsub(NewMessage, "$4", wartab[4]);
             end
             if (arg0>2) then
-               newMessage=string.gsub(newMessage, "$3", wartab[3]);
+               NewMessage=string.gsub(NewMessage, "$3", wartab[3]);
             end
             if (arg0>1) then
-               newMessage=string.gsub(newMessage, "$2", wartab[2]);
+               NewMessage=string.gsub(NewMessage, "$2", wartab[2]);
             end
             if (arg0>0) then
-               newMessage=string.gsub(newMessage, "$1", wartab[1]);
+               NewMessage=string.gsub(NewMessage, "$1", wartab[1]);
             end
          end
          BB_is_translation="1";      
-         nr_poz=BB_FindProS(newMessage,1);
+         nr_poz=BB_FindProS(NewMessage,1);
          
          local mark_AI = "";
          if (BB_AI and BB_AI[HashCode]) then
@@ -314,40 +314,58 @@ end
                local fixed_message = ""
                if (nr_poz==1) then
                   -- Apply WOWTR_AnsiReverse only to name_NPC, not the whole message
-                  fixed_message = WOWTR_AnsiReverse(name_NPC)..strsub(newMessage, 3);
+                  fixed_message = WOWTR_AnsiReverse(name_NPC)..strsub(NewMessage, 3);
                else
                   -- Apply WOWTR_AnsiReverse only to name_NPC, not the whole message
-                  fixed_message = strsub(newMessage,1,nr_poz-1)..WOWTR_AnsiReverse(name_NPC)..strsub(newMessage, nr_poz+2);
+                  fixed_message = strsub(NewMessage,1,nr_poz-1)..WOWTR_AnsiReverse(name_NPC)..strsub(NewMessage, nr_poz+2);
                end
                -- Use the regular name_NPC for the header, but the fixed message for content
                if (WoWTR_Localization.lang == 'AR') then
-                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(fixed_message,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-10));
+                  -- <<<< MODIFICATION START (Prat Support for AR %s) >>>>
+                  local qtrOffset = -10 -- Default offset
+                  if C_AddOns.IsAddOnLoaded("Prat-3.0") then
+                      qtrOffset = -50 -- Offset when Prat is loaded
+                  end
+                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(fixed_message,false,DEFAULT_CHAT_FRAME,WOWTR_Font2, qtrOffset));
+                  -- <<<< MODIFICATION END >>>>
                else
-                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(newMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-50)..mark_AI);
-               end 
-            elseif (strsub(newMessage,1,2)=="%o") then         -- jest forma '%o'
-               newMessage = strsub(newMessage, 3);
-               DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(newMessage:gsub("^%s*", ""),false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-50)..mark_AI); -- usuń białe spacje na początku
-            else
+                  -- Non-AR %s - Offset is already -50, no change needed for Prat check on this specific value
+                  -- If Prat required a *different* value than -50 here, you'd apply similar logic as above.
+                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(NewMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-50)..mark_AI);
+               end
+            elseif (strsub(NewMessage,1,2)=="%o") then         -- jest forma '%o'
+               NewMessage = strsub(NewMessage, 3);
+               -- %o format - Offset is already -50, no change needed for Prat check on this specific value
+               -- If Prat required a *different* value than -50 here, you'd apply similar logic as above.
+               DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(NewMessage:gsub("^%s*", ""),false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-50)..mark_AI); -- usuń białe spacje na początku
+            else -- Standard "NPC: Message" format
                if (WoWTR_Localization.lang == 'AR') then
-                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo("{r}"..WOWTR_AnsiReverse(name_NPC)..":{cFFFFFFFF} "..newMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-10));
+                  -- <<<< MODIFICATION START (Prat Support for AR Standard) >>>>
+                  local qtrOffset = -10 -- Default offset
+                  if C_AddOns.IsAddOnLoaded("Prat-3.0") then
+                      qtrOffset = -50 -- Offset when Prat is loaded
+                  end
+                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo("{r}"..WOWTR_AnsiReverse(name_NPC)..":{cFFFFFFFF} "..NewMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2, qtrOffset));
+                  -- <<<< MODIFICATION END >>>>
                else
-                  DEFAULT_CHAT_FRAME:AddMessage(colorText.."|cCCDDEEFF"..name_NPC..":|r "..QTR_ExpandUnitInfo(newMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-100)..mark_AI);   -- mówi (diyor ki)
+                  -- Non-AR Standard - Offset is -100, no change needed for Prat check on this specific value
+                  -- If Prat required a *different* value than -100 here, you'd apply similar logic as above.
+                  DEFAULT_CHAT_FRAME:AddMessage(colorText.."|cCCDDEEFF"..name_NPC..":|r "..QTR_ExpandUnitInfo(NewMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-100)..mark_AI);   -- mówi (diyor ki)
                end
             end
          else   
             if (nr_poz>0) then        -- mamy formę opisową dymku np. NPC_name coś robi.
                if (nr_poz==1) then
-                  newMessage = name_NPC..strsub(newMessage, 3);
+                  NewMessage = name_NPC..strsub(NewMessage, 3);
                else
-                  newMessage = strsub(newMessage,1,nr_poz-1)..name_NPC..strsub(newMessage, nr_poz+2);
+                  NewMessage = strsub(NewMessage,1,nr_poz-1)..name_NPC..strsub(NewMessage, nr_poz+2);
                end
-            elseif (strsub(newMessage,1,2)=="%o") then         -- jest forma '%o'
-               newMessage = strsub(newMessage, 3);
+            elseif (strsub(NewMessage,1,2)=="%o") then         -- jest forma '%o'
+               NewMessage = strsub(NewMessage, 3);
             end
          end
          if (changeBubble) then                          -- wyświetlaj dymek po turecku (jeśli istnieje)
-            tinsert(BB_BubblesArray, { [1] = arg1, [2] = newMessage, [3] = 1, [4] = name_NPC });
+            tinsert(BB_BubblesArray, { [1] = arg1, [2] = NewMessage, [3] = 1, [4] = name_NPC });
             BB_ctrFrame:SetScript("OnUpdate", BB_bubblizeText);
          end
       else                                               -- nie mamy tłumaczenia
