@@ -889,7 +889,7 @@ function QTR_START()
    QTR_ToggleButton0:SetText("Quest ID=?")
    QTR_ToggleButton0:Show()
    QTR_ToggleButton0:ClearAllPoints()
-   QTR_ToggleButton0:SetPoint("TOPLEFT", QuestFrame, "TOPLEFT", 105, -20)
+   QTR_ToggleButton0:SetPoint("TOPLEFT", QuestFrame, "TOPLEFT", 55, -20)
    QTR_ToggleButton0:SetScript("OnClick", QTR_ON_OFF)
 
    -- Button in QuestLogPopupDetailFrame
