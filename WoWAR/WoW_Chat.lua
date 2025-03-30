@@ -182,14 +182,71 @@ local function CH_ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
 
    local is_arabic = CH_Check_Arabic_Letters(arg1);
    if (is_arabic) then
-      local poz = string.find(arg2, "-");
       local output = "";
-      local playerLen = AS_UTF8len(string.sub(arg2, 1, poz-1));
-      local _, className = UnitClass(string.sub(arg2, 1, poz-1)); 
-      local classColorTable = RAID_CLASS_COLORS[className];
-		local playerLink = GetPlayerLink(arg2, ("[|c"..classColorTable.colorStr.."%s|r]"):format(string.sub(arg2, 1, poz-1)), arg11);
+      
+      -- Determine player name and attempt to get class color
+      local playerNameOnly = arg2 -- Default name for UnitClass lookup & display
+      local playerFullName = arg2 -- Full name for GetPlayerLink target
+      local playerColorStr = "FFFFFFFF" -- Default color to white
+
+      local poz = string.find(playerFullName, "-");
+      if poz then
+         -- Extract name without realm if hyphen exists
+         playerNameOnly = string.sub(playerFullName, 1, poz-1)
+      end
+
+      -- Debugging Output 1: Show names being processed
+      if CH_on_debug then print("|cFF00FF00WoWAR Debug:|r Processing player:", playerFullName, "| Name for UnitClass:", playerNameOnly) end
+
+      -- Try to get the class name and color using pcall for safety
+      local success, className = pcall(UnitClass, playerNameOnly);
+      local classNameUpper = nil -- Variable to hold the uppercase version
+
+      -- Debugging Output 2: Show result of UnitClass
+       if CH_on_debug then
+           if success then
+               print("|cFF00FF00WoWAR Debug:|r UnitClass result for", playerNameOnly, "is:", className or "nil")
+           else
+               print("|cFFFF0000WoWAR Debug:|r UnitClass call failed for", playerNameOnly, ":", className) -- className holds error msg here
+               className = nil
+           end
+       end
+
+      -- Trim and convert to uppercase if successful
+      if success and className then
+          className = string.trim(className) -- Trim first
+          classNameUpper = string.upper(className) -- Then convert to uppercase
+          if CH_on_debug then print("|cFF00FF00WoWAR Debug:|r Trimmed className:", className, "| Uppercase for lookup:", classNameUpper) end
+      end
+
+      -- Use the uppercase version for the lookup
+      if classNameUpper and RAID_CLASS_COLORS[classNameUpper] then
+         -- Class found, use the specific class color
+         playerColorStr = RAID_CLASS_COLORS[classNameUpper].colorStr;
+         if CH_on_debug then print("|cFF00FF00WoWAR Debug:|r Class color FOUND for", classNameUpper, ": |c"..playerColorStr..playerColorStr.."|r") end
+      else
+         -- Debugging Output 4: Indicate fallback reason
+         if CH_on_debug then
+            if not classNameUpper then
+               print("|cFF00FF00WoWAR Debug:|r ClassName was nil, failed, or became empty after processing. Using default white.")
+            else
+               -- Print the uppercase name that failed the lookup
+               print("|cFF00FF00WoWAR Debug:|r Uppercase ClassName '", classNameUpper, "' not found in RAID_CLASS_COLORS. Using default white.")
+            end
+         end
+      end
+
+      -- Construct the player link using the correct names and determined color
+      -- Note: We still display the original Capitalized playerNameOnly, just use classNameUpper for color lookup
+      local playerLink = GetPlayerLink(playerFullName, ("[|c"..playerColorStr.."%s|r]"):format(playerNameOnly), arg11);
+
+      -- Debugging Output 5: Show the final link generated
+      if CH_on_debug then print("|cFF00FF00WoWAR Debug:|r Generated playerLink:", playerLink or "nil") end
+
       local _fontC, _sizeC, _C = self:GetFont();   -- odczytaj aktualną czcionkę, rozmiar i typ
-      self:SetFont(CH_Font, _sizeC, _C);           -- załaduj arabską czcionkę
+      -- Font should be handled by hooks/guardian, setting it here might be redundant/cause issues
+      -- self:SetFont(CH_Font, _sizeC, _C);
+      
       if (event == "CHAT_MSG_SAY") then
          output = arg1..AS_UTF8reverseRS(" يتحدث: ")..playerLink;   -- said (forma właściwa)
          local czystyArg = CH_Usun_Linki(arg1);
@@ -211,51 +268,44 @@ local function CH_ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
          end
          output = arg1.." :"..playerLink.." "..AS_UTF8reverseRS("إلى");    
       elseif ((event == "CHAT_MSG_PARTY") or (event == "CHAT_MSG_PARTY_LEADER")) then
+         local isPratLoaded = C_AddOns.IsAddOnLoaded("Prat-3.0")
+         local tag = ""
          if (event == "CHAT_MSG_PARTY_LEADER") then
-            if (Prat) then       -- jest aktywny dodatek Prat
-               output = arg1.." :"..playerLink.." [PL]";
-            else
-               output = arg1.." :"..playerLink.." [Party Leader]";
-            end
+             tag = isPratLoaded and " [PL]" or " [Party Leader]"
          else
-            if (Prat) then       -- jest aktywny dodatek Prat
-               output = arg1.." :"..playerLink.." [P]";
-            else
-               output = arg1.." :"..playerLink.." [Party]";
-            end
+             tag = isPratLoaded and " [P]" or " [Party]"
          end
+         output = arg1.." :"..playerLink..tag;
+
          local czystyArg = CH_Usun_Linki(arg1);
          tinsert(CH_BubblesArray, { [1] = czystyArg, [2] = czystyArg, [3] = 1 });
          CH_ctrFrame:SetScript("OnUpdate", CH_bubblizeText);      -- obsługa bubbles dla komunikatu SAY
       elseif (event == "CHAT_MSG_RAID") then
-         if (Prat) then       -- jest aktywny dodatek Prat
-            output = arg1.." :"..playerLink.." [R]";
-         else
-            output = arg1.." :"..playerLink.." [Raid]";
-         end
+         local isPratLoaded = C_AddOns.IsAddOnLoaded("Prat-3.0")
+         output = arg1.." :"..playerLink..(isPratLoaded and " [R]" or " [Raid]");
       elseif (event == "CHAT_MSG_RAID_LEADER") then
-         if (Prat) then       -- jest aktywny dodatek Prat
-            output = arg1.." :"..playerLink.." [RL]";
-         else
-            output = arg1.." :"..playerLink.." [Raid Leader]";
-         end
+         local isPratLoaded = C_AddOns.IsAddOnLoaded("Prat-3.0")
+         output = arg1.." :"..playerLink..(isPratLoaded and " [RL]" or " [Raid Leader]");
       elseif (event == "CHAT_MSG_RAID_WARNING") then
-         local _font1, _size1, _3 = RaidWarningFrameSlot1:GetFont(); -- odczytaj aktualną czcionkę i rozmiar
+         local _, _size1, _ = RaidWarningFrameSlot1:GetFont(); -- Only need size
+         -- Ensure RaidWarningFrames use the correct font
          RaidWarningFrameSlot1:SetFont(CH_Font, _size1);
          RaidWarningFrameSlot2:SetFont(CH_Font, _size1);
-         if (Prat) then       -- jest aktywny dodatek Prat
-            output = arg1.." :"..playerLink.." [RW]";
-         else
-            output = arg1.." :"..playerLink.." [Raid Warning]";
-         end
+         local isPratLoaded = C_AddOns.IsAddOnLoaded("Prat-3.0")
+         output = arg1.." :"..playerLink..(isPratLoaded and " [RW]" or " [Raid Warning]");
       elseif ((event == "CHAT_MSG_GUILD") or (event == "CHAT_MSG_OFFICER")) then
-         if (Prat) then       -- jest aktywny dodatek Prat
-            output = arg1.." :"..playerLink.." [G]";
-         else
-            output = arg1.." :"..playerLink.." [Guild]";
-         end
+          local isPratLoaded = C_AddOns.IsAddOnLoaded("Prat-3.0")
+          local tag = isPratLoaded and " [G]" or " [Guild]"
+          if event == "CHAT_MSG_OFFICER" then
+             tag = isPratLoaded and " [O]" or " [Officer]"
+          end
+         output = arg1.." :"..playerLink..tag;
       elseif ((event == "CHAT_MSG_BATTLEGROUND") or (event == "CHAT_MSG_BATTLEGROUND_LEADER")) then
-         output = arg1.." :"..playerLink;
+         local tag = ""
+         if event == "CHAT_MSG_BATTLEGROUND_LEADER" then
+             tag = " [L]"
+         end
+         output = arg1.." :"..playerLink..tag;
       else
          return false;  -- wyświetlaj tekst oryginalny w oknie czatu
       end   
@@ -729,24 +779,133 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function CHAT_START()
-   local _fontC, _sizeC, _C = DEFAULT_CHAT_FRAME:GetFont(); -- odczytaj aktualną czcionkę, rozmiar i typ
-   DEFAULT_CHAT_FRAME:SetFont(CH_Font, _sizeC, _C);
-   local _fontC, _sizeC, _C = DEFAULT_CHAT_FRAME.editBox:GetFont(); -- odczytaj aktualną czcionkę, rozmiar i typ
-   DEFAULT_CHAT_FRAME.editBox:SetFont(CH_Font, _sizeC, _C);
-   DEFAULT_CHAT_FRAME.editBox:SetScript("OnChar", CH_OnChar);       -- aby zmieniał pozycję kursora przy wprowadzaniu kolejnych liter
-   DEFAULT_CHAT_FRAME.editBox:SetScript("OnKeyDown", CH_OnKeyDown); -- wciśnięto jakiś klawisz
-   DEFAULT_CHAT_FRAME.editBox:SetScript("OnKeyUp", CH_OnKeyUp);     -- puszczono jakiś klawisz
-   DEFAULT_CHAT_FRAME.editBox:SetScript("OnShow", CH_OnShow);       -- otworzono okno edycji tekstu
-   DEFAULT_CHAT_FRAME.editBox:SetScript("OnHide", CH_OnHide);       -- zamknięto okno edycji tekstu
-   
-   for i=1, 10, 1 do       -- edit Boxes other Tabs
-      getglobal("ChatFrame" .. tostring(i) .. "EditBox"):SetFont(CH_Font, _sizeC, _C);
-      getglobal("ChatFrame" .. tostring(i) .. "EditBox"):SetScript("OnChar", CH_OnChar);       -- aby zmieniał pozycję kursora przy wprowadzaniu kolejnych liter
-      getglobal("ChatFrame" .. tostring(i) .. "EditBox"):SetScript("OnKeyDown", CH_OnKeyDown); -- wciśnięto jakiś klawisz
-      getglobal("ChatFrame" .. tostring(i) .. "EditBox"):SetScript("OnKeyUp", CH_OnKeyUp);     -- puszczono jakiś klawisz
-      getglobal("ChatFrame" .. tostring(i) .. "EditBox"):SetScript("OnShow", CH_OnShow);       -- otworzono okno edycji tekstu
-      getglobal("ChatFrame" .. tostring(i) .. "EditBox"):SetScript("OnHide", CH_OnHide);       -- zamknięto okno edycji tekstu
+   -- Hook SetFont to force our Arabic font and preserve the requested height/flags
+   local function HookSetFontToForceArabic(frameOrEditBox)
+       if not frameOrEditBox or type(frameOrEditBox.SetFont) ~= "function" then return end
+       
+       -- Store original SetFont function if not already stored
+       if not frameOrEditBox.originalSetFont_WoWinArabic then
+           frameOrEditBox.originalSetFont_WoWinArabic = frameOrEditBox.SetFont
+       end
+       
+       -- Override SetFont with our protected version
+       frameOrEditBox.SetFont = function(self, fontPath, fontHeight, fontFlags)
+           -- Always use our font, but keep requested height/flags
+           self.originalSetFont_WoWinArabic(self, CH_Font, fontHeight, fontFlags)
+       end
    end
+   
+   -- Function to periodically check and restore our font if changed
+   local function CreateFontGuardian()
+       local fontGuardian = CreateFrame("Frame")
+       fontGuardian.frameConfigs = {}
+       
+       -- Store initial configuration for a frame/editbox
+       fontGuardian.Register = function(self, frame, size, flags)
+           if not frame then return end
+           self.frameConfigs[frame] = {size = size, flags = flags}
+       end
+       
+       -- Check and restore fonts periodically
+       fontGuardian:SetScript("OnUpdate", function(self, elapsed)
+           self.timeSinceLastCheck = (self.timeSinceLastCheck or 0) + elapsed
+           if self.timeSinceLastCheck < 1 then return end -- Check once per second
+           
+           self.timeSinceLastCheck = 0
+           for frame, config in pairs(self.frameConfigs) do
+               -- Check if frame is still valid using safer method
+               if frame and frame.GetFont then
+                   local success, currentFont, currentSize, currentFlags = pcall(frame.GetFont, frame)
+                   if success and currentFont ~= CH_Font then
+                       -- Font was changed by something else, restore it
+                       pcall(frame.SetFont, frame, CH_Font, config.size, config.flags)
+                   end
+               else
+                   -- Frame no longer valid, remove from tracking
+                   self.frameConfigs[frame] = nil
+               end
+           end
+       end)
+       
+       return fontGuardian
+   end
+   
+   -- Create our font guardian
+   local fontGuardian = CreateFontGuardian()
+   
+   -- Get initial font settings
+   local _, frameSize, frameFlags = DEFAULT_CHAT_FRAME:GetFont()
+   local _, editBoxSize, editBoxFlags = DEFAULT_CHAT_FRAME.editBox:GetFont()
+   
+   -- Setup DEFAULT_CHAT_FRAME
+   DEFAULT_CHAT_FRAME:SetFont(CH_Font, frameSize, frameFlags)
+   HookSetFontToForceArabic(DEFAULT_CHAT_FRAME)
+   fontGuardian:Register(DEFAULT_CHAT_FRAME, frameSize, frameFlags)
+   
+   -- Setup DEFAULT_CHAT_FRAME.editBox
+   DEFAULT_CHAT_FRAME.editBox:SetFont(CH_Font, editBoxSize, editBoxFlags)
+   DEFAULT_CHAT_FRAME.editBox:SetScript("OnChar", CH_OnChar)
+   DEFAULT_CHAT_FRAME.editBox:SetScript("OnKeyDown", CH_OnKeyDown)
+   DEFAULT_CHAT_FRAME.editBox:SetScript("OnKeyUp", CH_OnKeyUp)
+   DEFAULT_CHAT_FRAME.editBox:SetScript("OnShow", CH_OnShow)
+   DEFAULT_CHAT_FRAME.editBox:SetScript("OnHide", CH_OnHide)
+   HookSetFontToForceArabic(DEFAULT_CHAT_FRAME.editBox)
+   fontGuardian:Register(DEFAULT_CHAT_FRAME.editBox, editBoxSize, editBoxFlags)
+   
+   -- Setup other chat frames
+   for i = 1, NUM_CHAT_WINDOWS do
+       local frame = _G["ChatFrame" .. i]
+       local editBox = _G["ChatFrame" .. i .. "EditBox"]
+       
+       if frame then
+           local currentFrameSize, currentFrameFlags = select(2, frame:GetFont())
+           frame:SetFont(CH_Font, currentFrameSize or frameSize, currentFrameFlags or frameFlags)
+           HookSetFontToForceArabic(frame)
+           fontGuardian:Register(frame, currentFrameSize or frameSize, currentFrameFlags or frameFlags)
+       end
+       
+       if editBox then
+           local currentEditBoxSize, currentEditBoxFlags = select(2, editBox:GetFont())
+           editBox:SetFont(CH_Font, currentEditBoxSize or editBoxSize, currentEditBoxFlags or editBoxFlags)
+           editBox:SetScript("OnChar", CH_OnChar)
+           editBox:SetScript("OnKeyDown", CH_OnKeyDown)
+           editBox:SetScript("OnKeyUp", CH_OnKeyUp)
+           editBox:SetScript("OnShow", CH_OnShow)
+           editBox:SetScript("OnHide", CH_OnHide)
+           HookSetFontToForceArabic(editBox)
+           fontGuardian:Register(editBox, currentEditBoxSize or editBoxSize, currentEditBoxFlags or editBoxFlags)
+       end
+   end
+   
+   -- Also hook SetFontObject to prevent indirect font changes
+   local function HookSetFontObject(frame)
+       if not frame or not frame.SetFontObject then return end
+       
+       if not frame.originalSetFontObject_WoWinArabic then
+           frame.originalSetFontObject_WoWinArabic = frame.SetFontObject
+       end
+       
+       frame.SetFontObject = function(self, fontObject)
+           self.originalSetFontObject_WoWinArabic(self, fontObject)
+           -- After applying the font object, force our font
+           local _, height, flags = self:GetFont()
+           self:SetFont(CH_Font, height, flags)
+       end
+   end
+   
+   -- Apply SetFontObject hook to all chat frames and edit boxes
+   HookSetFontObject(DEFAULT_CHAT_FRAME)
+   HookSetFontObject(DEFAULT_CHAT_FRAME.editBox)
+   
+   for i = 1, NUM_CHAT_WINDOWS do
+       local frame = _G["ChatFrame" .. i]
+       local editBox = _G["ChatFrame" .. i .. "EditBox"]
+       
+       if frame then HookSetFontObject(frame) end
+       if editBox then HookSetFontObject(editBox) end
+   end
+
+   -- Rest of the original function (buttons, filters, etc.)
    
    CH_ToggleButton = CreateFrame("Button", nil, DEFAULT_CHAT_FRAME, "UIPanelButtonTemplate");
    CH_ToggleButton:SetWidth(34);
