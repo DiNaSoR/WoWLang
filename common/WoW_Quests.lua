@@ -582,7 +582,6 @@ function GossipOnQuestFrame()       -- frame: QuestFrame
    if ((GreetingText:IsVisible()) and (QTR_PS["gossip"]=="1")) then     -- mamy gossip w QuestFrame i włączone wyświetlanie tłumaczeń gossip
       QTR_ToggleButton0:Disable();                                      -- wyłącz możliwość przełączania EN-TR
       QTR_ToggleButton0:SetWidth(200);
-      QTR_ToggleButton0:SetPoint("TOPLEFT", GreetingText, "TOPLEFT", 0, 0);
       local Greeting_Text = GreetingText:GetText();
       if (Greeting_Text and (string.find(Greeting_Text," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
          local GO_resized = 0;
