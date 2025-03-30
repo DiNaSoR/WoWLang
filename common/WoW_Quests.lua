@@ -816,7 +816,7 @@ function GossipOnQuestFrame()       -- frame: QuestFrame
    local QFContinueBtext = QuestFrameContinueButtonText;
    ST_CheckAndReplaceTranslationText(QFContinueBtext, true, "ui",false,true);
 
-   local QFGoodbyeBtext = QuestFrameGoodbyeButtonText;
+   local QFGoodbyeBtext = QuestFrameGreetingGoodbyeButtonText;
    ST_CheckAndReplaceTranslationText(QFGoodbyeBtext, true, "ui",false,true);
 
    if (WoWTR_Localization.lang == 'AR') then
