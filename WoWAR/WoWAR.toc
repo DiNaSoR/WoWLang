@@ -29,6 +29,7 @@ Translations\Tooltips_AR.lua
 
 WoW_Arabic_Reshaper.lua
 WoW_Localization_AR.lua
+Plugins\DUIPlugin.lua
 WoW_Quests.lua
 WoW_Bubbles.lua
 WoW_MovieSubtitles.lua

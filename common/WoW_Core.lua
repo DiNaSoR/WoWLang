@@ -402,12 +402,14 @@ end
 
 function WOWTR_onEvent(self, event, name, ...)
    if (event=="ADDON_LOADED" and name==WoWTR_Localization.addonFolder) then
+      print("DEBUG: ADDON_LOADED fired for " .. name) -- Added debug print
       self:UnregisterEvent("ADDON_LOADED");
       self:RegisterEvent("QUEST_ACCEPTED");
       self:RegisterEvent("QUEST_DETAIL");
       self:RegisterEvent("QUEST_PROGRESS");
       self:RegisterEvent("QUEST_COMPLETE");
       self:RegisterEvent("GOSSIP_SHOW");
+      self:RegisterEvent("QUEST_GREETING");
       self:RegisterEvent("PLAY_MOVIE");
       self:RegisterEvent("CINEMATIC_START");
       self:RegisterEvent("CINEMATIC_STOP");
@@ -496,7 +498,7 @@ function WOWTR_onEvent(self, event, name, ...)
          local QTR_mapINFO = C_Map.GetMapInfo(QTR_mapID);
          QTR_SAVED[QTR_quest_ID.." MAPID"]=QTR_mapID.."@"..QTR_mapINFO.name.."@"..QTR_mapINFO.mapType.."@"..QTR_mapINFO.parentMapID;     -- save mapID to locale place of this quest
       end
-      if ( QuestFrame:IsVisible() or isImmersion() or isDUIQuestFrame()) then
+      if ( QuestFrame:IsVisible() or isImmersion() or IsDUIQuestFrame()) then
          QTR_QuestPrepare(event);
       elseif (isStoryline()) then
          if (not WOWTR_wait(1,QTR_Storyline_Quest)) then
@@ -506,16 +508,24 @@ function WOWTR_onEvent(self, event, name, ...)
       if (not WOWTR_wait(1,QTR_ObjectiveTracker_Check)) then
          -- opóźnienie 1 sek
       end
+   elseif (event=="QUEST_GREETING") then
+      print("DEBUG: QUEST_GREETING event fired!")
+      
    elseif (event=="GOSSIP_SHOW") then
+      print("DEBUG: GOSSIP_SHOW event fired!")
       if (QTR_PS["gossip"] == "1") then
-         if (ElvUI and not isDUIQuestFrame()) then
-            if (not isDUIQuestFrame()) then  
-               if (not WOWTR_wait(0.02, QTR_Gossip_Show)) then
-               -- opóźnienie 0.02 sek
-               end
-            end
+         -- First check if DUIPlugin exists and if the DialogueUI frame is active
+         if DUIPlugin and IsDUIQuestFrame() then
+            QTR_DUIGossipFrame()
          else
-            QTR_Gossip_Show();
+            -- Handle normal gossip frames
+            if (ElvUI) then
+               if (not WOWTR_wait(0.02, QTR_Gossip_Show)) then
+                  -- opóźnienie 0.02 sek
+               end
+            else
+               QTR_Gossip_Show();
+            end
          end
       end
    elseif (event=="PLAY_MOVIE") then
