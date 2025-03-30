@@ -2181,6 +2181,7 @@ function QTR_display_constants(lg)
         if isArabic then QuestProgressRequiredItemsText:SetJustifyH("RIGHT") else QuestProgressRequiredItemsText:SetJustifyH("LEFT") end;
 
         CurrentQuestsText:SetFont(WOWTR_Font1, elvuiFontSize);
+        CurrentQuestsText:SetWidth(WOW_width);
         CurrentQuestsText:SetText(QTR_ExpandUnitInfo(QTR_Messages.currquests,false,CurrentQuestsText,WOWTR_Font1,-30));
         if isArabic then CurrentQuestsText:SetJustifyH("RIGHT") else CurrentQuestsText:SetJustifyH("LEFT") end;
 
@@ -2504,6 +2505,7 @@ function QTR_ResetQuestToOriginal()
    QuestProgressRequiredItemsText:SetFont(Original_Font1, 18);
 
    CurrentQuestsText:SetText(QTR_MessOrig.currquests);
+   CurrentQuestsText:SetJustifyH("LEFT");
    CurrentQuestsText:SetFont(Original_Font1, 18);
 
    AvailableQuestsText:SetText(QTR_MessOrig.avaiquests);
