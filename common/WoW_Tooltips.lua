@@ -841,6 +841,10 @@ function ST_CurrentEquipped(obj)
                ST_kodKoloru = OkreslKodKoloru(leftColR, leftColG, leftColB);
                if (ST_leftText and (string.len(ST_leftText)>15) and ((ST_kodKoloru == "c7") or (ST_kodKoloru == "c4") or (string.len(ST_leftText)>30))) then
 --print(ST_kodKoloru,i,ST_leftText);
+                  -- Get the line object
+                  local lineObj = _G[obj:GetName().."TextLeft"..i]
+                  -- Get original font details *before* deciding translation
+                  local originalFont, originalSize, originalFlags = lineObj:GetFont()
                   ST_hash = StringHash(ST_UsunZbedneZnaki(ST_leftText));
                   if (((ST_kodKoloru == "c7") or (string.len(ST_leftText)>30)) and (not ST_hash2)) then
                      ST_hash2 = ST_hash;
@@ -852,8 +856,14 @@ function ST_CurrentEquipped(obj)
                      _G[obj:GetName().."TextLeft"..i]:SetFont(WOWTR_Font2, _size1);      -- ustawiamy czcionkę turecką
                      _G[obj:GetName().."TextLeft"..i]:SetText(QTR_ExpandUnitInfo(ST_tlumaczenie,false,_G["GameTooltipTextLeft"..i],WOWTR_Font2).." ");      -- dodajemy twardą spacje na końcu
                   else
-                     ST_nh = 1;              -- nowy Hash
-                     table.insert(ST_orygText,ST_leftText);
+                        -- >>> Explicitly ensure original font if no translation <<<
+                        if lineObj.SetFont then
+                           lineObj:SetFont(originalFont, originalSize, originalFlags)
+                        end
+                        -- >>> End explicit ensure <<<
+  
+                       ST_nh = 1;              -- nowy Hash
+                       table.insert(ST_orygText,ST_leftText);
                   end
                end
             end
