@@ -402,7 +402,7 @@ end
 
 function WOWTR_onEvent(self, event, name, ...)
    if (event=="ADDON_LOADED" and name==WoWTR_Localization.addonFolder) then
-      print("DEBUG: ADDON_LOADED fired for " .. name) -- Added debug print
+      --print("DEBUG: ADDON_LOADED fired for " .. name) -- Added debug print
       self:UnregisterEvent("ADDON_LOADED");
       self:RegisterEvent("QUEST_ACCEPTED");
       self:RegisterEvent("QUEST_DETAIL");

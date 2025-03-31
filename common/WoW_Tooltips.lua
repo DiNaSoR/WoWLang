@@ -840,7 +840,7 @@ function ST_CurrentEquipped(obj)
                leftColR, leftColG, leftColB = _G[obj:GetName().."TextLeft"..i]:GetTextColor();
                ST_kodKoloru = OkreslKodKoloru(leftColR, leftColG, leftColB);
                if (ST_leftText and (string.len(ST_leftText)>15) and ((ST_kodKoloru == "c7") or (ST_kodKoloru == "c4") or (string.len(ST_leftText)>30))) then
---print(ST_kodKoloru,i,ST_leftText);
+                  --print(ST_kodKoloru,i,ST_leftText);
                   -- Get the line object
                   local lineObj = _G[obj:GetName().."TextLeft"..i]
                   -- Get original font details *before* deciding translation
