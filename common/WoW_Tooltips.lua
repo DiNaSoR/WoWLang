@@ -221,6 +221,7 @@ function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)
                if obj.SetFont then
                   local originalFont, originalSize, originalFlags = obj:GetFont();
                   obj:SetFont(originalFont, originalSize, originalFlags);
+                  --print("Reverted to original font:", originalFont, originalSize, originalFlags);
                end
            end
        end

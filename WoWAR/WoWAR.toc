@@ -1,6 +1,6 @@
 ﻿## Interface: 110100, 110007
-## Version: 11.13
-## Title: WoWAR |cff8080ffv11.11|r
+## Version: 11.14
+## Title: WoWAR |cff8080ffv11.14|r
 ## Notes: World of Warcraft in Arabic.
 ## Author: Platine & Dragonarab
 ## E-mail: Dragonarab@gmail.com
@@ -27,8 +27,11 @@ Translations\TutorialsData7_AR.lua
 Translations\Books_AR.lua
 Translations\Tooltips_AR.lua
 
-WoW_Arabic_Reshaper.lua
 WoW_Localization_AR.lua
+
+WoW_Core.lua
+
+WoW_Arabic_Reshaper.lua
 Plugins\DUIPlugin.lua
 WoW_Quests.lua
 WoW_Bubbles.lua
@@ -37,6 +40,4 @@ WoW_Tutorials.lua
 WoW_Books.lua
 WoW_Tooltips.lua
 WoW_Chat.lua
-
-WoW_Core.lua
 WoW_Config.lua

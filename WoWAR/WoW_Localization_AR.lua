@@ -5,7 +5,7 @@
 
 WoWTR_Localization = {
    lang = "AR",
-   started = "ﻲﻔﻜﺗ ﻢﻜﺗﺍﻮﻋﺩ ..ﻢﻜﻴﻓ ﷲ ﻙﺭﺎﺑ",                                              -- addon was started
+   started = "|cFF87CEEBﻲﻔﻜﺗ ﻢﻜﺗﺍﻮﻋﺩ ..ﻢﻜﻴﻓ ﷲ ﻙﺭﺎﺑ|r |T524354:16:16:0:0|t",                                              -- addon was started
    mainFolder = "Interface\\AddOns\\WoWAR",                          -- main folder for addon files
    addonFolder = "WoWAR",                                            -- name of the folder where the addon was installed
    addonName = "WoWAR",                                              -- short name of the addon
@@ -263,7 +263,7 @@ WoWTR_Config_Interface = {
    
    titleTab9 = "ﺣﻮﻝ",
    generalText = "\n\nﻭﺍﻭ ﺑﺎﻟﻌﺮﺑﻲ ﺗﺘﻤﻨﻰ ﻟﻚ ﻗﻀﺎﺀ ﻭﻗﺖ ﻣﻤﺘﻊ ﻧﻌﻤﻞ ﺟﺎﻫﺪﺍ ﻟﺘﻮﻓﻴﺮ ﺇﻣﻜﺎﻧﻴﺔ ﺍﻟﻮﺻﻮﻝ ﺇﻟﻰ ﻣﺤﺘﻮﻯ ﺍﻟﻠﻌﺒﺔ ﺑﻠﻐﺘﻚ. ...\n\nﻧﻮﻓﺮ ﺩﻋﻤﺎ ﻟﻠﺘﺮﺟﻤﺔ ﻓﻲ ﺍﻟﻤﻬﺎﻡ ﻭﺍﻟﺤﻮﺍﺭﺍﺕ ﻭﺍﻟﺘﺮﺟﻤﺎﺕ ﻳﻤﻜﻨﻚ ﺗﻐﻴﻴﺮ ﻣﺨﺘﻠﻒ ﺍﻟﺨﻴﺎﺭﺍﺕ ﻣﻦ ﻗﺎﺋﻤﺔ ﺇﻋﺪﺍﺩﺍﺕ ﺍﻹﺿﺎﻓﺔ. \n\n  ﻟﺪﻋﻤﻨﺎ, ﻳﻤﻜﻨﻚ ﺣﻔﻆ ﺍﻟﻨﺼﻮﺹ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ ﺛﻢ ﻣﺸﺎﺭﻛﺔ ﻣﻠﻒ ﺍﻟﺤﻔﻆ ﻣﻌﻨﺎ ﻋﺒﺮ ﻗﻨﺎﺓ ﺍﻟﺪﻳﺴﻜﻮﺭﺩ ﺍﻟﺨﺎﺻﺔ ﺑﻨﺎ .\n\n ﻟﻠﻤﺴﺎﻫﻤﺔ ﻓﻲ ﺗﻄﻮﻳﺮ ﻗﺎﻋﺪﺓ ﺍﻟﺒﻴﺎﻧﺎﺕ ﺍﻟﻌﺮﺑﻴﺔ ﻟﺪﻳﻨﺎ.\n\n\n\n r| ﻣﺴﺎﺭ ﻣﻠﻒ ﺍﻟﺤﻔﻆ :804CAEffc| \n\n r|aul.RAWoW804CAEffc|/selbairaVdevaS/]XXX[/tnuoccA/FTW/liater/tfarcraW fo dlroW",
-   welcomeText = "",
+   welcomeText = "ﻋﺮﺽ ﻟﻮﺣﺔ ﺍﻟﺘﺮﺣﻴﺐ",
    welcomeButton = "ﻣﻮﺍﻓﻖ - ﺗﻢ ﺍﻟﻘﺮﺍﺀﺓ",
    showWelcome = "ﻋﺮﺽ ﻟﻮﺣﺔ ﺍﻟﺘﺮﺣﻴﺐ",
    authorHeader = "ﻣﻌﻠﻮﻣﺎﺕ ﺍﻟﻤﺆﻟﻒ",
