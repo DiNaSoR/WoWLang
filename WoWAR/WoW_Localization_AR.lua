@@ -5,7 +5,7 @@
 
 WoWTR_Localization = {
    lang = "AR",
-   started = "started",                                              -- addon was started
+   started = "ﻲﻔﻜﺗ ﻢﻜﺗﺍﻮﻋﺩ ..ﻢﻜﻴﻓ ﷲ ﻙﺭﺎﺑ",                                              -- addon was started
    mainFolder = "Interface\\AddOns\\WoWAR",                          -- main folder for addon files
    addonFolder = "WoWAR",                                            -- name of the folder where the addon was installed
    addonName = "WoWAR",                                              -- short name of the addon
