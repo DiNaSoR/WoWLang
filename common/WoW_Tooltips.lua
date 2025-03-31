@@ -606,6 +606,11 @@ function ST_GameTooltipOnShow()
          _G["GameTooltipTextLeft1"]:SetFont(WOWTR_Font2, _size1);
       end
 
+      -- Get the line object
+      local lineObj = _G["GameTooltipTextLeft1"]
+      -- Get original font details *before* deciding translation
+      local originalFont, originalSize, originalFlags = lineObj:GetFont()
+
       for i = ST_fromLine, numLines, 1 do
          ST_leftText = _G["GameTooltipTextLeft"..i]:GetText();
          if (ST_leftText and (string.find(ST_leftText," ")==nil)) then                 -- nie jest to nasze tłumaczenie
@@ -659,6 +664,12 @@ function ST_GameTooltipOnShow()
                      break;
                   end
                else
+                   -- >>> Explicitly ensure original font if no translation <<<
+                  if lineObj.SetFont then
+                      lineObj:SetFont(originalFont, originalSize, originalFlags)
+                  end
+                  -- >>> End explicit ensure <<<
+
                   ST_nh = 1;              -- nowy Hash
                   table.insert(ST_orygText,ST_leftText);
                end
