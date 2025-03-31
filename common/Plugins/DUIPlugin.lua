@@ -3,7 +3,7 @@
 
 -- Global variables and functions
 DUIPlugin = {}
-print("DUIPlugin loaded")
+--print("DUIPlugin loaded")
 
 -------------------------------------------------------------------------------------------------------------------
 -- Process font strings for gossip dialog UI

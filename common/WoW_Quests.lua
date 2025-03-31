@@ -68,7 +68,7 @@ Original_Font2 = "Fonts\\FRIZQT__.ttf";
 -------------------------------------------------------------------------------------------------------------------
 
 function GS_ON_OFF()
-   print("GS_ON_OFF");
+   --print("GS_ON_OFF");
    if (QTR_curr_goss=="1") then         -- wyłącz tłumaczenie - pokaż oryginalny tekst
       QTR_curr_goss="0";
       GossipGreetingText:SetText(QTR_GS[QTR_curr_hash]);
@@ -149,7 +149,7 @@ end
 -------------------------------------------------------------------------------------------------------------------
 
 function GS_ON_OFF2()
-   print("GS_ON_OFF2");
+   --print("GS_ON_OFF2");
    if (QTR_curr_goss=="1") then         -- Switch TO English (LTR)
       QTR_display_constants(0);          -- Reset constants to original
       QTR_curr_goss="0";
@@ -303,7 +303,7 @@ end
 
 -- NPC chat window opened - frame: GossipFrame
 function QTR_Gossip_Show()
-   print("QTR_Gossip_Show");
+   --print("QTR_Gossip_Show");
 --print ("Gossip_Show");
    local function ProcessOPT(buttonString)
       local fontString = buttonString.Content.Name;
@@ -576,7 +576,7 @@ end
 -------------------------------------------------------------------------------------------------------------------
 
 function GossipOnQuestFrame()       -- frame: QuestFrame
-   print("GossipOnQuestFrame");
+   --print("GossipOnQuestFrame");
    QTR_IconAI:Hide();
    GoQ_IconAI:Hide();
    if ((GreetingText:IsVisible()) and (QTR_PS["gossip"]=="1")) then     -- mamy gossip w QuestFrame i włączone wyświetlanie tłumaczeń gossip
@@ -886,7 +886,7 @@ end
 
 -- Pierwsza funkcja wywoływana po załadowaniu dodatku
 function QTR_START()
-   print("QTR_START");
+   --print("QTR_START");
 
    -- Button in QuestFrame (NPC)
    QTR_ToggleButton0 = CreateFrame("Button", nil, QuestFrame, "UIPanelButtonTemplate")
@@ -1599,7 +1599,7 @@ end
 
 -- Otworzono okienko QuestLogPopupDetailFrame lub QuestMapDetailsScrollFrame lub ClassicQuestLog lub Immersion
 function QTR_QuestPrepare(zdarzenie)
-   print("QTR_QuestPrepare");
+   --print("QTR_QuestPrepare");
    QTR_PrepareTime = time();
    QTR_IconAI:Hide();
    GoQ_IconAI:Hide();
@@ -1911,7 +1911,7 @@ end
 
 -- wyświetla tłumaczenie
 function QTR_Translate_On(typ,event)
-   print("QTR_Translate_On");
+   --print("QTR_Translate_On");
    QTR_display_constants(1);
    if (QuestNPCModelText:IsVisible() and (QTR_ModelTextHash>0)) then         -- jest wyświetlony tekst QuestNPCModelText
       QuestNPCModelText:SetText(QTR_ExpandUnitInfo(QTR_ModelText_PL.." ",false,QuestNPCModelText,WOWTR_Font2,-15));   -- na końcu dodajemy "twardą" spację
@@ -2030,7 +2030,7 @@ end
 
 -- wyświetla oryginalny tekst angielski
 function QTR_Translate_Off(typ,event)
-   print("QTR_Translate_Off");
+   --print("QTR_Translate_Off");
    QTR_display_constants(0);
    if (QuestNPCModelText:IsVisible() and (QTR_ModelTextHash>0)) then
       QuestNPCModelText:SetText(QTR_ModelText_EN);
@@ -2149,14 +2149,14 @@ end
 -------------------------------------------------------------------------------------------------------------------
 
 function QTR_display_constants(lg)
-   print("QTR_display_constants");
+   --print("QTR_display_constants");
    -- Get current quest ID info, but don't block constants based on it initially
    local str_ID = QTR_quest_ID and tostring(QTR_quest_ID) or nil;
    local questDataExists = str_ID and QTR_QuestData and QTR_QuestData[str_ID];
    local questLGData = questDataExists and QTR_quest_LG and QTR_quest_LG[QTR_quest_ID];
 
    if lg == 1 then -- Apply Translations
-   print("Apply Translations lg 1");
+   --print("Apply Translations lg 1");
         local isArabic = (WoWTR_Localization.lang == 'AR');
         local WOW_width = 265;
         if (WorldMapFrame:IsVisible()) then
@@ -2213,7 +2213,7 @@ function QTR_display_constants(lg)
 
         -- === Apply Translations DEPENDENT on Specific Quest Data (Only if data exists) ===
         if questDataExists and questLGData then
-            print("Apply Translations There is Quest Data");
+            --print("Apply Translations There is Quest Data");
             local itemChooseText = questLGData.itemchoose or QTR_Messages.itemchoose0;
             local itemReceiveText = questLGData.itemreceive or QTR_Messages.itemreceiv0;
 
@@ -2486,7 +2486,7 @@ function QTR_display_constants(lg)
         end -- End of check for questDataExists and questLGData
 
    else -- Apply Originals (lg == 0)
-      print("Apply Originals lg 0");
+      --print("Apply Originals lg 0");
       QTR_ResetQuestToOriginal();
    end
 end

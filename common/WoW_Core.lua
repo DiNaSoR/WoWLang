@@ -509,10 +509,10 @@ function WOWTR_onEvent(self, event, name, ...)
          -- opóźnienie 1 sek
       end
    elseif (event=="QUEST_GREETING") then
-      print("DEBUG: QUEST_GREETING event fired!")
+      --print("DEBUG: QUEST_GREETING event fired!")
       
    elseif (event=="GOSSIP_SHOW") then
-      print("DEBUG: GOSSIP_SHOW event fired!")
+      --print("DEBUG: GOSSIP_SHOW event fired!")
       if (QTR_PS["gossip"] == "1") then
          -- First check if DUIPlugin exists and if the DialogueUI frame is active
          if DUIPlugin and IsDUIQuestFrame() then
