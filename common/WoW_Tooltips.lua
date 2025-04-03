@@ -129,7 +129,7 @@ local ignoreSettings = {
 function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse, ST_corr)
    if (obj and obj.GetText) then
       local txt = obj:GetText();
-      if (txt and string.find(txt," ")==nil) then
+      if (txt and string.find(txt,NONBREAKINGSPACE)==nil) then
          local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
          
          if (ST_TooltipsHS[ST_Hash]) then
@@ -139,9 +139,9 @@ function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse,
                ST_corr = 0;
             end
             if (onlyReverse) then
-               obj:SetText(QTR_ReverseIfAR(ST_tlumaczenie).." ");
+               obj:SetText(QTR_ReverseIfAR(ST_tlumaczenie)..NONBREAKINGSPACE);
             else
-               obj:SetText(QTR_ExpandUnitInfo(ST_tlumaczenie,false,obj,WOWTR_Font2,ST_corr).." ");
+               obj:SetText(QTR_ExpandUnitInfo(ST_tlumaczenie,false,obj,WOWTR_Font2,ST_corr)..NONBREAKINGSPACE);
             end
             -- Don't try to set font if the object doesn't support it
             if obj.SetFont then
@@ -183,7 +183,7 @@ function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)
            return false
        end
        
-       if (txt and string.find(txt, " ") == nil and not shouldIgnore(txt)) then
+       if (txt and string.find(txt, NONBREAKINGSPACE) == nil and not shouldIgnore(txt)) then
            local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
            local destroyText = "Do you want to destroy";
            local deleteText = "DELETE";
@@ -206,7 +206,7 @@ function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)
                        new_trans = string.gsub(new_trans, "$I", new_item);
                    end
                end
-               obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, new_trans)).." ");
+               obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, new_trans))..NONBREAKINGSPACE);
                if (font1) then
                    obj:SetFont(font1, a2);
                else
@@ -1355,7 +1355,7 @@ function ST_SuggestTabClick()
 --print("SuggestTab clicked");
    if (TT_PS["ui5"] == "1") then
       local obj0 = EncounterJournalInstanceSelect.Title;
-      ST_CheckAndReplaceTranslationText(obj0, true, "Dungeon&Raid:Suggest:SuggestTittle",false,false);
+      ST_CheckAndReplaceTranslationTextUI(obj0, true, "Dungeon&Raid:Suggest:SuggestTittle",false);
       
       local obj1 = EncounterJournalSuggestFrame.Suggestion1.centerDisplay.description.text;
       local title1 = EncounterJournalSuggestFrame.Suggestion1.centerDisplay.title.text:GetText() or "?";
@@ -1373,7 +1373,7 @@ function ST_SuggestTabClick()
       ST_CheckAndReplaceTranslationText(obj4, true, "ui");
 
       local obj5 = EncounterJournalTitleText;                            -- https://imgur.com/KE3uW72
-      ST_CheckAndReplaceTranslationText(obj5, true, "ui");
+      ST_CheckAndReplaceTranslationTextUI(obj5, true, "ui", WOWTR_Font1);
 
       local obj6 = EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Month;         -- https://imgur.com/KE3uW72
       ST_CheckAndReplaceTranslationText(obj6, true, "ui");
@@ -1400,39 +1400,19 @@ function ST_SuggestTabClick()
       ST_CheckAndReplaceTranslationText(obj13, true, "ui");
 
       local obj14 = EncounterJournalMonthlyActivitiesTab.Text;  -- Tab: Traveler's Log
-      if (WoWTR_Localization.lang == 'AR') then
-         ST_CheckAndReplaceTranslationText(obj14, true, "ui", nil, true);
-      else
-         ST_CheckAndReplaceTranslationText(obj14, true, "ui");
-      end
+      ST_CheckAndReplaceTranslationTextUI(obj14, true, "ui", WOWTR_Font1);
 
       local obj15 = EncounterJournalSuggestTab.Text;            -- Tab: Suggested Content
-      if (WoWTR_Localization.lang == 'AR') then
-         ST_CheckAndReplaceTranslationText(obj15, true, "ui", nil, true);
-      else
-         ST_CheckAndReplaceTranslationText(obj15, true, "ui");
-      end
+      ST_CheckAndReplaceTranslationTextUI(obj15, true, "ui");
 
       local obj16 = EncounterJournalDungeonTab.Text;            -- Tab: Dungeons
-      if (WoWTR_Localization.lang == 'AR') then
-         ST_CheckAndReplaceTranslationText(obj16, true, "ui", nil, true);
-      else
-         ST_CheckAndReplaceTranslationText(obj16, true, "ui");
-      end
+      ST_CheckAndReplaceTranslationTextUI(obj16, true, "ui");
 
       local obj17 = EncounterJournalRaidTab.Text;               -- Tab: Raids
-      if (WoWTR_Localization.lang == 'AR') then
-         ST_CheckAndReplaceTranslationText(obj17, true, "ui", nil, true);
-      else
-         ST_CheckAndReplaceTranslationText(obj17, true, "ui");
-      end
+      ST_CheckAndReplaceTranslationTextUI(obj17, true, "ui");
 
       local obj18 = EncounterJournalLootJournalTab.Text;        -- Tab: Item Sets
-      if (WoWTR_Localization.lang == 'AR') then
-         ST_CheckAndReplaceTranslationText(obj18, true, "ui", nil, true);
-      else
-         ST_CheckAndReplaceTranslationText(obj18, true, "ui");
-      end
+      ST_CheckAndReplaceTranslationTextUI(obj18, true, "ui");
    end
 end
 
