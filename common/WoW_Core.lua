@@ -4,6 +4,7 @@
 -------------------------------------------------------------------------------------------------------
 
 -- General Variables
+NONBREAKINGSPACE = " ";
 WOWTR_player_name = UnitName("player");
 WOWTR_player_race = UnitRace("player");
 WOWTR_player_class = UnitClass("player");
