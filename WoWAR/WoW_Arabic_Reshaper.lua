@@ -594,6 +594,81 @@ end
 --    - retstr (string): The processed text ready for display.
 -------------------------------------------------------------------------------------------------------
 function AS_ReverseAndPrepareLineText(Atext, Awidth, Afont, AfontSize)
+   local retstr = ""; 
+   if (Atext and Awidth and AfontSize) then
+      if (AS_TestLine == nil) then 
+         AS_CreateTestLine(); 
+      end
+      Atext = string.gsub(Atext, " #", "#");
+      Atext = string.gsub(Atext, "# ", "#");
+      
+      local bytes = strlen(Atext);
+      local pos = 1;
+      local counter = 0; 
+      local link_start_stop = false; 
+      local newstr = ""; 
+      local nextstr = ""; 
+      local charbytes;
+      --local newstrR; -- Removed as unused
+      local char1 = "";
+      local char2 = ""; 
+      local last_space = 0; 
+
+      while (pos <= bytes) do 
+         charbytes = AS_UTF8charbytes(Atext, pos); 
+         char1 = strsub(Atext, pos, pos + charbytes - 1); 
+         newstr = newstr .. char1; 
+
+         if ((char2 .. char1 == "|r") and (pos < bytes)) then
+            link_start_stop = true; 
+         elseif ((char2 .. char1 == "|c") and (pos < bytes)) then 
+            link_start_stop = false;
+         end
+
+         if ((char1 == '#') or ((char1 == " ") and (link_start_stop == false))) then
+            last_space = 0;
+            nextstr = "";
+         else
+            nextstr = nextstr .. char1;
+            last_space = last_space + charbytes;
+         end
+         
+         if (link_start_stop == false) then 
+            AS_TestLine.text:SetWidth(Awidth); 
+            AS_TestLine.text:SetFont(Afont, AfontSize); 
+            AS_TestLine.text:SetText(AS_UTF8reverse(newstr)); 
+            if ((char1 == '#') or (AS_TestLine.text:GetHeight() > AfontSize * 1.5)) then 
+               newstr = string.sub(newstr, 1, strlen(newstr) - last_space); 
+               newstr = string.gsub(newstr, "#", "");
+               -- *** MODIFICATION: Remove call to AS_AddSpaces ***
+               retstr = retstr .. AS_UTF8reverse(newstr) .. "\n"; 
+               newstr = nextstr;
+               nextstr = ""; 
+               --counter = 0; -- Removed counter reset
+            end
+         end
+         char2 = char1; 
+         pos = pos + charbytes; 
+      end
+      
+      -- *** MODIFICATION: Remove call to AS_AddSpaces for the last line ***
+      retstr = retstr .. AS_UTF8reverse(newstr); 
+      retstr = string.gsub(retstr, "#", "");
+      retstr = string.gsub(retstr, " \n", "\n"); 
+      retstr = string.gsub(retstr, "\n ", "\n"); 
+   end
+   
+   return retstr; 
+end
+
+--------------------------------------------------------------------------------------------------------
+--[[
+comment...
+
+]]
+--------------------------------------------------------------------------------------------------------
+
+function AS_ReverseAndPrepareLineText_RIGHT(Atext, Awidth, Afont, AfontSize)
    local retstr = "";
    if (Atext and Awidth and AfontSize) then
       if (AS_TestLine == nil) then -- a separate frame for displaying the translation of texts and determining the length
