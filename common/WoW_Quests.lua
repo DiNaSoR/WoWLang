@@ -304,7 +304,6 @@ end
 -- NPC chat window opened - frame: GossipFrame
 function QTR_Gossip_Show()
    --print("QTR_Gossip_Show");
---print ("Gossip_Show");
    local function ProcessOPT(buttonString)
       local fontString = buttonString.Content.Name;
       local GOptionText = WOWTR_DetectAndReplacePlayerName(fontString:GetText());
@@ -518,9 +517,9 @@ function QTR_Gossip_Show()
                if (GS_Gossip[OptHash]) then               -- jest tłumaczenie
                   local transTR;
                   if (GTxtframe.Icon) then
-                     transTR = prefix .. QTR_ExpandUnitInfo(GS_Gossip[OptHash],false,GTxtframe,WOWTR_Font2,-60) .. sufix .. NONBREAKINGSPACE;   -- twarda spacja na końcu
+                     transTR = prefix .. QTR_ExpandUnitInfo(GS_Gossip[OptHash],false,GTxtframe,WOWTR_Font2,-60,"RIGHT") .. sufix .. NONBREAKINGSPACE;   -- twarda spacja na końcu
                   else                 
-                     transTR = prefix .. QTR_ExpandUnitInfo(GS_Gossip[OptHash],false,GTxtframe,WOWTR_Font2,-40) .. sufix .. NONBREAKINGSPACE;   -- twarda spacja na końcu
+                     transTR = prefix .. QTR_ExpandUnitInfo(GS_Gossip[OptHash],false,GTxtframe,WOWTR_Font2,-40,"RIGHT") .. sufix .. NONBREAKINGSPACE;   -- twarda spacja na końcu
                   end
                   QTR_goss_optionsEN[GTxtframe] = GOptionText;   -- zapis tekstu oryginalnego gossip option
                   QTR_goss_optionsTR[GTxtframe] = transTR;       -- zapis tekstu przetłumaczonego gossip option
