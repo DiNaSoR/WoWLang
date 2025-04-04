@@ -36,6 +36,8 @@ WoW_Bubbles.lua
 WoW_MovieSubtitles.lua
 
 UI\Professions.lua
+UI\Talents.lua
+
 WoW_Tutorials.lua
 
 WoW_Books.lua
