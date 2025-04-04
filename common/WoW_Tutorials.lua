@@ -64,15 +64,15 @@ function TT_onTutorialShow()          				-- main function called when tutorial 
 				end
 				if ((_G[obj]:IsVisible()) and (_G[obj].Text)) then
 				   txt = _G[obj].Text:GetText();
-				   if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+				   if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
 					  id = StringHash(txt);
 					  if (Tut_Data7[id]) then         -- jest tureckie tłumaczenie w bazie tłumaczeń
 						 local _font5, _size5, _35 = _G[obj].Text:GetFont();
 							if (WoWTR_Localization.lang == 'AR') then
-							   _G[obj].Text:SetText(QTR_ExpandUnitInfo(Tut_Data7[id],false,_G[obj].Text,WOWTR_Font2,-5).." ");  -- podmieniamy tekst na nasze tłumaczenie
+							   _G[obj].Text:SetText(QTR_ExpandUnitInfo(Tut_Data7[id],false,_G[obj].Text,WOWTR_Font2,-5)..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie
 							   _G[obj].Text:SetFont(WOWTR_Font2, _size5);      -- na końcu dodajemy twardą spację, jako znacznik tekstu tureckiego
 							else
-							   _G[obj].Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[id])).." ");  -- podmieniamy tekst na nasze tłumaczenie
+							   _G[obj].Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[id]))..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie
 							   _G[obj].Text:SetFont(WOWTR_Font2, _size5);      -- na końcu dodajemy twardą spację, jako znacznik tekstu tureckiego
 							end
 					  elseif (TT_PS["save"] == "1") then
@@ -91,16 +91,16 @@ function TT_onTutorialShow()          				-- main function called when tutorial 
 				end
 				if ((_G[obj]:IsVisible()) and (_G[obj].Text)) then
 				   txt = _G[obj].Text:GetText();
-				   if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+				   if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
 					  id = StringHash(txt);
 					  if (Tut_Data7[id]) then         -- jest tureckie tłumaczenie w bazie tłumaczeń
 						 local _font5, _size5, _35 = _G[obj].Text:GetFont();
 							if (WoWTR_Localization.lang == 'AR') then
-							   _G[obj].Text:SetText(QTR_ExpandUnitInfo(Tut_Data7[id],false,_G[obj].Text,WOWTR_Font2,-30).." ");  -- podmieniamy tekst na nasze tłumaczenie
+							   _G[obj].Text:SetText(QTR_ExpandUnitInfo(Tut_Data7[id],false,_G[obj].Text,WOWTR_Font2,-30)..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie
 							   _G[obj].Text:SetJustifyH("LEFT");
 							   _G[obj].Text:SetFont(WOWTR_Font2, _size5);      -- na końcu dodajemy twardą spację, jako znacznik tekstu tureckiego
 							else
-							   _G[obj].Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[id])).." ");  -- podmieniamy tekst na nasze tłumaczenie
+							   _G[obj].Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[id]))..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie
 							   _G[obj].Text:SetFont(WOWTR_Font2, _size5);      -- na końcu dodajemy twardą spację, jako znacznik tekstu tureckiego
 							end
 					  elseif (TT_PS["save"] == "1") then
@@ -126,14 +126,14 @@ function TT_SprawdzFrames()
    obj = "TutorialMainFrame_Frame";
    if ((_G[obj]) and (_G[obj].ContainerFrame) and (_G[obj].ContainerFrame:IsVisible()) and (_G[obj].ContainerFrame.Text)) then
       txt = _G[obj].ContainerFrame.Text:GetText();            -- odczytaj tekst oryginalny
-      if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+      if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
          id = StringHash(txt);
          if (Tut_Data7[id]) then                    -- jest tureckie tłumaczenie w bazie tłumaczeń
             local _font5, _size5, _35 = _G[obj].ContainerFrame.Text:GetFont();
             if (WoWTR_Localization.lang == 'AR') then
-               _G[obj].ContainerFrame.Text:SetText(QTR_ExpandUnitInfo(Tut_Data7[id],false,_G[obj].ContainerFrame.Text,WOWTR_Font2,-15).." ");  -- podmieniamy tekst na nasze tłumaczenie
+               _G[obj].ContainerFrame.Text:SetText(QTR_ExpandUnitInfo(Tut_Data7[id],false,_G[obj].ContainerFrame.Text,WOWTR_Font2,-15)..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie
             else
-               _G[obj].ContainerFrame.Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[id])).." ");  -- podmieniamy tekst na nasze tłumaczenie
+               _G[obj].ContainerFrame.Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[id]))..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie
             end
             _G[obj].ContainerFrame.Text:SetFont(WOWTR_Font2, _size5);
             _G[obj].ContainerFrame.Text:SetHeight(150);
@@ -145,14 +145,14 @@ function TT_SprawdzFrames()
    obj = "TutorialWalk_Frame";
    if ((_G[obj]) and (_G[obj].ContainerFrame) and (_G[obj].ContainerFrame:IsVisible()) and (_G[obj].ContainerFrame.Text)) then
       txt = _G[obj].ContainerFrame.Text:GetText();            -- odczytaj tekst oryginalny
-      if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+      if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
          id = StringHash(txt);
          if (Tut_Data7[id]) then                    -- jest tureckie tłumaczenie w bazie tłumaczeń
             local _font5, _size5, _35 = _G[obj].ContainerFrame.Text:GetFont();
             if (WoWTR_Localization.lang == 'AR') then
-               _G[obj].ContainerFrame.Text:SetText(QTR_ExpandUnitInfo(Tut_Data7[id],false,_G[obj].ContainerFrame.Text,WOWTR_Font2).." ");  -- podmieniamy tekst na nasze tłumaczenie
+               _G[obj].ContainerFrame.Text:SetText(QTR_ExpandUnitInfo(Tut_Data7[id],false,_G[obj].ContainerFrame.Text,WOWTR_Font2)..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie
             else
-               _G[obj].ContainerFrame.Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[id])).." ");  -- podmieniamy tekst na nasze tłumaczenie
+               _G[obj].ContainerFrame.Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[id]))..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie
             end
             _G[obj].ContainerFrame.Text:SetFont(WOWTR_Font2, _size5);
             _G[obj].ContainerFrame.Text:SetHeight(150);
@@ -164,11 +164,11 @@ function TT_SprawdzFrames()
    obj = "TutorialKeyboardMouseFrame_Frame";
    if ((_G[obj]) and (_G[obj]:IsVisible()) and (_G[obj].Text)) then
       txt = _G[obj].Text:GetText();               -- odczytaj tekst oryginalny
-      if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+      if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
          id = StringHash(txt);
          if (Tut_Data7[id]) then         -- jest tureckie tłumaczenie w bazie tłumaczeń
             local _font5, _size5, _35 = _G[obj].Text:GetFont();
-            _G[obj].Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[id])).." ");                 -- podmieniamy tekst na nasze tłumaczenie
+            _G[obj].Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[id]))..NONBREAKINGSPACE);                 -- podmieniamy tekst na nasze tłumaczenie
             _G[obj].Text:SetFont(WOWTR_Font2, _size5);
 --            _G[obj].Text:SetHeight(150);
          elseif (TT_PS["save"] == "1") then
@@ -179,11 +179,11 @@ function TT_SprawdzFrames()
    obj = "TutorialSingleKey_Frame";
    if ((_G[obj]) and (_G[obj].ContainerFrame) and (_G[obj].ContainerFrame:IsVisible()) and (_G[obj].ContainerFrame.Text)) then
       txt = _G[obj].ContainerFrame.Text:GetText();            -- odczytaj tekst oryginalny
-      if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+      if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
          id = StringHash(txt);
          if (Tut_Data7[id]) then                    -- jest tureckie tłumaczenie w bazie tłumaczeń
             local _font5, _size5, _35 = _G[obj].ContainerFrame.Text:GetFont();
-            _G[obj].ContainerFrame.Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[id])).." ");   -- podmieniamy tekst na nasze tłumaczenie
+            _G[obj].ContainerFrame.Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[id]))..NONBREAKINGSPACE);   -- podmieniamy tekst na nasze tłumaczenie
             _G[obj].ContainerFrame.Text:SetFont(WOWTR_Font2, _size5);
             _G[obj].ContainerFrame.Text:SetHeight(150);
          elseif (TT_PS["save"] == "1") then
@@ -247,11 +247,11 @@ end
 
 function TT_onChoiceShow()
    local txt = PlayerChoiceFrame.Title.Text:GetText();     -- tutuł tablicy wyboru
-   if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+   if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
       local hash = StringHash(txt);
       if (Tut_Data7[hash]) then                  -- jest tureckie tłumaczenie w bazie tłumaczeń
          local _font6, _size6, _36 = PlayerChoiceFrame.Title.Text:GetFont();
-         PlayerChoiceFrame.Title.Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[hash])).." ");  -- podmieniamy tekst na nasze tłumaczenie
+         PlayerChoiceFrame.Title.Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[hash]))..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie
          PlayerChoiceFrame.Title.Text:SetFont(WOWTR_Font2, _size6);     -- na końcu dodajemu twardą spację jako znacznik tekstu tureckiego
       elseif (TT_PS["save"] == "1") then
          TT_TUTORIALS[tostring(hash)] = txt;
@@ -261,12 +261,12 @@ function TT_onChoiceShow()
       if (PlayerChoiceFrame.Option1.OptionText) then
          local obj = PlayerChoiceFrame.Option1.OptionText.HTML:GetRegions();
          txt = obj:GetText();
-         if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+         if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
             txt = string.gsub(txt, '\r', '');         -- usuń \r, ale pozostaw \n
             hash= StringHash(txt);
             if (Tut_Data7[hash]) then       -- jest tłumacznie tego tekstu
                local _font7, _size7, _37 = obj:GetFont();
-               obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2).." ");
+               obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2)..NONBREAKINGSPACE);
                obj:SetFont(WOWTR_Font2, _size7);
             elseif (TT_PS["save"] == "1") then
                TT_TUTORIALS[tostring(hash)] = txt;
@@ -276,11 +276,11 @@ function TT_onChoiceShow()
       if (PlayerChoiceFrame.Option1.OptionButtonsContainer.button1) then      -- przycisk
          local obj = PlayerChoiceFrame.Option1.OptionButtonsContainer.button1;
          txt = obj:GetText();
-         if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+         if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
             hash= StringHash(txt);
             if (Tut_Data7[hash]) then       -- jest tłumacznie tego tekstu
                local _font7, _size7, _37 = obj.Text:GetFont();
-               obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2).." ");  -- podmieniamy tekst na nasze tłumaczenie + twarda spacja
+               obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2)..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie + twarda spacja
                obj.Text:SetFont(WOWTR_Font2, _size7);
             elseif (TT_PS["save"] == "1") then
                TT_TUTORIALS[tostring(hash)] = txt;
@@ -293,12 +293,12 @@ function TT_onChoiceShow()
       if (PlayerChoiceFrame.Option2.OptionText) then
          local obj = PlayerChoiceFrame.Option2.OptionText.HTML:GetRegions();
          txt = obj:GetText();
-         if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+         if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
             txt = string.gsub(txt, '\r', '');         -- usuń \r, ale pozostaw \n
             hash= StringHash(txt);
             if (Tut_Data7[hash]) then       -- jest tłumacznie tego tekstu
                local _font7, _size7, _37 = obj:GetFont();
-               obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2).." ");  -- podmieniamy tekst na nasze tłumaczenie + twarda spacja
+               obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2)..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie + twarda spacja
                obj:SetFont(WOWTR_Font2, _size7);
             elseif (TT_PS["save"] == "1") then
                TT_TUTORIALS[tostring(hash)] = txt;
@@ -308,11 +308,11 @@ function TT_onChoiceShow()
       if (PlayerChoiceFrame.Option2.OptionButtonsContainer.button1) then      -- przycisk
          local obj = PlayerChoiceFrame.Option2.OptionButtonsContainer.button1;
          txt = obj:GetText();
-         if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+         if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
             hash= StringHash(txt);
             if (Tut_Data7[hash]) then       -- jest tłumacznie tego tekstu
                local _font7, _size7, _37 = obj.Text:GetFont();
-               obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2).." ");  -- podmieniamy tekst na nasze tłumaczenie + twarda spacja
+               obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2)..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie + twarda spacja
                obj.Text:SetFont(WOWTR_Font2, _size7);
             elseif (TT_PS["save"] == "1") then
                TT_TUTORIALS[tostring(hash)] = txt;
@@ -325,12 +325,12 @@ function TT_onChoiceShow()
       if (PlayerChoiceFrame.Option3.OptionText) then
          local obj = PlayerChoiceFrame.Option3.OptionText.HTML:GetRegions();
          txt = obj:GetText();
-         if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+         if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
             txt = string.gsub(txt, '\r', '');         -- usuń \r, ale pozostaw \n
             hash= StringHash(txt);
             if (Tut_Data7[hash]) then       -- jest tłumacznie tego tekstu
                local _font7, _size7, _37 = obj:GetFont();
-               obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2).." ");  -- podmieniamy tekst na nasze tłumaczenie + twarda spacja
+               obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2)..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie + twarda spacja
                obj:SetFont(WOWTR_Font2, _size7);
             elseif (TT_PS["save"] == "1") then
                TT_TUTORIALS[tostring(hash)] = txt;
@@ -340,11 +340,11 @@ function TT_onChoiceShow()
       if (PlayerChoiceFrame.Option3.OptionButtonsContainer.button1) then      -- przycisk
          local obj = PlayerChoiceFrame.Option3.OptionButtonsContainer.button1;
          txt = obj:GetText();
-         if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+         if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
             hash= StringHash(txt);
             if (Tut_Data7[hash]) then       -- jest tłumacznie tego tekstu
                local _font7, _size7, _37 = obj.Text:GetFont();
-               obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2).." ");  -- podmieniamy tekst na nasze tłumaczenie + twarda spacja
+               obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2)..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie + twarda spacja
                obj.Text:SetFont(WOWTR_Font2, _size7);
             elseif (TT_PS["save"] == "1") then
                TT_TUTORIALS[tostring(hash)] = txt;
@@ -368,12 +368,12 @@ function TT_onChoiceShow()
             local obj = frame.OptionText.HTML:GetRegions();
             if (obj) then
                txt = obj:GetText();
-               if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+               if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
                   txt = string.gsub(txt, '\r', '');         -- usuń \r, ale pozostaw \n
                   hash= StringHash(txt);
                   if (Tut_Data7[hash]) then       -- jest tłumacznie tego tekstu
                      local _font7, _size7, _37 = obj:GetFont();
-                     obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2).." ");  -- podmieniamy tekst na nasze tłumaczenie + twarda spacja
+                     obj:SetText(QTR_ExpandUnitInfo(WOW_ZmienKody(Tut_Data7[hash]),false,obj,WOWTR_Font2)..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie + twarda spacja
                      obj:SetFont(WOWTR_Font2, _size7);
                   elseif (TT_PS["save"] == "1") then
                      TT_TUTORIALS[tostring(hash)] = txt;
@@ -453,11 +453,11 @@ if ((GetLocale()=="enUS") or (GetLocale()=="enGB")) then
          for frame in self.framePool:EnumerateActive() do
             if frame.info.system == "MicroButtons" then
                local txt = frame.Text:GetText();
-               if ((txt) and (string.find(txt," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+               if ((txt) and (string.find(txt,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
                   local hash= StringHash(txt);
                   if (Tut_Data7[hash]) then                  -- jest tłumacznie tego tekstu
                      local _font8, _size8, _38 = frame.Text:GetFont();
-                     frame.Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[hash])).." ");  -- podmieniamy tekst na nasze tłumaczenie
+                     frame.Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(Tut_Data7[hash]))..NONBREAKINGSPACE);  -- podmieniamy tekst na nasze tłumaczenie
                      frame.Text:SetFont(WOWTR_Font2, _size8);        -- na końcu dodajemy twardą spację, jako znacznik tekstu tureckiego
                   elseif (TT_PS["save"] == "1") then
                      TT_TUTORIALS[tostring(hash)] = txt;

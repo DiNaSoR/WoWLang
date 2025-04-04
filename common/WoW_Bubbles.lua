@@ -326,18 +326,18 @@ end
                   if C_AddOns.IsAddOnLoaded("Prat-3.0") then
                       qtrOffset = -50 -- Offset when Prat is loaded
                   end
-                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(fixed_message,false,DEFAULT_CHAT_FRAME,WOWTR_Font2, qtrOffset));
+                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(fixed_message,false,DEFAULT_CHAT_FRAME,WOWTR_Font2, qtrOffset, true));
                   -- <<<< MODIFICATION END >>>>
                else
                   -- Non-AR %s - Offset is already -50, no change needed for Prat check on this specific value
                   -- If Prat required a *different* value than -50 here, you'd apply similar logic as above.
-                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(NewMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-50)..mark_AI);
+                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(NewMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-50, true)..mark_AI);
                end
             elseif (strsub(NewMessage,1,2)=="%o") then         -- jest forma '%o'
                NewMessage = strsub(NewMessage, 3);
                -- %o format - Offset is already -50, no change needed for Prat check on this specific value
                -- If Prat required a *different* value than -50 here, you'd apply similar logic as above.
-               DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(NewMessage:gsub("^%s*", ""),false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-50)..mark_AI); -- usuń białe spacje na początku
+               DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo(NewMessage:gsub("^%s*", ""),false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-50, true)..mark_AI); -- usuń białe spacje na początku
             else -- Standard "NPC: Message" format
                if (WoWTR_Localization.lang == 'AR') then
                   -- <<<< MODIFICATION START (Prat Support for AR Standard) >>>>
@@ -345,12 +345,12 @@ end
                   if C_AddOns.IsAddOnLoaded("Prat-3.0") then
                       qtrOffset = -50 -- Offset when Prat is loaded
                   end
-                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo("{r}"..WOWTR_AnsiReverse(name_NPC)..":{cFFFFFFFF} "..NewMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2, qtrOffset));
+                  DEFAULT_CHAT_FRAME:AddMessage(colorText..QTR_ExpandUnitInfo("{r}"..WOWTR_AnsiReverse(name_NPC)..":{cFFFFFFFF} "..NewMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2, qtrOffset, true));
                   -- <<<< MODIFICATION END >>>>
                else
                   -- Non-AR Standard - Offset is -100, no change needed for Prat check on this specific value
                   -- If Prat required a *different* value than -100 here, you'd apply similar logic as above.
-                  DEFAULT_CHAT_FRAME:AddMessage(colorText.."|cCCDDEEFF"..name_NPC..":|r "..QTR_ExpandUnitInfo(NewMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-100)..mark_AI);   -- mówi (diyor ki)
+                  DEFAULT_CHAT_FRAME:AddMessage(colorText.."|cCCDDEEFF"..name_NPC..":|r "..QTR_ExpandUnitInfo(NewMessage,false,DEFAULT_CHAT_FRAME,WOWTR_Font2,-100, true)..mark_AI);   -- mówi (diyor ki)
                end
             end
          else   

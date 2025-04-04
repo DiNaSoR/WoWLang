@@ -30,7 +30,7 @@ end
 
 function MF_ShowMovieSubtitles()       -- wyświetlanie napisów w MOVIES
    local MF_readed_ST = SubtitlesFrame.Subtitle1:GetText();
-   if (MF_readed_ST and (MF_readed_ST ~= MF_last_ST) and (string.find(MF_readed_ST," ")==nil)) then   -- napis jest inny niż ostatni
+   if (MF_readed_ST and (MF_readed_ST ~= MF_last_ST) and (string.find(MF_readed_ST,NONBREAKINGSPACE)==nil)) then   -- napis jest inny niż ostatni
       MF_readed_ST = WOWTR_DetectAndReplacePlayerName(MF_readed_ST);
       local MF_readed_HS = WOWTR_DeleteSpecialCodes(MF_readed_ST);
       MF_lp = MF_lp + 1;                                                             -- oraz nie jest to tekst tłumaczenia
@@ -41,7 +41,7 @@ function MF_ShowMovieSubtitles()       -- wyświetlanie napisów w MOVIES
       MF_last_ST = MF_readed_ST;             -- zapisz jako ostatni napis
       MF_hash2 = StringHash(MF_readed_HS);
       if (MF_Hash[MF_hash2] or BB_Bubbles[MF_hash2]) then   -- jest w bazie tłumaczenie napisu
-         SubtitlesFrame.Subtitle1:SetText(QTR_ReverseIfAR(MF_Hash[MF_hash2] or BB_Bubbles[MF_hash2]) .. " ");  -- twarda spacja na końcu
+         SubtitlesFrame.Subtitle1:SetText(QTR_ReverseIfAR(MF_Hash[MF_hash2] or BB_Bubbles[MF_hash2]) .. NONBREAKINGSPACE);  -- twarda spacja na końcu
          SubtitlesFrame.Subtitle1:SetFont(WOWTR_Font2, MF_Size); 
       else           -- nie ma tego Hasha - zapisz dane
          if (MF_PM["save"] == "1") then
@@ -57,7 +57,7 @@ function MF_ShowCinematicSubtitles()            -- wyświetlanie napisów w CINE
    if (GetTime() - MF_time1 > 0.1) then         -- minęło conajmniej 0.1 sek.
       if (SubtitlesFrame.Subtitle1 and SubtitlesFrame.Subtitle1:IsVisible()) then        -- jest widoczny napis
          local MF_napis = SubtitlesFrame.Subtitle1:GetText();     -- odczytaj aktualny napis
-         if (MF_napis and (string.len(MF_napis)>0) and (string.find(MF_napis," ")==nil)) then  -- znak ' ' wskazuje na tekst turecki (twarda spacja)
+         if (MF_napis and (string.len(MF_napis)>0) and (string.find(MF_napis,NONBREAKINGSPACE)==nil)) then  -- znak ' ' wskazuje na tekst turecki (twarda spacja)
             MF_time1 = GetTime() + 1;                             -- +1 sek. nie trzeba sprawdzać
             local MF_zapisz_EN = true;
             MF_napis = WOWTR_DetectAndReplacePlayerName(MF_napis);   -- przeszukaj tekst i zamien na kody $x
@@ -71,11 +71,11 @@ function MF_ShowCinematicSubtitles()            -- wyświetlanie napisów w CINE
                if (BB_Bubbles[MF_hash2] or MF_Hash[MF_hash2]) then                           -- istnieje tłumaczenie w dymkach
                   if (WoWTR_Localization.lang == 'AR') then
                      local MF_output = "r|"..WOWTR_AnsiReverse(string.sub(MF_napis,1,p1-1)).." :0099FFFFc| "..WOW_ZmienKody(BB_Bubbles[MF_hash2] or MF_Hash[MF_hash2]);
-                     SubtitlesFrame.Subtitle1:SetText(QTR_ExpandUnitInfo((MF_output),false,SubtitlesFrame.Subtitle1,WOWTR_Font1).." ");         -- podmień wyświetlany tekst dodając twardą spację
+                     SubtitlesFrame.Subtitle1:SetText(QTR_ExpandUnitInfo((MF_output),false,SubtitlesFrame.Subtitle1,WOWTR_Font1)..NONBREAKINGSPACE);         -- podmień wyświetlany tekst dodając twardą spację
                      MF_zapisz_EN = false;
                   else
                      local MF_output = "|cFFFF9900"..string.sub(MF_napis,1,p1-1).." :|r "..WOW_ZmienKody(BB_Bubbles[MF_hash2] or MF_Hash[MF_hash2]);
-                     SubtitlesFrame.Subtitle1:SetText(MF_output.." ");         -- podmień wyświetlany tekst dodając twardą spację
+                     SubtitlesFrame.Subtitle1:SetText(MF_output..NONBREAKINGSPACE);         -- podmień wyświetlany tekst dodając twardą spację
                      MF_zapisz_EN = false;
                   end
                else
@@ -98,7 +98,7 @@ function MF_ShowCinematicSubtitles()            -- wyświetlanie napisów w CINE
                   end
                   local MF_output = MF_tekst.."";
                   local _font, _size, _3 = SubtitlesFrame.Subtitle1:GetFont();         -- odczytaj wielkość czcionki
-                  SubtitlesFrame.Subtitle1:SetText(QTR_ReverseIfAR(MF_output).." ");   -- podmień wyświetlany tekst dodając twardą spację
+                  SubtitlesFrame.Subtitle1:SetText(QTR_ReverseIfAR(MF_output)..NONBREAKINGSPACE);   -- podmień wyświetlany tekst dodając twardą spację
                   MF_zapisz_EN = false;
                else
                   if ((MF_zapisz_EN) and (MF_PM["save"] == "1")) then             -- zapisz oryginalny tekst wraz z kodem Hash
