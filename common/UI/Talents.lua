@@ -1,4 +1,58 @@
 
+function ST_revertTalentTranslations()
+    local elementsToRevert = {
+        ClassTalentFrame and ClassTalentFrame.TalentsTab and ClassTalentFrame.TalentsTab.ApplyButton and ClassTalentFrame.TalentsTab.ApplyButton.Text,
+        
+        PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame and PlayerSpellsFrame.TalentsFrame.HeroTalentsContainer and PlayerSpellsFrame.TalentsFrame.HeroTalentsContainer.LockedLabel1,
+        PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame and PlayerSpellsFrame.TalentsFrame.HeroTalentsContainer and PlayerSpellsFrame.TalentsFrame.HeroTalentsContainer.LockedLabel2,
+        PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame and PlayerSpellsFrame.TalentsFrame.ClassCurrencyDisplay and PlayerSpellsFrame.TalentsFrame.ClassCurrencyDisplay.CurrencyLabel,
+        PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame and PlayerSpellsFrame.TalentsFrame.SpecCurrencyDisplay and PlayerSpellsFrame.TalentsFrame.SpecCurrencyDisplay.CurrencyLabel
+    }
+    
+    if PlayerSpellsFrame and PlayerSpellsFrame.SpecFrame and PlayerSpellsFrame.SpecFrame.SpecContentFramePool then
+        for specContentFrame in PlayerSpellsFrame.SpecFrame.SpecContentFramePool:EnumerateActive() do
+            if specContentFrame then
+                table.insert(elementsToRevert, specContentFrame.RoleName)
+                table.insert(elementsToRevert, specContentFrame.SampleAbilityText)
+                table.insert(elementsToRevert, specContentFrame.ActivatedText)
+                table.insert(elementsToRevert, specContentFrame.ActivateButton and specContentFrame.ActivateButton.Text)
+                table.insert(elementsToRevert, specContentFrame.Description)
+            end
+        end
+    end
+    
+    if HeroTalentsSelectionDialog and HeroTalentsSelectionDialog.SpecContentFramePool then
+        for frame in HeroTalentsSelectionDialog.SpecContentFramePool:EnumerateActive() do
+            if frame then
+                table.insert(elementsToRevert, frame.CurrencyFrame and frame.CurrencyFrame.LabelText)
+                table.insert(elementsToRevert, frame.ActivatedText)
+                table.insert(elementsToRevert, frame.ActivateButton and frame.ActivateButton.Text)
+                table.insert(elementsToRevert, frame.Description)
+            end
+        end
+    end
+
+    for _, element in ipairs(elementsToRevert) do
+        if element and element.GetText and element.SetText then
+            local currentText = element:GetText()
+            if currentText and (string.find(currentText, NONBREAKINGSPACE) or ST_OriginalTextCache[element]) then
+                local originalText = ST_OriginalTextCache[element]
+                local originalFontInfo = ST_OriginalFontCache[element]
+                local originalJustifyH = ST_OriginalJustifyCache[element]
+
+                if originalText then
+                    element:SetText(originalText)
+                    if element.SetFont and originalFontInfo then
+                       pcall(element.SetFont, element, unpack(originalFontInfo))
+                    end
+                    if element.SetJustifyH and originalJustifyH then
+                        pcall(element.SetJustifyH, element, originalJustifyH)
+                    end
+                end
+            end
+        end
+    end
+end
 
 function ST_UpdateFrameTitle(classTalentFrame)
    local ST_titleText;
@@ -34,114 +88,183 @@ end
 
 
 function ST_TalentsTranslate()
-   local talentsFrame = PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame
-   if not talentsFrame then return end
+   TT_PS = TT_PS or {}
+   TT_PS.ui8 = TT_PS.ui8 or "1" -- Default to translated if setting doesn't exist
+   
+   if (TT_PS["ui8"] == "1") then
+      local talentsFrame = PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame
+      if not talentsFrame then return end
 
-   local lockedLabel1 = talentsFrame.HeroTalentsContainer and talentsFrame.HeroTalentsContainer.LockedLabel1
-   ST_CheckAndReplaceTranslationText(lockedLabel1, true, "ui")
+      local lockedLabel1 = talentsFrame.HeroTalentsContainer and talentsFrame.HeroTalentsContainer.LockedLabel1
+      ST_CheckAndReplaceTranslationText(lockedLabel1, true, "ui")
 
-   local lockedLabel2 = talentsFrame.HeroTalentsContainer and talentsFrame.HeroTalentsContainer.LockedLabel2
-   ST_CheckAndReplaceTranslationText(lockedLabel2, true, "ui")
+      local lockedLabel2 = talentsFrame.HeroTalentsContainer and talentsFrame.HeroTalentsContainer.LockedLabel2
+      ST_CheckAndReplaceTranslationText(lockedLabel2, true, "ui")
 
-   local classCurrencyLabel = talentsFrame.ClassCurrencyDisplay and talentsFrame.ClassCurrencyDisplay.CurrencyLabel
-   ST_CheckAndReplaceTranslationText(classCurrencyLabel, true, "ui")
+      local classCurrencyLabel = talentsFrame.ClassCurrencyDisplay and talentsFrame.ClassCurrencyDisplay.CurrencyLabel
+      ST_CheckAndReplaceTranslationText(classCurrencyLabel, true, "ui")
 
-   local specCurrencyLabel = talentsFrame.SpecCurrencyDisplay and talentsFrame.SpecCurrencyDisplay.CurrencyLabel
-   ST_CheckAndReplaceTranslationText(specCurrencyLabel, true, "ui")
+      local specCurrencyLabel = talentsFrame.SpecCurrencyDisplay and talentsFrame.SpecCurrencyDisplay.CurrencyLabel
+      ST_CheckAndReplaceTranslationText(specCurrencyLabel, true, "ui")
+   else
+      ST_revertTalentTranslations()
+   end
 end
 
 
 function ST_updateSpecContentsHook()
-   for specContentFrame in PlayerSpellsFrame.SpecFrame.SpecContentFramePool:EnumerateActive() do
-      local _, _, description, _, _, _ = GetSpecializationInfo(specContentFrame.specIndex, false, false, nil, WOWTR_player_sex)
-      if description and not description:find(NONBREAKINGSPACE) then
-         local ST_hash = StringHash(ST_UsunZbedneZnaki(description))
-         if ST_TooltipsHS[ST_hash] then
-            specContentFrame.Description:SetFont(WOWTR_Font2, select(2, specContentFrame.Description:GetFont()))
-            local translatedText = QTR_ExpandUnitInfo(ST_TranslatePrepare(description, ST_TooltipsHS[ST_hash]), false, specContentFrame.Description, WOWTR_Font2)
-            specContentFrame.Description:SetText(translatedText)
-         elseif ST_PM["saveNW"] == "1" then
-            ST_PH[ST_hash] = "SpecTab:" .. WOWTR_player_class .. ":" .. specContentFrame.SpecName:GetText() .. "@" .. ST_PrzedZapisem(description:gsub("(%d),(%d)", "%1%2"):gsub("\r", ""))
+   TT_PS = TT_PS or {}
+   TT_PS.ui8 = TT_PS.ui8 or "1" -- Default to translated if setting doesn't exist
+   
+   if (TT_PS["ui8"] == "1") then
+      for specContentFrame in PlayerSpellsFrame.SpecFrame.SpecContentFramePool:EnumerateActive() do
+         local _, _, description, _, _, _ = GetSpecializationInfo(specContentFrame.specIndex, false, false, nil, WOWTR_player_sex)
+         if description and not description:find(NONBREAKINGSPACE) then
+            local ST_hash = StringHash(ST_UsunZbedneZnaki(description))
+            if ST_TooltipsHS[ST_hash] then
+               if not ST_OriginalTextCache[specContentFrame.Description] then
+                  ST_OriginalTextCache[specContentFrame.Description] = specContentFrame.Description:GetText()
+                  if specContentFrame.Description.GetFont then
+                     ST_OriginalFontCache[specContentFrame.Description] = {specContentFrame.Description:GetFont()}
+                  end
+                  if specContentFrame.Description.GetJustifyH then
+                     ST_OriginalJustifyCache[specContentFrame.Description] = specContentFrame.Description:GetJustifyH()
+                  end
+               end
+               
+               specContentFrame.Description:SetFont(WOWTR_Font2, select(2, specContentFrame.Description:GetFont()))
+               local translatedText = QTR_ExpandUnitInfo(ST_TranslatePrepare(description, ST_TooltipsHS[ST_hash]), false, specContentFrame.Description, WOWTR_Font2)
+               specContentFrame.Description:SetText(translatedText)
+            elseif ST_PM["saveNW"] == "1" then
+               ST_PH[ST_hash] = "SpecTab:" .. WOWTR_player_class .. ":" .. specContentFrame.SpecName:GetText() .. "@" .. ST_PrzedZapisem(description:gsub("(%d),(%d)", "%1%2"):gsub("\r", ""))
+            end
          end
-      end
 
-      local function updateText(element, key, translationType, alignment)
-         local text = element:GetText()
-         local hash = StringHash(ST_UsunZbedneZnaki(text))
-         if ST_TooltipsHS[hash] then
-            local translatedText
-            if translationType == 2 then
-               translatedText = QTR_ExpandUnitInfo(ST_TranslatePrepare(text, ST_TooltipsHS[hash]), false, element, WOWTR_Font2)
-            else
-               translatedText = QTR_ReverseIfAR(ST_SetText(text))
-            end
-            element:SetText(translatedText)
-            element:SetFont(WOWTR_Font2, select(2, element:GetFont()))
+         local function updateText(element, key, translationType, alignment)
+            if not element then return end
             
-            if alignment then
-               element:SetJustifyH(alignment)
+            local text = element:GetText()
+            if not text then return end
+            
+            if not ST_OriginalTextCache[element] then
+               ST_OriginalTextCache[element] = text
+               if element.GetFont then
+                  ST_OriginalFontCache[element] = {element:GetFont()}
+               end
+               if element.GetJustifyH then
+                  ST_OriginalJustifyCache[element] = element:GetJustifyH()
+               end
+            end
+            
+            local hash = StringHash(ST_UsunZbedneZnaki(text))
+            if ST_TooltipsHS[hash] then
+               local translatedText
+               if translationType == 2 then
+                  translatedText = QTR_ExpandUnitInfo(ST_TranslatePrepare(text, ST_TooltipsHS[hash]), false, element, WOWTR_Font2)
+               else
+                  translatedText = QTR_ReverseIfAR(ST_SetText(text))
+               end
+               element:SetText(translatedText)
+               element:SetFont(WOWTR_Font2, select(2, element:GetFont()))
+               
+               if alignment then
+                  element:SetJustifyH(alignment)
+               end
             end
          end
+         
+         updateText(specContentFrame.RoleName, "RoleName", 1)
+         updateText(specContentFrame.SampleAbilityText, "SampleAbilityText", 1)
+         updateText(specContentFrame.ActivatedText, "ActivatedText", 1)
+         updateText(specContentFrame.ActivateButton and specContentFrame.ActivateButton.Text, "ActivateButton.Text", 1)
+         updateText(specContentFrame.Description, "Description", 2)
       end
-      
-      updateText(specContentFrame.RoleName, "RoleName", 1)
-      updateText(specContentFrame.SampleAbilityText, "SampleAbilityText", 1)
-      updateText(specContentFrame.ActivatedText, "ActivatedText", 1)
-      updateText(specContentFrame.ActivateButton.Text, "ActivateButton.Text", 1)
-      updateText(specContentFrame.Description, "Description", 2)
+   else
+      ST_revertTalentTranslations()
    end
 end
 
 
 function ST_updateHeroTalentHook()
-    if not HeroTalentsSelectionDialog or not HeroTalentsSelectionDialog.SpecContentFramePool then
-        print("HeroTalentsSelectionDialog veya SpecContentFramePool mevcut değil.")
-        return
-    end
+    TT_PS = TT_PS or {}
+    TT_PS.ui8 = TT_PS.ui8 or "1" -- Default to translated if setting doesn't exist
+    
+    if (TT_PS["ui8"] == "1") then
+        if not HeroTalentsSelectionDialog or not HeroTalentsSelectionDialog.SpecContentFramePool then
+            print("HeroTalentsSelectionDialog veya SpecContentFramePool mevcut değil.")
+            return
+        end
 
-    local activeFrameFunction = HeroTalentsSelectionDialog.SpecContentFramePool:EnumerateActive()
-    if activeFrameFunction then
-        for frame in activeFrameFunction do
-            if frame and frame.Description then
-                local description = frame.Description:GetText()
-                if description and not description:find(NONBREAKINGSPACE) then
-                    local ST_hash = StringHash(ST_UsunZbedneZnaki(description))
-                    if ST_TooltipsHS[ST_hash] then
-                        frame.Description:SetFont(WOWTR_Font2, select(2, frame.Description:GetFont()))
-                        local translatedText = QTR_ExpandUnitInfo(ST_TranslatePrepare(description, ST_TooltipsHS[ST_hash]), false, frame.Description, WOWTR_Font2)
-                        frame.Description:SetText(translatedText)
-                    elseif ST_PM["saveNW"] == "1" then
-                        ST_PH[ST_hash] = "SpecTab:" .. WOWTR_player_class .. ":" .. frame.SpecName:GetText() .. "@" .. ST_PrzedZapisem(description:gsub("(%d),(%d)", "%1%2"):gsub("\r", ""))
+        local activeFrameFunction = HeroTalentsSelectionDialog.SpecContentFramePool:EnumerateActive()
+        if activeFrameFunction then
+            for frame in activeFrameFunction do
+                if frame and frame.Description then
+                    local description = frame.Description:GetText()
+                    if description and not description:find(NONBREAKINGSPACE) then
+                        if not ST_OriginalTextCache[frame.Description] then
+                            ST_OriginalTextCache[frame.Description] = description
+                            if frame.Description.GetFont then
+                                ST_OriginalFontCache[frame.Description] = {frame.Description:GetFont()}
+                            end
+                            if frame.Description.GetJustifyH then
+                                ST_OriginalJustifyCache[frame.Description] = frame.Description:GetJustifyH()
+                            end
+                        end
+                        
+                        local ST_hash = StringHash(ST_UsunZbedneZnaki(description))
+                        if ST_TooltipsHS[ST_hash] then
+                            frame.Description:SetFont(WOWTR_Font2, select(2, frame.Description:GetFont()))
+                            local translatedText = QTR_ExpandUnitInfo(ST_TranslatePrepare(description, ST_TooltipsHS[ST_hash]), false, frame.Description, WOWTR_Font2)
+                            frame.Description:SetText(translatedText)
+                        elseif ST_PM["saveNW"] == "1" then
+                            ST_PH[ST_hash] = "SpecTab:" .. WOWTR_player_class .. ":" .. frame.SpecName:GetText() .. "@" .. ST_PrzedZapisem(description:gsub("(%d),(%d)", "%1%2"):gsub("\r", ""))
+                        end
                     end
                 end
-            end
-         local function updateText(element, key, translationType, alignment)
-         local text = element:GetText()
-         local hash = StringHash(ST_UsunZbedneZnaki(text))
-         if ST_TooltipsHS[hash] then
-            local translatedText
-            if translationType == 2 then
-               translatedText = QTR_ExpandUnitInfo(ST_TranslatePrepare(text, ST_TooltipsHS[hash]), false, element, WOWTR_Font2)
-            else
-               translatedText = QTR_ReverseIfAR(ST_SetText(text))
-            end
-            element:SetText(translatedText)
-            element:SetFont(WOWTR_Font2, select(2, element:GetFont()))
-            
-            if alignment then
-               element:SetJustifyH(alignment)
-            end
-         end
-      end
-      
-      updateText(frame.CurrencyFrame.LabelText, "CurrencyFrame.LabelText", 1)
-      updateText(frame.ActivatedText, "ActivatedText", 1)
-      updateText(frame.ActivateButton.Text, "ActivateButton.Text", 1)
-      updateText(frame.Description, "Description", 2)
-      
-        end
+                
+                local function updateText(element, key, translationType, alignment)
+                    if not element then return end
+                    
+                    local text = element:GetText()
+                    if not text then return end
+                    
+                    if not ST_OriginalTextCache[element] then
+                        ST_OriginalTextCache[element] = text
+                        if element.GetFont then
+                            ST_OriginalFontCache[element] = {element:GetFont()}
+                        end
+                        if element.GetJustifyH then
+                            ST_OriginalJustifyCache[element] = element:GetJustifyH()
+                        end
+                    end
+                    
+                    local hash = StringHash(ST_UsunZbedneZnaki(text))
+                    if ST_TooltipsHS[hash] then
+                        local translatedText
+                        if translationType == 2 then
+                            translatedText = QTR_ExpandUnitInfo(ST_TranslatePrepare(text, ST_TooltipsHS[hash]), false, element, WOWTR_Font2)
+                        else
+                            translatedText = QTR_ReverseIfAR(ST_SetText(text))
+                        end
+                        element:SetText(translatedText)
+                        element:SetFont(WOWTR_Font2, select(2, element:GetFont()))
+                        
+                        if alignment then
+                            element:SetJustifyH(alignment)
+                        end
+                    end
+                }
+                
+                updateText(frame.CurrencyFrame and frame.CurrencyFrame.LabelText, "CurrencyFrame.LabelText", 1)
+                updateText(frame.ActivatedText, "ActivatedText", 1)
+                updateText(frame.ActivateButton and frame.ActivateButton.Text, "ActivateButton.Text", 1)
+                updateText(frame.Description, "Description", 2)
+            }
+        }
+    else
+        ST_revertTalentTranslations()
     end
-end
+}
 
 
 function ST_IsTalentTooltip(tooltipData)
@@ -174,6 +297,9 @@ local function CheckAndHookTalentFrame()
         ClassTalentFrame:HookScript("OnShow", function()
             if _G.StartTicker then
                 _G.StartTicker(ClassTalentFrame, ST_UpdateFrameTitle, 0.1, ClassTalentFrame)
+            end
+            if ST_TalentDescbutton then
+                ST_TalentDescbutton()
             end
         end)
         
@@ -222,6 +348,46 @@ end
 local function HookHeroTalentsDialog()
     if HeroTalentsSelectionDialog then
         hooksecurefunc(HeroTalentsSelectionDialog, "UpdateSpecContents", ST_updateHeroTalentHook)
+    end
+end
+
+local isTalentButtonCreated = false
+local TalentupdateVisibility -- Holds the function returned by CreateToggleButton
+
+function ST_TalentDescbutton()
+    if not isTalentButtonCreated then
+        TT_PS = TT_PS or { ui8 = "1" } -- Initialize settings if they don't exist
+
+        TalentupdateVisibility = CreateToggleButton(
+           ClassTalentFrame,
+           TT_PS,
+           "ui8",
+           WoWTR_Localization.WoWTR_enDESC,
+           WoWTR_Localization.WoWTR_trDESC,
+           {"TOPLEFT", ClassTalentFrame, "TOPRIGHT", -170, 0},
+           function() -- OnClick handler
+                 if ST_TalentsTranslate then
+                     ST_TalentsTranslate() -- Translate or revert based on new state
+                 end
+                 if ClassTalentFrame and ClassTalentFrame.TalentsTab and ClassTalentFrame.TalentsTab:IsVisible() then
+                    C_Timer.After(0.01, function()
+                        ClassTalentFrame.TalentsTab:Hide()
+                        ClassTalentFrame.TalentsTab:Show()
+                    end)
+                 end
+                 if PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame and PlayerSpellsFrame.TalentsFrame:IsVisible() then
+                    C_Timer.After(0.01, function()
+                        PlayerSpellsFrame.TalentsFrame:Hide()
+                        PlayerSpellsFrame.TalentsFrame:Show()
+                    end)
+                 end
+           end
+        )
+        isTalentButtonCreated = true
+    end
+
+    if TalentupdateVisibility then
+        TalentupdateVisibility()
     end
 end
 
