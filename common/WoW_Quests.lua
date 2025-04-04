@@ -125,10 +125,10 @@ function GS_ON_OFF()
       end
       if (WoWTR_Localization.lang == 'AR') then
          GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GossipGreetingText,WOWTR_Font2,-5));    -- dodano na końcu twardą spację
-         GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GossipGreetingText,WOWTR_Font2,-5));    -- dodano na końcu twardą spację
+         GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR..NONBREAKINGSPACE,false,GossipGreetingText,WOWTR_Font2,-5));    -- dodano na końcu twardą spację
          GossipGreetingText:SetJustifyH("RIGHT");
       else
-         GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GossipGreetingText,WOWTR_Font2));    -- dodano na końcu twardą spację
+         GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR..NONBREAKINGSPACE,false,GossipGreetingText,WOWTR_Font2));    -- dodano na końcu twardą spację
       end
 --    GossipGreetingText:SetFont(WOWTR_Font2, 12);      
       QTR_ToggleButtonGS1:SetText("Gossip-Hash="..tostring(QTR_curr_hash).." "..WoWTR_Localization.lang);
@@ -234,10 +234,10 @@ function GS_ON_OFF2()
 
       -- Format and set main gossip text based on language
       if isArabic then
-         GreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GreetingText,WOWTR_Font2,-5)); -- Use ExpandUnitInfo for main text too
+         GreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR..NONBREAKINGSPACE,false,GreetingText,WOWTR_Font2,-5)); -- Use ExpandUnitInfo for main text too
          GreetingText:SetJustifyH("RIGHT");
       else
-         GreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GreetingText,WOWTR_Font2)); -- Use ExpandUnitInfo for main text too
+         GreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR..NONBREAKINGSPACE,false,GreetingText,WOWTR_Font2)); -- Use ExpandUnitInfo for main text too
          GreetingText:SetJustifyH("LEFT");
       end
       -- GreetingText:SetFont(WOWTR_Font2, 12); -- Set translated font if needed
@@ -325,7 +325,7 @@ function QTR_Gossip_Show()
       end
       local OptHash = StringHash(GOptionText);
       if (GS_Gossip[OptHash]) then               -- jest tłumaczenie
-         local transLN = prefix .. QTR_ExpandUnitInfo(GS_Gossip[OptHash],false,fontString,WOWTR_Font2,-40) .. sufix .. " ";   -- twarda spacja na końcu
+         local transLN = prefix .. QTR_ExpandUnitInfo(GS_Gossip[OptHash],false,fontString,WOWTR_Font2,-40) .. sufix .. NONBREAKINGSPACE;   -- twarda spacja na końcu
          fontString:SetText(transLN);
       end
       table.insert(Gossip2DUI_LN, fontString:GetText());    -- translated version
@@ -363,7 +363,7 @@ function QTR_Gossip_Show()
          end
       end
       
-      if (Greeting_Text and (string.find(Greeting_Text," ")==nil)) then   -- nie jest to tekst przetłumaczony (nie ma twardej spacji)
+      if (Greeting_Text and (string.find(Greeting_Text,NONBREAKINGSPACE)==nil)) then   -- nie jest to tekst przetłumaczony (nie ma twardej spacji)
          Nazwa_NPC = string.gsub(Nazwa_NPC, '"', '\"');
          local Origin_Text = WOWTR_DetectAndReplacePlayerName(Greeting_Text);
          local Czysty_Text = WOWTR_DeleteSpecialCodes(Origin_Text);
@@ -431,10 +431,10 @@ function QTR_Gossip_Show()
                GossipGreetingText = GossipTextFrame.GreetingText;
                local GO_height = GossipGreetingText:GetHeight();
                if (WoWTR_Localization.lang == 'AR') then
-                  GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GossipGreetingText,WOWTR_Font2,-5));    -- dodano na końcu twardą spację
+                  GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR..NONBREAKINGSPACE,false,GossipGreetingText,WOWTR_Font2,-5));    -- dodano na końcu twardą spację
                   GossipGreetingText:SetJustifyH("RIGHT");
                else
-                  GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GossipGreetingText,WOWTR_Font2));    -- dodano na końcu twardą spację
+                  GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR..NONBREAKINGSPACE,false,GossipGreetingText,WOWTR_Font2));    -- dodano na końcu twardą spację
                end
                GossipGreetingText:SetFont(WOWTR_Font2, tonumber(QTR_PS["fontsize"]));
 --               GossipTextFrame:Resize();
@@ -497,7 +497,7 @@ function QTR_Gossip_Show()
          if (GTxtframe.GreetingText) then    -- Greeting Text
             GossipTextFrame = GTxtframe;
          else
-            if (((GTtype==3) or (GTtype==4) or (GTtype==5)) and (QTR_PS["gossip"]=="1") and (string.find(GTxtframe:GetText()," ")==nil)) then    -- gossip options
+            if (((GTtype==3) or (GTtype==4) or (GTtype==5)) and (QTR_PS["gossip"]=="1") and (string.find(GTxtframe:GetText(),NONBREAKINGSPACE)==nil)) then    -- gossip options
                local GOptionText = WOWTR_DetectAndReplacePlayerName(GTxtframe:GetText(), nil, '$N');     -- detect only name of player
                local prefix = "";
                local sufix = "";
@@ -518,9 +518,9 @@ function QTR_Gossip_Show()
                if (GS_Gossip[OptHash]) then               -- jest tłumaczenie
                   local transTR;
                   if (GTxtframe.Icon) then
-                     transTR = prefix .. QTR_ExpandUnitInfo(GS_Gossip[OptHash],false,GTxtframe,WOWTR_Font2,-60) .. sufix .. " ";   -- twarda spacja na końcu
+                     transTR = prefix .. QTR_ExpandUnitInfo(GS_Gossip[OptHash],false,GTxtframe,WOWTR_Font2,-60) .. sufix .. NONBREAKINGSPACE;   -- twarda spacja na końcu
                   else                 
-                     transTR = prefix .. QTR_ExpandUnitInfo(GS_Gossip[OptHash],false,GTxtframe,WOWTR_Font2,-40) .. sufix .. " ";   -- twarda spacja na końcu
+                     transTR = prefix .. QTR_ExpandUnitInfo(GS_Gossip[OptHash],false,GTxtframe,WOWTR_Font2,-40) .. sufix .. NONBREAKINGSPACE;   -- twarda spacja na końcu
                   end
                   QTR_goss_optionsEN[GTxtframe] = GOptionText;   -- zapis tekstu oryginalnego gossip option
                   QTR_goss_optionsTR[GTxtframe] = transTR;       -- zapis tekstu przetłumaczonego gossip option
@@ -583,7 +583,7 @@ function GossipOnQuestFrame()       -- frame: QuestFrame
       QTR_ToggleButton0:Disable();                                      -- wyłącz możliwość przełączania EN-TR
       QTR_ToggleButton0:SetWidth(200);
       local Greeting_Text = GreetingText:GetText();
-      if (Greeting_Text and (string.find(Greeting_Text," ")==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
+      if (Greeting_Text and (string.find(Greeting_Text,NONBREAKINGSPACE)==nil)) then         -- nie jest to tekst po turecku (nie ma twardej spacji)
          local GO_resized = 0;
          QTR_goss_optionsEN = { };    -- wyzeruj tablicę na opcje EN gossip
          QTR_goss_optionsTR = { };    -- wyzeruj tablicę na opcje TR gossip
@@ -598,7 +598,7 @@ function GossipOnQuestFrame()       -- frame: QuestFrame
             QTR_ToggleButton0:Enable();
             local Greeting_TR = GS_Gossip[Hash];
             local GO_height = GreetingText:GetHeight();
-            GreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GreetingText,WOWTR_Font2));
+            GreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR..NONBREAKINGSPACE,false,GreetingText,WOWTR_Font2));
             GreetingText:SetFont(WOWTR_Font2, tonumber(QTR_PS["fontsize"]));
 --            GreetingText:Resize();
             QTR_curr_goss="1";
@@ -939,7 +939,7 @@ function QTR_START()
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines()
       if (GS_Gossip[1975795450]) then
-         GameTooltip:AddLine(QTR_ExpandUnitInfo(GS_Gossip[1975795450], false, GameTooltip, WOWTR_Font2).." ", 1, 1, 1, true)   -- white color, wrap
+         GameTooltip:AddLine(QTR_ExpandUnitInfo(GS_Gossip[1975795450], false, GameTooltip, WOWTR_Font2)..NONBREAKINGSPACE, 1, 1, 1, true)   -- white color, wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13)
       end
       GameTooltip:Show() -- Show the tooltip
@@ -959,7 +959,7 @@ function QTR_START()
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines()
       if (GS_Gossip[1975795450]) then
-         GameTooltip:AddLine(QTR_ExpandUnitInfo(GS_Gossip[1975795450], false, GameTooltip, WOWTR_Font2).." ", 1, 1, 1, true)   -- white color, wrap
+         GameTooltip:AddLine(QTR_ExpandUnitInfo(GS_Gossip[1975795450], false, GameTooltip, WOWTR_Font2)..NONBREAKINGSPACE, 1, 1, 1, true)   -- white color, wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13)
       end
       GameTooltip:Show() -- Show the tooltip
@@ -1284,22 +1284,22 @@ end
 --               fontString:SetText(QTR_ReverseIfAR(obj1));      -- może: QTR_ExpandUnitInfo ?
 --               fontString:SetFont(WOWTR_Font2, 12);
 --               QTR_ResizeBlock(fontString);
---            elseif (string.find(fontString:GetText()," ") == nil) then   -- nie jest to przetłumaczony tekst
+--            elseif (string.find(fontString:GetText(),NONBREAKINGSPACE) == nil) then   -- nie jest to przetłumaczony tekst
 --               local qtr_obj = fontString:GetText();
 --                for qtr_en, qtr_pl in pairsByKeys(QTR_Tlumacz_Online) do
 --                  qtr_obj = string.gsub(qtr_obj, qtr_en, qtr_pl);
 --               end
---               fontString:SetText(QTR_ReverseIfAR(qtr_obj).." ");         -- może: QTR_ExpandUnitInfo ?
+--               fontString:SetText(QTR_ReverseIfAR(qtr_obj)..NONBREAKINGSPACE);         -- może: QTR_ExpandUnitInfo ?
 --               fontString:SetFont(WOWTR_Font2, 12);
 --               QTR_ResizeBlock(fontString);
 --            end
---            elseif (string.find(fontString:GetText()," ") == nil) then   -- nie jest to przetłumaczony tekst
+--            elseif (string.find(fontString:GetText(),NONBREAKINGSPACE) == nil) then   -- nie jest to przetłumaczony tekst
 --               local qtr_obj = fontString:GetText();
 --               for qtr_en, qtr_pl in pairsByKeys(QTR_Tlumacz_Online) do
 --                  qtr_obj = string.gsub(qtr_obj, qtr_en, qtr_pl);
 --               end
 --            end
---            fontString:SetText((qtr_obj).." ");            -- może: QTR_ExpandUnitInfo ?
+--            fontString:SetText((qtr_obj)..NONBREAKINGSPACE);            -- może: QTR_ExpandUnitInfo ?
 --            fontString:SetFont(WOWTR_Font2, 12);
 --            QTR_ResizeBlock(fontString);
 --         end
@@ -1653,7 +1653,7 @@ function QTR_QuestPrepare(zdarzenie)
       end
       if (QuestNPCModelText:IsVisible()) then              -- jest wyświetlony tekst QuestNPCModelText
          local QTR_ModelText = QuestNPCModelText:GetText();
-         if (QTR_ModelText and (string.find(QTR_ModelText," ") == nil)) then   -- nie jest to turecki tekst (twarda spacja)
+         if (QTR_ModelText and (string.find(QTR_ModelText,NONBREAKINGSPACE) == nil)) then   -- nie jest to turecki tekst (twarda spacja)
             QTR_ModelTextHash = StringHash(QTR_ModelText);
             if (GS_Gossip[QTR_ModelTextHash]) then         -- jest tłumaczenie w bazie gossip
                QTR_ModelText_EN = QTR_ModelText;
@@ -1914,7 +1914,7 @@ function QTR_Translate_On(typ,event)
    --print("QTR_Translate_On");
    QTR_display_constants(1);
    if (QuestNPCModelText:IsVisible() and (QTR_ModelTextHash>0)) then         -- jest wyświetlony tekst QuestNPCModelText
-      QuestNPCModelText:SetText(QTR_ExpandUnitInfo(QTR_ModelText_PL.." ",false,QuestNPCModelText,WOWTR_Font2,-15));   -- na końcu dodajemy "twardą" spację
+      QuestNPCModelText:SetText(QTR_ExpandUnitInfo(QTR_ModelText_PL..NONBREAKINGSPACE,false,QuestNPCModelText,WOWTR_Font2,-15));   -- na końcu dodajemy "twardą" spację
       QuestNPCModelText:SetFont(WOWTR_Font2, 13);
    end
    
@@ -3550,7 +3550,7 @@ end
 -------------------------------------------------------------------------------------------------------------------
 
 -- podmieniaj specjane znaki w tekście
-function QTR_ExpandUnitInfo(msg, OnObjectives, AR_obj, AR_font, AR_corr)
+function QTR_ExpandUnitInfo(msg, OnObjectives, AR_obj, AR_font, AR_corr, AR_RIGHT) -- Changed last arg to AR_RIGHT
    if (msg == nil) then
       msg = "";
    end
@@ -3559,16 +3559,33 @@ function QTR_ExpandUnitInfo(msg, OnObjectives, AR_obj, AR_font, AR_corr)
    if ((WoWTR_Localization.lang == 'AR') and (AR_obj)) then    -- prepare the text for proper display
       local _font = WOWTR_Font2;
       local AR_size = 13;
-      if (AR_obj.GetFont) then
-         _font, AR_size, _3 = AR_obj:GetFont("P");             -- read current font and size of the object
-      else
-         local regions = { AR_obj:GetRegions() };              -- search for FontString object to read the font
+      -- Attempt to get font/size, handling potential errors or different object types
+      if AR_obj.GetFont then
+         local success, fontResult, sizeResult, flagsResult = pcall(AR_obj.GetFont, AR_obj, "P") -- Try paragraph font first for SimpleHTML
+         if success and fontResult then
+            _font = fontResult
+            AR_size = sizeResult or AR_size -- Keep default if size is nil
+         else -- Fallback if GetFont("P") fails or object is not SimpleHTML
+             success, fontResult, sizeResult, flagsResult = pcall(AR_obj.GetFont, AR_obj)
+             if success and fontResult then
+                 _font = fontResult
+                 AR_size = sizeResult or AR_size
+             end
+         end
+      elseif AR_obj.GetRegions then -- Fallback for objects without direct GetFont
+         local regions = { AR_obj:GetRegions() };              
          for k, v in pairs(regions) do
-            if (v:GetObjectType() == "FontString") then
-               _font, AR_size, _3 = v:GetFont();               -- read current font and size of the object
+            if (v:GetObjectType() == "FontString" and v.GetFont) then -- Check if region is FontString and has GetFont
+               local success_region, fontResult_region, sizeResult_region, flagsResult_region = pcall(v.GetFont, v)
+               if success_region and fontResult_region then
+                  _font = fontResult_region;              
+                  AR_size = sizeResult_region or AR_size; 
+                  break -- Found a font string, stop searching
+               end
             end
          end
       end
+      
       local _corr = 0;
       if (AR_corr and (type(AR_corr)=="number")) then
          _corr = AR_corr;
@@ -3605,12 +3622,18 @@ function QTR_ExpandUnitInfo(msg, OnObjectives, AR_obj, AR_font, AR_corr)
       msg = string.gsub(msg, "{a}", "a|");
       msg = string.gsub(msg, "{h}", "h|");
       
-      msg = AS_ReverseAndPrepareLineText(msg, AR_obj:GetWidth()+_corr, AR_font, AR_size);
+      -- *** Call appropriate processing function based on AR_RIGHT ***
+      if AR_RIGHT then
+         msg = AS_ReverseAndPrepareLineText_RIGHT(msg, AR_obj:GetWidth()+_corr, AR_font or _font, AR_size); 
+      else
+         msg = AS_ReverseAndPrepareLineText(msg, AR_obj:GetWidth()+_corr, AR_font or _font, AR_size);
+      end
 
       msg = RestoreWoWSpecialCodes(msg, specialCodes)
 
       -- Reattach the prefix
       msg = prefix .. msg
+      
    end
    
    return msg;
