@@ -29,12 +29,19 @@ Translations\Books_UA.lua
 Translations\Tooltips_UA.lua
 
 WoW_Localization_UA.lua
+
+Plugins\DUIPlugin.lua
+
 WoW_Quests.lua
 WoW_Bubbles.lua
 WoW_MovieSubtitles.lua
+
+UI\Professions.lua
 WoW_Tutorials.lua
+
 WoW_Books.lua
 WoW_Tooltips.lua
+WoW_Chat.lua
 
 WoW_Core.lua
 WoW_Config.lua
