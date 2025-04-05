@@ -30,20 +30,16 @@ Translations\Tooltips_TR.lua
 
 WoW_Localization_TR.lua
 
-Plugins\DUIPlugin.lua
+WoW_Core.lua
+WoW_Config.lua
+WoW_Tooltips.lua
 
 WoW_Quests.lua
 WoW_Bubbles.lua
 WoW_MovieSubtitles.lua
+WoW_Tutorials.lua
+WoW_Books.lua
 
+Plugins\DUIPlugin.lua
 UI\Professions.lua
 UI\Talents.lua
-
-WoW_Tutorials.lua
-
-WoW_Books.lua
-WoW_Tooltips.lua
-WoW_Chat.lua
-
-WoW_Core.lua
-WoW_Config.lua
