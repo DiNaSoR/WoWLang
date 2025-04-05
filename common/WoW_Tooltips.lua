@@ -5,7 +5,7 @@
 
 -- Local Variables
 local _G = _G;
-local ST_miasto = "";      -- miejsce powrotu przedmiotu Heartstone
+local ST_miasto = ""; -- miejsce powrotu przedmiotu Heartstone
 local ST_GameGossip_Show = false;
 local ST_width2 = math.floor(UIParent:GetWidth() / 2 + 0.5);
 local ST_height2 = math.floor(UIParent:GetHeight() / 2 + 0.5);
@@ -22,7 +22,7 @@ local ST_load9 = false;
 local ST_load10 = false;
 --local ST_load11 = false;
 local ST_firstBoss = true;
-local ST_nameBoss = { };
+local ST_nameBoss = {};
 local ST_navBar1, ST_navBar2, ST_navBar3, ST_navBar4, ST_navBar5 = false;
 ST_OriginalTextCache = {}
 ST_OriginalFontCache = {}
@@ -43,7 +43,7 @@ addonlogintext:SetFont(WOWTR_Font1, 20);
 local addonlogintext2 = firstloginframe:CreateFontString(nil, "OVERLAY", "GameFontNormal");
 --local a1, a2, a3 = addonlogintext2:GetFont();
 addonlogintext2:SetPoint("LEFT", 0, -15);
-addonlogintext2:SetText("ver. "..WOWTR_version);
+addonlogintext2:SetText("ver. " .. WOWTR_version);
 addonlogintext2:SetTextColor(1, 1, 1, 0.1);
 addonlogintext2:SetFont(WOWTR_Font2, 15);
 local function OnLogin()
@@ -55,33 +55,33 @@ firstloginframe:SetScript("OnEvent", OnLogin);
 
 -------------------------------------------------------------------------------------------------------
 
-function ST_UsunZbedneZnaki(txt)          -- przed obliczeniem kodu Hash
+function ST_UsunZbedneZnaki(txt) -- przed obliczeniem kodu Hash
    if (not txt) then return ""; end
-   text = string.gsub(txt,"|cFFFFFFFF","");
-   text = string.gsub(text,"|r","");
-   text = string.gsub(text,"\r","");
-   text = string.gsub(text,"\n","");
-   text = string.gsub(text,'%f[%a]'..WOWTR_player_name..'%f[%A]',"$N");
-   text = string.gsub(text,"(%d),(%d)","%1%2");      -- usuń przecinek między cyframi (odstęp tysięczny)
-   text = string.gsub(text,"0","");
-   text = string.gsub(text,"1","");
-   text = string.gsub(text,"2","");
-   text = string.gsub(text,"3","");
-   text = string.gsub(text,"4","");
-   text = string.gsub(text,"5","");
-   text = string.gsub(text,"6","");
-   text = string.gsub(text,"7","");
-   text = string.gsub(text,"8","");
-   text = string.gsub(text,"9","");
+   text = string.gsub(txt, "|cFFFFFFFF", "");
+   text = string.gsub(text, "|r", "");
+   text = string.gsub(text, "\r", "");
+   text = string.gsub(text, "\n", "");
+   text = string.gsub(text, '%f[%a]' .. WOWTR_player_name .. '%f[%A]', "$N");
+   text = string.gsub(text, "(%d),(%d)", "%1%2"); -- usuń przecinek między cyframi (odstęp tysięczny)
+   text = string.gsub(text, "0", "");
+   text = string.gsub(text, "1", "");
+   text = string.gsub(text, "2", "");
+   text = string.gsub(text, "3", "");
+   text = string.gsub(text, "4", "");
+   text = string.gsub(text, "5", "");
+   text = string.gsub(text, "6", "");
+   text = string.gsub(text, "7", "");
+   text = string.gsub(text, "8", "");
+   text = string.gsub(text, "9", "");
    return text;
 end
 
 -------------------------------------------------------------------------------------------------------
 
 function ST_PrzedZapisem(txt)
-   local text = string.gsub(txt,"(%d),(%d)","%1%2");      -- usuń przecinek między cyframi (odstęp tysięczny)
-   text = string.gsub(text,"\r","");
-   text = string.gsub(text,'%f[%a]'..WOWTR_player_name..'%f[%A]',"$N");
+   local text = string.gsub(txt, "(%d),(%d)", "%1%2"); -- usuń przecinek między cyframi (odstęp tysięczny)
+   text = string.gsub(text, "\r", "");
+   text = string.gsub(text, '%f[%a]' .. WOWTR_player_name .. '%f[%A]', "$N");
    return text;
 end
 
@@ -89,43 +89,43 @@ end
 
 function ST_RenkKoduSil(txt)
    if (not txt) then return ""; end
-   local text = string.gsub(txt,"|r","");
-   text = string.gsub(text,"Dragon Isles ","");
-   text = string.gsub(text," Specializations","");
-   text = string.gsub(text,"Classic ","");
-   text = string.gsub(text,"|cffffd100","");
-   text = string.gsub(text,"|cff0070dd","");
-   text = string.gsub(text,"|cffffffff","");
-   text = string.gsub(text,"|cff1eff00","");
-   text = string.gsub(text,"|cffa335ee","");
-   text = string.gsub(text,"|cffffd200","");
+   local text = string.gsub(txt, "|r", "");
+   text = string.gsub(text, "Dragon Isles ", "");
+   text = string.gsub(text, " Specializations", "");
+   text = string.gsub(text, "Classic ", "");
+   text = string.gsub(text, "|cffffd100", "");
+   text = string.gsub(text, "|cff0070dd", "");
+   text = string.gsub(text, "|cffffffff", "");
+   text = string.gsub(text, "|cff1eff00", "");
+   text = string.gsub(text, "|cffa335ee", "");
+   text = string.gsub(text, "|cffffd200", "");
    return text;
 end
 
 -------------------------------------------------------------------------------------------------------
 
 local ignoreSettings = {
-    words = {
-        "Seller: |cffffffff",
-        "Sellers: |cffffffff",
-        "Equipment Sets: |cFFFFFFFF",
-        "|cff00ff00<Made by ",
-        "Leader: |cffffffff",
-        "Realm: |cffffffff",
-        "Waiting on: |cff",
-        "Reagents: |n",
-        "  |A:raceicon128",
-        "Achievement in progress by",
-        "Achievement earned by",
-        "You completed this on ",
-        "AllTheThings",
-        "|cffb4b4ffATT|r",
-        "|cff0070dd",
-        "|Hachievement:",
-        "  |T",
-        "   |c"
-    },
-    pattern = "[Яа-яĄ-Źą-źŻ-żЀ-ӿΑ-Ωα-ω]"
+   words = {
+      "Seller: |cffffffff",
+      "Sellers: |cffffffff",
+      "Equipment Sets: |cFFFFFFFF",
+      "|cff00ff00<Made by ",
+      "Leader: |cffffffff",
+      "Realm: |cffffffff",
+      "Waiting on: |cff",
+      "Reagents: |n",
+      "  |A:raceicon128",
+      "Achievement in progress by",
+      "Achievement earned by",
+      "You completed this on ",
+      "AllTheThings",
+      "|cffb4b4ffATT|r",
+      "|cff0070dd",
+      "|Hachievement:",
+      "  |T",
+      "   |c"
+   },
+   pattern = "[Яа-яĄ-Źą-źŻ-żЀ-ӿΑ-Ωα-ω]"
 }
 
 -- ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse, ST_corr)
@@ -153,7 +153,7 @@ function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse,
          -- Only cache if it doesn't already look like our translated text
          ST_OriginalTextCache[obj] = txt
          if originalFont then
-            ST_OriginalFontCache[obj] = {originalFont, originalSize, originalFlags}
+            ST_OriginalFontCache[obj] = { originalFont, originalSize, originalFlags }
          end
          ST_OriginalJustifyCache[obj] = originalJustifyH -- Cache justification
       end
@@ -172,9 +172,9 @@ function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse,
 
             local processedText;
             if (onlyReverse) then
-               processedText = QTR_ReverseIfAR(ST_tlumaczenie)..NONBREAKINGSPACE;
+               processedText = QTR_ReverseIfAR(ST_tlumaczenie) .. NONBREAKINGSPACE;
             else
-               processedText = QTR_ExpandUnitInfo(ST_tlumaczenie, true, obj, WOWTR_Font2, ST_corr)..NONBREAKINGSPACE;
+               processedText = QTR_ExpandUnitInfo(ST_tlumaczenie, true, obj, WOWTR_Font2, ST_corr) .. NONBREAKINGSPACE;
             end
             obj:SetText(processedText);
 
@@ -190,7 +190,7 @@ function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse,
             -- Set Justification (Apply passed 'justifyAlign' if valid)
             if justifyAlign and obj.SetJustifyH then
                if justifyAlign == "LEFT" or justifyAlign == "RIGHT" or justifyAlign == "CENTER" then
-                   pcall(obj.SetJustifyH, obj, justifyAlign)
+                  pcall(obj.SetJustifyH, obj, justifyAlign)
                else
                   -- If justifyAlign was provided but invalid, fall back to original
                   pcall(obj.SetJustifyH, obj, originalJustifyH)
@@ -213,18 +213,16 @@ function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse,
             end
 
             -- Save untranslated text if enabled
-            if (sav and (ST_PM["saveNW"]=="1")) then
-               ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
+            if (sav and (ST_PM["saveNW"] == "1")) then
+               ST_PH[ST_Hash] = prefix .. "@" .. ST_PrzedZapisem(txt);
             end
          end
-      -- else -- Text was nil or already translated (had NBSP)
+         -- else -- Text was nil or already translated (had NBSP)
          -- Do nothing here - either no text or already handled.
          -- Reversion for already-translated text happens via ST_revertProfessionDescription
       end
    end
 end
-
-
 
 -------------------------------------------------------------------------------------------------------
 -- obj=object with stingtext,  sav=permission to save untranstaled tekst (true/false)
@@ -234,92 +232,91 @@ end
 
 function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)
    if (obj and obj.GetText) then
-       local txt = obj:GetText();
-       local originalFont, originalSize, originalFlags -- Declare variables
-       local originalJustifyH = "LEFT" -- Default
+      local txt = obj:GetText();
+      local originalFont, originalSize, originalFlags -- Declare variables
+      local originalJustifyH = "LEFT"                 -- Default
 
-       -- Try to get original font info early
-       if obj.GetFont then
-           originalFont, originalSize, originalFlags = obj:GetFont();
-       end
-       -- *** Store original justification ***
-       if obj.GetJustifyH then
-           local success, align = pcall(obj.GetJustifyH, obj)
-           if success and align then
-               originalJustifyH = align
-           end
-       end
+      -- Try to get original font info early
+      if obj.GetFont then
+         originalFont, originalSize, originalFlags = obj:GetFont();
+      end
+      -- *** Store original justification ***
+      if obj.GetJustifyH then
+         local success, align = pcall(obj.GetJustifyH, obj)
+         if success and align then
+            originalJustifyH = align
+         end
+      end
 
-       -- Cache original text, font, and justification if it's not already translated and not nil
-       if txt and string.find(txt, NONBREAKINGSPACE) == nil then
-            ST_OriginalTextCache[obj] = txt
-            if originalFont then
-                 ST_OriginalFontCache[obj] = {originalFont, originalSize, originalFlags}
+      -- Cache original text, font, and justification if it's not already translated and not nil
+      if txt and string.find(txt, NONBREAKINGSPACE) == nil then
+         ST_OriginalTextCache[obj] = txt
+         if originalFont then
+            ST_OriginalFontCache[obj] = { originalFont, originalSize, originalFlags }
+         end
+         ST_OriginalJustifyCache[obj] = originalJustifyH -- Cache justification
+      end
+
+      -- Ignore specific patterns/words
+      local function shouldIgnore(text)
+         -- ... (keep existing shouldIgnore logic) ...
+         -- ...
+         return false
+      end
+
+      -- Proceed only if text exists, is not already translated (no NBSP), and not ignored
+      if (txt and string.find(txt, NONBREAKINGSPACE) == nil and not shouldIgnore(txt)) then
+         -- ... (existing hash calculation logic) ...
+         local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
+         -- ...
+
+         if (ST_TooltipsHS[ST_Hash]) then
+            -- *** Apply Translation ***
+            local a1, a2, a3 = obj:GetFont(); -- a2 is likely the size
+            -- ... (translation application logic) ...
+            obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, ST_TooltipsHS[ST_Hash])) .. NONBREAKINGSPACE);
+
+            -- Set Font
+            if obj.SetFont then
+               local targetSize = a2 or originalSize or 12
+               local targetFont = font1 or WOWTR_Font2
+               pcall(obj.SetFont, obj, targetFont, targetSize); -- Use pcall for safety
             end
-            ST_OriginalJustifyCache[obj] = originalJustifyH -- Cache justification
-       end
-
-       -- Ignore specific patterns/words
-       local function shouldIgnore(text)
-           -- ... (keep existing shouldIgnore logic) ...
-           -- ...
-            return false
-       end
-
-       -- Proceed only if text exists, is not already translated (no NBSP), and not ignored
-       if (txt and string.find(txt, NONBREAKINGSPACE) == nil and not shouldIgnore(txt)) then
-           -- ... (existing hash calculation logic) ...
-           local ST_Hash = StringHash(ST_UsunZbedneZnaki(txt));
-           -- ...
-
-           if (ST_TooltipsHS[ST_Hash]) then
-               -- *** Apply Translation ***
-               local a1, a2, a3 = obj:GetFont(); -- a2 is likely the size
-               -- ... (translation application logic) ...
-               obj:SetText(QTR_ReverseIfAR(ST_TranslatePrepare(txt, ST_TooltipsHS[ST_Hash]))..NONBREAKINGSPACE);
-
-               -- Set Font
-               if obj.SetFont then
-                   local targetSize = a2 or originalSize or 12
-                   local targetFont = font1 or WOWTR_Font2
-                   pcall(obj.SetFont, obj, targetFont, targetSize); -- Use pcall for safety
-               end
-                -- Set Justification (UI usually doesn't change justification)
-               -- If needed, apply logic similar to ST_CheckAndReplaceTranslationText
-
-           elseif (sav and (TT_PS["saveui"] == "1")) then
-               -- *** No Translation, Saving Enabled ***
-               ST_PH[ST_Hash] = prefix.."@"..ST_PrzedZapisem(txt);
-               -- Ensure original font and justification are restored
-               if obj.SetFont and originalFont then
-                   pcall(obj.SetFont, obj, originalFont, originalSize, originalFlags);
-               end
-               if obj.SetJustifyH then
-                   pcall(obj.SetJustifyH, obj, originalJustifyH);
-               end
-           else
-               -- *** No Translation, Saving Disabled ***
-               -- Explicitly revert font and justification to original
-               if obj.SetFont and originalFont then
-                  pcall(obj.SetFont, obj, originalFont, originalSize, originalFlags);
-               end
-               if obj.SetJustifyH then
-                   pcall(obj.SetJustifyH, obj, originalJustifyH);
-               end
-           end
-       -- else -- Text was nil, already translated (had NBSP), or ignored
-          -- Reversion happens via ST_revertProfessionDescription if needed.
-          -- Still important to restore original justification if it was modified before
-          -- and then the condition here became false (e.g., text became nil)
-          if obj.SetJustifyH then
+            -- Set Justification (UI usually doesn't change justification)
+            -- If needed, apply logic similar to ST_CheckAndReplaceTranslationText
+         elseif (sav and (TT_PS["saveui"] == "1")) then
+            -- *** No Translation, Saving Enabled ***
+            ST_PH[ST_Hash] = prefix .. "@" .. ST_PrzedZapisem(txt);
+            -- Ensure original font and justification are restored
+            if obj.SetFont and originalFont then
+               pcall(obj.SetFont, obj, originalFont, originalSize, originalFlags);
+            end
+            if obj.SetJustifyH then
+               pcall(obj.SetJustifyH, obj, originalJustifyH);
+            end
+         else
+            -- *** No Translation, Saving Disabled ***
+            -- Explicitly revert font and justification to original
+            if obj.SetFont and originalFont then
+               pcall(obj.SetFont, obj, originalFont, originalSize, originalFlags);
+            end
+            if obj.SetJustifyH then
+               pcall(obj.SetJustifyH, obj, originalJustifyH);
+            end
+         end
+         -- else -- Text was nil, already translated (had NBSP), or ignored
+         -- Reversion happens via ST_revertProfessionDescription if needed.
+         -- Still important to restore original justification if it was modified before
+         -- and then the condition here became false (e.g., text became nil)
+         if obj.SetJustifyH then
             local cachedJustify = ST_OriginalJustifyCache[obj]
             if cachedJustify then
-                pcall(obj.SetJustifyH, obj, cachedJustify)
-            -- else -- If nothing cached, maybe revert to default? Depends on desired behavior
-            --    pcall(obj.SetJustifyH, obj, "LEFT")
+               pcall(obj.SetJustifyH, obj, cachedJustify)
+               -- else -- If nothing cached, maybe revert to default? Depends on desired behavior
+               --    pcall(obj.SetJustifyH, obj, "LEFT")
             end
-          end
-       end
+         end
+      end
    end
 end
 
@@ -331,50 +328,54 @@ function ST_TranslatePrepare(ST_origin, ST_tlumacz)
    if (not ST_miasto) then
       ST_miasto = WoWTR_Localization.your_home;
    end
-   tlumaczenie = string.gsub(tlumaczenie, "$L", QTR_ReverseIfAR(ST_miasto));    -- miasto lokalizacji do Kamienia Powrotu
-   local wartab = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};         -- max. 20 liczb całkowitych w tekście
+   tlumaczenie = string.gsub(tlumaczenie, "$L", QTR_ReverseIfAR(ST_miasto));      -- miasto lokalizacji do Kamienia Powrotu
+   local wartab = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; -- max. 20 liczb całkowitych w tekście
    local arg0 = 0;
-   ST_origin = string.gsub(ST_origin,"(%d),(%d)","%1%2");            -- usuń przecinek tysięczny przy liczbach
+   ST_origin = string.gsub(ST_origin, "(%d),(%d)", "%1%2");                       -- usuń przecinek tysięczny przy liczbach
    for w in string.gmatch(ST_origin, "%d+") do
-      arg0 = arg0 + 1;                                               -- formatowanie do postaci: 99.123.456
+      arg0 = arg0 + 1;                                                            -- formatowanie do postaci: 99.123.456
       if (WoWTR_Localization.lang == 'TR') then
          wartab[arg0] = w:gsub("(%d+)", function(num)
-           if #num > 1 and num:sub(1,1) == "0" then
-            return num
-           else
-            return tonumber(num)
-           end
+            if #num > 1 and num:sub(1, 1) == "0" then
+               return num
+            else
+               return tonumber(num)
+            end
          end)
-      elseif (WoWTR_Localization.lang == 'JP') then                      -- formatowanie do postaci: 99,123,456 (JP)
-         if (math.floor(w)>999999) then
-            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1,%2,"):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-         elseif (math.floor(w)>99999) then
-            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1,%2"):gsub("(%-?)$", "%1"):reverse();    -- tu mamy kolejne cyfry z oryginału
-         elseif (math.floor(w)>999) then
-            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)", "%1,"):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-         else   
+      elseif (WoWTR_Localization.lang == 'JP') then -- formatowanie do postaci: 99,123,456 (JP)
+         if (math.floor(w) > 999999) then
+            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1,%2,"):gsub("(%-?)$", "%1")
+                :reverse(); -- tu mamy kolejne cyfry z oryginału
+         elseif (math.floor(w) > 99999) then
+            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1,%2"):gsub("(%-?)$", "%1")
+                :reverse();                                                                                          -- tu mamy kolejne cyfry z oryginału
+         elseif (math.floor(w) > 999) then
+            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)", "%1,"):gsub("(%-?)$", "%1"):reverse(); -- tu mamy kolejne cyfry z oryginału
+         else
             wartab[arg0] = tostring(math.floor(w));
          end
-      else                                                           -- formatowanie do postaci: 99.123.456 (Europe)
-         if (math.floor(w)>999999) then
-            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1,%2,"):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-         elseif (math.floor(w)>99999) then
-            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1,%2"):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-         elseif (math.floor(w)>999) then
-            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)", "%1,"):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-         else   
+      else -- formatowanie do postaci: 99.123.456 (Europe)
+         if (math.floor(w) > 999999) then
+            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1,%2,"):gsub("(%-?)$", "%1")
+                :reverse(); -- tu mamy kolejne cyfry z oryginału
+         elseif (math.floor(w) > 99999) then
+            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1,%2"):gsub("(%-?)$", "%1")
+                :reverse();                                                                                          -- tu mamy kolejne cyfry z oryginału
+         elseif (math.floor(w) > 999) then
+            wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)", "%1,"):gsub("(%-?)$", "%1"):reverse(); -- tu mamy kolejne cyfry z oryginału
+         else
             wartab[arg0] = tostring(math.floor(w));
          end
       end
    end;
    if (WoWTR_Localization.lang == 'TR') then
       for i = 40, 1, -1 do
-        local pattern = string.format("{%02d}", i)
-        local dollarPattern = "$" .. i
-        if arg0 >= i then
-          tlumaczenie = string.gsub(tlumaczenie, pattern, WOWTR_AnsiReverse(wartab[i]))
-          tlumaczenie = string.gsub(tlumaczenie, dollarPattern, WOWTR_AnsiReverse(wartab[i]))
-        end
+         local pattern = string.format("{%02d}", i)
+         local dollarPattern = "$" .. i
+         if arg0 >= i then
+            tlumaczenie = string.gsub(tlumaczenie, pattern, WOWTR_AnsiReverse(wartab[i]))
+            tlumaczenie = string.gsub(tlumaczenie, dollarPattern, WOWTR_AnsiReverse(wartab[i]))
+         end
       end
    else
       for i = 1, 40 do
@@ -382,7 +383,7 @@ function ST_TranslatePrepare(ST_origin, ST_tlumacz)
             -- Reverse "i" to match the curly-brace pattern (e.g. 12 => "{21}")
             local reversedI = tostring(i):reverse()
             tlumaczenie = string.gsub(tlumaczenie, "{" .. reversedI .. "}", WOWTR_AnsiReverse(wartab[i]))
-            tlumaczenie = string.gsub(tlumaczenie, "$"  .. i,           WOWTR_AnsiReverse(wartab[i]))
+            tlumaczenie = string.gsub(tlumaczenie, "$" .. i, WOWTR_AnsiReverse(wartab[i]))
          end
       end
    end
@@ -390,14 +391,14 @@ function ST_TranslatePrepare(ST_origin, ST_tlumacz)
       tlumaczenie = string.gsub(tlumaczenie, "$o", "$O");
       local nr_1, nr_2, nr_3 = 0;
       local QTR_forma = "";
-      local nr_poz = string.find(tlumaczenie, "$O");    -- gdy nie znalazł, jest: nil
-      while (nr_poz and nr_poz>0) do
-         nr_1 = nr_poz + 1;   
+      local nr_poz = string.find(tlumaczenie, "$O"); -- gdy nie znalazł, jest: nil
+      while (nr_poz and nr_poz > 0) do
+         nr_1 = nr_poz + 1;
          while (string.sub(tlumaczenie, nr_1, nr_1) ~= "(") do
             nr_1 = nr_1 + 1;
          end
          if (string.sub(tlumaczenie, nr_1, nr_1) == "(") then
-            nr_2 =  nr_1 + 1;
+            nr_2 = nr_1 + 1;
             while (string.sub(tlumaczenie, nr_2, nr_2) ~= ";") do
                nr_2 = nr_2 + 1;
             end
@@ -407,13 +408,13 @@ function ST_TranslatePrepare(ST_origin, ST_tlumacz)
                   nr_3 = nr_3 + 1;
                end
                if (string.sub(tlumaczenie, nr_3, nr_3) == ")") then
-                  if (QTR_PS["ownname"] == "1") then        -- forma polska
-                     QTR_forma = string.sub(tlumaczenie,nr_2+1,nr_3-1);
-                  else                                      -- forma angielska
-                     QTR_forma = QTR_ReverseIfAR(string.sub(tlumaczenie,nr_1+1,nr_2-1));
+                  if (QTR_PS["ownname"] == "1") then -- forma polska
+                     QTR_forma = string.sub(tlumaczenie, nr_2 + 1, nr_3 - 1);
+                  else                               -- forma angielska
+                     QTR_forma = QTR_ReverseIfAR(string.sub(tlumaczenie, nr_1 + 1, nr_2 - 1));
                   end
-                  tlumaczenie = string.sub(tlumaczenie,1,nr_poz-1) .. QTR_forma .. string.sub(tlumaczenie,nr_3+1);
-               end   
+                  tlumaczenie = string.sub(tlumaczenie, 1, nr_poz - 1) .. QTR_forma .. string.sub(tlumaczenie, nr_3 + 1);
+               end
             end
          end
          nr_poz = string.find(tlumaczenie, "$O");
@@ -425,116 +426,66 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
-function OkreslKodKoloru(k1,k2,k3)
-   local kol1=('%.0f'):format(k1);
-   local kol2=('%.0f'):format(k2);
-   local kol3=('%.0f'):format(k3);
-   local c_out='c?';
-   if (kol1=="0" and kol2=="0" and kol3=="0") then
-      c_out='c1';
-   elseif (kol1=="0" and kol2=="0" and kol3=="1") then
-      c_out='c2';
-   elseif (kol1=="0" and kol2=="1" and kol3=="0") then
-      c_out='c3';
-   elseif (kol1=="0" and kol2=="1" and kol3=="1") then
-      c_out='c4';
-   elseif (kol1=="1" and kol2=="0" and kol3=="0") then
-      c_out='c5';
-   elseif (kol1=="1" and kol2=="0" and kol3=="1") then
-      c_out='c6';
-   elseif (kol1=="1" and kol2=="1" and kol3=="0") then
-      c_out='c7';
+function OkreslKodKoloru(k1, k2, k3)
+   local kol1 = ('%.0f'):format(k1);
+   local kol2 = ('%.0f'):format(k2);
+   local kol3 = ('%.0f'):format(k3);
+   local c_out = 'c?';
+   if (kol1 == "0" and kol2 == "0" and kol3 == "0") then
+      c_out = 'c1';
+   elseif (kol1 == "0" and kol2 == "0" and kol3 == "1") then
+      c_out = 'c2';
+   elseif (kol1 == "0" and kol2 == "1" and kol3 == "0") then
+      c_out = 'c3';
+   elseif (kol1 == "0" and kol2 == "1" and kol3 == "1") then
+      c_out = 'c4';
+   elseif (kol1 == "1" and kol2 == "0" and kol3 == "0") then
+      c_out = 'c5';
+   elseif (kol1 == "1" and kol2 == "0" and kol3 == "1") then
+      c_out = 'c6';
+   elseif (kol1 == "1" and kol2 == "1" and kol3 == "0") then
+      c_out = 'c7';
    else
-      c_out='c8';
+      c_out = 'c8';
    end
-   return c_out;   
+   return c_out;
 end
 
 -------------------------------------------------------------------------------------------------------
 
-if ((GetLocale()=="enUS") or (GetLocale()=="enGB")) then
-
--- funkcja wywoływana po wyświetleniu się oryginalnego okienka Tooltip
+if ((GetLocale() == "enUS") or (GetLocale() == "enGB")) then
+   -- funkcja wywoływana po wyświetleniu się oryginalnego okienka Tooltip
    GameTooltip:HookScript('OnUpdate', function(self, ...)
       if (not WOWTR_wait(0, ST_GameTooltipOnShow)) then
-      -- opóźnienie 0.01 sek
+         -- opóźnienie 0.01 sek
       end
-   end );
+   end);
 
--------------------------------------------------------------------------------------------------------
+   -------------------------------------------------------------------------------------------------------
 
--- funkcja wywoływana po ukryciu oryginalnego okienka Tooltip
+   -- funkcja wywoływana po ukryciu oryginalnego okienka Tooltip
    GameTooltip:HookScript('OnHide', function(self, ...)
       ST_lastNumLines = 0;
-   end );
+   end);
 
--------------------------------------------------------------------------------------------------------
+   -------------------------------------------------------------------------------------------------------
 
--- funkcja wywoływana po wyświetleniu się oryginalnego okienka Tooltip
+   -- funkcja wywoływana po wyświetleniu się oryginalnego okienka Tooltip
    GameTooltip:HookScript('OnUpdate', function(self, ...)
-      if ((ST_PM["active"]=="1") and (ST_lastNumLines > 0)) then                        -- dodatek aktywny
+      if ((ST_PM["active"] == "1") and (ST_lastNumLines > 0)) then -- dodatek aktywny
          if ((ST_PM["constantly"] == "1") and (UnitLevel("player") > 10)) then
             if ((ST_PM["showID"] == "1") or (ST_PM["showHS"] == "1")) then
                if (ST_lastNumLines ~= self:NumLines()) then
                   ST_GameTooltipOnShow();
                end
-            elseif (_G["GameTooltipTextLeft1"] and _G["GameTooltipTextLeft1"]:GetText() and (string.find(_G["GameTooltipTextLeft1"]:GetText(),NONBREAKINGSPACE)==nil)) then
+            elseif (_G["GameTooltipTextLeft1"] and _G["GameTooltipTextLeft1"]:GetText() and (string.find(_G["GameTooltipTextLeft1"]:GetText(), NONBREAKINGSPACE) == nil)) then
                ST_GameTooltipOnShow();
             end
          elseif ((ST_PM["constantly"] == "1") and (self.updateTooltipTimer > 1)) then
             self.updateTooltipTimer = 2;
          end
       end
-   end );
-   
-end
-
--------------------------------------------------------------------------------------------------------
--- Generic UI Helpers (Could potentially be moved to a shared UI utilities file later)
--------------------------------------------------------------------------------------------------------
-
-function CreateToggleButton(parentFrame, settingsTable, settingKey, onText, offText, point, onClick)
-   local buttonOFF = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
-   local buttonON = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
-
-   local function SetupButton(button, text)
-       button:SetSize(120, 22)
-       if WoWTR_Localization.lang == 'AR' and text == WoWTR_Localization.WoWTR_trDESC then
-           button:SetText(QTR_ReverseIfAR(text))
-           button:GetFontString():SetFont(WOWTR_Font2, 13)
-       else
-           button:SetText(text)
-           button:GetFontString():SetFont(button:GetFontString():GetFont(), 13)
-       end
-       button:SetPoint(unpack(point))
-       button:SetFrameStrata("TOOLTIP")
-   end
-
-   SetupButton(buttonOFF, offText)
-   SetupButton(buttonON, onText)
-
-   local function UpdateVisibility()
-       if settingsTable[settingKey] == "1" then
-           buttonOFF:Show(); buttonON:Hide()
-       else
-           buttonOFF:Hide(); buttonON:Show()
-       end
-   end
-
-   buttonOFF:SetScript("OnClick", function()
-       settingsTable[settingKey] = "0"
-       UpdateVisibility()
-       if onClick then onClick() end
-   end)
-
-   buttonON:SetScript("OnClick", function()
-       settingsTable[settingKey] = "1"
-       UpdateVisibility()
-       if onClick then onClick() end
-   end)
-
-   UpdateVisibility()
-   return UpdateVisibility
+   end);
 end
 -------------------------------------------------------------------------------------------------------
 
@@ -543,69 +494,69 @@ function ST_ElvSpellBookTooltipOnShow()
    local ElvUISpellBookTooltip = E.SpellBookTooltip;
    local numLines = ElvUISpellBookTooltip:NumLines();
 
-   if (numLines == 1) then   -- ElvUISpellBookTooltip zawiera tylko 1 linijkę opisu i jest to tytuł spella
+   if (numLines == 1) then -- ElvUISpellBookTooltip zawiera tylko 1 linijkę opisu i jest to tytuł spella
       return;
    end
-   
+
    if (ST_PM["spell"] == "0") then
       return;
    end
-   
+
    local ST_kodKoloru;
    local ST_leftText, ST_rightText, ST_tlumaczenie, ST_hash, ST_hash2;
    local _font1, _size1, _1;
-   
+
    local ST_prefix = "s";
    if (ElvUISpellBookTooltip.processingInfo and ElvUISpellBookTooltip.processingInfo.tooltipData.id) then
-      ST_prefix = ST_prefix..ElvUISpellBookTooltip.processingInfo.tooltipData.id;
+      ST_prefix = ST_prefix .. ElvUISpellBookTooltip.processingInfo.tooltipData.id;
    end
    ElvUISpellBookTooltip:HookScript("OnHide", function() ST_MyGameTooltip:Hide(); end);
-   ST_MyGameTooltip:SetOwner(WorldFrame, "ANCHOR_NONE" );
+   ST_MyGameTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
    ST_MyGameTooltip:ClearAllPoints();
-   ST_MyGameTooltip:SetPoint("TOPLEFT", ElvUISpellBookTooltip, "BOTTOMLEFT", 0, 0);    -- pod przyciskiem od lewej strony
+   ST_MyGameTooltip:SetPoint("TOPLEFT", ElvUISpellBookTooltip, "BOTTOMLEFT", 0, 0); -- pod przyciskiem od lewej strony
    ST_MyGameTooltip:ClearLines();
-   for i = 2, numLines-1, 1 do
-      ST_leftText = _G[ElvUISpellBookTooltip:GetName().."TextLeft"..i]:GetText();
-      leftColR, leftColG, leftColB = _G[ElvUISpellBookTooltip:GetName().."TextLeft"..i]:GetTextColor();
+   for i = 2, numLines - 1, 1 do
+      ST_leftText = _G[ElvUISpellBookTooltip:GetName() .. "TextLeft" .. i]:GetText();
+      leftColR, leftColG, leftColB = _G[ElvUISpellBookTooltip:GetName() .. "TextLeft" .. i]:GetTextColor();
       ST_kodKoloru = OkreslKodKoloru(leftColR, leftColG, leftColB);
-      if (ST_leftText and (string.len(ST_leftText)>15) and ((ST_kodKoloru == "c7") or (ST_kodKoloru == "c4") or (string.len(ST_leftText)>30))) then
+      if (ST_leftText and (string.len(ST_leftText) > 15) and ((ST_kodKoloru == "c7") or (ST_kodKoloru == "c4") or (string.len(ST_leftText) > 30))) then
          ST_hash = StringHash(ST_UsunZbedneZnaki(ST_leftText));
-         if (((ST_kodKoloru == "c7") or (string.len(ST_leftText)>30)) and (not ST_hash2)) then
+         if (((ST_kodKoloru == "c7") or (string.len(ST_leftText) > 30)) and (not ST_hash2)) then
             ST_hash2 = ST_hash;
          end
-         if (ST_TooltipsHS[ST_hash]) then        -- mamy przetłumaczony ten Hash
+         if (ST_TooltipsHS[ST_hash]) then -- mamy przetłumaczony ten Hash
             ST_tlumaczenie = ST_TooltipsHS[ST_hash];
             ST_tlumaczenie = ST_TranslatePrepare(ST_leftText, ST_tlumaczenie);
             ST_MyGameTooltip:AddLine(QTR_ReverseIfAR(ST_tlumaczenie), leftColR, leftColG, leftColB, true);
-            numLines = ST_MyGameTooltip:NumLines();           -- aktualna liczba linii
-            _font1, _size1, _1 = _G[ElvUISpellBookTooltip:GetName().."TextLeft"..i]:GetFont();    -- odczytaj aktualną czcionkę i rozmiar    
-            _G["ST_MyGameTooltipTextLeft"..numLines]:SetFont(WOWTR_Font2, 11);        -- ustawiamy własną czcionkę 
+            numLines = ST_MyGameTooltip:NumLines();                                                -- aktualna liczba linii
+            _font1, _size1, _1 = _G[ElvUISpellBookTooltip:GetName() .. "TextLeft" .. i]:GetFont(); -- odczytaj aktualną czcionkę i rozmiar
+            _G["ST_MyGameTooltipTextLeft" .. numLines]:SetFont(WOWTR_Font2, 11);                   -- ustawiamy własną czcionkę
          end
       end
    end
-   
-   if (((ST_PM["showID"]=="1") and (string.len(ST_prefix) > 1)) or ((ST_PM["showHS"]=="1") and ST_hash2)) then   -- czy dodawać ID i Hash ?
-      numLines = ST_MyGameTooltip:NumLines();           -- aktualna liczba linii
+
+   if (((ST_PM["showID"] == "1") and (string.len(ST_prefix) > 1)) or ((ST_PM["showHS"] == "1") and ST_hash2)) then -- czy dodawać ID i Hash ?
+      numLines = ST_MyGameTooltip:NumLines();                                                                      -- aktualna liczba linii
       if (numLines == 0) then
          ST_MyGameTooltip:AddLine(QTR_Messages.missing, 1, 1, 0.5);
-         _G["ST_MyGameTooltipTextLeft1"]:SetFont(WOWTR_Font2, 11);      -- ustawiamy czcionkę turecką
+         _G["ST_MyGameTooltipTextLeft1"]:SetFont(WOWTR_Font2, 11); -- ustawiamy czcionkę turecką
       end
-      ST_MyGameTooltip:AddLine(" ",0,0,0);           -- dodaj odstęp przed linią z ID
+      ST_MyGameTooltip:AddLine(" ", 0, 0, 0);                      -- dodaj odstęp przed linią z ID
       typName = "Spell";
-      ST_ID = string.sub(ST_prefix,2);
-      if ((ST_PM["showID"]=="1") and ST_ID) then
-         ST_MyGameTooltip:AddLine(typName.." ID: "..tostring(ST_ID),0,1,1);
-         numLines = ST_MyGameTooltip:NumLines();                -- Aktualna liczba linii w ST_MyGameTooltip
-         _G["ST_MyGameTooltipTextLeft"..numLines]:SetFont(WOWTR_Font2, 10);      -- wielkość 12
+      ST_ID = string.sub(ST_prefix, 2);
+      if ((ST_PM["showID"] == "1") and ST_ID) then
+         ST_MyGameTooltip:AddLine(typName .. " ID: " .. tostring(ST_ID), 0, 1, 1);
+         numLines = ST_MyGameTooltip:NumLines();                              -- Aktualna liczba linii w ST_MyGameTooltip
+         _G["ST_MyGameTooltipTextLeft" .. numLines]:SetFont(WOWTR_Font2, 10); -- wielkość 12
       end
-      if ((ST_PM["showHS"]=="1") and ST_hash2) then
-         ST_MyGameTooltip:AddLine("Hash: "..tostring(ST_hash2),0,1,1);
-         numLines = ST_MyGameTooltip:NumLines();                -- Aktualna liczba linii w ST_MyGameTooltip
-         _G["ST_MyGameTooltipTextLeft"..numLines]:SetFont(WOWTR_Font2, 10);      -- wielkość 12
+      if ((ST_PM["showHS"] == "1") and ST_hash2) then
+         ST_MyGameTooltip:AddLine("Hash: " .. tostring(ST_hash2), 0, 1, 1);
+         numLines = ST_MyGameTooltip:NumLines();                              -- Aktualna liczba linii w ST_MyGameTooltip
+         _G["ST_MyGameTooltipTextLeft" .. numLines]:SetFont(WOWTR_Font2, 10); -- wielkość 12
       end
    end
 
-   ST_MyGameTooltip:Show();         -- wyświetla ramkę w tłumaczeniem (zrobi także resize)
+   ST_MyGameTooltip:Show(); -- wyświetla ramkę w tłumaczeniem (zrobi także resize)
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -614,39 +565,40 @@ function ST_BuffOrDebuff()
    if (_G["GameTooltipTextLeft2"] and _G["GameTooltipTextLeft2"]:GetText()) then
       local ST_leftText2 = _G["GameTooltipTextLeft2"]:GetText();
       local ST_hash = StringHash(ST_UsunZbedneZnaki(ST_leftText2));
-      if (ST_TooltipsHS[ST_hash]) then        -- mamy przetłumaczony ten Hash
+      if (ST_TooltipsHS[ST_hash]) then -- mamy przetłumaczony ten Hash
          local ST_tlumaczenie = ST_TooltipsHS[ST_hash];
          ST_tlumaczenie = ST_TranslatePrepare(ST_leftText2, ST_tlumaczenie);
          local leftColR, leftColG, leftColB = _G["GameTooltipTextLeft2"]:GetTextColor();
-         
+
          if not GameTooltip.OnHideHooked then
-            GameTooltip:HookScript("OnHide", function() 
-               C_Timer.After(0.01, function() 
-                  ST_MyGameTooltip:Hide() 
+            GameTooltip:HookScript("OnHide", function()
+               C_Timer.After(0.01, function()
+                  ST_MyGameTooltip:Hide()
                end)
             end)
             GameTooltip.OnHideHooked = true
          end
 
-         ST_MyGameTooltip:SetOwner(WorldFrame, "ANCHOR_NONE" );
+         ST_MyGameTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
          ST_MyGameTooltip:ClearAllPoints();
-         ST_MyGameTooltip:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", 0, 0);    -- pod przyciskiem od prawej strony
+         ST_MyGameTooltip:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", 0, 0); -- pod przyciskiem od prawej strony
          ST_MyGameTooltip:ClearLines();
          if (WoWTR_Localization.lang == 'AR') then
-            ST_MyGameTooltip:AddLine(QTR_ExpandUnitInfo(ST_tlumaczenie,false,ST_MyGameTooltip,WOWTR_Font2), leftColR, leftColG, leftColB, true);
+            ST_MyGameTooltip:AddLine(QTR_ExpandUnitInfo(ST_tlumaczenie, false, ST_MyGameTooltip, WOWTR_Font2), leftColR,
+               leftColG, leftColB, true);
          else
             ST_MyGameTooltip:AddLine(QTR_ReverseIfAR(ST_tlumaczenie), leftColR, leftColG, leftColB, true);
          end
-         _G["ST_MyGameTooltipTextLeft1"]:SetFont(WOWTR_Font2, 12);      -- wielkość 12
-         if (ST_PM["showHS"]=="1") then            -- czy Hash ?
-            ST_MyGameTooltip:AddLine(" ",0,0,0);   -- dodaj odstęp przed linią z Hash
-            ST_MyGameTooltip:AddLine("Hash: "..tostring(ST_hash),0,1,1);
-            _G["ST_MyGameTooltipTextLeft3"]:SetFont(WOWTR_Font2, 12);      -- wielkość 12
+         _G["ST_MyGameTooltipTextLeft1"]:SetFont(WOWTR_Font2, 12);    -- wielkość 12
+         if (ST_PM["showHS"] == "1") then                             -- czy Hash ?
+            ST_MyGameTooltip:AddLine(" ", 0, 0, 0);                   -- dodaj odstęp przed linią z Hash
+            ST_MyGameTooltip:AddLine("Hash: " .. tostring(ST_hash), 0, 1, 1);
+            _G["ST_MyGameTooltipTextLeft3"]:SetFont(WOWTR_Font2, 12); -- wielkość 12
          end
-         ST_MyGameTooltip:Show();         -- wyświetla ramkę w tłumaczeniem (zrobi także resize)
-      elseif ((ST_PM["saveNW"]=="1") and GameTooltip.processingInfo and GameTooltip.processingInfo.tooltipData.id) then
-         local ST_prefix = "s"..GameTooltip.processingInfo.tooltipData.id;
-         ST_PH[ST_hash]=ST_prefix.."@"..ST_PrzedZapisem(ST_leftText2);
+         ST_MyGameTooltip:Show();                                     -- wyświetla ramkę w tłumaczeniem (zrobi także resize)
+      elseif ((ST_PM["saveNW"] == "1") and GameTooltip.processingInfo and GameTooltip.processingInfo.tooltipData.id) then
+         local ST_prefix = "s" .. GameTooltip.processingInfo.tooltipData.id;
+         ST_PH[ST_hash] = ST_prefix .. "@" .. ST_PrzedZapisem(ST_leftText2);
       end
    end
 end
@@ -654,77 +606,77 @@ end
 -------------------------------------------------------------------------------------------------------
 
 function ST_GameTooltipOnShow()
---print("Jestem w OnShow");
-   if (ST_PM["active"]=="1") then                        -- dodatek aktywny
-   
+   --print("Jestem w OnShow");
+   if (ST_PM["active"] == "1") then -- dodatek aktywny
       ST_lastNumLines = 0;
       -- tu jeszcze obsługa buffów i debuffów - tłumaczenie w oddzielnej ramce pod oryginałem
       local ST_BFisOver = BuffFrame:IsMouseOver() or (ElvUIPlayerBuffs and ElvUIPlayerBuffs:IsMouseOver());
       local ST_DFisOver = DebuffFrame:IsMouseOver() or (ElvUIPlayerDebuffs and ElvUIPlayerDebuffs:IsMouseOver());
-      if (ST_BFisOver or ST_DFisOver) then               -- Buffy i Debuffy
+      if (ST_BFisOver or ST_DFisOver) then -- Buffy i Debuffy
          ST_BuffOrDebuff();
          return;
       end
-      
-      GameTooltip.updateTooltipTimer = tonumber(ST_PM["timer"]);   -- X sekund zatrzymania uaktualnienia GameTooltip
+
+      GameTooltip.updateTooltipTimer = tonumber(ST_PM["timer"]); -- X sekund zatrzymania uaktualnienia GameTooltip
       if (_G["GameTooltipTextLeft1"] and _G["GameTooltipTextLeft1"]:GetText()) then
-         if (string.find(_G["GameTooltipTextLeft1"]:GetText(),NONBREAKINGSPACE)) then
-             return;
+         if (string.find(_G["GameTooltipTextLeft1"]:GetText(), NONBREAKINGSPACE)) then
+            return;
          end
-         _G["GameTooltipTextLeft1"]:SetText(QTR_ExpandUnitInfo(_G["GameTooltipTextLeft1"]:GetText(),WOWTR_Font2)..NONBREAKINGSPACE);   -- znacznik twardej spacji do tytułu
+         _G["GameTooltipTextLeft1"]:SetText(QTR_ExpandUnitInfo(_G["GameTooltipTextLeft1"]:GetText(), WOWTR_Font2) ..
+            NONBREAKINGSPACE); -- znacznik twardej spacji do tytułu
       end
-      
+
       local ST_prefix = "h";
       if (GameTooltip.processingInfo and GameTooltip.processingInfo.tooltipData.id) then
-         if (GameTooltip.processingInfo.tooltipData.type == 0) then           -- items
+         if (GameTooltip.processingInfo.tooltipData.type == 0) then -- items
             ST_prefix = "i" .. GameTooltip.processingInfo.tooltipData.id;
-            if (ST_PM["item"] == "0") then      -- nie ma zezwolenia tłumaczenia przedmiotów
+            if (ST_PM["item"] == "0") then                          -- nie ma zezwolenia tłumaczenia przedmiotów
                return;
             end
-         elseif (GameTooltip.processingInfo.tooltipData.type == 1) then       -- spell or talent
+         elseif (GameTooltip.processingInfo.tooltipData.type == 1) then -- spell or talent
             if ST_IsTalentTooltip and ST_IsTalentTooltip(GameTooltip.processingInfo.tooltipData) then
-                  ST_prefix = "t" .. GameTooltip.processingInfo.tooltipData.id;
-                  if (ST_PM["talent"] == "0") then      -- nie ma zezwolenia tłumaczenia talentów
-                     return;
+               ST_prefix = "t" .. GameTooltip.processingInfo.tooltipData.id;
+               if (ST_PM["talent"] == "0") then -- nie ma zezwolenia tłumaczenia talentów
+                  return;
                end
             else
                ST_prefix = "s" .. GameTooltip.processingInfo.tooltipData.id;
-               if (ST_PM["spell"] == "0") then      -- nie ma zezwolenia tłumaczenia spelli
+               if (ST_PM["spell"] == "0") then -- nie ma zezwolenia tłumaczenia spelli
                   return;
                end
             end
-         else   --if (GameTooltip.processingInfo.tooltipData.type > 1) then
+         else                                                                                    --if (GameTooltip.processingInfo.tooltipData.type > 1) then
             ST_prefix = "s" .. GameTooltip.processingInfo.tooltipData.id;
-            if (ST_PM["spell"] == "0") and (GameTooltip.processingInfo.tooltipData.id == 9) then    -- nie ma zezwolenia tłumaczenia spelli
+            if (ST_PM["spell"] == "0") and (GameTooltip.processingInfo.tooltipData.id == 9) then -- nie ma zezwolenia tłumaczenia spelli
                return;
             end
          end
       end
 
       local numLines = GameTooltip:NumLines();
-      if ((numLines == 1) and (ST_prefix ~= "h")) then   -- GameTooltip zawiera tylko 1 linijkę opisu i jest to tytuł itemu lub spella
+      if ((numLines == 1) and (ST_prefix ~= "h")) then -- GameTooltip zawiera tylko 1 linijkę opisu i jest to tytuł itemu lub spella
          return;
       end
-      
+
       local ST_kodKoloru;
       local ST_leftText, ST_rightText, ST_tlumaczenie, ST_hash, ST_hash2, ST_pomoc5, ST_pomoc6, ST_pomoc7;
       local _font1, _size1, _1;
       local ST_odstep = true;
       local ST_orygText = {};
-      local ST_nh = 0;   -- nowy Hash ?
-      
+      local ST_nh = 0; -- nowy Hash ?
+
       -- sprawdź czy są ramki z ceną
       local moneyFrameLineNumber = {};
       local money = {};
       table.insert(moneyFrameLineNumber, 0);
-      table.insert(money,0);
-      if (GameTooltip.shownMoneyFrames) then        -- są ramki z ceną itemu
+      table.insert(money, 0);
+      if (GameTooltip.shownMoneyFrames) then                                                           -- są ramki z ceną itemu
          for i = 1, GameTooltip.shownMoneyFrames, 1 do
-            local moneyFrameName = GameTooltip:GetName().."MoneyFrame"..i;           -- nazwa obiektu
-            _G[moneyFrameName.."PrefixText"]:SetText(QTR_ReverseIfAR(WoWTR_Localization.sellPrice));  -- SELL PRICE
-            _font1, _size1, _1 = _G[moneyFrameName.."PrefixText"]:GetFont();  -- odczytaj aktualną czcionkę i rozmiar    
-            _G[moneyFrameName.."PrefixText"]:SetFont(WOWTR_Font2, _size1);
-            if (ST_PM["sellprice"] == "1") then    -- jest zezwolenie na ukrycie ceny skupu
+            local moneyFrameName = GameTooltip:GetName() .. "MoneyFrame" .. i;                         -- nazwa obiektu
+            _G[moneyFrameName .. "PrefixText"]:SetText(QTR_ReverseIfAR(WoWTR_Localization.sellPrice)); -- SELL PRICE
+            _font1, _size1, _1 = _G[moneyFrameName .. "PrefixText"]:GetFont();                         -- odczytaj aktualną czcionkę i rozmiar
+            _G[moneyFrameName .. "PrefixText"]:SetFont(WOWTR_Font2, _size1);
+            if (ST_PM["sellprice"] == "1") then                                                        -- jest zezwolenie na ukrycie ceny skupu
                _G[moneyFrameName]:Hide();
                ST_odstep = false;
             end
@@ -735,10 +687,10 @@ function ST_GameTooltipOnShow()
       if (ST_prefix == "h") then
          ST_fromLine = 1;
       end
-      
-      if (ST_TooltipsID and (ST_PM["transtitle"]=="1") and ST_TooltipsID[ST_prefix]) then     -- jest zezwolenie na tłumaczenie tytułu i jest tłumaczenie
-         _G["GameTooltipTextLeft1"]:SetText(QTR_ExpandUnitInfo(ST_TooltipsID[ST_prefix],WOWTR_Font2)..NONBREAKINGSPACE);   -- znacznik twardej spacji do tytułu
-         _font1, _size1, _1 = _G["GameTooltipTextLeft1"]:GetFont();           -- odczytaj aktualną czcionkę i rozmiar    
+
+      if (ST_TooltipsID and (ST_PM["transtitle"] == "1") and ST_TooltipsID[ST_prefix]) then                                 -- jest zezwolenie na tłumaczenie tytułu i jest tłumaczenie
+         _G["GameTooltipTextLeft1"]:SetText(QTR_ExpandUnitInfo(ST_TooltipsID[ST_prefix], WOWTR_Font2) .. NONBREAKINGSPACE); -- znacznik twardej spacji do tytułu
+         _font1, _size1, _1 = _G["GameTooltipTextLeft1"]:GetFont();                                                         -- odczytaj aktualną czcionkę i rozmiar
          _G["GameTooltipTextLeft1"]:SetFont(WOWTR_Font2, _size1);
       end
 
@@ -748,39 +700,39 @@ function ST_GameTooltipOnShow()
       local originalFont, originalSize, originalFlags = lineObj:GetFont()
 
       for i = ST_fromLine, numLines, 1 do
-         ST_leftText = _G["GameTooltipTextLeft"..i]:GetText();
-         if (ST_leftText and (string.find(ST_leftText,NONBREAKINGSPACE)==nil)) then                 -- nie jest to nasze tłumaczenie
-            leftColR, leftColG, leftColB = _G["GameTooltipTextLeft"..i]:GetTextColor();
+         ST_leftText = _G["GameTooltipTextLeft" .. i]:GetText();
+         if (ST_leftText and (string.find(ST_leftText, NONBREAKINGSPACE) == nil)) then -- nie jest to nasze tłumaczenie
+            leftColR, leftColG, leftColB = _G["GameTooltipTextLeft" .. i]:GetTextColor();
             ST_kodKoloru = OkreslKodKoloru(leftColR, leftColG, leftColB);
-            if (ST_leftText and (string.len(ST_leftText)>15) and ((ST_kodKoloru == "c7") or (ST_kodKoloru == "c4") or (string.len(ST_leftText)>30))) then
---print(ST_kodKoloru,i,ST_leftText);
-               if (GameTooltip.processingInfo and GameTooltip.processingInfo.tooltipData.id and (GameTooltip.processingInfo.tooltipData.id == 6948)) then   -- wyjątek na Kamień Powrotu
-                  ST_pomoc5, _ = string.find(ST_leftText,". Speak");        -- znajdź kropkę kończącą pierwsze zdanie
-                  if (ST_pomoc5 and (ST_pomoc5>22)) then
-                     ST_miasto = string.sub(ST_leftText,21,ST_pomoc5-1);
+            if (ST_leftText and (string.len(ST_leftText) > 15) and ((ST_kodKoloru == "c7") or (ST_kodKoloru == "c4") or (string.len(ST_leftText) > 30))) then
+               --print(ST_kodKoloru,i,ST_leftText);
+               if (GameTooltip.processingInfo and GameTooltip.processingInfo.tooltipData.id and (GameTooltip.processingInfo.tooltipData.id == 6948)) then -- wyjątek na Kamień Powrotu
+                  ST_pomoc5, _ = string.find(ST_leftText, ". Speak");                                                                                     -- znajdź kropkę kończącą pierwsze zdanie
+                  if (ST_pomoc5 and (ST_pomoc5 > 22)) then
+                     ST_miasto = string.sub(ST_leftText, 21, ST_pomoc5 - 1);
                   else
                      ST_miasto = WoWTR_Localization.your_home;
                   end
-                  ST_pomoc6, _ = string.find(ST_leftText,' Min Cooldown)');
-                  if (ST_pomoc6) then              -- mamy 2 wersję tekstu z Cooldown
+                  ST_pomoc6, _ = string.find(ST_leftText, ' Min Cooldown)');
+                  if (ST_pomoc6) then -- mamy 2 wersję tekstu z Cooldown
                      ST_hash = 1336493626;
-                  else                             -- 1 wersja tekstu (bez Cooldown)
+                  else                -- 1 wersja tekstu (bez Cooldown)
                      ST_hash = 3076025968;
                   end
                else
                   ST_hash = StringHash(ST_UsunZbedneZnaki(ST_leftText));
                end
-               if (((ST_kodKoloru == "c7") or (string.len(ST_leftText)>30)) and (not ST_hash2)) then
+               if (((ST_kodKoloru == "c7") or (string.len(ST_leftText) > 30)) and (not ST_hash2)) then
                   ST_hash2 = ST_hash;
                end
-               ST_pomoc7, _ = string.find(ST_leftText,"<Made by");    -- znajdź czy jest to tekst typu "|cff00ff00<Made by Platine>|r"
+               ST_pomoc7, _ = string.find(ST_leftText, "<Made by"); -- znajdź czy jest to tekst typu "|cff00ff00<Made by Platine>|r"
                if (ST_pomoc7) then
                   ST_hash = 1381871427;
                end
-               if (ST_TooltipsHS[ST_hash]) then        -- mamy przetłumaczony ten Hash lub jest to <Made by...
+               if (ST_TooltipsHS[ST_hash]) then -- mamy przetłumaczony ten Hash lub jest to <Made by...
                   if (ST_pomoc7) then
-                     local endBy = string.find(ST_leftText,">");
-                     local nameBy = string.sub(ST_leftText,ST_pomoc7+9,endBy-1);
+                     local endBy = string.find(ST_leftText, ">");
+                     local nameBy = string.sub(ST_leftText, ST_pomoc7 + 9, endBy - 1);
                      ST_tlumaczenie = ST_TooltipsHS[ST_hash];
                      if (WoWTR_Localization.lang == 'AR') then
                         ST_tlumaczenie = string.gsub(ST_tlumaczenie, "NAMEBY", string.reverse(nameBy));
@@ -792,117 +744,119 @@ function ST_GameTooltipOnShow()
                      ST_tlumaczenie = ST_TooltipsHS[ST_hash];
                   end
                   ST_tlumaczenie = ST_TranslatePrepare(ST_leftText, ST_tlumaczenie);
-                  _font1, _size1, _1 = _G["GameTooltipTextLeft"..i]:GetFont();    -- odczytaj aktualną czcionkę i rozmiar    
-                  _G["GameTooltipTextLeft"..i]:SetFont(WOWTR_Font2, _size1);      -- ustawiamy czcionkę turecką
-                  _G["GameTooltipTextLeft"..i]:SetText(QTR_ExpandUnitInfo(ST_tlumaczenie,false,_G["GameTooltipTextLeft"..i],WOWTR_Font2, -5)..NONBREAKINGSPACE);      -- dodajemy twardą spacje na końcu
-                  _G["GameTooltipTextLeft"..i].wrap = true;
-                  if (GameTooltip.processingInfo and GameTooltip.processingInfo.tooltipData.id and (GameTooltip.processingInfo.tooltipData.id == 6948)) then   -- wyjątek na Kamień Powrotu
+                  _font1, _size1, _1 = _G["GameTooltipTextLeft" .. i]:GetFont();                                                                             -- odczytaj aktualną czcionkę i rozmiar
+                  _G["GameTooltipTextLeft" .. i]:SetFont(WOWTR_Font2, _size1);                                                                               -- ustawiamy czcionkę turecką
+                  _G["GameTooltipTextLeft" .. i]:SetText(QTR_ExpandUnitInfo(ST_tlumaczenie, false,
+                     _G["GameTooltipTextLeft" .. i], WOWTR_Font2, -5) .. NONBREAKINGSPACE);                                                                  -- dodajemy twardą spacje na końcu
+                  _G["GameTooltipTextLeft" .. i].wrap = true;
+                  if (GameTooltip.processingInfo and GameTooltip.processingInfo.tooltipData.id and (GameTooltip.processingInfo.tooltipData.id == 6948)) then -- wyjątek na Kamień Powrotu
                      break;
                   end
                else
-                   -- >>> Explicitly ensure original font if no translation <<<
+                  -- >>> Explicitly ensure original font if no translation <<<
                   if lineObj.SetFont then
-                      lineObj:SetFont(originalFont, originalSize, originalFlags)
+                     lineObj:SetFont(originalFont, originalSize, originalFlags)
                   end
                   -- >>> End explicit ensure <<<
 
-                  ST_nh = 1;              -- nowy Hash
-                  table.insert(ST_orygText,ST_leftText);
+                  ST_nh = 1; -- nowy Hash
+                  table.insert(ST_orygText, ST_leftText);
                end
             end
          end
       end
-      
 
-      if (((ST_PM["showID"]=="1") and (string.len(ST_prefix) > 1)) or ((ST_PM["showHS"]=="1") and ST_hash2)) then   -- czy dodawać ID i Hash ?
-         numLines = GameTooltip:NumLines();           -- aktualna liczba linii
+
+      if (((ST_PM["showID"] == "1") and (string.len(ST_prefix) > 1)) or ((ST_PM["showHS"] == "1") and ST_hash2)) then -- czy dodawać ID i Hash ?
+         numLines = GameTooltip:NumLines();                                                                           -- aktualna liczba linii
          if (numLines > 0 and ST_odstep) then
-            GameTooltip:AddLine(" ",0,0,0);           -- dodaj odstęp przed linią z ID
+            GameTooltip:AddLine(" ", 0, 0, 0);                                                                        -- dodaj odstęp przed linią z ID
          end
          local typName = " ";
-         if (string.sub(ST_prefix,1,1) == "i") then
+         if (string.sub(ST_prefix, 1, 1) == "i") then
             typName = "Item";
-            ST_ID = string.sub(ST_prefix,2);
-         elseif (string.sub(ST_prefix,1,1) == "s") then
+            ST_ID = string.sub(ST_prefix, 2);
+         elseif (string.sub(ST_prefix, 1, 1) == "s") then
             typName = "Spell";
-            ST_ID = string.sub(ST_prefix,2);
-         elseif (string.sub(ST_prefix,1,1) == "t") then
+            ST_ID = string.sub(ST_prefix, 2);
+         elseif (string.sub(ST_prefix, 1, 1) == "t") then
             typName = "Talent";
-            ST_ID = string.sub(ST_prefix,2);
+            ST_ID = string.sub(ST_prefix, 2);
          else
             ST_ID = nil;
          end
-         if ((ST_PM["showID"]=="1") and ST_ID) then
-            GameTooltip:AddLine(typName.." ID: "..tostring(ST_ID),0,1,1);
-            numLines = GameTooltip:NumLines();                -- Aktualna liczba linii w GameTooltip
-            _G["GameTooltipTextLeft"..numLines]:SetFont(WOWTR_Font2, 12);      -- wielkość 12
-            _G["GameTooltipTextRight"..numLines]:SetFont(WOWTR_Font2, 12);     -- wielkość 12
+         if ((ST_PM["showID"] == "1") and ST_ID) then
+            GameTooltip:AddLine(typName .. " ID: " .. tostring(ST_ID), 0, 1, 1);
+            numLines = GameTooltip:NumLines();                               -- Aktualna liczba linii w GameTooltip
+            _G["GameTooltipTextLeft" .. numLines]:SetFont(WOWTR_Font2, 12);  -- wielkość 12
+            _G["GameTooltipTextRight" .. numLines]:SetFont(WOWTR_Font2, 12); -- wielkość 12
          end
-         if ((ST_PM["showHS"]=="1") and ST_hash2) then
-            GameTooltip:AddLine("Hash: "..tostring(ST_hash2),0,1,1);
-            numLines = GameTooltip:NumLines();                -- Aktualna liczba linii w GameTooltip
-            _G["GameTooltipTextLeft"..numLines]:SetFont(WOWTR_Font2, 12);      -- wielkość 12
-            _G["GameTooltipTextRight"..numLines]:SetFont(WOWTR_Font2, 12);     -- wielkość 12
+         if ((ST_PM["showHS"] == "1") and ST_hash2) then
+            GameTooltip:AddLine("Hash: " .. tostring(ST_hash2), 0, 1, 1);
+            numLines = GameTooltip:NumLines();                               -- Aktualna liczba linii w GameTooltip
+            _G["GameTooltipTextLeft" .. numLines]:SetFont(WOWTR_Font2, 12);  -- wielkość 12
+            _G["GameTooltipTextRight" .. numLines]:SetFont(WOWTR_Font2, 12); -- wielkość 12
          end
       end
-      
+
       if ((ST_PM["constantly"] == "1") and (UnitLevel("player") > 60) and _G["GameTooltipTextLeft1"] and _G["GameTooltipTextLeft1"]:GetText()) then
-         _G["GameTooltipTextLeft1"]:SetText(QTR_ExpandUnitInfo(_G["GameTooltipTextLeft1"]:GetText(),WOWTR_Font2)..NONBREAKINGSPACE);
+         _G["GameTooltipTextLeft1"]:SetText(QTR_ExpandUnitInfo(_G["GameTooltipTextLeft1"]:GetText(), WOWTR_Font2) ..
+            NONBREAKINGSPACE);
       end
-      GameTooltip:Show();   -- wyświetla ramkę podpowiedzi (zrobi także resize)
+      GameTooltip:Show(); -- wyświetla ramkę podpowiedzi (zrobi także resize)
       ST_lastNumLines = GameTooltip:NumLines();
 
       if ((ST_orygText or (ST_nh == 1)) and (ST_PM["saveNW"] == "1")) then
-          for _, ST_origin in ipairs(ST_orygText) do
-              local ST_hash = StringHash(ST_UsunZbedneZnaki(ST_origin))
-              if (string.sub(ST_origin, 1, 11) ~= '|A:raceicon') then
-                  local shouldSave = true
-                  
-                  for _, word in ipairs(ignoreSettings.words) do
-                      if string.find(ST_origin, word) then
-                          shouldSave = false
-                          break
-                      end
-                  end
+         for _, ST_origin in ipairs(ST_orygText) do
+            local ST_hash = StringHash(ST_UsunZbedneZnaki(ST_origin))
+            if (string.sub(ST_origin, 1, 11) ~= '|A:raceicon') then
+               local shouldSave = true
 
-                  if shouldSave and string.find(ST_origin, ignoreSettings.pattern) then
-                      shouldSave = false
+               for _, word in ipairs(ignoreSettings.words) do
+                  if string.find(ST_origin, word) then
+                     shouldSave = false
+                     break
                   end
+               end
 
-                  if shouldSave then
-                      ST_PH[ST_hash] = ST_prefix .. "@" .. ST_PrzedZapisem(ST_origin)
-                  end
-              end
-          end
+               if shouldSave and string.find(ST_origin, ignoreSettings.pattern) then
+                  shouldSave = false
+               end
+
+               if shouldSave then
+                  ST_PH[ST_hash] = ST_prefix .. "@" .. ST_PrzedZapisem(ST_origin)
+               end
+            end
+         end
       end
    end
 end
 
 -------------------------------------------------------------------------------------------------------
 
-function ST_SetText(txt)      -- funkcja wyszukuje tłumaczenie, albo zapisuje test oryginalny
-   if (string.find(txt,NONBREAKINGSPACE)==nil) then    -- nie jest to tekst turecki (nie ma twardej spacji na końcu tłumaczenia)
+function ST_SetText(txt)                               -- funkcja wyszukuje tłumaczenie, albo zapisuje test oryginalny
+   if (string.find(txt, NONBREAKINGSPACE) == nil) then -- nie jest to tekst turecki (nie ma twardej spacji na końcu tłumaczenia)
       local ST_hash = StringHash(ST_UsunZbedneZnaki(txt));
       if (ST_TooltipsHS[ST_hash]) then
-         return ST_TooltipsHS[ST_hash]..NONBREAKINGSPACE;       -- dodajemy twardą spację na końcu tłumaczenia
-      elseif (ST_PM["saveNW"]=="1") then           -- jest zezwolenie na zapis oryginalnego tekstu
-         ST_PH[ST_hash] = "ui@"..ST_PrzedZapisem(txt);
+         return ST_TooltipsHS[ST_hash] .. NONBREAKINGSPACE; -- dodajemy twardą spację na końcu tłumaczenia
+      elseif (ST_PM["saveNW"] == "1") then                  -- jest zezwolenie na zapis oryginalnego tekstu
+         ST_PH[ST_hash] = "ui@" .. ST_PrzedZapisem(txt);
       end
    end
-   return txt;       -- zwracamy oryginalny tekst bez zmiany   
+   return txt; -- zwracamy oryginalny tekst bez zmiany
 end
 
 -------------------------------------------------------------------------------------------------------
 
-if ((GetLocale()=="enUS") or (GetLocale()=="enGB")) then
-   hooksecurefunc("GameTooltip_ShowCompareItem",function(self)
+if ((GetLocale() == "enUS") or (GetLocale() == "enGB")) then
+   hooksecurefunc("GameTooltip_ShowCompareItem", function(self)
       if (ShoppingTooltip1 and ShoppingTooltip1:IsVisible()) then
          ST_CurrentEquipped(ShoppingTooltip1);
       end
       if (ShoppingTooltip2 and ShoppingTooltip2:IsVisible()) then
          ST_CurrentEquipped(ShoppingTooltip2);
       end
-   end );
+   end);
 end
 
 --GameTooltip:HookScript("KeyDown", function() print("key pressed"); end);
@@ -911,7 +865,7 @@ end
 
 -- Funkcja przegląda wyświetlane itemy Current Equipped w oknie ShoppingTooltip1 lub ShoppingTooltip2
 function ST_CurrentEquipped(obj)
-   if ((ST_PM["active"]=="1") and (ST_PM["item"] == "1")) then          -- dodatek aktywny i zezwolono na tłumaczenie itemów
+   if ((ST_PM["active"] == "1") and (ST_PM["item"] == "1")) then -- dodatek aktywny i zezwolono na tłumaczenie itemów
       if (obj.processingInfo and obj.processingInfo.tooltipData.id) then
          ST_prefix = "i" .. obj.processingInfo.tooltipData.id;
 
@@ -920,140 +874,140 @@ function ST_CurrentEquipped(obj)
          local _font1, _size1, _1;
          local ST_odstep = true;
          local ST_orygText = {};
-         local ST_nh = 0;   -- nowy Hash ?
+         local ST_nh = 0; -- nowy Hash ?
          local numLines = obj:NumLines();
-         
+
          -- sprawdź czy są ramki z ceną
          local moneyFrameLineNumber = {};
          local money = {};
          table.insert(moneyFrameLineNumber, 0);
-         table.insert(money,0);
-         if (obj.shownMoneyFrames) then        -- są ramki z ceną itemu
+         table.insert(money, 0);
+         if (obj.shownMoneyFrames) then                                                                   -- są ramki z ceną itemu
             for i = 1, obj.shownMoneyFrames, 1 do
-               local moneyFrameName = obj:GetName().."MoneyFrame"..i;           -- nazwa obiektu
-               _G[moneyFrameName.."PrefixText"]:SetText(QTR_ReverseIfAR(WoWTR_Localization.sellPrice));  -- SELL PRICE
-               _font1, _size1, _1 = _G[moneyFrameName.."PrefixText"]:GetFont();  -- odczytaj aktualną czcionkę i rozmiar    
-               _G[moneyFrameName.."PrefixText"]:SetFont(WOWTR_Font2, _size1);
-               if (ST_PM["sellprice"] == "1") then    -- jest zezwolenie na ukrycie ceny skupu
+               local moneyFrameName = obj:GetName() .. "MoneyFrame" .. i;                                 -- nazwa obiektu
+               _G[moneyFrameName .. "PrefixText"]:SetText(QTR_ReverseIfAR(WoWTR_Localization.sellPrice)); -- SELL PRICE
+               _font1, _size1, _1 = _G[moneyFrameName .. "PrefixText"]:GetFont();                         -- odczytaj aktualną czcionkę i rozmiar
+               _G[moneyFrameName .. "PrefixText"]:SetFont(WOWTR_Font2, _size1);
+               if (ST_PM["sellprice"] == "1") then                                                        -- jest zezwolenie na ukrycie ceny skupu
                   _G[moneyFrameName]:Hide();
                   ST_odstep = false;
                end
             end
          end
-         
+
          -- pierwsza linia z opisem założenia przedmiotu (Currently Equipped lub Equipped With)
-         ST_leftText = _G[obj:GetName().."TextLeft1"]:GetText();
-         if (ST_leftText) then 
-            if (string.find(ST_leftText,NONBREAKINGSPACE)==nil) then                             -- nie jest to tekst przetłumaczony (twarda spacja na końcu)
-               if (ST_leftText=="Currently Equipped") then
+         ST_leftText = _G[obj:GetName() .. "TextLeft1"]:GetText();
+         if (ST_leftText) then
+            if (string.find(ST_leftText, NONBREAKINGSPACE) == nil) then -- nie jest to tekst przetłumaczony (twarda spacja na końcu)
+               if (ST_leftText == "Currently Equipped") then
                   ST_info = WoWTR_Localization.currentlyEquipped;
-               elseif(ST_leftText=="Equipped With") then
+               elseif (ST_leftText == "Equipped With") then
                   ST_info = WoWTR_Localization.additionalEquipped;
                else
-                  ST_info = ST_leftText;     -- inny wariant tekstu?
+                  ST_info = ST_leftText;                                                                                        -- inny wariant tekstu?
                end
-               if ((ST_info == ST_leftText) and (string.len(ST_leftText)>2) and (string.sub(ST_leftText,1,2)~="|T")) then  -- nic nie przetłumaczono
-               --   ST_PI[ST_info]=leftText[1];        -- zapisz
+               if ((ST_info == ST_leftText) and (string.len(ST_leftText) > 2) and (string.sub(ST_leftText, 1, 2) ~= "|T")) then -- nic nie przetłumaczono
+                  --   ST_PI[ST_info]=leftText[1];        -- zapisz
                else
-                  _font1, _size1, _1 = _G[obj:GetName().."TextLeft1"]:GetFont();    -- odczytaj aktualną czcionkę i rozmiar    
-                  _G[obj:GetName().."TextLeft1"]:SetText(QTR_ReverseIfAR(ST_info)..NONBREAKINGSPACE);             -- dodajemy twardą spacje na końcu
-                  _G[obj:GetName().."TextLeft1"]:SetFont(WOWTR_Font2, _size1);
+                  _font1, _size1, _1 = _G[obj:GetName() .. "TextLeft1"]:GetFont();                        -- odczytaj aktualną czcionkę i rozmiar
+                  _G[obj:GetName() .. "TextLeft1"]:SetText(QTR_ReverseIfAR(ST_info) .. NONBREAKINGSPACE); -- dodajemy twardą spacje na końcu
+                  _G[obj:GetName() .. "TextLeft1"]:SetFont(WOWTR_Font2, _size1);
                end
-            end               
+            end
          end
-   
+
          -- druga linia z tytułem przedmiotu
-         ST_pomoc0, _ = string.find(_G[obj:GetName().."TextLeft2"]:GetText(),NONBREAKINGSPACE);   -- szukamy twardej spacji
-         if (ST_TooltipID and (ST_pomoc0==nil) and (ST_TooltipsID[ST_prefix..tostring(ST_itemID)]) and (ST_PM["transtitle"]=="1")) then  -- jest tłumaczenie tytułu w bazie
-            _G[obj:GetName().."TextLeft2"]:SetText(QTR_ExpandUnitInfo(ST_TooltipsID[ST_prefix..tostring(ST_itemID)]),WOWTR_Font2);
-            _font1, _size1, _1 = _G[obj:GetName().."TextLeft2"]:GetFont();  -- odczytaj aktualną czcionkę i rozmiar    
-            _G[obj:GetName().."TextLeft2"]:SetFont(WOWTR_Font2, _size1);
+         ST_pomoc0, _ = string.find(_G[obj:GetName() .. "TextLeft2"]:GetText(), NONBREAKINGSPACE);                                            -- szukamy twardej spacji
+         if (ST_TooltipID and (ST_pomoc0 == nil) and (ST_TooltipsID[ST_prefix .. tostring(ST_itemID)]) and (ST_PM["transtitle"] == "1")) then -- jest tłumaczenie tytułu w bazie
+            _G[obj:GetName() .. "TextLeft2"]:SetText(QTR_ExpandUnitInfo(ST_TooltipsID[ST_prefix .. tostring(ST_itemID)]),
+               WOWTR_Font2);
+            _font1, _size1, _1 = _G[obj:GetName() .. "TextLeft2"]:GetFont(); -- odczytaj aktualną czcionkę i rozmiar
+            _G[obj:GetName() .. "TextLeft2"]:SetFont(WOWTR_Font2, _size1);
          end
-   
+
          for i = 3, numLines, 1 do
-            ST_leftText = _G[obj:GetName().."TextLeft"..i]:GetText();
-            if (ST_leftText and (string.find(ST_leftText,NONBREAKINGSPACE)==nil)) then                 -- nie jest to nasze tłumaczenie
-               leftColR, leftColG, leftColB = _G[obj:GetName().."TextLeft"..i]:GetTextColor();
+            ST_leftText = _G[obj:GetName() .. "TextLeft" .. i]:GetText();
+            if (ST_leftText and (string.find(ST_leftText, NONBREAKINGSPACE) == nil)) then -- nie jest to nasze tłumaczenie
+               leftColR, leftColG, leftColB = _G[obj:GetName() .. "TextLeft" .. i]:GetTextColor();
                ST_kodKoloru = OkreslKodKoloru(leftColR, leftColG, leftColB);
-               if (ST_leftText and (string.len(ST_leftText)>15) and ((ST_kodKoloru == "c7") or (ST_kodKoloru == "c4") or (string.len(ST_leftText)>30))) then
+               if (ST_leftText and (string.len(ST_leftText) > 15) and ((ST_kodKoloru == "c7") or (ST_kodKoloru == "c4") or (string.len(ST_leftText) > 30))) then
                   --print(ST_kodKoloru,i,ST_leftText);
                   -- Get the line object
-                  local lineObj = _G[obj:GetName().."TextLeft"..i]
+                  local lineObj = _G[obj:GetName() .. "TextLeft" .. i]
                   -- Get original font details *before* deciding translation
                   local originalFont, originalSize, originalFlags = lineObj:GetFont()
                   ST_hash = StringHash(ST_UsunZbedneZnaki(ST_leftText));
-                  if (((ST_kodKoloru == "c7") or (string.len(ST_leftText)>30)) and (not ST_hash2)) then
+                  if (((ST_kodKoloru == "c7") or (string.len(ST_leftText) > 30)) and (not ST_hash2)) then
                      ST_hash2 = ST_hash;
                   end
-                  if (ST_TooltipsHS[ST_hash]) then        -- mamy przetłumaczony ten Hash
+                  if (ST_TooltipsHS[ST_hash]) then -- mamy przetłumaczony ten Hash
                      ST_tlumaczenie = ST_TooltipsHS[ST_hash];
                      ST_tlumaczenie = ST_TranslatePrepare(ST_leftText, ST_tlumaczenie);
-                     _font1, _size1, _1 = _G[obj:GetName().."TextLeft"..i]:GetFont();    -- odczytaj aktualną czcionkę i rozmiar    
-                     _G[obj:GetName().."TextLeft"..i]:SetFont(WOWTR_Font2, _size1);      -- ustawiamy czcionkę turecką
-                     _G[obj:GetName().."TextLeft"..i]:SetText(QTR_ExpandUnitInfo(ST_tlumaczenie,false,_G["GameTooltipTextLeft"..i],WOWTR_Font2)..NONBREAKINGSPACE);      -- dodajemy twardą spacje na końcu
+                     _font1, _size1, _1 = _G[obj:GetName() .. "TextLeft" .. i]:GetFont();  -- odczytaj aktualną czcionkę i rozmiar
+                     _G[obj:GetName() .. "TextLeft" .. i]:SetFont(WOWTR_Font2, _size1);    -- ustawiamy czcionkę turecką
+                     _G[obj:GetName() .. "TextLeft" .. i]:SetText(QTR_ExpandUnitInfo(ST_tlumaczenie, false,
+                        _G["GameTooltipTextLeft" .. i], WOWTR_Font2) .. NONBREAKINGSPACE); -- dodajemy twardą spacje na końcu
                   else
-                        -- >>> Explicitly ensure original font if no translation <<<
-                        if lineObj.SetFont then
-                           lineObj:SetFont(originalFont, originalSize, originalFlags)
-                        end
-                        -- >>> End explicit ensure <<<
-  
-                       ST_nh = 1;              -- nowy Hash
-                       table.insert(ST_orygText,ST_leftText);
+                     -- >>> Explicitly ensure original font if no translation <<<
+                     if lineObj.SetFont then
+                        lineObj:SetFont(originalFont, originalSize, originalFlags)
+                     end
+                     -- >>> End explicit ensure <<<
+
+                     ST_nh = 1; -- nowy Hash
+                     table.insert(ST_orygText, ST_leftText);
                   end
                end
             end
          end
-         
-   
-         if (((ST_PM["showID"]=="1") and (string.len(ST_prefix) > 1)) or ((ST_PM["showHS"]=="1") and ST_hash2)) then   -- czy dodawać ID i Hash ?
-            numLines = obj:NumLines();           -- aktualna liczba linii
+
+
+         if (((ST_PM["showID"] == "1") and (string.len(ST_prefix) > 1)) or ((ST_PM["showHS"] == "1") and ST_hash2)) then -- czy dodawać ID i Hash ?
+            numLines = obj:NumLines();                                                                                   -- aktualna liczba linii
             if (numLines > 0 and ST_odstep) then
-               obj:AddLine(" ",0,0,0);           -- dodaj odstęp przed linią z ID
+               obj:AddLine(" ", 0, 0, 0);                                                                                -- dodaj odstęp przed linią z ID
             end
             local typName = " ";
-            if (string.sub(ST_prefix,1,1) == "i") then
+            if (string.sub(ST_prefix, 1, 1) == "i") then
                typName = "Item";
-               ST_ID = string.sub(ST_prefix,2);
-            elseif (string.sub(ST_prefix,1,1) == "s") then
+               ST_ID = string.sub(ST_prefix, 2);
+            elseif (string.sub(ST_prefix, 1, 1) == "s") then
                typName = "Spell";
-               ST_ID = string.sub(ST_prefix,2);
-            elseif (string.sub(ST_prefix,1,1) == "t") then
+               ST_ID = string.sub(ST_prefix, 2);
+            elseif (string.sub(ST_prefix, 1, 1) == "t") then
                typName = "Talent";
-               ST_ID = string.sub(ST_prefix,2);
+               ST_ID = string.sub(ST_prefix, 2);
             else
                ST_ID = nil;
             end
-            if ((ST_PM["showID"]=="1") and ST_ID) then
-               obj:AddLine(typName.." ID: "..tostring(ST_ID),0,1,1);
-               numLines = obj:NumLines();                -- Aktualna liczba linii w obj
-               _G[obj:GetName().."TextLeft"..numLines]:SetFont(WOWTR_Font2, 12);      -- wielkość 12
-               _G[obj:GetName().."TextRight"..numLines]:SetFont(WOWTR_Font2, 12);     -- wielkość 12
+            if ((ST_PM["showID"] == "1") and ST_ID) then
+               obj:AddLine(typName .. " ID: " .. tostring(ST_ID), 0, 1, 1);
+               numLines = obj:NumLines();                                             -- Aktualna liczba linii w obj
+               _G[obj:GetName() .. "TextLeft" .. numLines]:SetFont(WOWTR_Font2, 12);  -- wielkość 12
+               _G[obj:GetName() .. "TextRight" .. numLines]:SetFont(WOWTR_Font2, 12); -- wielkość 12
             end
-            if ((ST_PM["showHS"]=="1") and ST_hash2) then
-               obj:AddLine("Hash: "..tostring(ST_hash2),0,1,1);
-               numLines = obj:NumLines();                -- Aktualna liczba linii w obj
-               _G[obj:GetName().."TextLeft"..numLines]:SetFont(WOWTR_Font2, 12);      -- wielkość 12
-               _G[obj:GetName().."TextRight"..numLines]:SetFont(WOWTR_Font2, 12);     -- wielkość 12
+            if ((ST_PM["showHS"] == "1") and ST_hash2) then
+               obj:AddLine("Hash: " .. tostring(ST_hash2), 0, 1, 1);
+               numLines = obj:NumLines();                                             -- Aktualna liczba linii w obj
+               _G[obj:GetName() .. "TextLeft" .. numLines]:SetFont(WOWTR_Font2, 12);  -- wielkość 12
+               _G[obj:GetName() .. "TextRight" .. numLines]:SetFont(WOWTR_Font2, 12); -- wielkość 12
             end
          end
-         
-         obj:Show();   -- wyświetla ramkę podpowiedzi (zrobi także resize)
-         
-         if ((ST_orygText or (ST_nh==1)) and (ST_PM["saveNW"]=="1")) then
-            for _, ST_origin in ipairs(ST_orygText) do   
+
+         obj:Show(); -- wyświetla ramkę podpowiedzi (zrobi także resize)
+
+         if ((ST_orygText or (ST_nh == 1)) and (ST_PM["saveNW"] == "1")) then
+            for _, ST_origin in ipairs(ST_orygText) do
                ST_hash = StringHash(ST_UsunZbedneZnaki(ST_origin));
-               if ((not ST_TooltipsHS[ST_hash]) and (string.find(ST_origin,NONBREAKINGSPACE)==nil)) then    -- i nie jest to tekst tłumaczenia (twarda spacja)
-                  ST_PH[ST_hash]=ST_prefix.."@"..ST_PrzedZapisem(ST_origin);
+               if ((not ST_TooltipsHS[ST_hash]) and (string.find(ST_origin, NONBREAKINGSPACE) == nil)) then -- i nie jest to tekst tłumaczenia (twarda spacja)
+                  ST_PH[ST_hash] = ST_prefix .. "@" .. ST_PrzedZapisem(ST_origin);
                end
             end
          end
       end
-         
-   end   -- if ST_PM["active"]
-   
+   end -- if ST_PM["active"]
 end
-    
+
 -------------------------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------------------------
@@ -1080,7 +1034,7 @@ function ST_updateSpellBookFrame()
             SpellBookFrameTabButton1:SetText(text1);
          end
       end
-      
+
       if (SpellBookFrameTabButton2 and SpellBookFrameTabButton2:GetText()) then
          local str_ID = StringHash(ST_UsunZbedneZnaki(SpellBookFrameTabButton2:GetText()));
          if (ST_TooltipsHS[str_ID]) then
@@ -1092,7 +1046,7 @@ function ST_updateSpellBookFrame()
             SpellBookFrameTabButton2:SetText(text1);
          end
       end
-      
+
       if (SpellBookFrameTabButton3 and SpellBookFrameTabButton3:GetText()) then
          local str_ID = StringHash(ST_UsunZbedneZnaki(SpellBookFrameTabButton3:GetText()));
          if (ST_TooltipsHS[str_ID]) then
@@ -1119,257 +1073,272 @@ end
 function WOWSTR_onEvent(_, event, addonName)
    --print(addonName);
    --QTR_PS["Test"] = Frame; -- search data
-      if (QTR_PS) then
-         C_Timer.After(1, function() 
+   if (QTR_PS) then
+      C_Timer.After(1, function()
          QTR_ObjectiveTrackerFrame_Titles() -- Addon adds translations when it starts
-         end)
-      end
-      if (addonName == 'Blizzard_PlayerSpells') then
-         ST_Load1 = true;
-         PlayerSpellsFrame:HookScript("OnShow", ST_SpellBookTranslateButton);
+      end)
+   end
+   if (addonName == 'Blizzard_PlayerSpells') then
+      ST_Load1 = true;
+
+      -- Existing OnShow hooks (keep these)
+      if PlayerSpellsFrame and PlayerSpellsFrame.SpecFrame then
          PlayerSpellsFrame.SpecFrame:HookScript("OnShow", ST_updateSpecContentsHook);
+      end
+      if PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame then
          PlayerSpellsFrame.TalentsFrame:HookScript("OnShow", ST_TalentsTranslate);
+      end
+      if HeroTalentsSelectionDialog and HeroTalentsSelectionDialog.SpecOptionsContainer then
          HeroTalentsSelectionDialog.SpecOptionsContainer:HookScript("OnShow", ST_updateHeroTalentHook);
-         
-      elseif (addonName == 'Blizzard_EncounterJournal') then
-         ST_load2 = true;
-         EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription:HookScript("OnShow", ST_clickBosses)
-         EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription:HookScript("OnShow", function() StartTicker(EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription, ST_ShowAbility, 0.1) end)
-         EncounterJournal:HookScript("OnShow", function() StartTicker(EncounterJournal, ST_SuggestTabClick, 0) end)
-         EncounterJournal:HookScript("OnShow", ST_AdventureGuidebutton)
-         EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont:HookScript("OnShow", ST_showLoreDescription)
-         
-      -- elseif (addonName == 'Blizzard_Professions') then -- Removed block
-         -- ST_load3 = true; -- Removed line
-         -- ProfessionsFrame:HookScript("OnShow", function() StartTicker(ProfessionsFrame, ST_showProfessionDescription, 0) end) -- Removed line
-         -- ProfessionsFrame:HookScript("OnShow", ST_ProfDescbutton) -- Removed line
-         
-      elseif (addonName == 'Blizzard_Collections') then
-         ST_load4 = true;
-         CollectionsJournalTitleText:HookScript("OnShow", function() StartTicker(CollectionsJournalTitleText, ST_MountJournal, 0.1) end)
-         WardrobeCollectionFrame:HookScript("OnShow", function() StartTicker(WardrobeCollectionFrame, ST_HelpPlateTooltip, 0.2) end)
-         MountJournalName:HookScript("OnShow", ST_MountJournalbutton)
-        
-      elseif (addonName == 'Blizzard_PVPUI') then
-         ST_load5 = true;
-         PVPQueueFrameCategoryButton1:HookScript("OnShow", function() StartTicker(PVPQueueFrameCategoryButton1, ST_GroupPVPFinder, 0.02) end)
-        
-      elseif (addonName == 'Blizzard_ChallengesUI') then
-         ST_load6 = true;
-         ChallengesFrame:HookScript("OnShow", function() StartTicker(ChallengesFrame, ST_GroupMplusFinder, 0) end)
-         
-      elseif (addonName == 'Blizzard_DelvesDifficultyPicker') then
-         ST_load7 = true;
-         DelvesDifficultyPickerFrame:HookScript("OnShow", function() StartTicker(DelvesDifficultyPickerFrame, ST_showDelveDifficultFrame, 0.2) end)
-         
-      elseif (addonName == 'Blizzard_ItemUpgradeUI') then
-         ST_load8 = true;
-         ItemUpgradeFrame:HookScript("OnShow", function() StartTicker(ItemUpgradeFrame, ST_ItemUpgradeFrm, 0.2) end)
-         
-      elseif (addonName == 'Blizzard_WeeklyRewards') then
-         ST_load9 = true;
-         WeeklyRewardsFrame:HookScript("OnShow", function() StartTicker(WeeklyRewardsFrame, ST_WeeklyRewardsFrame, 0.2) end) 
-         
-      elseif (addonName == 'Blizzard_AdventureMap') then
-         ST_load10 = true;
-         AdventureMapQuestChoiceDialog.Details.Child.DescriptionText:HookScript("OnShow", function() StartTicker(AdventureMapQuestChoiceDialog.Details.Child.DescriptionText, ST_AdvantureMapFrm, 0.2) end) 
-   
-      -- elseif (addonName == 'Blizzard_ProfessionsBook') then -- Removed block
-         -- ST_load11 = true; -- Removed line
-         -- ProfessionsBookFrame:HookScript("OnShow", function() StartTicker(ProfessionsBookFrame, ST_ProfessionEmptyText, 0.02) end) -- Removed line
       end
 
-      -- Updated condition to remove ST_load3 and ST_load11
-      if (ST_load1 and ST_load2 and ST_load4 and ST_load5 and ST_load6 and ST_load7 and ST_load8 and ST_load9 and ST_load10) then    -- otworzono wszystkie inne dodatki Blizzarda
-         WOWSTR:UnregisterEvent("ADDON_LOADED");      -- wyłącz nasłuchiwanie
+      -- ADDED: Attempt hooksecurefunc here, after the addon is loaded
+      if PlayerSpellsFrame and PlayerSpellsFrame.SpecFrame then
+         local success, err = pcall(hooksecurefunc, PlayerSpellsFrame.SpecFrame, "UpdateSpecContents",
+            ST_updateSpecContentsHook)
+         if not success then
+            --print("WoWTR Tooltips: Failed to hook PlayerSpellsFrame.SpecFrame.UpdateSpecContents:", tostring(err))
+         else
+            --print("WoWTR Tooltips: Successfully hooked PlayerSpellsFrame.SpecFrame.UpdateSpecContents.")
+
+            -- <<< ADDED: Trigger Talents.lua check/timer >>>
+            if _G.StartPlayerSpellsFrameCheck then -- <<< CHANGED function name
+               --print("WoWTR Tooltips: Triggering PlayerSpellsFrame check from Talents.lua.")
+               _G.StartPlayerSpellsFrameCheck()    -- <<< CHANGED function name
+            else
+               --print("WoWTR Tooltips: ERROR - StartPlayerSpellsFrameCheck function not found in global scope!")
+            end
+            -- <<< END ADDED >>>
+         end
+      else
+         --print("WoWTR Tooltips: PlayerSpellsFrame.SpecFrame not found when attempting hooksecurefunc.")
       end
+
+      -- REMOVED HeroTalentsSelectionDialog hook attempts for now
+      --[[
+         if HeroTalentsSelectionDialog then
+             local success, err = pcall(hooksecurefunc, HeroTalentsSelectionDialog, "UpdateSpecContents", ST_updateHeroTalentHook)
+             if not success then
+                 print("WoWTR Tooltips: Failed to hook HeroTalentsSelectionDialog.UpdateSpecContents:", tostring(err)) -- Use tostring for error
+             else
+                 print("WoWTR Tooltips: Successfully hooked HeroTalentsSelectionDialog.UpdateSpecContents.")
+             end
+         else
+             print("WoWTR Tooltips: HeroTalentsSelectionDialog not found when attempting hooksecurefunc.")
+         end
+         --]]
+   elseif (addonName == 'Blizzard_EncounterJournal') then
+      ST_load2 = true;
+      EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription:HookScript("OnShow", ST_clickBosses)
+      EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription:HookScript("OnShow",
+         function()
+            StartTicker(EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription,
+               ST_ShowAbility, 0.1)
+         end)
+      EncounterJournal:HookScript("OnShow", function() StartTicker(EncounterJournal, ST_SuggestTabClick, 0) end)
+      EncounterJournal:HookScript("OnShow", ST_AdventureGuidebutton)
+      EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont:HookScript("OnShow", ST_showLoreDescription)
+
+      -- elseif (addonName == 'Blizzard_Professions') then -- Removed block
+      -- ST_load3 = true; -- Removed line
+      -- ProfessionsFrame:HookScript("OnShow", function() StartTicker(ProfessionsFrame, ST_showProfessionDescription, 0) end) -- Removed line
+      -- ProfessionsFrame:HookScript("OnShow", ST_ProfDescbutton) -- Removed line
+   elseif (addonName == 'Blizzard_Collections') then
+      ST_load4 = true;
+      CollectionsJournalTitleText:HookScript("OnShow",
+         function() StartTicker(CollectionsJournalTitleText, ST_MountJournal, 0.1) end)
+      WardrobeCollectionFrame:HookScript("OnShow",
+         function() StartTicker(WardrobeCollectionFrame, ST_HelpPlateTooltip, 0.2) end)
+      MountJournalName:HookScript("OnShow", ST_MountJournalbutton)
+   elseif (addonName == 'Blizzard_PVPUI') then
+      ST_load5 = true;
+      PVPQueueFrameCategoryButton1:HookScript("OnShow",
+         function() StartTicker(PVPQueueFrameCategoryButton1, ST_GroupPVPFinder, 0.02) end)
+   elseif (addonName == 'Blizzard_ChallengesUI') then
+      ST_load6 = true;
+      ChallengesFrame:HookScript("OnShow", function() StartTicker(ChallengesFrame, ST_GroupMplusFinder, 0) end)
+   elseif (addonName == 'Blizzard_DelvesDifficultyPicker') then
+      ST_load7 = true;
+      DelvesDifficultyPickerFrame:HookScript("OnShow",
+         function() StartTicker(DelvesDifficultyPickerFrame, ST_showDelveDifficultFrame, 0.2) end)
+   elseif (addonName == 'Blizzard_ItemUpgradeUI') then
+      ST_load8 = true;
+      ItemUpgradeFrame:HookScript("OnShow", function() StartTicker(ItemUpgradeFrame, ST_ItemUpgradeFrm, 0.2) end)
+   elseif (addonName == 'Blizzard_WeeklyRewards') then
+      ST_load9 = true;
+      WeeklyRewardsFrame:HookScript("OnShow", function() StartTicker(WeeklyRewardsFrame, ST_WeeklyRewardsFrame, 0.2) end)
+   elseif (addonName == 'Blizzard_AdventureMap') then
+      ST_load10 = true;
+      AdventureMapQuestChoiceDialog.Details.Child.DescriptionText:HookScript("OnShow",
+         function() StartTicker(AdventureMapQuestChoiceDialog.Details.Child.DescriptionText, ST_AdvantureMapFrm, 0.2) end)
+
+      -- elseif (addonName == 'Blizzard_ProfessionsBook') then -- Removed block
+      -- ST_load11 = true; -- Removed line
+      -- ProfessionsBookFrame:HookScript("OnShow", function() StartTicker(ProfessionsBookFrame, ST_ProfessionEmptyText, 0.02) end) -- Removed line
    end
 
-
--------------------------------------------------------------------------------------------------------
-
-function ST_SpellBookTranslateButton()
-   if (ST_PM["active"] == "1") then
-      -- Button to toggle between TR - EN for talents
-      WOWTR_ToggleButtonS = CreateFrame("Button", nil, SpellBookFrame, "UIPanelButtonTemplate")
-      WOWTR_ToggleButtonS:SetWidth(80)
-      WOWTR_ToggleButtonS:SetHeight(13) -- Set the height to 15
-      WOWTR_ToggleButtonS:SetFrameStrata("TOOLTIP")
-
-      if (ST_PM["spell"] == "1") then
-            if (WoWTR_Localization.lang == 'AR') then
-               WOWTR_ToggleButtonS:SetText(QTR_ReverseIfAR(WoWTR_Localization.WoWTR_Spellbook_trDESC))
-               WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_Font2, 7)
-            else
-               WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_trDESC)
-               WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_ToggleButtonS:GetFontString():GetFont(), 7)
-            end
-      else
-            WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_enDESC)
-            WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_ToggleButtonS:GetFontString():GetFont(), 7)
-      end
-
-      WOWTR_ToggleButtonS:ClearAllPoints()
-      WOWTR_ToggleButtonS:SetPoint("TOPLEFT", PlayerSpellsFrame, "TOPRIGHT", -110, 0)
-      WOWTR_ToggleButtonS:SetScript("OnClick", STspell_ON_OFF)
-      PlayerSpellsFrame:HookScript("OnHide", function() WOWTR_ToggleButtonS:Hide() end)
+   -- Updated condition to remove ST_load3 and ST_load11
+   if (ST_load1 and ST_load2 and ST_load4 and ST_load5 and ST_load6 and ST_load7 and ST_load8 and ST_load9 and ST_load10) then -- otworzono wszystkie inne dodatki Blizzarda
+      WOWSTR:UnregisterEvent("ADDON_LOADED");                                                                                  -- wyłącz nasłuchiwanie
    end
 end
-     
+
 -------------------------------------------------------------------------------------------------------
 
 function ST_SuggestTabClick()
    --print("SuggestTab clicked");
-      if (TT_PS["ui5"] == "1") then
-         local obj0 = EncounterJournalInstanceSelect.Title;
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj0, true, "Dungeon&Raid:Suggest:SuggestTittle",WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj0, true, "Dungeon&Raid:Suggest:SuggestTittle",false);
-         end
-         
-         local obj1 = EncounterJournalSuggestFrame.Suggestion1.centerDisplay.description.text;
-         local title1 = EncounterJournalSuggestFrame.Suggestion1.centerDisplay.title.text:GetText() or "?";
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj1, true, "Dungeon&Raid:Suggest:"..title1,WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj1, true, "Dungeon&Raid:Suggest:"..title1,false);
-         end
-         
-         local obj2 = EncounterJournalSuggestFrame.Suggestion2.centerDisplay.description.text;
-         local title2 = EncounterJournalSuggestFrame.Suggestion2.centerDisplay.title.text:GetText() or "?";
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj2, true, "Dungeon&Raid:Suggest:"..title2,WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj2, true, "Dungeon&Raid:Suggest:"..title2,false);
-         end
-   
-         local obj3 = EncounterJournalSuggestFrame.Suggestion3.centerDisplay.description.text;
-         local title3 = EncounterJournalSuggestFrame.Suggestion3.centerDisplay.title.text:GetText() or "?";
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj3, true, "Dungeon&Raid:Suggest:"..title3,WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj3, true, "Dungeon&Raid:Suggest:"..title3,false);
-         end
-   
-         local obj4 = EncounterJournalMonthlyActivitiesFrame.BarComplete.AllRewardsCollectedText; -- https://imgur.com/KE3uW72
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj4, true, "ui",WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj4, true, "ui",false);
-         end
-   
-         local obj5 = EncounterJournalTitleText;                            -- https://imgur.com/KE3uW72
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj5, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj5, true, "ui",false);
-         end
-   
-         local obj6 = EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Month;         -- https://imgur.com/KE3uW72
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj6, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj6, true, "ui",false);
-         end
-   
-         local obj7 = EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title;         -- https://imgur.com/KE3uW72
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj7, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj7, true, "ui",false);
-         end
-   
-         local obj8 = EncounterJournalMonthlyActivitiesFrame.HeaderContainer.TimeLeft;      -- https://imgur.com/KE3uW72
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj8, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj8, true, "ui",false);
-         end
-   
-         local obj9 = EncounterJournalSuggestFrame.Suggestion1.button.Text;             -- https://imgur.com/kkPedLC
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj9, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj9, true, "ui",false);
-         end
-   
-         local obj10 = EncounterJournalSuggestFrame.Suggestion2.centerDisplay.button.Text; -- https://imgur.com/kkPedLC
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj10, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj10, true, "ui",false);
-         end
-   
-         local obj11 = EncounterJournalSuggestFrame.Suggestion3.centerDisplay.button.Text; -- https://imgur.com/kkPedLC
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj11, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj11, true, "ui",false);
-         end
-   
-         local obj12 = EncounterJournalSuggestFrame.Suggestion1.reward.text;               -- https://imgur.com/kkPedLC
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj12, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj12, true, "ui",false);
-         end
-        
-         local obj13 = EncounterJournalMonthlyActivitiesFrame.BarComplete.PendingRewardsText;               -- https://imgur.com/kkPedLC
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj13, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj13, true, "ui",false);
-         end
-   
-         local obj14 = EncounterJournalMonthlyActivitiesTab.Text;  -- Tab: Traveler's Log
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj14, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj14, true, "ui", false);
-         end
-   
-         local obj15 = EncounterJournalSuggestTab.Text;            -- Tab: Suggested Content
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj15, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj15, true, "ui", false);
-         end
-   
-         local obj16 = EncounterJournalDungeonTab.Text;            -- Tab: Dungeons
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj16, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj16, true, "ui", false);
-         end
-   
-         local obj17 = EncounterJournalRaidTab.Text;               -- Tab: Raids
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj17, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj17, true, "ui", false);
-         end
-   
-         local obj18 = EncounterJournalLootJournalTab.Text;        -- Tab: Item Sets
-         if (WoWTR_Localization.lang == 'AR') then
-            ST_CheckAndReplaceTranslationTextUI(obj18, true, "ui", WOWTR_Font1);
-         else
-            ST_CheckAndReplaceTranslationTextUI(obj18, true, "ui", false);
-         end
+   if (TT_PS["ui5"] == "1") then
+      local obj0 = EncounterJournalInstanceSelect.Title;
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj0, true, "Dungeon&Raid:Suggest:SuggestTittle", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj0, true, "Dungeon&Raid:Suggest:SuggestTittle", false);
+      end
+
+      local obj1 = EncounterJournalSuggestFrame.Suggestion1.centerDisplay.description.text;
+      local title1 = EncounterJournalSuggestFrame.Suggestion1.centerDisplay.title.text:GetText() or "?";
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj1, true, "Dungeon&Raid:Suggest:" .. title1, WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj1, true, "Dungeon&Raid:Suggest:" .. title1, false);
+      end
+
+      local obj2 = EncounterJournalSuggestFrame.Suggestion2.centerDisplay.description.text;
+      local title2 = EncounterJournalSuggestFrame.Suggestion2.centerDisplay.title.text:GetText() or "?";
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj2, true, "Dungeon&Raid:Suggest:" .. title2, WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj2, true, "Dungeon&Raid:Suggest:" .. title2, false);
+      end
+
+      local obj3 = EncounterJournalSuggestFrame.Suggestion3.centerDisplay.description.text;
+      local title3 = EncounterJournalSuggestFrame.Suggestion3.centerDisplay.title.text:GetText() or "?";
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj3, true, "Dungeon&Raid:Suggest:" .. title3, WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj3, true, "Dungeon&Raid:Suggest:" .. title3, false);
+      end
+
+      local obj4 = EncounterJournalMonthlyActivitiesFrame.BarComplete.AllRewardsCollectedText; -- https://imgur.com/KE3uW72
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj4, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj4, true, "ui", false);
+      end
+
+      local obj5 = EncounterJournalTitleText; -- https://imgur.com/KE3uW72
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj5, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj5, true, "ui", false);
+      end
+
+      local obj6 = EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Month; -- https://imgur.com/KE3uW72
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj6, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj6, true, "ui", false);
+      end
+
+      local obj7 = EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title; -- https://imgur.com/KE3uW72
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj7, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj7, true, "ui", false);
+      end
+
+      local obj8 = EncounterJournalMonthlyActivitiesFrame.HeaderContainer.TimeLeft; -- https://imgur.com/KE3uW72
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj8, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj8, true, "ui", false);
+      end
+
+      local obj9 = EncounterJournalSuggestFrame.Suggestion1.button.Text; -- https://imgur.com/kkPedLC
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj9, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj9, true, "ui", false);
+      end
+
+      local obj10 = EncounterJournalSuggestFrame.Suggestion2.centerDisplay.button.Text; -- https://imgur.com/kkPedLC
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj10, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj10, true, "ui", false);
+      end
+
+      local obj11 = EncounterJournalSuggestFrame.Suggestion3.centerDisplay.button.Text; -- https://imgur.com/kkPedLC
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj11, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj11, true, "ui", false);
+      end
+
+      local obj12 = EncounterJournalSuggestFrame.Suggestion1.reward.text; -- https://imgur.com/kkPedLC
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj12, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj12, true, "ui", false);
+      end
+
+      local obj13 = EncounterJournalMonthlyActivitiesFrame.BarComplete.PendingRewardsText; -- https://imgur.com/kkPedLC
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj13, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj13, true, "ui", false);
+      end
+
+      local obj14 = EncounterJournalMonthlyActivitiesTab.Text; -- Tab: Traveler's Log
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj14, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj14, true, "ui", false);
+      end
+
+      local obj15 = EncounterJournalSuggestTab.Text; -- Tab: Suggested Content
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj15, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj15, true, "ui", false);
+      end
+
+      local obj16 = EncounterJournalDungeonTab.Text; -- Tab: Dungeons
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj16, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj16, true, "ui", false);
+      end
+
+      local obj17 = EncounterJournalRaidTab.Text; -- Tab: Raids
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj17, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj17, true, "ui", false);
+      end
+
+      local obj18 = EncounterJournalLootJournalTab.Text; -- Tab: Item Sets
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(obj18, true, "ui", WOWTR_Font1);
+      else
+         ST_CheckAndReplaceTranslationTextUI(obj18, true, "ui", false);
       end
    end
-   
-   -------------------------------------------------------------------------------------------------------
-   
-   function ST_showLoreDescription()
+end
+
+-------------------------------------------------------------------------------------------------------
+
+function ST_showLoreDescription()
    --print("show LoreDescription");
-    if (TT_PS["ui5"] == "1") then
+   if (TT_PS["ui5"] == "1") then
       local ST_Dungeon_Raid_zone = EncounterJournalEncounterFrameInstanceFrame.title:GetText() or "?";
-      local ST_loreDescription = EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox.FontStringContainer.FontString;
+      local ST_loreDescription = EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox
+          .FontStringContainer.FontString;
       if (WoWTR_Localization.lang == 'AR') then
-         ST_CheckAndReplaceTranslationText(ST_loreDescription, true, "Dungeon&Raid:Zone:"..ST_Dungeon_Raid_zone, false, false, -5, "RIGHT");
+         ST_CheckAndReplaceTranslationText(ST_loreDescription, true, "Dungeon&Raid:Zone:" .. ST_Dungeon_Raid_zone, false,
+            false, -5, "RIGHT");
       else
-         ST_CheckAndReplaceTranslationText(ST_loreDescription, true, "Dungeon&Raid:Zone:"..ST_Dungeon_Raid_zone);
+         ST_CheckAndReplaceTranslationText(ST_loreDescription, true, "Dungeon&Raid:Zone:" .. ST_Dungeon_Raid_zone);
       end
       local ST_loreShowmap = EncounterJournalEncounterFrameInstanceFrameMapButtonText;
       if (WoWTR_Localization.lang == 'AR') then
@@ -1377,8 +1346,8 @@ function ST_SuggestTabClick()
       else
          ST_CheckAndReplaceTranslationText(ST_loreShowmap, true, "ui");
       end
-    end
    end
+end
 
 -------------------------------------------------------------------------------------------------------
 -- PROFESSION FRAME - Function to work in harmony with the CraftSim plugin.
@@ -1390,27 +1359,27 @@ function ST_SuggestTabClick()
 -------------------------------------------------------------------------------------------------------
 
 --DelveDifficultFrame, TEXT and OTHER TRANSLATE
-function ST_showDelveDifficultFrame() 
---print("show DelveDifficultFrame");
+function ST_showDelveDifficultFrame()
+   --print("show DelveDifficultFrame");
    -- if (TT_PS["ui7"] == "1") then
-      local DelveDF01 = DelvesDifficultyPickerFrame.Description; -- https://imgur.com/a/SAyXuiR
-      if (WoWTR_Localization.lang == 'AR') then
-         ST_CheckAndReplaceTranslationText(DelveDF01, true, "Dungeon&Raid:Zone:DelvesFrame",false,false);       -- save untranslated text
-      else
-         ST_CheckAndReplaceTranslationTextUI(DelveDF01, true, "Dungeon&Raid:Zone:DelvesFrame");       -- save untranslated text
-      end
-      
-      local DelveDF02 = DelvesDifficultyPickerFrame.EnterDelveButton.Text; -- https://imgur.com/a/SAyXuiR
-      ST_CheckAndReplaceTranslationTextUI(DelveDF02, false, "ui");       -- dont save untranslated text
+   local DelveDF01 = DelvesDifficultyPickerFrame.Description;                                            -- https://imgur.com/a/SAyXuiR
+   if (WoWTR_Localization.lang == 'AR') then
+      ST_CheckAndReplaceTranslationText(DelveDF01, true, "Dungeon&Raid:Zone:DelvesFrame", false, false); -- save untranslated text
+   else
+      ST_CheckAndReplaceTranslationTextUI(DelveDF01, true, "Dungeon&Raid:Zone:DelvesFrame");             -- save untranslated text
+   end
 
-      local DelveDF03 = DelvesDifficultyPickerFrame.DelveRewardsContainerFrame.RewardText; -- https://imgur.com/a/SAyXuiR
-      ST_CheckAndReplaceTranslationTextUI(DelveDF03, false, "ui");       -- dont save untranslated text
+   local DelveDF02 = DelvesDifficultyPickerFrame.EnterDelveButton.Text;                   -- https://imgur.com/a/SAyXuiR
+   ST_CheckAndReplaceTranslationTextUI(DelveDF02, false, "ui");                           -- dont save untranslated text
 
-      local DelveDF04 = DelvesDifficultyPickerFrame.ScenarioLabel; -- https://imgur.com/a/SAyXuiR
-      ST_CheckAndReplaceTranslationTextUI(DelveDF04, false, "ui");       -- dont save untranslated text
+   local DelveDF03 = DelvesDifficultyPickerFrame.DelveRewardsContainerFrame.RewardText;   -- https://imgur.com/a/SAyXuiR
+   ST_CheckAndReplaceTranslationTextUI(DelveDF03, false, "ui");                           -- dont save untranslated text
 
-      local DelveDF05 = DelvesDifficultyPickerFrame.Title; -- https://imgur.com/a/SAyXuiR
-      ST_CheckAndReplaceTranslationTextUI(DelveDF05, true, "Dungeon&Raid:Zone:DelvesFrame");       -- dont save untranslated text
+   local DelveDF04 = DelvesDifficultyPickerFrame.ScenarioLabel;                           -- https://imgur.com/a/SAyXuiR
+   ST_CheckAndReplaceTranslationTextUI(DelveDF04, false, "ui");                           -- dont save untranslated text
+
+   local DelveDF05 = DelvesDifficultyPickerFrame.Title;                                   -- https://imgur.com/a/SAyXuiR
+   ST_CheckAndReplaceTranslationTextUI(DelveDF05, true, "Dungeon&Raid:Zone:DelvesFrame"); -- dont save untranslated text
    -- end
 end
 
@@ -1423,34 +1392,35 @@ function ST_UpdateJournalEncounterBossInfo(ST_bossName)
    -- Simplified helper function: Calls ST_CheckAndReplaceTranslationText with appropriate params
    -- Relies on ST_CheckAndReplaceTranslationText to handle font and justification.
    local function updateElement(element, prefix, ST_corr, justifyAlign)
-       -- Ensure element exists and has GetText method before proceeding
-       if not element or not element.GetText then return end
-       
-       -- Pass parameters directly to the main translation function
-       -- 'true' for saving, WOWTR_Font2 as default font (can be overridden by font1 if needed), 'false' for onlyReverse
-       ST_CheckAndReplaceTranslationText(element, true, prefix .. ST_bossName, WOWTR_Font2, false, ST_corr, justifyAlign)
+      -- Ensure element exists and has GetText method before proceeding
+      if not element or not element.GetText then return end
+
+      -- Pass parameters directly to the main translation function
+      -- 'true' for saving, WOWTR_Font2 as default font (can be overridden by font1 if needed), 'false' for onlyReverse
+      ST_CheckAndReplaceTranslationText(element, true, prefix .. ST_bossName, WOWTR_Font2, false, ST_corr, justifyAlign)
    end
 
    -- Define elements and their specific parameters, including conditional justification
    local elementsToUpdate = {
-       -- Apply RIGHT align only if language is AR, otherwise pass nil (use default)
-       {EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription, "Dungeon&Raid:Boss:", -5, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil},
-       -- Handling the overview description separately below using tempObj
-       -- {EncounterJournalEncounterFrameInfo.overviewScroll.child.overviewDescription, "Dungeon&Raid:Boss:", nil, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil},
-       {EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription, "Dungeon&Raid:Boss:", nil, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil},
-       {EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle, "ui", nil, nil} -- Titles usually default to LEFT
+      -- Apply RIGHT align only if language is AR, otherwise pass nil (use default)
+      { EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription, "Dungeon&Raid:Boss:", -5,  (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil },
+      -- Handling the overview description separately below using tempObj
+      -- {EncounterJournalEncounterFrameInfo.overviewScroll.child.overviewDescription, "Dungeon&Raid:Boss:", nil, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil},
+      { EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription,      "Dungeon&Raid:Boss:", nil, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil },
+      { EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle,           "ui",                 nil, nil } -- Titles usually default to LEFT
    }
 
    -- Process the standard elements defined above
    for _, elementData in ipairs(elementsToUpdate) do
-       -- Unpack all four values and pass them to updateElement
-       updateElement(elementData[1], elementData[2], elementData[3], elementData[4])
+      -- Unpack all four values and pass them to updateElement
+      updateElement(elementData[1], elementData[2], elementData[3], elementData[4])
    end
 
    -- Special handling for the main overview description (often a SimpleHTML object)
    local overviewDesc = EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription
    if overviewDesc then
-      local descText = overviewDesc.Text -- The actual FontString or SimpleHTML object holding the text display
+      local descText = overviewDesc
+      .Text                                        -- The actual FontString or SimpleHTML object holding the text display
       local originalText = overviewDesc.textString -- SimpleHTML often stores the original string here
 
       if originalText and descText then
@@ -1458,50 +1428,51 @@ function ST_UpdateJournalEncounterBossInfo(ST_bossName)
 
          -- Create a temporary object wrapper conforming to ST_CheckAndReplaceTranslationText's expected interface
          local tempObj = {
-             GetText = function() return originalText end,
-             -- SetText in the wrapper now ONLY sets the text and updates font visuals
-             SetText = function(self, text)
-                 descText:SetText(text)
-                 ST_UpdateBossDescriptionFont(descText) -- Update font styles if necessary for SimpleHTML
-                 -- NO justification logic here anymore - handled by ST_CheckAndReplaceTranslationText
-             end,
-             -- Provide GetFont and GetWidth for ST_CheckAndReplaceTranslationText
-             GetFont = function()
-                 -- *** FIX: Call GetFont with "p" for SimpleHTML ***
-                 -- Get font details specifically for the paragraph tag ("p")
-                 -- as a reasonable default base size for SimpleHTML objects.
-                 -- Returns fontFile, height, flags for the "p" tag.
-                 return descText:GetFont("p")
-             end,
-             SetFont = function(self, font, size, flags)
-                 -- This might be less effective for SimpleHTML than SetFontObject,
-                 -- but ST_UpdateBossDescriptionFont likely handles detailed styling.
-                 -- We keep it for interface compatibility with ST_CheckAndReplaceTranslationText.
-                 -- Note: SimpleHTML SetFont might need a textType argument too,
-                 -- but ST_CheckAndReplaceTranslationText calls it without one.
-                 -- We rely on ST_UpdateBossDescriptionFont for the main styling.
-                 pcall(function() descText:SetFont("p", font, size, flags) end)
-             end,
-             GetWidth = function() return descText:GetWidth() end,
-             SetJustifyH = function(self, align) -- Needed for ST_CheckAndReplaceTranslationText to call
-                 -- Handle justification for SimpleHTML potentially needing per-tag alignment
-                 local textTypes = {"p", "h1", "h2", "h3"}
-                 for _, textType in ipairs(textTypes) do
-                     pcall(function() descText:SetJustifyH(textType, align) end)
-                 end
-             end
-             -- GetRegions = function() return descText:GetRegions() end -- Might not be needed by the main function
+            GetText = function() return originalText end,
+            -- SetText in the wrapper now ONLY sets the text and updates font visuals
+            SetText = function(self, text)
+               descText:SetText(text)
+               ST_UpdateBossDescriptionFont(descText) -- Update font styles if necessary for SimpleHTML
+               -- NO justification logic here anymore - handled by ST_CheckAndReplaceTranslationText
+            end,
+            -- Provide GetFont and GetWidth for ST_CheckAndReplaceTranslationText
+            GetFont = function()
+               -- *** FIX: Call GetFont with "p" for SimpleHTML ***
+               -- Get font details specifically for the paragraph tag ("p")
+               -- as a reasonable default base size for SimpleHTML objects.
+               -- Returns fontFile, height, flags for the "p" tag.
+               return descText:GetFont("p")
+            end,
+            SetFont = function(self, font, size, flags)
+               -- This might be less effective for SimpleHTML than SetFontObject,
+               -- but ST_UpdateBossDescriptionFont likely handles detailed styling.
+               -- We keep it for interface compatibility with ST_CheckAndReplaceTranslationText.
+               -- Note: SimpleHTML SetFont might need a textType argument too,
+               -- but ST_CheckAndReplaceTranslationText calls it without one.
+               -- We rely on ST_UpdateBossDescriptionFont for the main styling.
+               pcall(function() descText:SetFont("p", font, size, flags) end)
+            end,
+            GetWidth = function() return descText:GetWidth() end,
+            SetJustifyH = function(self, align) -- Needed for ST_CheckAndReplaceTranslationText to call
+               -- Handle justification for SimpleHTML potentially needing per-tag alignment
+               local textTypes = { "p", "h1", "h2", "h3" }
+               for _, textType in ipairs(textTypes) do
+                  pcall(function() descText:SetJustifyH(textType, align) end)
+               end
+            end
+            -- GetRegions = function() return descText:GetRegions() end -- Might not be needed by the main function
          }
 
          -- Call the main function with the tempObj and conditional justification
-         ST_CheckAndReplaceTranslationText(tempObj, true, "Dungeon&Raid:Boss:" .. ST_bossName, WOWTR_Font2, false, -120, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil)
+         ST_CheckAndReplaceTranslationText(tempObj, true, "Dungeon&Raid:Boss:" .. ST_bossName, WOWTR_Font2, false, -120,
+            (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil)
       end
    end
 
    -- Update the root button text based on language (existing logic)
    local rootButton = EncounterJournalEncounterFrameInfoRootButton
    if rootButton then
-       rootButton:SetText(WoWTR_Localization.lang == 'AR' and ">" or "<")
+      rootButton:SetText(WoWTR_Localization.lang == 'AR' and ">" or "<")
    end
 
    -- Update header tab text (existing logic)
@@ -1509,98 +1480,97 @@ function ST_UpdateJournalEncounterBossInfo(ST_bossName)
 end
 
 function ST_SaveOriginalText(bossName, text)
-    if not ST_OriginalTexts then
-        ST_OriginalTexts = {}
-    end
-    ST_OriginalTexts[bossName] = text
-    -- Here you can save the text permanently, for example, to a file or database
+   if not ST_OriginalTexts then
+      ST_OriginalTexts = {}
+   end
+   ST_OriginalTexts[bossName] = text
+   -- Here you can save the text permanently, for example, to a file or database
 end
 
 function ST_BossHeaderTabText()
    local tabs = {
-       EncounterJournalEncounterFrameInfoOverviewTab,
-       EncounterJournalEncounterFrameInfoLootTab,
-       EncounterJournalEncounterFrameInfoBossTab,
-       EncounterJournalEncounterFrameInfoModelTab
+      EncounterJournalEncounterFrameInfoOverviewTab,
+      EncounterJournalEncounterFrameInfoLootTab,
+      EncounterJournalEncounterFrameInfoBossTab,
+      EncounterJournalEncounterFrameInfoModelTab
    }
 
    for _, tab in ipairs(tabs) do
-       ST_CheckAndReplaceTranslationText(tab, false, "ui", WOWTR_Font2, false, 0)
+      ST_CheckAndReplaceTranslationText(tab, false, "ui", WOWTR_Font2, false, 0)
    end
 end
 
 function ST_UpdateBossDescriptionFont(descText)
-  if not descText then return end
-  
-  local textTypes = {"p", "h1", "h2", "h3"}
-  for _, textType in ipairs(textTypes) do
+   if not descText then return end
+
+   local textTypes = { "p", "h1", "h2", "h3" }
+   for _, textType in ipairs(textTypes) do
       local alignment = (WoWTR_Localization.lang == 'AR') and "RIGHT" or "LEFT"
       if descText.SetJustifyH then
-          descText:SetJustifyH(textType, alignment)
+         descText:SetJustifyH(textType, alignment)
       end
       if descText.SetFont then
-          descText:SetFont(textType, WOWTR_Font2, 12, "")
+         descText:SetFont(textType, WOWTR_Font2, 12, "")
       end
       if descText.SetFontObject then
-          local fontName = "WOWTRBossDescFont_" .. textType
-          local fontObj = CreateFont(fontName)
-          fontObj:SetFont(WOWTR_Font2, 12, "")
-          fontObj:SetJustifyH(alignment)
-          descText:SetFontObject(textType, fontObj)
+         local fontName = "WOWTRBossDescFont_" .. textType
+         local fontObj = CreateFont(fontName)
+         fontObj:SetFont(WOWTR_Font2, 12, "")
+         fontObj:SetJustifyH(alignment)
+         descText:SetFontObject(textType, fontObj)
       end
-  end
+   end
 end
 
 function ST_UpdateBossDescriptionFont(textObject)
    if not textObject then return end
-   
+
    -- Create a custom font object
    local fontName = "WOWTRBossDescFont"
    local font = CreateFont(fontName)
    font:SetFont(WOWTR_Font2, 12, "")
-   
+
    -- Set the font for each text type of the SimpleHTML object
-   local textTypes = {"p", "h1", "h2", "h3"}
+   local textTypes = { "p", "h1", "h2", "h3" }
    for _, textType in ipairs(textTypes) do
-       if textObject.SetFont then
-           textObject:SetFont(textType, WOWTR_Font2, 12, "")
-       end
-       if textObject.SetFontObject then
-           textObject:SetFontObject(textType, font)
-       end
+      if textObject.SetFont then
+         textObject:SetFont(textType, WOWTR_Font2, 12, "")
+      end
+      if textObject.SetFontObject then
+         textObject:SetFontObject(textType, font)
+      end
    end
 end
 
 function ST_clickBosses()
    local previousText = ""
    local function OnUpdateHandler()
-       local currentText = EncounterJournalEncounterFrameInfoEncounterTitle:GetText()
-       if currentText and currentText ~= previousText then
-           -- Get the boss name from the navigation bar
-           local ST_bossName = EncounterJournalNavBarButton3Text:GetText()
-           -- Update boss info
-           ST_UpdateJournalEncounterBossInfo(ST_bossName)
-           -- Update previousText
-           previousText = currentText
+      local currentText = EncounterJournalEncounterFrameInfoEncounterTitle:GetText()
+      if currentText and currentText ~= previousText then
+         -- Get the boss name from the navigation bar
+         local ST_bossName = EncounterJournalNavBarButton3Text:GetText()
+         -- Update boss info
+         ST_UpdateJournalEncounterBossInfo(ST_bossName)
+         -- Update previousText
+         previousText = currentText
 
-           -- Add " " at the end of the text (only once)
-           if not string.find(currentText, " $") then
-               local modifiedText = currentText .. " "
-               EncounterJournalEncounterFrameInfoEncounterTitle:SetText(modifiedText)
-           end
-       end
+         -- Add " " at the end of the text (only once)
+         if not string.find(currentText, " $") then
+            local modifiedText = currentText .. " "
+            EncounterJournalEncounterFrameInfoEncounterTitle:SetText(modifiedText)
+         end
+      end
    end
 
    local frame = CreateFrame("Frame")
    frame:SetScript("OnUpdate", OnUpdateHandler)
 end
 
-
 local isEJournalButtonCreated = false
 local EncounterJournalupdateVisibility
 function ST_AdventureGuidebutton()
-    if not isEJournalButtonCreated then
-        TT_PS = TT_PS or { ui5 = "1" }
+   if not isEJournalButtonCreated then
+      TT_PS = TT_PS or { ui5 = "1" }
 
       EncounterJournalupdateVisibility = CreateToggleButton(
          EncounterJournal,
@@ -1608,7 +1578,7 @@ function ST_AdventureGuidebutton()
          "ui5",
          WoWTR_Localization.WoWTR_enDESC,
          WoWTR_Localization.WoWTR_trDESC,
-         {"TOPLEFT", EncounterJournal, "TOPRIGHT", -170, 0},
+         { "TOPLEFT", EncounterJournal, "TOPRIGHT", -170, 0 },
          function()
             ST_clickBosses()
             if EncounterJournal then
@@ -1617,83 +1587,85 @@ function ST_AdventureGuidebutton()
                -- Butonun temizlenmesi için burada gerekli işlemleri yapabilirsiniz
             end
          end
-        )
+      )
 
-        isEJournalButtonCreated = true -- Butonlar ilk kez oluşturulunca işaretleyin
-    end
+      isEJournalButtonCreated = true -- Butonlar ilk kez oluşturulunca işaretleyin
+   end
 
-    if EncounterJournalupdateVisibility then
-       EncounterJournalupdateVisibility()
-    end
+   if EncounterJournalupdateVisibility then
+      EncounterJournalupdateVisibility()
+   end
 end
+
 -------------------------------------------------------------------------------------------------------
 
-function ST_ShowAbility()            -- sprawdzanie tekstów Ability
-  if (TT_PS["ui5"] == "1") then
-   for i = 1, 99, 1 do
-      if (_G["EncounterJournalInfoHeader"..i.."Description"]) then
-         local obj = _G["EncounterJournalInfoHeader"..i.."Description"];
-         local obj1= _G["EncounterJournalInfoHeader"..i];
-         local obj2= _G["EncounterJournalInfoHeader"..i.."DescriptionBG"];
-         local txt = obj:GetText();
+function ST_ShowAbility() -- sprawdzanie tekstów Ability
+   if (TT_PS["ui5"] == "1") then
+      for i = 1, 99, 1 do
+         if (_G["EncounterJournalInfoHeader" .. i .. "Description"]) then
+            local obj = _G["EncounterJournalInfoHeader" .. i .. "Description"];
+            local obj1 = _G["EncounterJournalInfoHeader" .. i];
+            local obj2 = _G["EncounterJournalInfoHeader" .. i .. "DescriptionBG"];
+            local txt = obj:GetText();
 
-         ST_CheckAndReplaceTranslationText(obj, true, "Dungeon&Raid:Ability:".._G["EncounterJournalInfoHeader"..i.."HeaderButton"].title:GetText());
-         local ST_bossDescription2 = EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription;
-         ST_CheckAndReplaceTranslationText(ST_bossDescription2, false);
+            ST_CheckAndReplaceTranslationText(obj, true,
+               "Dungeon&Raid:Ability:" .. _G["EncounterJournalInfoHeader" .. i .. "HeaderButton"].title:GetText());
+            local ST_bossDescription2 = EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription;
+            ST_CheckAndReplaceTranslationText(ST_bossDescription2, false);
+         end
       end
    end
-  end
 end
 
 -------------------------------------------------------------------------------------------------------
 
 function ST_BossHeaderTabText()
    if (TT_PS["ui5"] == "1") then
-    local ST_bossName = EncounterJournalNavBarButton3Text:GetText()
+      local ST_bossName = EncounterJournalNavBarButton3Text:GetText()
 
-    local headers = {
-        EncounterJournalOverviewInfoHeader1,
-        EncounterJournalOverviewInfoHeader2,
-        EncounterJournalOverviewInfoHeader3
-    }
+      local headers = {
+         EncounterJournalOverviewInfoHeader1,
+         EncounterJournalOverviewInfoHeader2,
+         EncounterJournalOverviewInfoHeader3
+      }
 
-    for index, header in ipairs(headers) do
-        if header then
+      for index, header in ipairs(headers) do
+         if header then
             local bulletsTable = header.Bullets
 
             if bulletsTable then
-                for _, bulletData in ipairs(bulletsTable) do
-                    if bulletData.Text and bulletData.Text.GetTextData then
-                        local textData = bulletData.Text:GetTextData()
-                        if textData then
-                            for text_index, textInfo in ipairs(textData) do
-                                if textInfo.text then
-                                    local metin = textInfo.text
-                                    
-                                    -- Create a temporary object to handle text replacement
-                                    local tempObj = {
-                                        GetText = function() return metin end,
-                                        SetText = function(self, text)
-                                            bulletData.Text:SetText(text)
-                                            -- Update font/style if needed
-                                            ST_UpdateBossDescriptionFont(bulletData.Text)
-                                        end
-                                    }
-                                    
-                                    local prefix = "Dungeon&Raid:Boss:" .. ST_bossName
-                                    ST_CheckAndReplaceTranslationText(tempObj, true, prefix, nil, false, nil)
-                                end
-                            end
+               for _, bulletData in ipairs(bulletsTable) do
+                  if bulletData.Text and bulletData.Text.GetTextData then
+                     local textData = bulletData.Text:GetTextData()
+                     if textData then
+                        for text_index, textInfo in ipairs(textData) do
+                           if textInfo.text then
+                              local metin = textInfo.text
+
+                              -- Create a temporary object to handle text replacement
+                              local tempObj = {
+                                 GetText = function() return metin end,
+                                 SetText = function(self, text)
+                                    bulletData.Text:SetText(text)
+                                    -- Update font/style if needed
+                                    ST_UpdateBossDescriptionFont(bulletData.Text)
+                                 end
+                              }
+
+                              local prefix = "Dungeon&Raid:Boss:" .. ST_bossName
+                              ST_CheckAndReplaceTranslationText(tempObj, true, prefix, nil, false, nil)
+                           end
                         end
-                    end
-                end
+                     end
+                  end
+               end
             else
-                -- Uncomment for debugging: print("Bullets table not found for Header " .. index)
+               -- Uncomment for debugging: print("Bullets table not found for Header " .. index)
             end
-        else
+         else
             -- Uncomment for debugging: print("Header " .. index .. " not found.")
-        end
-    end
+         end
+      end
       local HeaderTitle1 = EncounterJournalOverviewInfoHeader1HeaderButtonTitle;
       ST_CheckAndReplaceTranslationText(HeaderTitle1, true, "ui");
       local HeaderTitle2 = EncounterJournalOverviewInfoHeader2HeaderButtonTitle;
@@ -1707,7 +1679,7 @@ end
 
 --StaticPopup1 and StaticPopup1 WINDOW
 function ST_StaticPopup1()
---print(StaticPopup1Text:GetText());
+   --print(StaticPopup1Text:GetText());
    if (TT_PS["ui1"] == "1") then
       local SPobj01 = StaticPopup1Text;
       ST_CheckAndReplaceTranslationTextUI(SPobj01, true, "h@popuptext-ui"); -- Dodano znacznik "h" do kontroli danych od użytkowników.
@@ -1723,7 +1695,7 @@ function ST_StaticPopup1()
 
       local SPobj05 = StaticPopup1Button4Text;
       ST_CheckAndReplaceTranslationTextUI(SPobj05, true, "h@popupbutton-ui"); -- Dodano znacznik "h" do kontroli danych od użytkowników.
-      
+
       local SPobj06 = StaticPopup2Text;
       ST_CheckAndReplaceTranslationTextUI(SPobj06, true, "h@popuptext-ui"); -- Dodano znacznik "h" do kontroli danych od użytkowników.
 
@@ -1745,7 +1717,7 @@ end
 
 --WORLD MAP TITLE
 function ST_WorldMapFunc()
---print("ST_WorldMapFunc");
+   --print("ST_WorldMapFunc");
    local wmframe01 = WorldMapFrameTitleText;
    ST_CheckAndReplaceTranslationText(wmframe01, true, "ui", false, 1);
 
@@ -1757,8 +1729,8 @@ end
 
 --Group Finder Frames
 function ST_GroupFinder()
---print("ST_GroupFinder");
--- Dungeons & Raids
+   --print("ST_GroupFinder");
+   -- Dungeons & Raids
    if (TT_PS["ui3"] == "1") then
       local GFobj01 = PVEFrameTitleText;
       ST_CheckAndReplaceTranslationTextUI(GFobj01, true, "ui");
@@ -1773,13 +1745,13 @@ function ST_GroupFinder()
       ST_CheckAndReplaceTranslationTextUI(GFobj04, true, "ui");
 
       local GFobj05 = GroupFinderFrameGroupButton1Name;
-      ST_CheckAndReplaceTranslationText(GFobj05, true, "ui",false,true);
+      ST_CheckAndReplaceTranslationText(GFobj05, true, "ui", false, true);
 
       local GFobj06 = GroupFinderFrameGroupButton2Name;
       ST_CheckAndReplaceTranslationTextUI(GFobj06, true, "ui");
 
       local GFobj07 = GroupFinderFrameGroupButton3Name;
-      ST_CheckAndReplaceTranslationText(GFobj07, true, "ui",false,true);
+      ST_CheckAndReplaceTranslationText(GFobj07, true, "ui", false, true);
 
       local GFobj08 = LFDQueueFrameTypeDropDownName;
       ST_CheckAndReplaceTranslationTextUI(GFobj08, true, "ui");
@@ -1788,13 +1760,13 @@ function ST_GroupFinder()
       ST_CheckAndReplaceTranslationTextUI(GFobj09, true, "ui", WOWTR_Font1);
 
       local GFobj10 = LFDQueueFrameRandomScrollFrameChildFrameDescription;
-      ST_CheckAndReplaceTranslationText(GFobj10, true, "ui",false,false);
+      ST_CheckAndReplaceTranslationText(GFobj10, true, "ui", false, false);
 
       local GFobj11 = LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel;
       ST_CheckAndReplaceTranslationTextUI(GFobj11, true, "ui", WOWTR_Font1);
 
       local GFobj12 = LFDQueueFrameRandomScrollFrameChildFrameRewardsDescription;
-      ST_CheckAndReplaceTranslationText(GFobj12, true, "ui",false,false,-10);
+      ST_CheckAndReplaceTranslationText(GFobj12, true, "ui", false, false, -10);
 
       local GFobj13 = LFDQueueFrameFindGroupButton.Text;
       ST_CheckAndReplaceTranslationTextUI(GFobj13, true, "ui");
@@ -1942,64 +1914,64 @@ function ST_GroupFinder()
       local function ApplyTranslationToElement(element, alignment)
          -- Check if the element is valid and has the necessary text methods
          if element and element.GetText and element.SetText then
-               local originalText = element:GetText()  -- Get the current text
-      
-               if originalText then
-                  -- --- START: Debug code to print font information ---
-                  if element.GetFont then -- Check if the element supports getting font info
-                     local fontFile, fontHeight, fontFlags = element:GetFont()
-                     local elementName = element:GetName() -- Try to get the element's name for context
-                     local parentName = element:GetParent() and element:GetParent():GetName() -- Get parent name too
-      
-                     --print("--- ApplyTranslationToElement Debug ---")
-                     if elementName then
-                           --print("Element Name:", elementName)
-                     end
-                     if parentName then
-                           --print("Parent Name:", parentName)
-                     end
-                     -- If no name, maybe show the first few chars of text for context
-                     if not elementName then
-                           --print("Element (no name): Text starts with ->", string.sub(originalText, 1, 30))
-                     end
-                     --print("Original Font File:", fontFile or "N/A")
-                     --print("Original Font Size:", fontHeight or "N/A")
-                     -- print("Original Font Flags:", fontFlags or "N/A") -- Optional: Uncomment if you need flags
-                     --print("---------------------------------------")
-                  else
-                        -- Optionally print if GetFont isn't supported
-                        local elementName = element:GetName()
-                        --print("ApplyTranslationToElement:", elementName or "Unnamed Element", "does not support GetFont()")
+            local originalText = element:GetText() -- Get the current text
+
+            if originalText then
+               -- --- START: Debug code to print font information ---
+               if element.GetFont then                                                     -- Check if the element supports getting font info
+                  local fontFile, fontHeight, fontFlags = element:GetFont()
+                  local elementName = element:GetName()                                    -- Try to get the element's name for context
+                  local parentName = element:GetParent() and element:GetParent():GetName() -- Get parent name too
+
+                  --print("--- ApplyTranslationToElement Debug ---")
+                  if elementName then
+                     --print("Element Name:", elementName)
                   end
-                  -- --- END: Debug code ---
-      
-                  local hash = StringHash(ST_UsunZbedneZnaki(originalText))  -- Calculate the hash
-      
-                  -- If a translation exists, update the text and font
-                  if ST_TooltipsHS[hash] then
-                     local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash])
-                     element:SetText(translatedText)  -- Set the translated text
-      
-                     if element.SetFont then
-                           -- Use select(2,...) which is safer if GetFont returns nil
-                           if WoWTR_Localization.lang == 'AR' then 
-                              element:SetFont(WOWTR_Font1, select(2, element:GetFont()))
-                           else
-                              element:SetFont(WOWTR_Font2, select(2, element:GetFont()))
-                           end
-                     end
-                  -- else -- No translation found
-                     -- Ensure original font remains if needed (usually not necessary unless something else modified it)
-                     -- if element.SetFont and fontFile and fontHeight then
-                     --    element:SetFont(fontFile, fontHeight, fontFlags)
-                     -- end
+                  if parentName then
+                     --print("Parent Name:", parentName)
                   end
-      
-                  -- Adjust text alignment if specified
-                  if alignment and element.SetJustifyH then
-                     element:SetJustifyH(alignment)
+                  -- If no name, maybe show the first few chars of text for context
+                  if not elementName then
+                     --print("Element (no name): Text starts with ->", string.sub(originalText, 1, 30))
                   end
+                  --print("Original Font File:", fontFile or "N/A")
+                  --print("Original Font Size:", fontHeight or "N/A")
+                  -- print("Original Font Flags:", fontFlags or "N/A") -- Optional: Uncomment if you need flags
+                  --print("---------------------------------------")
+               else
+                  -- Optionally print if GetFont isn't supported
+                  local elementName = element:GetName()
+                  --print("ApplyTranslationToElement:", elementName or "Unnamed Element", "does not support GetFont()")
                end
+               -- --- END: Debug code ---
+
+               local hash = StringHash(ST_UsunZbedneZnaki(originalText)) -- Calculate the hash
+
+               -- If a translation exists, update the text and font
+               if ST_TooltipsHS[hash] then
+                  local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash])
+                  element:SetText(translatedText) -- Set the translated text
+
+                  if element.SetFont then
+                     -- Use select(2,...) which is safer if GetFont returns nil
+                     if WoWTR_Localization.lang == 'AR' then
+                        element:SetFont(WOWTR_Font1, select(2, element:GetFont()))
+                     else
+                        element:SetFont(WOWTR_Font2, select(2, element:GetFont()))
+                     end
+                  end
+                  -- else -- No translation found
+                  -- Ensure original font remains if needed (usually not necessary unless something else modified it)
+                  -- if element.SetFont and fontFile and fontHeight then
+                  --    element:SetFont(fontFile, fontHeight, fontFlags)
+                  -- end
+               end
+
+               -- Adjust text alignment if specified
+               if alignment and element.SetJustifyH then
+                  element:SetJustifyH(alignment)
+               end
+            end
          end
       end
 
@@ -2016,22 +1988,22 @@ function ST_GroupFinder()
       for _, button in ipairs(categoryButtons) do
          -- MODIFICATION: Check for the .Label child and pass THAT to the function
          if button and button.Label then
-             -- Pass the actual Label element which holds the text and font info
-             ApplyTranslationToElement(button.Label)
+            -- Pass the actual Label element which holds the text and font info
+            ApplyTranslationToElement(button.Label)
          elseif button then
-             -- Fallback: If no Label child, try applying to the button itself (might not work for font)
-             --print("Warning: Button", button:GetName(), "does not have a .Label child. Applying to button itself.")
-             ApplyTranslationToElement(button)
+            -- Fallback: If no Label child, try applying to the button itself (might not work for font)
+            --print("Warning: Button", button:GetName(), "does not have a .Label child. Applying to button itself.")
+            ApplyTranslationToElement(button)
          end
-     end
+      end
    end
 end
 
 -------------------------------------------------------------------------------------------------------
 
 function ST_GroupPVPFinder()
---print("ST_GroupPVPFinder");
--- Player vs. Player
+   --print("ST_GroupPVPFinder");
+   -- Player vs. Player
    if (TT_PS["ui3"] == "1") then
       local gfpvpobj01 = PVPQueueFrameCategoryButton1.Name;
       ST_CheckAndReplaceTranslationTextUI(gfpvpobj01, true, "ui");
@@ -2078,40 +2050,39 @@ function ST_GroupPVPFinder()
       local gfpvpobj15 = LFGListFrame.CategorySelection.Label; -- Premade Groups
       ST_CheckAndReplaceTranslationTextUI(gfpvpobj15, true, "ui");
    end
-
 end
 
 -------------------------------------------------------------------------------------------------------
 
 function ST_GroupMplusFinder()
    if TT_PS["ui3"] == "1" then
-     local elements = {
-       {ChallengesFrame.SeasonChangeNoticeFrame.NewSeason, "ui"},
-       {ChallengesFrame.SeasonChangeNoticeFrame.SeasonDescription, "ui"},
-       {ChallengesFrame.SeasonChangeNoticeFrame.SeasonDescription2, "ui"},
-       {ChallengesFrame.WeeklyInfo.Child.Description, "ui"},
-       {ChallengesFrame.WeeklyInfo.Child.SeasonBest, "ui"},
-       {ChallengesFrame.WeeklyInfo.Child.ThisWeekLabel, "ui"},
-       {ChallengesFrame.WeeklyInfo.Child.WeeklyChest.RunStatus, "ui"},
-       {ChallengesFrame.WeeklyInfo.Child.DungeonScoreInfo.Title, "ui"},
-     };
- 
-     for _, elementData in ipairs(elements) do
-       local element, prefix = unpack(elementData);
-       if WoWTR_Localization.lang == 'AR' then
-         ST_CheckAndReplaceTranslationText(element, true, prefix, false, false, -10);
-       else
-         ST_CheckAndReplaceTranslationTextUI(element, true, prefix);
-       end
-     end
+      local elements = {
+         { ChallengesFrame.SeasonChangeNoticeFrame.NewSeason,          "ui" },
+         { ChallengesFrame.SeasonChangeNoticeFrame.SeasonDescription,  "ui" },
+         { ChallengesFrame.SeasonChangeNoticeFrame.SeasonDescription2, "ui" },
+         { ChallengesFrame.WeeklyInfo.Child.Description,               "ui" },
+         { ChallengesFrame.WeeklyInfo.Child.SeasonBest,                "ui" },
+         { ChallengesFrame.WeeklyInfo.Child.ThisWeekLabel,             "ui" },
+         { ChallengesFrame.WeeklyInfo.Child.WeeklyChest.RunStatus,     "ui" },
+         { ChallengesFrame.WeeklyInfo.Child.DungeonScoreInfo.Title,    "ui" },
+      };
+
+      for _, elementData in ipairs(elements) do
+         local element, prefix = unpack(elementData);
+         if WoWTR_Localization.lang == 'AR' then
+            ST_CheckAndReplaceTranslationText(element, true, prefix, false, false, -10);
+         else
+            ST_CheckAndReplaceTranslationTextUI(element, true, prefix);
+         end
+      end
    end
- end
+end
 
 -------------------------------------------------------------------------------------------------------
 
 --MERCHANT FRAME
 function ST_MerchantFrame()
---print("ST_MerchantFrame");
+   --print("ST_MerchantFrame");
    if (TT_PS["ui1"] == "1") then
       local MercTab1 = MerchantFrameTab1.Text;
       ST_CheckAndReplaceTranslationTextUI(MercTab1, true, "ui");
@@ -2128,60 +2099,60 @@ function ST_GameMenuTranslate()
    if TT_PS["ui1"] ~= "1" then return end
 
    local function SafeUpdateText(textObject)
-       if not textObject or not textObject.GetText then return end
-       local originalText = textObject:GetText()
-       if not originalText then return end
+      if not textObject or not textObject.GetText then return end
+      local originalText = textObject:GetText()
+      if not originalText then return end
 
-       local hash = StringHash(ST_UsunZbedneZnaki(originalText))
-       if ST_TooltipsHS[hash] then
-           local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash]) .. NONBREAKINGSPACE
-           C_Timer.After(0.01, function()
-               if textObject:GetText() == originalText then
-                   textObject:SetText(translatedText)
-                   if textObject.SetFont then
-                       textObject:SetFont(WOWTR_Font2, select(2, textObject:GetFont()))
-                   end
+      local hash = StringHash(ST_UsunZbedneZnaki(originalText))
+      if ST_TooltipsHS[hash] then
+         local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash]) .. NONBREAKINGSPACE
+         C_Timer.After(0.01, function()
+            if textObject:GetText() == originalText then
+               textObject:SetText(translatedText)
+               if textObject.SetFont then
+                  textObject:SetFont(WOWTR_Font2, select(2, textObject:GetFont()))
                end
-           end)
-       -- elseif ST_PM["saveNW"] == "1" then
-           -- ST_PH[hash] = "ui@" .. ST_PrzedZapisem(originalText)
-       end
+            end
+         end)
+         -- elseif ST_PM["saveNW"] == "1" then
+         -- ST_PH[hash] = "ui@" .. ST_PrzedZapisem(originalText)
+      end
    end
 
    local function SafeUpdateButton(button)
       SafeUpdateText(button)
-      
+
       local fontStates = {
-          "Normal",
-          "Highlight",
-          "Disabled",
-          "Pushed"
+         "Normal",
+         "Highlight",
+         "Disabled",
+         "Pushed"
       }
-      
+
       for _, state in ipairs(fontStates) do
-          local getFontObject = button["Get" .. state .. "FontObject"]
-          local setFontObject = button["Set" .. state .. "FontObject"]
-          
-          if getFontObject and setFontObject then
-              local fontObject = getFontObject(button)
-              if fontObject then
-                  fontObject:SetFont(WOWTR_Font2, select(2, fontObject:GetFont()))
-                  setFontObject(button, fontObject)
-              end
-          end
+         local getFontObject = button["Get" .. state .. "FontObject"]
+         local setFontObject = button["Set" .. state .. "FontObject"]
+
+         if getFontObject and setFontObject then
+            local fontObject = getFontObject(button)
+            if fontObject then
+               fontObject:SetFont(WOWTR_Font2, select(2, fontObject:GetFont()))
+               setFontObject(button, fontObject)
+            end
+         end
       end
-  end
+   end
 
    SafeUpdateText(GameMenuFrame.Header.Text)
 
    local function SafeInitButtons()
-       C_Timer.After(0.01, function()
-           if GameMenuFrame.buttonPool then
-               for buttonFrame in GameMenuFrame.buttonPool:EnumerateActive() do
-                   SafeUpdateButton(buttonFrame)
-               end
-           end
-       end)
+      C_Timer.After(0.01, function()
+         if GameMenuFrame.buttonPool then
+            for buttonFrame in GameMenuFrame.buttonPool:EnumerateActive() do
+               SafeUpdateButton(buttonFrame)
+            end
+         end
+      end)
    end
 
    hooksecurefunc(GameMenuFrame, "InitButtons", SafeInitButtons)
@@ -2193,18 +2164,18 @@ end
 
 --Collections Journal & Toys
 function ST_MountJournal()
---print(ST_MountJournal);
+   --print(ST_MountJournal);
    if (TT_PS["ui4"] == "1") then
       local CJobj01 = MountJournalLore;
       local ST_MountName = MountJournalName:GetText();
       if (WoWTR_Localization.lang == 'AR') then
-         ST_CheckAndReplaceTranslationText(CJobj01, true, "Collections:Mount:"..(ST_MountName or ''),false,false,-10);
+         ST_CheckAndReplaceTranslationText(CJobj01, true, "Collections:Mount:" .. (ST_MountName or ''), false, false, -10);
       else
-         ST_CheckAndReplaceTranslationTextUI(CJobj01, true, "Collections:Mount:"..(ST_MountName or ''));  -- https://imgur.com/7INQmHh
+         ST_CheckAndReplaceTranslationTextUI(CJobj01, true, "Collections:Mount:" .. (ST_MountName or '')); -- https://imgur.com/7INQmHh
       end
 
       local CJobj02 = MountJournalSummonRandomFavoriteButtonSpellName;
-      ST_CheckAndReplaceTranslationText(CJobj02, false, "ui",false,false);
+      ST_CheckAndReplaceTranslationText(CJobj02, false, "ui", false, false);
 
       local CJobj03 = MountJournal.BottomLeftInset.SlotLabel;
       ST_CheckAndReplaceTranslationTextUI(CJobj03, false, "ui");
@@ -2244,14 +2215,14 @@ function ST_MountJournal()
 
       local CJobj20 = PetJournalSummonRandomFavoritePetButtonSpellName;
       if (WoWTR_Localization.lang == 'AR') then
-         ST_CheckAndReplaceTranslationText(CJobj20, false, "ui",false,false);
+         ST_CheckAndReplaceTranslationText(CJobj20, false, "ui", false, false);
       else
          ST_CheckAndReplaceTranslationTextUI(CJobj20, false, "ui");
       end
 
       local CJobj21 = PetJournalHealPetButtonSpellName;
       if (WoWTR_Localization.lang == 'AR') then
-         ST_CheckAndReplaceTranslationText(CJobj21, false, "ui",false,false);
+         ST_CheckAndReplaceTranslationText(CJobj21, false, "ui", false, false);
       else
          ST_CheckAndReplaceTranslationTextUI(CJobj21, false, "ui");
       end
@@ -2290,11 +2261,11 @@ function ST_MountJournal()
       ST_CheckAndReplaceTranslationTextUI(CJobj32, false, "ui");
 
       for i = 1, 18 do
-         local CJToys = ToyBox.iconsFrame["spellButton"..i].name;
+         local CJToys = ToyBox.iconsFrame["spellButton" .. i].name;
          ST_CheckAndReplaceTranslationTextUI(CJToys, true, "toyname");
       end
    end
-   
+
    if (TT_PS["ui5"] == "1") then
       local CJobj08 = CollectionsJournalTab1.Text;
       ST_CheckAndReplaceTranslationTextUI(CJobj08, false, "ui");
@@ -2317,83 +2288,82 @@ local isMountButtonCreated = false
 local mountUpdateVisibility
 
 function ST_MountJournalbutton()
-    if not isMountButtonCreated then
-        TT_PS = TT_PS or { ui4 = "1" }
+   if not isMountButtonCreated then
+      TT_PS = TT_PS or { ui4 = "1" }
 
-        mountUpdateVisibility = CreateToggleButton(
-            MountJournal,
-            TT_PS,
-            "ui4",
-            WoWTR_Localization.WoWTR_enDESC,
-            WoWTR_Localization.WoWTR_trDESC,
-            {"TOPLEFT", MountJournal, "TOPRIGHT", -170, 0},
-            function()
-                ST_MountJournal()
-                -- You can add any necessary refresh logic here for the mount journal.
-            end
-        )
+      mountUpdateVisibility = CreateToggleButton(
+         MountJournal,
+         TT_PS,
+         "ui4",
+         WoWTR_Localization.WoWTR_enDESC,
+         WoWTR_Localization.WoWTR_trDESC,
+         { "TOPLEFT", MountJournal, "TOPRIGHT", -170, 0 },
+         function()
+            ST_MountJournal()
+            -- You can add any necessary refresh logic here for the mount journal.
+         end
+      )
 
-        isMountButtonCreated = true -- Mark that the button has been created to avoid duplication.
-    end
+      isMountButtonCreated = true -- Mark that the button has been created to avoid duplication.
+   end
 
-    -- Adjust visibility of the existing button
-    if mountUpdateVisibility then
-        mountUpdateVisibility()
-    end
+   -- Adjust visibility of the existing button
+   if mountUpdateVisibility then
+      mountUpdateVisibility()
+   end
 end
 
 -------------------------------------------------------------------------------------------------------
 
 --CHARACTER FRAME
 function ST_CharacterFrame() -- https://imgur.com/FV5MXvb
---print("ST_CharacterFrame");
+   --print("ST_CharacterFrame");
    if (TT_PS["ui2"] == "1") then
-      local ChFrame1 = CharacterStatsPane.ItemLevelCategory.Title;    -- Item Level
+      local ChFrame1 = CharacterStatsPane.ItemLevelCategory.Title; -- Item Level
       ST_CheckAndReplaceTranslationTextUI(ChFrame1, true, "ui");
 
-      local ChFrame2 = CharacterStatsPane.AttributesCategory.Title;   -- Attributes
+      local ChFrame2 = CharacterStatsPane.AttributesCategory.Title; -- Attributes
       ST_CheckAndReplaceTranslationTextUI(ChFrame2, true, "ui");
 
       local ChFrame3 = CharacterStatsPane.EnhancementsCategory.Title; -- Enhancements
       ST_CheckAndReplaceTranslationTextUI(ChFrame3, true, "ui");
 
-      local ChFrame4 = CharacterFrameTab1.Text;                       -- Character Tab
+      local ChFrame4 = CharacterFrameTab1.Text; -- Character Tab
       ST_CheckAndReplaceTranslationTextUI(ChFrame4, true, "ui");
 
-      local ChFrame5 = CharacterFrameTab2.Text;                       -- Reputation Tab
+      local ChFrame5 = CharacterFrameTab2.Text; -- Reputation Tab
       ST_CheckAndReplaceTranslationTextUI(ChFrame5, true, "ui");
 
-      local ChFrame6 = CharacterFrameTab3.Text;                       -- Currency Tab
+      local ChFrame6 = CharacterFrameTab3.Text; -- Currency Tab
       ST_CheckAndReplaceTranslationTextUI(ChFrame6, true, "ui");
 
       local ChFrame7 = ReputationFrame.ReputationDetailFrame.ScrollingDescription.ScrollBox.ScrollTarget; -- https://imgur.com/A77RwLM
-      local childFrame = select(1, ChFrame7:GetChildren())  -- Get the first child frame 
+      local childFrame = select(1, ChFrame7:GetChildren())                                                -- Get the first child frame
       if childFrame and childFrame.FontString and childFrame.FontString.GetText then
-         local text = childFrame.FontString:GetText()  -- Get the text
+         local text = childFrame.FontString:GetText()                                                     -- Get the text
          --print("ChFrame7 text: " .. text)  -- Print the text to the console
-         local RDFactionName = ReputationFrame.ReputationDetailFrame.Title:GetText(); -- Get the Faction Name
+         local RDFactionName = ReputationFrame.ReputationDetailFrame.Title:GetText();                     -- Get the Faction Name
          ST_CheckAndReplaceTranslationTextUI(childFrame.FontString, true, "Factions:" .. ST_RenkKoduSil(RDFactionName));
       else
          --print("ChFrame7 text not found.");
       end
 
-      local ChFrame8 = ReputationDetailAtWarCheckBoxText;             -- Check Box Text - At War
+      local ChFrame8 = ReputationDetailAtWarCheckBoxText; -- Check Box Text - At War
       ST_CheckAndReplaceTranslationTextUI(ChFrame8, true, "ui");
 
-      local ChFrame9 = ReputationDetailInactiveCheckBoxText;          -- Check Box Text - Move to Inactive
+      local ChFrame9 = ReputationDetailInactiveCheckBoxText; -- Check Box Text - Move to Inactive
       ST_CheckAndReplaceTranslationTextUI(ChFrame9, true, "ui");
 
-      local ChFrame10 = ReputationDetailMainScreenCheckBoxText;       -- Check Box Text - Show as Experience Bar
+      local ChFrame10 = ReputationDetailMainScreenCheckBoxText; -- Check Box Text - Show as Experience Bar
       ST_CheckAndReplaceTranslationTextUI(ChFrame10, true, "ui");
    end
-
 end
 
 -------------------------------------------------------------------------------------------------------
 
 --FRIENDS FRAME
 function ST_FriendsFrame()
---print("ST_FriendsFrame");
+   --print("ST_FriendsFrame");
    if (TT_PS["ui6"] == "1") then
       local Friendsobj01 = FriendsFrameTitleText;
       ST_CheckAndReplaceTranslationTextUI(Friendsobj01, true, "ui");
@@ -2454,7 +2424,7 @@ function ST_FriendsFrame()
 
       local Friendsobj20 = RecruitAFriendRecruitmentFrame.Title;
       ST_CheckAndReplaceTranslationTextUI(Friendsobj20, true, "ui");
-      
+
       local Friendsobj21 = RecruitAFriendRecruitmentFrame.Description;
       ST_CheckAndReplaceTranslationTextUI(Friendsobj21, true, "ui");
 
@@ -2495,8 +2465,8 @@ end
 -------------------------------------------------------------------------------------------------------
 
 --HELP FRAME TOOLTIP
-function ST_HelpPlateTooltip()   -- https://imgur.com/MkPVoFr
---print("ST_HelpPlateTooltip");
+function ST_HelpPlateTooltip() -- https://imgur.com/MkPVoFr
+   --print("ST_HelpPlateTooltip");
    if (TT_PS["active"] == "1") then
       local HPT01 = HelpPlateTooltip.Text;
       ST_CheckAndReplaceTranslationTextUI(HPT01, true, "ui");
@@ -2506,8 +2476,8 @@ end
 -------------------------------------------------------------------------------------------------------
 
 --SPLASH FRAME (What's New)
-function ST_SplashFrame()   -- https://imgur.com/80WLNbC       You can use FontFile: Original_Font1, Original_Font2
---print("ST_SplashFrame");
+function ST_SplashFrame() -- https://imgur.com/80WLNbC       You can use FontFile: Original_Font1, Original_Font2
+   --print("ST_SplashFrame");
    if (TT_PS["active"] == "1") then
       local SplashF01 = SplashFrame.Header;
       ST_CheckAndReplaceTranslationTextUI(SplashF01, true, "ui");
@@ -2517,25 +2487,25 @@ function ST_SplashFrame()   -- https://imgur.com/80WLNbC       You can use FontF
 
       local SplashF03 = SplashFrame.TopLeftFeature.Description;
       if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationText(SplashF03, true, "ui",false,false,-10);
-      SplashF03:SetJustifyH("RIGHT");
+         ST_CheckAndReplaceTranslationText(SplashF03, true, "ui", false, false, -10);
+         SplashF03:SetJustifyH("RIGHT");
       else
-      ST_CheckAndReplaceTranslationTextUI(SplashF03, true, "ui");
+         ST_CheckAndReplaceTranslationTextUI(SplashF03, true, "ui");
       end
 
       local SplashF04 = SplashFrame.BottomLeftFeature.Description;
       if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationText(SplashF04, true, "ui",false,false,-15);
-      SplashF04:SetJustifyH("RIGHT");
+         ST_CheckAndReplaceTranslationText(SplashF04, true, "ui", false, false, -15);
+         SplashF04:SetJustifyH("RIGHT");
       else
-      ST_CheckAndReplaceTranslationTextUI(SplashF04, true, "ui");
+         ST_CheckAndReplaceTranslationTextUI(SplashF04, true, "ui");
       end
 
       local SplashF05 = SplashFrame.RightFeature.Description;
       if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationText(SplashF05, true, "ui",false,false,-10);
+         ST_CheckAndReplaceTranslationText(SplashF05, true, "ui", false, false, -10);
       else
-      ST_CheckAndReplaceTranslationTextUI(SplashF05, true, "ui");
+         ST_CheckAndReplaceTranslationTextUI(SplashF05, true, "ui");
       end
 
       local SplashF06 = SplashFrame.BottomCloseButton.Text;
@@ -2555,8 +2525,8 @@ end
 -------------------------------------------------------------------------------------------------------
 
 --PING TUTORIAL FRAME
-function ST_PingSystemTutorial()   -- https://imgur.com/tv61op7      You can use FontFile: Original_Font1, Original_Font2
---print("ST_PingSystemTutorial");
+function ST_PingSystemTutorial() -- https://imgur.com/tv61op7      You can use FontFile: Original_Font1, Original_Font2
+   --print("ST_PingSystemTutorial");
    if (TT_PS["active"] == "1") then
       local PST01 = PingSystemTutorialTitleText;
       ST_CheckAndReplaceTranslationTextUI(PST01, true, "ui");
@@ -2588,7 +2558,7 @@ end
 
 --BANK FRAME (Bank, Reagent, Warband Bank)
 function ST_WarbandBankFrm()
---print("ST_WarbandBankFrm")
+   --print("ST_WarbandBankFrm")
    if (TT_PS["active"] == "1") then
       local BANKFrame01 = AccountBankPanel.PurchasePrompt.Title;
       ST_CheckAndReplaceTranslationTextUI(BANKFrame01, false, "ui");
@@ -2621,66 +2591,67 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
---TOOLTIPS FRAME (click on chat frame) 
-local ignoreList = {}  -- The texts in the list will not be translated.
+--TOOLTIPS FRAME (click on chat frame)
+local ignoreList = {} -- The texts in the list will not be translated.
 if WoWTR_Localization.lang == 'TR' then
-    ignoreList = {
-        "Head", "Neck", "Shoulder", "Back", "Chest", "Tabard", "Wrist", "Hands", "Waist", "Legs", "Feet", "Finger", "Trinket"
-    }
+   ignoreList = {
+      "Head", "Neck", "Shoulder", "Back", "Chest", "Tabard", "Wrist", "Hands", "Waist", "Legs", "Feet", "Finger",
+      "Trinket"
+   }
 else
-    -- For other languages, the ignore list empty.
+   -- For other languages, the ignore list empty.
 end
 
 local function shouldIgnore(text)
-    for _, ignoreText in ipairs(ignoreList) do
-        if text:find(ignoreText) then
-            return true
-        end
-    end
-    return false
+   for _, ignoreText in ipairs(ignoreList) do
+      if text:find(ignoreText) then
+         return true
+      end
+   end
+   return false
 end
 
-function ST_ItemRefTooltip()         -- https://imgur.com/a/5Ooqnb2
-    for i = 2, 30 do
-        local itemRefLeft = _G["ItemRefTooltipTextLeft" .. i]
-        if itemRefLeft and itemRefLeft:GetText() then
-            local text = itemRefLeft:GetText()
-            if not shouldIgnore(text) then
-                ST_CheckAndReplaceTranslationTextUI(itemRefLeft, true, "other")
-            end
-        end
+function ST_ItemRefTooltip() -- https://imgur.com/a/5Ooqnb2
+   for i = 2, 30 do
+      local itemRefLeft = _G["ItemRefTooltipTextLeft" .. i]
+      if itemRefLeft and itemRefLeft:GetText() then
+         local text = itemRefLeft:GetText()
+         if not shouldIgnore(text) then
+            ST_CheckAndReplaceTranslationTextUI(itemRefLeft, true, "other")
+         end
+      end
 
-        local itemRefRight = _G["ItemRefTooltipTextRight" .. i]
-        if itemRefRight and itemRefRight:GetText() then
-            local text = itemRefRight:GetText()
-            if not shouldIgnore(text) then
-                ST_CheckAndReplaceTranslationTextUI(itemRefRight, true, "other")
-            end
-        end
-    end
+      local itemRefRight = _G["ItemRefTooltipTextRight" .. i]
+      if itemRefRight and itemRefRight:GetText() then
+         local text = itemRefRight:GetText()
+         if not shouldIgnore(text) then
+            ST_CheckAndReplaceTranslationTextUI(itemRefRight, true, "other")
+         end
+      end
+   end
 end
 
 -------------------------------------------------------------------------------------------------------
 
 --ITEM UPGRADE FRAME
-function ST_ItemUpgradeFrm()         -- https://imgur.com/a/Vy6wNjO
+function ST_ItemUpgradeFrm() -- https://imgur.com/a/Vy6wNjO
    if (TT_PS["ui1"] == "1") then
-   local ItemUpFrm01 = ItemUpgradeFrameTitleText;
-   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm01, false, "ui");
-   local ItemUpFrm02 = ItemUpgradeFrame.ItemInfo.MissingItemText;
-   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm02, false, "ui");
-   local ItemUpFrm03 = ItemUpgradeFrame.MissingDescription;
-   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm03, false, "ui");
-   local ItemUpFrm04 = ItemUpgradeFrame.UpgradeButton.Text;
-   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm04, false, "ui");
-   local ItemUpFrm05 = ItemUpgradeFrame.UpgradeCostFrame.Label;
-   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm05, false, "ui");
-   local ItemUpFrm06 = ItemUpgradeFrame.ItemInfo.UpgradeTo;
-   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm06, false, "ui");
-   local ItemUpFrm07 = ItemUpgradeFrameLeftItemPreviewFrameTextLeft1;
-   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm07, false, "ui");
-   local ItemUpFrm08 = ItemUpgradeFrameRightItemPreviewFrameTextLeft1;
-   ST_CheckAndReplaceTranslationTextUI(ItemUpFrm08, false, "ui");
+      local ItemUpFrm01 = ItemUpgradeFrameTitleText;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm01, false, "ui");
+      local ItemUpFrm02 = ItemUpgradeFrame.ItemInfo.MissingItemText;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm02, false, "ui");
+      local ItemUpFrm03 = ItemUpgradeFrame.MissingDescription;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm03, false, "ui");
+      local ItemUpFrm04 = ItemUpgradeFrame.UpgradeButton.Text;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm04, false, "ui");
+      local ItemUpFrm05 = ItemUpgradeFrame.UpgradeCostFrame.Label;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm05, false, "ui");
+      local ItemUpFrm06 = ItemUpgradeFrame.ItemInfo.UpgradeTo;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm06, false, "ui");
+      local ItemUpFrm07 = ItemUpgradeFrameLeftItemPreviewFrameTextLeft1;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm07, false, "ui");
+      local ItemUpFrm08 = ItemUpgradeFrameRightItemPreviewFrameTextLeft1;
+      ST_CheckAndReplaceTranslationTextUI(ItemUpFrm08, false, "ui");
    end
 end
 
@@ -2689,46 +2660,46 @@ end
 --WEEKLY REWARDS - GREAT VAULT FRAME
 function ST_WeeklyRewardsFrame()
    if (TT_PS["ui1"] == "1") then
-    local WeeklyRFrm01 = WeeklyRewardsFrame.HeaderFrame.Text
-    if (WoWTR_Localization.lang == 'AR') then
-    ST_CheckAndReplaceTranslationText(WeeklyRFrm01, false, "ui", WOWTR_Font1,false,5)
-    else
-    ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm01, false, "ui")
-    end
-    local WeeklyRFrm02 = WeeklyRewardsFrame.RaidFrame.Name
-    if (WoWTR_Localization.lang == 'AR') then
-    ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm02, false, "ui", WOWTR_Font1)
-    else
-    ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm02, false, "ui")
-    end
-    local WeeklyRFrm03 = WeeklyRewardsFrame.MythicFrame.Name
-    if (WoWTR_Localization.lang == 'AR') then
-    ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm03, false, "ui", WOWTR_Font1)
-    else
-    ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm03, false, "ui")
-    end
-    local WeeklyRFrm04 = WeeklyRewardsFrame.WorldFrame.Name
-    if (WoWTR_Localization.lang == 'AR') then
-    ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm04, false, "ui", WOWTR_Font1)
-    else
-    ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm04, false, "ui")
-    end
-    if WeeklyRewardsFrame.Overlay and WeeklyRewardsFrame.Overlay.Title then
-        local WeeklyRFrm05 = WeeklyRewardsFrame.Overlay.Title
-        if (WoWTR_Localization.lang == 'AR') then
-        ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm05, true, "ui", WOWTR_Font1)
-        else
-        ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm05, true, "ui")
-        end
-    end
-    if WeeklyRewardsFrame.Overlay and WeeklyRewardsFrame.Overlay.Text then
-        local WeeklyRFrm06 = WeeklyRewardsFrame.Overlay.Text
-        if (WoWTR_Localization.lang == 'AR') then
-        ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm06, true, "ui", WOWTR_Font1)
-        else
-        ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm06, true, "ui")
-        end
-    end
+      local WeeklyRFrm01 = WeeklyRewardsFrame.HeaderFrame.Text
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationText(WeeklyRFrm01, false, "ui", WOWTR_Font1, false, 5)
+      else
+         ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm01, false, "ui")
+      end
+      local WeeklyRFrm02 = WeeklyRewardsFrame.RaidFrame.Name
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm02, false, "ui", WOWTR_Font1)
+      else
+         ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm02, false, "ui")
+      end
+      local WeeklyRFrm03 = WeeklyRewardsFrame.MythicFrame.Name
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm03, false, "ui", WOWTR_Font1)
+      else
+         ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm03, false, "ui")
+      end
+      local WeeklyRFrm04 = WeeklyRewardsFrame.WorldFrame.Name
+      if (WoWTR_Localization.lang == 'AR') then
+         ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm04, false, "ui", WOWTR_Font1)
+      else
+         ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm04, false, "ui")
+      end
+      if WeeklyRewardsFrame.Overlay and WeeklyRewardsFrame.Overlay.Title then
+         local WeeklyRFrm05 = WeeklyRewardsFrame.Overlay.Title
+         if (WoWTR_Localization.lang == 'AR') then
+            ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm05, true, "ui", WOWTR_Font1)
+         else
+            ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm05, true, "ui")
+         end
+      end
+      if WeeklyRewardsFrame.Overlay and WeeklyRewardsFrame.Overlay.Text then
+         local WeeklyRFrm06 = WeeklyRewardsFrame.Overlay.Text
+         if (WoWTR_Localization.lang == 'AR') then
+            ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm06, true, "ui", WOWTR_Font1)
+         else
+            ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm06, true, "ui")
+         end
+      end
    end
 end
 
@@ -2741,20 +2712,20 @@ function ST_EventToastManagerFrame()
       if toast then
          local EventTextScreen01 = toast.Title
          ST_CheckAndReplaceTranslationTextUI(EventTextScreen01, true, "Collections:TextEvent", WOWTR_Font1)
-         
+
          local EventTextScreen02 = toast.SubTitle
          ST_CheckAndReplaceTranslationTextUI(EventTextScreen02, true, "Collections:TextEvent")
-         
+
          local EventTextScreen03 = toast.Description
          ST_CheckAndReplaceTranslationTextUI(EventTextScreen03, true, "Collections:TextEvent")
-         
+
          if toast.Contents then
             local EventTextScreen04 = toast.Contents.Title
             ST_CheckAndReplaceTranslationTextUI(EventTextScreen04, true, "Collections:TextEvent", WOWTR_Font1)
-            
+
             local EventTextScreen05 = toast.Contents.SubTitle
             ST_CheckAndReplaceTranslationTextUI(EventTextScreen05, true, "Collections:TextEvent")
-            
+
             local EventTextScreen06 = toast.Contents.Description
             ST_CheckAndReplaceTranslationTextUI(EventTextScreen06, true, "Collections:TextEvent")
          end
@@ -2767,38 +2738,37 @@ end
 -- RAID BOSS EMOTE FRAME
 function ST_RaidBossEmoteFrame()
    if (TT_PS["ui1"] == "1") then
-   local RBossEmoteFrm04 = RaidBossEmoteFrame.slot1Text
-    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm04, false, "Collections:Emote")
-    local RBossEmoteFrm05 = RaidBossEmoteFrame.slot2Text
-    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm05, false, "Collections:Emote")
-    local RBossEmoteFrm06 = RaidBossEmoteFrame.slot3Text
-    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm06, false, "Collections:Emote")
-    local RBossEmoteFrm01 = RaidBossEmoteFrame.slot1
-    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm01, true, "Collections:Emote")
-    local RBossEmoteFrm02 = RaidBossEmoteFrame.slot2
-    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm02, true, "Collections:Emote")
-    local RBossEmoteFrm03 = RaidBossEmoteFrame.slot3
-    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm03, true, "Collections:Emote")
+      local RBossEmoteFrm04 = RaidBossEmoteFrame.slot1Text
+      ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm04, false, "Collections:Emote")
+      local RBossEmoteFrm05 = RaidBossEmoteFrame.slot2Text
+      ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm05, false, "Collections:Emote")
+      local RBossEmoteFrm06 = RaidBossEmoteFrame.slot3Text
+      ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm06, false, "Collections:Emote")
+      local RBossEmoteFrm01 = RaidBossEmoteFrame.slot1
+      ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm01, true, "Collections:Emote")
+      local RBossEmoteFrm02 = RaidBossEmoteFrame.slot2
+      ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm02, true, "Collections:Emote")
+      local RBossEmoteFrm03 = RaidBossEmoteFrame.slot3
+      ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm03, true, "Collections:Emote")
    end
 end
 
 -------------------------------------------------------------------------------------------------------
 
-if ((GetLocale()=="enUS") or (GetLocale()=="enGB")) then
--- Własne okno Tooltips - do wyświetlenia tłumaczenia Buff lub Debudd
-   ST_MyGameTooltip = CreateFrame( "GameTooltip", "ST_MyGameTooltip", UIParent, "GameTooltipTemplate" );
-   ST_MyGameTooltip:SetOwner(WorldFrame, "ANCHOR_NONE" );
+if ((GetLocale() == "enUS") or (GetLocale() == "enGB")) then
+   -- Własne okno Tooltips - do wyświetlenia tłumaczenia Buff lub Debudd
+   ST_MyGameTooltip = CreateFrame("GameTooltip", "ST_MyGameTooltip", UIParent, "GameTooltipTemplate");
+   ST_MyGameTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
 
--------------------------------------------------------------------------------------------------------
+   -------------------------------------------------------------------------------------------------------
 
-   WOWSTR = CreateFrame("Frame");               -- ramka czekająca na załadowanie modułu ClassTalentFrame
+   WOWSTR = CreateFrame("Frame"); -- ramka czekająca na załadowanie modułu ClassTalentFrame
    WOWSTR:SetScript("OnEvent", WOWSTR_onEvent);
    WOWSTR:RegisterEvent("ADDON_LOADED");
 
--------------------------------------------------------------------------------------------------------
+   -------------------------------------------------------------------------------------------------------
 
    if SpellBookFrame_Update then
       hooksecurefunc("SpellBookFrame_Update", ST_updateSpellBookFrame);
    end
-
 end
