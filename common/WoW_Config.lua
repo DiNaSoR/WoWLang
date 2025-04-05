@@ -127,10 +127,10 @@ function WOWTR_SetDungeonFrames(obj, tryb, horiz)
       obj:SetPoint("CENTER", horiz, obj.vertical);
       obj:ClearLines();
       obj:AddLine(QTR_ReverseIfAR(WoWTR_Localization.moveFrameUpDown), 1, 1, 1, true);
-      if (BB_PM["setsize"] == "1") then                                                    -- jest włączona wielkość czcionki dymku
+      if (BB_PM["setsize"] == "1") then                                                      -- jest włączona wielkość czcionki dymku
          _G[obj:GetName() .. "TextLeft1"]:SetFont(WOWTR_Font2, tonumber(BB_PM["fontsize"])); -- wielkość czcionki
       else
-         _G[obj:GetName() .. "TextLeft1"]:SetFont(WOWTR_Font2, 13);                        -- ustaw turecką czcionkę oraz niezmienioną wielkość (13)
+         _G[obj:GetName() .. "TextLeft1"]:SetFont(WOWTR_Font2, 13);                          -- ustaw turecką czcionkę oraz niezmienioną wielkość (13)
       end
       obj:Show();
       obj:SetMovable(true);
@@ -204,17 +204,19 @@ function WOWTR_BlizzardOptions()
    else
       WOWTR_OptionsHeaderText:SetPoint("LEFT", WOWTR_OptionsHeaderIcon, "RIGHT", 0, 0);
       WOWTR_OptionsHeaderText:SetText(" " ..
-      WoWTR_Localization.optionTitle .. " |cff8080ffv" .. WOWTR_version ..
-      "|r                          by Platine © 2024");
+         WoWTR_Localization.optionTitle .. " |cff8080ffv" .. WOWTR_version ..
+         "|r                          by Platine © 2024");
    end
 
    local WOWTR_CheckButton00 = CreateFrame("CheckButton", "WOWTR_CheckButton00", WOWTR_Options, "UICheckButtonTemplate");
    WOWTR_CheckButton00:SetScript("OnClick",
-      function(self) if (QTR_PS["icon"] == "1") then
+      function(self)
+         if (QTR_PS["icon"] == "1") then
             QTR_PS["icon"] = "0"; WOWTR.db.profile.minimap.hide = true; LibDBIcon10_WOWTR_LDB:Hide();
          else
             QTR_PS["icon"] = "1"; WOWTR.db.profile.minimap.hide = false; LibDBIcon10_WOWTR_LDB:Show();
-         end; end);
+         end;
+      end);
    if (WoWTR_Localization.lang == 'AR') then
       WOWTR_CheckButton00:SetPoint("TOPLEFT", WOWTR_OptionsHeaderText, "TOPLEFT", 525, -20);
       WOWTR_CheckButton00.Text:SetText("|cffffffff" .. AS_UTF8reverse(WoWTR_Config_Interface.showMinimapIcon) .. "|r"); -- Show then addon setting icon next to the minimap
@@ -229,13 +231,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton00:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT");
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.showMinimapIcon) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.showMinimapIcon) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.showMinimapIconDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                   -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.showMinimapIconDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                     -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton00:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -539,18 +541,19 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton11:SetPoint("TOPLEFT", WOWTR_Panel1Header1, "TOPLEFT", 10, -20);
    end
    WOWTR_CheckButton11.Text:SetText("|cffffffff" ..
-   QTR_ReverseIfAR(WoWTR_Config_Interface.activateQuestsTranslations) .. "|r");                                           -- Activate quest translations
+      QTR_ReverseIfAR(WoWTR_Config_Interface.activateQuestsTranslations) .. "|r"); -- Activate quest translations
    WOWTR_CheckButton11.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton11:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT");
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateQuestsTranslations) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateQuestsTranslations) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateQuestsTranslationsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                              -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateQuestsTranslationsDESC, false,
+            getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                                -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton11:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -571,13 +574,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton12:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateQuestTitles) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateQuestTitles) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateQuestTitlesDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                        -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateQuestTitlesDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                          -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton12:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -598,13 +601,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton13:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateGossipTexts) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateGossipTexts) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateGossipTextsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                        -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateGossipTextsDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                          -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton13:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -623,24 +626,25 @@ function WOWTR_BlizzardOptions()
    if (WoWTR_Localization.lang == 'AR') then
       WOWTR_CheckButton1a.Text:SetText(QTR_ReverseIfAR(WOW_ZmienKody(WoWTR_Config_Interface.translateOwnNames) .. "")); -- Display translation of GOSSIP texts
    else
-      WOWTR_CheckButton1a.Text:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.translateOwnNames));                 -- Display translation of GOSSIP texts
+      WOWTR_CheckButton1a.Text:SetText(QTR_ReverseIfAR(WoWTR_Config_Interface.translateOwnNames));                      -- Display translation of GOSSIP texts
    end
    WOWTR_CheckButton1a.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton1a:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
       if (WoWTR_Localization.lang == 'AR') then
-         GameTooltip:AddLine(QTR_ReverseIfAR(WOW_ZmienKody(WoWTR_Config_Interface.translateOwnNames)) .. NONBREAKINGSPACE,
+         GameTooltip:AddLine(
+            QTR_ReverseIfAR(WOW_ZmienKody(WoWTR_Config_Interface.translateOwnNames)) .. NONBREAKINGSPACE,
             false);
       else
          GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateOwnNames) .. NONBREAKINGSPACE, false);
       end
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateOwnNamesDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                     -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateOwnNamesDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                       -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton1a:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -658,18 +662,18 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton14:SetPoint("TOPLEFT", WOWTR_CheckButton1a, "BOTTOMLEFT", 0, 5);
    end
    WOWTR_CheckButton14.Text:SetText("|cffffffff" ..
-   QTR_ReverseIfAR(WoWTR_Config_Interface.translateTrackObjectives) .. "|r");                                           -- Display translation of GOSSIP texts
+      QTR_ReverseIfAR(WoWTR_Config_Interface.translateTrackObjectives) .. "|r"); -- Display translation of GOSSIP texts
    WOWTR_CheckButton14.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton14:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateTrackObjectives) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateTrackObjectives) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateTrackObjectivesDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                            -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateTrackObjectivesDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                              -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton14:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -735,13 +739,14 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton1c:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.displayENfirst) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.displayENfirst) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayENfirstDESC, false, getglobal("GameTooltipTextLeft1"), WOWTR_Font2) ..
-      NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                                     -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayENfirstDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) ..
+         NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                    -- Show the tooltip
+      GameTooltip:Show()                   -- Show the tooltip
    end);
    WOWTR_CheckButton1c:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -771,18 +776,18 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton15:SetPoint("TOPLEFT", WOWTR_Panel1Header2, "TOPLEFT", 10, -20);
    end
    WOWTR_CheckButton15.Text:SetText("|cffffffff" .. QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedQuests) ..
-   "|r");                                                                                                             -- Save untranslated quests
+      "|r"); -- Save untranslated quests
    WOWTR_CheckButton15.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton15:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedQuests) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedQuests) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedQuestsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                          -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedQuestsDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                            -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton15:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -799,18 +804,18 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton16:SetPoint("TOPLEFT", WOWTR_CheckButton15, "BOTTOMLEFT", 0, 0);
    end
    WOWTR_CheckButton16.Text:SetText("|cffffffff" .. QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedGossip) ..
-   "|r");                                                                                                             -- Save untranslated gossip texts
+      "|r"); -- Save untranslated gossip texts
    WOWTR_CheckButton16.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton16:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedGossip) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedGossip) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedGossipDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                          -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedGossipDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                            -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton16:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -844,13 +849,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton17:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateImmersion) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateImmersion) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateImmersionDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                      -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateImmersionDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                        -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton17:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -871,13 +876,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton18:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateStoryLine) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateStoryLine) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateStoryLineDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                      -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateStoryLineDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                        -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton18:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -898,13 +903,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton19:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateQuestLog) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateQuestLog) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateQuestLogDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                     -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateQuestLogDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                       -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton19:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -925,13 +930,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton1b:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateDialogueUI) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateDialogueUI) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateDialogueUIDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                       -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateDialogueUIDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                         -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton1b:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -973,18 +978,19 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton21:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", 10, -20);
    end
    WOWTR_CheckButton21.Text:SetText("|cffffffff" ..
-   QTR_ReverseIfAR(WoWTR_Config_Interface.activateBubblesTranslations) .. "|r");                                           -- Activate bubble translations
+      QTR_ReverseIfAR(WoWTR_Config_Interface.activateBubblesTranslations) .. "|r"); -- Activate bubble translations
    WOWTR_CheckButton21.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton21:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateBubblesTranslations) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateBubblesTranslations) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateBubblesTranslationsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                               -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateBubblesTranslationsDESC, false,
+            getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                                 -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton21:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1005,13 +1011,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton22:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.displayOriginalTexts) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.displayOriginalTexts) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayOriginalTextsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                        -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayOriginalTextsDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                          -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton22:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1028,15 +1034,15 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton23:SetPoint("TOPLEFT", WOWTR_CheckButton22, "BOTTOMLEFT", 0, 0);
    end
    WOWTR_CheckButton23.Text:SetText("|cffffffff" .. QTR_ReverseIfAR(WoWTR_Config_Interface.displayTranslatedTexts) ..
-   "|r");                                                                                                             -- Display translated text in chat frame
+      "|r"); -- Display translated text in chat frame
    WOWTR_CheckButton23.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton23:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.displayTranslatedTexts) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.displayTranslatedTexts) .. NONBREAKINGSPACE, false); -- red color, no wrap
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslatedTextsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                          -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslatedTextsDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
       GameTooltip:Show() -- Show the tooltip
@@ -1048,11 +1054,13 @@ function WOWTR_BlizzardOptions()
    local WOWTR_CheckButton24 = CreateFrame("CheckButton", "WOWTR_CheckButton24", WOWTR_OptionPanel2,
       "UICheckButtonTemplate");
    WOWTR_CheckButton24:SetScript("OnClick",
-      function(self) if (BB_PM["sex"] == "2") then
+      function(self)
+         if (BB_PM["sex"] == "2") then
             BB_PM["sex"] = "4"; WOWTR_CheckButton26:SetChecked(true);
          else
             BB_PM["sex"] = "2"; WOWTR_CheckButton25:SetChecked(false); WOWTR_CheckButton26:SetChecked(false);
-         end; end);
+         end;
+      end);
    WOWTR_CheckButton24:SetChecked(BB_PM["sex"] == "2")
    if (WoWTR_Localization.lang == 'AR') then
       WOWTR_CheckButton24:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", 135, -130);
@@ -1065,13 +1073,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton24:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.choiceGender1OfPlayer) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.choiceGender1OfPlayer) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.choiceGender1OfPlayerDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.choiceGender1OfPlayerDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton24:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1080,11 +1088,13 @@ function WOWTR_BlizzardOptions()
    local WOWTR_CheckButton25 = CreateFrame("CheckButton", "WOWTR_CheckButton25", WOWTR_OptionPanel2,
       "UICheckButtonTemplate");
    WOWTR_CheckButton25:SetScript("OnClick",
-      function(self) if (BB_PM["sex"] == "3") then
+      function(self)
+         if (BB_PM["sex"] == "3") then
             BB_PM["sex"] = "4"; WOWTR_CheckButton26:SetChecked(true);
          else
             BB_PM["sex"] = "3"; WOWTR_CheckButton24:SetChecked(false); WOWTR_CheckButton26:SetChecked(false);
-         end; end);
+         end;
+      end);
    WOWTR_CheckButton25:SetChecked(BB_PM["sex"] == "3")
    if (WoWTR_Localization.lang == 'AR') then
       WOWTR_CheckButton25:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", 135, -160);
@@ -1097,13 +1107,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton25:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.choiceGender2OfPlayer) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.choiceGender2OfPlayer) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.choiceGender2OfPlayerDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.choiceGender2OfPlayerDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton25:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1112,11 +1122,13 @@ function WOWTR_BlizzardOptions()
    local WOWTR_CheckButton26 = CreateFrame("CheckButton", "WOWTR_CheckButton26", WOWTR_OptionPanel2,
       "UICheckButtonTemplate");
    WOWTR_CheckButton26:SetScript("OnClick",
-      function(self) if (BB_PM["sex"] == "4") then
+      function(self)
+         if (BB_PM["sex"] == "4") then
             BB_PM["sex"] = "2"; WOWTR_CheckButton24:SetChecked(true);
          else
             BB_PM["sex"] = "4"; WOWTR_CheckButton24:SetChecked(false); WOWTR_CheckButton25:SetChecked(false);
-         end; end);
+         end;
+      end);
    WOWTR_CheckButton26:SetChecked(BB_PM["sex"] == "4")
    if (WoWTR_Localization.lang == 'AR') then
       WOWTR_CheckButton26:SetPoint("TOPLEFT", WOWTR_Panel2Header1, "TOPLEFT", 135, -190);
@@ -1129,13 +1141,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton26:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.choiceGender3OfPlayer) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.choiceGender3OfPlayer) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.choiceGender3OfPlayerDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.choiceGender3OfPlayerDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton26:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1158,13 +1170,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton2d1:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.showBubblesInDungeon) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.showBubblesInDungeon) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.showBubblesInDungeonDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                        -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.showBubblesInDungeonDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                          -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton2d1:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1201,13 +1213,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton2d2:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.setDungeonFrames) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.setDungeonFrames) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.setDungeonFramesDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                    -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.setDungeonFramesDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                      -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton2d2:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1264,18 +1276,18 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton27:SetPoint("TOPLEFT", WOWTR_Panel2Header2, "TOPLEFT", 10, -20);
    end
    WOWTR_CheckButton27.Text:SetText("|cffffffff" .. QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedBubbles) ..
-   "|r");                                                                                                              -- Save untranslated bubbles
+      "|r"); -- Save untranslated bubbles
    WOWTR_CheckButton27.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton27:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedBubbles) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedBubbles) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedBubblesDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                           -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedBubblesDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                             -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton27:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1309,13 +1321,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton28:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.setFontActivate) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.setFontActivate) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.setFontActivateDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                   -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.setFontActivateDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                     -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton28:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1403,18 +1415,18 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton31:SetPoint("TOPLEFT", WOWTR_Panel3Header1, "TOPLEFT", 10, -20);
    end
    WOWTR_CheckButton31.Text:SetText("|cffffffff" ..
-   QTR_ReverseIfAR(WoWTR_Config_Interface.activateSubtitleTranslations) .. "|r");                                           -- Activate subtitle translations
+      QTR_ReverseIfAR(WoWTR_Config_Interface.activateSubtitleTranslations) .. "|r"); -- Activate subtitle translations
    WOWTR_CheckButton31.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton31:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateSubtitleTranslations) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateSubtitleTranslations) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateSubtitleTranslationsDESC, false,
-         getglobal("GameTooltipTextLeft1"), WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                             -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateSubtitleTranslationsDESC, false,
+            getglobal("GameTooltipTextLeft1"), WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                                  -- Show the tooltip
+      GameTooltip:Show()                                                                         -- Show the tooltip
    end);
    WOWTR_CheckButton31:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1435,13 +1447,14 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton32:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.subtitleIntro) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.subtitleIntro) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.subtitleIntroDESC, false, getglobal("GameTooltipTextLeft1"), WOWTR_Font2) ..
-      NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                                    -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.subtitleIntroDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) ..
+         NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                   -- Show the tooltip
+      GameTooltip:Show()                   -- Show the tooltip
    end);
    WOWTR_CheckButton32:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1462,13 +1475,14 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton33:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.subtitleMovies) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.subtitleMovies) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.subtitleMoviesDESC, false, getglobal("GameTooltipTextLeft1"), WOWTR_Font2) ..
-      NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                                     -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.subtitleMoviesDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) ..
+         NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                    -- Show the tooltip
+      GameTooltip:Show()                   -- Show the tooltip
    end);
    WOWTR_CheckButton33:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1489,13 +1503,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton34:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.subtitleCinematics) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.subtitleCinematics) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.subtitleCinematicsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                      -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.subtitleCinematicsDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                        -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton34:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1525,18 +1539,19 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton35:SetPoint("TOPLEFT", WOWTR_Panel3Header2, "TOPLEFT", 10, -20);
    end
    WOWTR_CheckButton35.Text:SetText("|cffffffff" ..
-   QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedSubtitles) .. "|r");                                           -- Save untranslated subtitles
+      QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedSubtitles) .. "|r"); -- Save untranslated subtitles
    WOWTR_CheckButton35.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton35:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedSubtitles) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedSubtitles) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedSubtitlesDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                             -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedSubtitlesDESC, false,
+            getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                               -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton35:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1572,26 +1587,28 @@ function WOWTR_BlizzardOptions()
       local WOWTR_CheckButton36 = CreateFrame("CheckButton", "WOWTR_CheckButton36", WOWTR_OptionPanel3,
          "UICheckButtonTemplate");
       WOWTR_CheckButton36:SetScript("OnClick",
-         function(self) if (CH_PM["active"] == "1") then
+         function(self)
+            if (CH_PM["active"] == "1") then
                CH_PM["active"] = "0"; CH_ToggleButton:SetText("EN"); CH_ToggleButton:Hide()
             else
                CH_PM["active"] = "1"; CH_ToggleButton:Show()
-            end; end);
+            end;
+         end);
       WOWTR_CheckButton36:SetPoint("TOPLEFT", WOWTR_Panel3Header3, "TOPLEFT", 185, -20);
       WOWTR_CheckButton36.Text:SetPoint("TOPLEFT", WOWTR_Panel3Header3, "TOPLEFT", -10, -30);
       WOWTR_CheckButton36.Text:SetText("|cffffffff" .. QTR_ReverseIfAR(WoWTR_Config_Interface.activateChatService) ..
-      "|r");                                                                                                          -- Activate service of arabic chat
+         "|r"); -- Activate service of arabic chat
       WOWTR_CheckButton36.Text:SetFont(WOWTR_Font2, 15);
       WOWTR_CheckButton36:SetScript("OnEnter", function(self)
          GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
          GameTooltip:ClearLines();
-         GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateChatService) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+         GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateChatService) .. NONBREAKINGSPACE, false); -- red color, no wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
          GameTooltip:AddLine(
-         QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateChatServiceDESC, false, getglobal("GameTooltipTextLeft1"),
-            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                       -- white color, wrap
+            QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateChatServiceDESC, false, getglobal("GameTooltipTextLeft1"),
+               WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
          getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-         GameTooltip:Show()                                                                                                                                                         -- Show the tooltip
+         GameTooltip:Show()                                      -- Show the tooltip
       end);
       WOWTR_CheckButton36:SetScript("OnLeave", function(self)
          GameTooltip:Hide() -- Hide the tooltip
@@ -1608,13 +1625,13 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton37:SetScript("OnEnter", function(self)
          GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
          GameTooltip:ClearLines();
-         GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.chatFontActivate) .. NONBREAKINGSPACE, false);                                                            -- red color, no wrap
+         GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.chatFontActivate) .. NONBREAKINGSPACE, false); -- red color, no wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
          GameTooltip:AddLine(
-         QTR_ExpandUnitInfo(WoWTR_Config_Interface.chatFontActivateDESC, false, getglobal("GameTooltipTextLeft1"),
-            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                 -- white color, wrap
+            QTR_ExpandUnitInfo(WoWTR_Config_Interface.chatFontActivateDESC, false, getglobal("GameTooltipTextLeft1"),
+               WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
          getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-         GameTooltip:Show()                                                                                                                                                   -- Show the tooltip
+         GameTooltip:Show()                                      -- Show the tooltip
       end);
       WOWTR_CheckButton37:SetScript("OnLeave", function(self)
          GameTooltip:Hide() -- Hide the tooltip
@@ -1694,18 +1711,18 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton41:SetPoint("TOPLEFT", WOWTR_Panel4Header1, "TOPLEFT", 10, -20);
    end
    WOWTR_CheckButton41.Text:SetText("|cffffffff" ..
-   QTR_ReverseIfAR(WoWTR_Config_Interface.activateTutorialTranslations) .. "|r");                                           -- Activate subtitle translations
+      QTR_ReverseIfAR(WoWTR_Config_Interface.activateTutorialTranslations) .. "|r"); -- Activate subtitle translations
    WOWTR_CheckButton41.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton41:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateTutorialTranslations), false);                                                                                   -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateTutorialTranslations), false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateTutorialTranslationsDESC, false,
-         getglobal("GameTooltipTextLeft1"), WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                             -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateTutorialTranslationsDESC, false,
+            getglobal("GameTooltipTextLeft1"), WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                                  -- Show the tooltip
+      GameTooltip:Show()                                                                         -- Show the tooltip
    end);
    WOWTR_CheckButton41:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1735,18 +1752,19 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton42:SetPoint("TOPLEFT", WOWTR_Panel4Header2, "TOPLEFT", 10, -20);
    end
    WOWTR_CheckButton42.Text:SetText("|cffffffff" ..
-   QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedTutorials) .. "|r");                                           -- Save untranslated tutorials
+      QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedTutorials) .. "|r"); -- Save untranslated tutorials
    WOWTR_CheckButton42.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton42:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedTutorials) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedTutorials) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedTutorialsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                             -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedTutorialsDESC, false,
+            getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                               -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton42:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1810,7 +1828,7 @@ function WOWTR_BlizzardOptions()
             info.value = font;
             info.func = function(self, arg1, arg2, checked) -- function is called when option is clicked
                QTR_PS["FontFile"] = self.value;
-               WOWTR_Panel4Header2h:SetText(self.value); -- Selected font
+               WOWTR_Panel4Header2h:SetText(self.value);    -- Selected font
                WOWTR_Font2 = WoWTR_Localization.mainFolder .. "\\Fonts\\" .. self.value;
                WOWTR_Panel4Header2h:SetFont(WOWTR_Font2, 13);
                WOWTR_ReloadButtonUI:Show();
@@ -1891,10 +1909,10 @@ function WOWTR_BlizzardOptions()
          getglobal("GameTooltipTextLeft1"):SetJustifyH("RIGHT");
       end
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI1DESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI1DESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton43:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1922,10 +1940,10 @@ function WOWTR_BlizzardOptions()
          getglobal("GameTooltipTextLeft1"):SetJustifyH("RIGHT");
       end
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI2DESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI2DESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton45:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1953,10 +1971,10 @@ function WOWTR_BlizzardOptions()
          getglobal("GameTooltipTextLeft1"):SetJustifyH("RIGHT");
       end
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI3DESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI3DESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton46:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -1984,10 +2002,10 @@ function WOWTR_BlizzardOptions()
          getglobal("GameTooltipTextLeft1"):SetJustifyH("RIGHT");
       end
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI7DESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI7DESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton50:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2015,10 +2033,10 @@ function WOWTR_BlizzardOptions()
          getglobal("GameTooltipTextLeft1"):SetJustifyH("RIGHT");
       end
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI4DESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI4DESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton47:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2046,10 +2064,10 @@ function WOWTR_BlizzardOptions()
          getglobal("GameTooltipTextLeft1"):SetJustifyH("RIGHT");
       end
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI5DESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI5DESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton48:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2077,10 +2095,10 @@ function WOWTR_BlizzardOptions()
          getglobal("GameTooltipTextLeft1"):SetJustifyH("RIGHT");
       end
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI6DESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI6DESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton49:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2108,10 +2126,10 @@ function WOWTR_BlizzardOptions()
          getglobal("GameTooltipTextLeft1"):SetJustifyH("RIGHT");
       end
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI8DESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationUI8DESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton40:SetScript("OnLeave", function(self)
       GameTooltip:Hide()       -- Hide the tooltip
@@ -2174,13 +2192,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton44:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveTranslationUI) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveTranslationUI) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveTranslationUIDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                     -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveTranslationUIDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                       -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton44:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2209,13 +2227,14 @@ function WOWTR_BlizzardOptions()
    WOWTR_ResetButton2:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Localization.resetButton2Opis) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Localization.resetButton2Opis) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Localization.resetButton2OpisDESC, false, getglobal("GameTooltipTextLeft1"), WOWTR_Font2) ..
-      NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                                   -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Localization.resetButton2OpisDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) ..
+         NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                  --Show the tooltip
+      GameTooltip:Show()                   --Show the tooltip
    end);
    WOWTR_ResetButton2:SetScript("OnLeave", function(self)
       GameTooltip:Hide() --Hide the tooltip
@@ -2257,18 +2276,19 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton51:SetPoint("TOPLEFT", WOWTR_Panel5Header1, "TOPLEFT", 10, -20);
    end
    WOWTR_CheckButton51.Text:SetText("|cffffffff" ..
-   QTR_ReverseIfAR(WoWTR_Config_Interface.activateBooksTranslations) .. "|r");                                           -- Activate subtitle translations
+      QTR_ReverseIfAR(WoWTR_Config_Interface.activateBooksTranslations) .. "|r"); -- Activate subtitle translations
    WOWTR_CheckButton51.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton51:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateBooksTranslations) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateBooksTranslations) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateBooksTranslationsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                             -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateBooksTranslationsDESC, false,
+            getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                               -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton51:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2277,9 +2297,13 @@ function WOWTR_BlizzardOptions()
    local WOWTR_CheckButton52 = CreateFrame("CheckButton", "WOWTR_CheckButton52", WOWTR_OptionPanel5,
       "UICheckButtonTemplate");
    WOWTR_CheckButton52:SetScript("OnClick",
-      function(self) if (BT_PM["title"] == "1") then BT_PM["title"] = "0" else
+      function(self)
+         if (BT_PM["title"] == "1") then
+            BT_PM["title"] = "0"
+         else
             BT_PM["title"] = "1"; BB_PM["chat-tr"] = "0"; WOWTR_CheckButton23:SetValue(false);
-         end; end);
+         end;
+      end);
    if (WoWTR_Localization.lang == 'AR') then
       WOWTR_CheckButton52:SetPoint("TOPLEFT", WOWTR_Panel5Header1, "TOPLEFT", 110, -70);
       WOWTR_CheckButton52.Text:SetPoint("TOPLEFT", WOWTR_Panel5Header1, "TOPLEFT", -50, -80);
@@ -2291,13 +2315,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton52:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateBookTitles) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateBookTitles) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateBookTitlesDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                       -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateBookTitlesDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                         -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton52:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2306,9 +2330,13 @@ function WOWTR_BlizzardOptions()
    local WOWTR_CheckButton53 = CreateFrame("CheckButton", "WOWTR_CheckButton53", WOWTR_OptionPanel5,
       "UICheckButtonTemplate");
    WOWTR_CheckButton53:SetScript("OnClick",
-      function(self) if (BT_PM["showID"] == "1") then BT_PM["showID"] = "0" else
+      function(self)
+         if (BT_PM["showID"] == "1") then
+            BT_PM["showID"] = "0"
+         else
             BT_PM["showID"] = "1"; BB_PM["chat-en"] = "0"; WOWTR_CheckButton22:SetValue(false);
-         end; end);
+         end;
+      end);
    if (WoWTR_Localization.lang == 'AR') then
       WOWTR_CheckButton53:SetPoint("TOPLEFT", WOWTR_Panel5Header1, "TOPLEFT", 110, -100);
       WOWTR_CheckButton53.Text:SetPoint("TOPLEFT", WOWTR_Panel5Header1, "TOPLEFT", -3, -110);
@@ -2320,13 +2348,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton53:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.showBookID) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.showBookID) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.showBookIDDESC, false, getglobal("GameTooltipTextLeft1"), WOWTR_Font2) ..
-      NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                                 -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.showBookIDDESC, false, getglobal("GameTooltipTextLeft1"), WOWTR_Font2) ..
+         NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                -- Show the tooltip
+      GameTooltip:Show()                   -- Show the tooltip
    end);
    WOWTR_CheckButton53:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2360,13 +2388,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton55:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedBooks) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedBooks) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedBooksDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedBooksDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton55:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2400,13 +2428,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton58:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.setFontActivate) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.setFontActivate) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.setFontActivateDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                   -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.setFontActivateDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                     -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton58:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2494,18 +2522,19 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton61:SetPoint("TOPLEFT", WOWTR_Panel6Header1, "TOPLEFT", 10, -20);
    end
    WOWTR_CheckButton61.Text:SetText("|cffffffff" ..
-   QTR_ReverseIfAR(WoWTR_Config_Interface.activateTooltipTranslations) .. "|r");                                           -- Activate tooltip translations
+      QTR_ReverseIfAR(WoWTR_Config_Interface.activateTooltipTranslations) .. "|r"); -- Activate tooltip translations
    WOWTR_CheckButton61.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton61:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateTooltipTranslations) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.activateTooltipTranslations) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateTooltipTranslationsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                               -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.activateTooltipTranslationsDESC, false,
+            getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                                 -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton61:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2526,13 +2555,14 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton62:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateItems) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateItems) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateItemsDESC, false, getglobal("GameTooltipTextLeft1"), WOWTR_Font2) ..
-      NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                                     -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateItemsDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) ..
+         NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                    -- Show the tooltip
+      GameTooltip:Show()                   -- Show the tooltip
    end);
    WOWTR_CheckButton62:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2553,13 +2583,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton63:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateSpells) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateSpells) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateSpellsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                   -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateSpellsDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                     -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton63:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2580,13 +2610,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton64:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateTalents) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateTalents) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateTalentsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                    -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateTalentsDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                      -- Show the tooltip
+      GameTooltip:Show()                                      -- Show the tooltip
    end);
    WOWTR_CheckButton64:SetScript("OnLeave", function(self)
       GameTooltip:Hide() -- Hide the tooltip
@@ -2604,18 +2634,18 @@ function WOWTR_BlizzardOptions()
          WOWTR_CheckButton6A:SetPoint("TOPLEFT", WOWTR_CheckButton64, "BOTTOMLEFT", 0, 0);
       end
       WOWTR_CheckButton6A.Text:SetText("|cffffffff" ..
-      QTR_ReverseIfAR(WoWTR_Config_Interface.translateTooltipTitle) .. "|r");                                           -- Display translated title of tooltips
+         QTR_ReverseIfAR(WoWTR_Config_Interface.translateTooltipTitle) .. "|r"); -- Display translated title of tooltips
       WOWTR_CheckButton6A.Text:SetFont(WOWTR_Font2, 15);
       WOWTR_CheckButton6A:SetScript("OnEnter", function(self)
          GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
          GameTooltip:ClearLines();
-         GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateTooltipTitle) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+         GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.translateTooltipTitle) .. NONBREAKINGSPACE, false); -- red color, no wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
          GameTooltip:AddLine(
-         QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateTooltipTitleDESC, false, getglobal("GameTooltipTextLeft1"),
-            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                         -- white color, wrap
+            QTR_ExpandUnitInfo(WoWTR_Config_Interface.translateTooltipTitleDESC, false, getglobal("GameTooltipTextLeft1"),
+               WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
          getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-         GameTooltip:Show()                                                                                                                                                           -- Show the tooltip
+         GameTooltip:Show()                                      -- Show the tooltip
       end);
       WOWTR_CheckButton6A:SetScript("OnLeave", function(self)
          GameTooltip:Hide() -- Hide the tooltip
@@ -2641,12 +2671,12 @@ function WOWTR_BlizzardOptions()
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       if (WoWTR_Localization.lang == 'AR') then
          GameTooltip:AddLine(
-         QTR_ExpandUnitInfo(WoWTR_Config_Interface.showTooltipIDDESC, false, getglobal("GameTooltipTextLeft1"),
-            WOWTR_Font2, -5) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                -- white color, wrap
+            QTR_ExpandUnitInfo(WoWTR_Config_Interface.showTooltipIDDESC, false, getglobal("GameTooltipTextLeft1"),
+               WOWTR_Font2, -5) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       else
          GameTooltip:AddLine(
-         QTR_ExpandUnitInfo(WoWTR_Config_Interface.showTooltipIDDESC, false, getglobal("GameTooltipTextLeft1"),
-            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                    -- white color, wrap
+            QTR_ExpandUnitInfo(WoWTR_Config_Interface.showTooltipIDDESC, false, getglobal("GameTooltipTextLeft1"),
+               WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       end
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
       GameTooltip:Show() -- Show the tooltip
@@ -2670,13 +2700,13 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton66:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.showTooltipHash) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.showTooltipHash) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.showTooltipHashDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                   -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.showTooltipHashDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                     --Show the tooltip
+      GameTooltip:Show()                                      --Show the tooltip
    end);
    WOWTR_CheckButton66:SetScript("OnLeave", function(self)
       GameTooltip:Hide() --Hide the tooltip
@@ -2697,13 +2727,14 @@ function WOWTR_BlizzardOptions()
    WOWTR_CheckButton67:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.hideSellPrice) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.hideSellPrice) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.hideSellPriceDESC, false, getglobal("GameTooltipTextLeft1"), WOWTR_Font2) ..
-      NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                                    -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.hideSellPriceDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) ..
+         NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                   --Show the tooltip
+      GameTooltip:Show()                   --Show the tooltip
    end);
    WOWTR_CheckButton67:SetScript("OnLeave", function(self)
       GameTooltip:Hide() --Hide the tooltip
@@ -2733,18 +2764,18 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton68:SetPoint("TOPLEFT", WOWTR_Panel6Header2, "TOPLEFT", 10, -20);
    end
    WOWTR_CheckButton68.Text:SetText("|cffffffff" ..
-   QTR_ReverseIfAR(WoWTR_Config_Interface.displayTranslationConstantly) .. "|r");                                           -- Display translation constantly
+      QTR_ReverseIfAR(WoWTR_Config_Interface.displayTranslationConstantly) .. "|r"); -- Display translation constantly
    WOWTR_CheckButton68.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton68:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.displayTranslationConstantly) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.displayTranslationConstantly) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationConstantlyDESC, false,
-         getglobal("GameTooltipTextLeft1"), WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                             -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.displayTranslationConstantlyDESC, false,
+            getglobal("GameTooltipTextLeft1"), WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                                  --Show the tooltip
+      GameTooltip:Show()                                                                         --Show the tooltip
    end);
    WOWTR_CheckButton68:SetScript("OnLeave", function(self)
       GameTooltip:Hide() --Hide the tooltip
@@ -2801,15 +2832,15 @@ function WOWTR_BlizzardOptions()
       WOWTR_CheckButton69:SetPoint("TOPLEFT", WOWTR_Panel6Header3, "TOPLEFT", 10, -20);
    end
    WOWTR_CheckButton69.Text:SetText("|cffffffff" ..
-   QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedTooltips) .. "|r");                                           -- Save untranslated tooltips
+      QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedTooltips) .. "|r"); -- Save untranslated tooltips
    WOWTR_CheckButton69.Text:SetFont(WOWTR_Font2, 15);
    WOWTR_CheckButton69:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedTooltips) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.saveUntranslatedTooltips) .. NONBREAKINGSPACE, false); -- red color, no wrap
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedTooltipsDESC, false, getglobal("GameTooltipTextLeft1"),
-         WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                            -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Config_Interface.saveUntranslatedTooltipsDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) .. NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
       GameTooltip:Show() --Show the tooltip
@@ -2830,10 +2861,10 @@ function WOWTR_BlizzardOptions()
    WOWTR_Panel9Text:SetFont(WOWTR_Font2, 14);
    if (WoWTR_Localization.lang == 'AR') then
       WOWTR_Panel9Text:SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.generalText, false, WOWTR_Panel9Text,
-         WOWTR_Font2, -80));                                                                                                -- generalText
+         WOWTR_Font2, -80)); -- generalText
    else
       WOWTR_Panel9Text:SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.generalText, false, WOWTR_Panel9Text,
-         WOWTR_Font2, -50));                                                                                                -- generalText
+         WOWTR_Font2, -50)); -- generalText
    end
 
    local WOWTR_Panel9Header1 = WOWTR_OptionPanel9:CreateFontString(nil, "ARTWORK");
@@ -2945,13 +2976,14 @@ function WOWTR_BlizzardOptions()
    WOWTR_ResetButton1:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
       GameTooltip:ClearLines();
-      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Localization.resetButton1Opis) .. NONBREAKINGSPACE, false);                                                               -- red color, no wrap
+      GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Localization.resetButton1Opis) .. NONBREAKINGSPACE, false); -- red color, no wrap
       getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
       GameTooltip:AddLine(
-      QTR_ExpandUnitInfo(WoWTR_Localization.resetButton1OpisDESC, false, getglobal("GameTooltipTextLeft1"), WOWTR_Font2) ..
-      NONBREAKINGSPACE, 1, 1, 1, true);                                                                                                                                   -- white color, wrap
+         QTR_ExpandUnitInfo(WoWTR_Localization.resetButton1OpisDESC, false, getglobal("GameTooltipTextLeft1"),
+            WOWTR_Font2) ..
+         NONBREAKINGSPACE, 1, 1, 1, true); -- white color, wrap
       getglobal("GameTooltipTextLeft2"):SetFont(WOWTR_Font2, 13);
-      GameTooltip:Show()                                                                                                                                                  --Show the tooltip
+      GameTooltip:Show()                   --Show the tooltip
    end);
    WOWTR_ResetButton1:SetScript("OnLeave", function(self)
       GameTooltip:Hide() --Hide the tooltip
@@ -2984,10 +3016,10 @@ function WOWTR_BlizzardOptions()
    WOWTR_Panel9TextContact:SetFont(WOWTR_Font2, 14);
    if (WoWTR_Localization.lang == 'AR') then
       WOWTR_Panel9TextContact:SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.textContact, false,
-         WOWTR_Panel9TextContact, WOWTR_Font2, -40));                                                                                     -- TextContact
+         WOWTR_Panel9TextContact, WOWTR_Font2, -40)); -- TextContact
    else
       WOWTR_Panel9TextContact:SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.textContact, false,
-         WOWTR_Panel9TextContact, WOWTR_Font2));                                                                                          -- TextContact
+         WOWTR_Panel9TextContact, WOWTR_Font2)); -- TextContact
    end
 
    WOWTR_LinkFrame = CreateFrame("Frame", nil, WOWTR_OptionPanel9, "UIPanelDialogTemplate");
@@ -3049,15 +3081,15 @@ function WOWTR_BlizzardOptions()
       WOWTR_linkButtonWWW:SetScript("OnEnter", function(self)
          GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
          GameTooltip:ClearLines();
-         GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.linkWWWShow), 1, 1, 1, true);                                                                    -- white color, wrap
+         GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.linkWWWShow), 1, 1, 1, true); -- white color, wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
-         GameTooltip:Show()                                                                                                                                          -- Show the tooltip
+         GameTooltip:Show()                                                                       -- Show the tooltip
          if (WoWTR_Localization.lang == 'AR') then
             getglobal("GameTooltipTextLeft1"):SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.linkWWWShow, false,
-               getglobal("GameTooltipTextLeft1"), WOWTR_Font2, -20));                                                                                                -- white color, wrap
+               getglobal("GameTooltipTextLeft1"), WOWTR_Font2, -20)); -- white color, wrap
          else
             getglobal("GameTooltipTextLeft1"):SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.linkWWWShow, false,
-               getglobal("GameTooltipTextLeft1"), WOWTR_Font2));                                                                                                     -- white color, wrap
+               getglobal("GameTooltipTextLeft1"), WOWTR_Font2)); -- white color, wrap
          end
       end);
       WOWTR_linkButtonWWW:SetScript("OnLeave", function(self)
@@ -3094,7 +3126,7 @@ function WOWTR_BlizzardOptions()
          GameTooltip:ClearLines();
          GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.linkDISCShow), 1, 1, 1, true); -- white color, wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
-         GameTooltip:Show()                                                                     -- Show the tooltip
+         GameTooltip:Show()                                                                        -- Show the tooltip
       end);
       WOWTR_linkButtonDISC:SetScript("OnLeave", function(self)
          GameTooltip:Hide() -- Hide the tooltip
@@ -3131,7 +3163,7 @@ function WOWTR_BlizzardOptions()
             GameTooltip:ClearLines();
             GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.linkDISCShowCOM), 1, 1, 1, true); -- white color, wrap
             getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
-            GameTooltip:Show()                                                                        -- Show the tooltip
+            GameTooltip:Show()                                                                           -- Show the tooltip
          end);
          WOWTR_linkButtonDISC:SetScript("OnLeave", function(self)
             GameTooltip:Hide() -- Hide the tooltip
@@ -3165,7 +3197,7 @@ function WOWTR_BlizzardOptions()
          GameTooltip:ClearLines();
          GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.linkTWITCHShow), 1, 1, 1, true); -- white color, wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
-         GameTooltip:Show()                                                                       -- Show the tooltip
+         GameTooltip:Show()                                                                          -- Show the tooltip
       end);
       WOWTR_linkButtonTWITCH:SetScript("OnLeave", function(self)
          GameTooltip:Hide() -- Hide the tooltip
@@ -3198,7 +3230,7 @@ function WOWTR_BlizzardOptions()
          GameTooltip:ClearLines();
          GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.linkFBShow), 1, 1, 1, true); -- white color, wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
-         GameTooltip:Show()                                                                   -- Show the tooltip
+         GameTooltip:Show()                                                                      -- Show the tooltip
       end);
       WOWTR_linkButtonFB:SetScript("OnLeave", function(self)
          GameTooltip:Hide() -- Hide the tooltip
@@ -3231,7 +3263,7 @@ function WOWTR_BlizzardOptions()
          GameTooltip:ClearLines();
          GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.linkEMAILShow), 1, 1, 1, true); -- white color, wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
-         GameTooltip:Show()                                                                      -- Show the tooltip
+         GameTooltip:Show()                                                                         -- Show the tooltip
       end);
       WOWTR_linkButtonEMAIL:SetScript("OnLeave", function(self)
          GameTooltip:Hide() -- Hide the tooltip
@@ -3267,7 +3299,7 @@ function WOWTR_BlizzardOptions()
          GameTooltip:ClearLines();
          GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.linkCURSEShow), 1, 1, 1, true); -- white color, wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
-         GameTooltip:Show()                                                                      -- Show the tooltip
+         GameTooltip:Show()                                                                         -- Show the tooltip
       end);
       WOWTR_linkButtonCURSE:SetScript("OnLeave", function(self)
          GameTooltip:Hide() -- Hide the tooltip
@@ -3300,7 +3332,7 @@ function WOWTR_BlizzardOptions()
          GameTooltip:ClearLines();
          GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.linkPPShow), 1, 1, 1, true); -- white color, wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
-         GameTooltip:Show()                                                                   -- Show the tooltip
+         GameTooltip:Show()                                                                      -- Show the tooltip
       end);
       WOWTR_linkButtonPP:SetScript("OnLeave", function(self)
          GameTooltip:Hide() -- Hide the tooltip
@@ -3341,7 +3373,7 @@ function WOWTR_BlizzardOptions()
          GameTooltip:ClearLines();
          GameTooltip:AddLine(QTR_ReverseIfAR(WoWTR_Config_Interface.linkBLIKShow), 1, 1, 1, true); -- white color, wrap
          getglobal("GameTooltipTextLeft1"):SetFont(WOWTR_Font2, 13);
-         GameTooltip:Show()                                                                     -- Show the tooltip
+         GameTooltip:Show()                                                                        -- Show the tooltip
       end);
       WOWTR_linkButtonBLIK:SetScript("OnLeave", function(self)
          GameTooltip:Hide() -- Hide the tooltip
@@ -3735,7 +3767,7 @@ function WOWTR_WelcomePanel()
       if (WoWTR_Localization.welcomeIconPos > 0) then
          WOWTR.Icon = WOWTR.WelcomePanel:CreateTexture(nil, "OVERLAY");
          WOWTR.Icon:ClearAllPoints();
-         WOWTR.Icon:SetPoint("TOPRIGHT", WOWTR.WelcomePanel, "TOPRIGHT", -20, -WoWTR_Localization.welcomeIconPos);
+         WOWTR.Icon:SetPoint("BOTTOMRIGHT", WOWTR.WelcomePanel, -10, 10, -WoWTR_Localization.welcomeIconPos);
          WOWTR.Icon:SetWidth(32);
          WOWTR.Icon:SetHeight(32);
          WOWTR.Icon:SetTexture(WoWTR_Localization.mainFolder .. "\\Images\\icon.png");
@@ -3748,7 +3780,7 @@ function WOWTR_WelcomePanel()
       WOWTR.WelcomePanel.Text:SetPoint("TOPLEFT", WOWTR.WelcomePanel, "TOPLEFT", 20, -40);
       WOWTR.WelcomePanel.Text:SetWidth(770);
       WOWTR.WelcomePanel.Text:SetText(QTR_ExpandUnitInfo(WoWTR_Config_Interface.welcomeText, false,
-         WOWTR.WelcomePanel.Text, WOWTR_Font2));                                                                                         -- welcome text when the addon is launched for the first time
+         WOWTR.WelcomePanel.Text, WOWTR_Font2, -140, "RIGHT")); -- welcome text when the addon is launched for the first time
       WOWTR.WelcomePanel.Text:SetFont(WOWTR_Font2, 14);
       WOWTR.WelcomePanel.Button = CreateFrame("Button", nil, WOWTR.WelcomePanel, "UIPanelButtonTemplate");
       WOWTR.WelcomePanel.Button:SetWidth(160);
