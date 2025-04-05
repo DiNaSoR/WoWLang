@@ -122,7 +122,7 @@ function AS_UTF8charbytes(s, i)
 
    -- determine bytes needed for character, based on RFC 3629
    -- validate byte 1
-   
+
    if (c > 0 and c <= 127) then
       -- UTF8-1
       return 1;
@@ -131,13 +131,13 @@ function AS_UTF8charbytes(s, i)
       local c2 = strbyte(s, i + 1);
 
       if (not c2) then
-         print("UTF-8 string terminated early ("..tostring(i)..",2,0): "..s);
+         print("UTF-8 string terminated early (" .. tostring(i) .. ",2,0): " .. s);
          return 1;
       end
 
       -- validate byte 2
       if (c2 < 128 or c2 > 191) then
-         print("Invalid UTF-8 character ("..tostring(i)..",2,1): "..s);
+         print("Invalid UTF-8 character (" .. tostring(i) .. ",2,1): " .. s);
          return 1;
       end
 
@@ -148,7 +148,7 @@ function AS_UTF8charbytes(s, i)
       local c3 = strbyte(s, i + 2);
 
       if (not c2 or not c3) then
-         print("UTF-8 string terminated early ("..tostring(i)..",3,0): "..s);
+         print("UTF-8 string terminated early (" .. tostring(i) .. ",3,0): " .. s);
          if (not c2) then
             return 1;
          else
@@ -158,19 +158,19 @@ function AS_UTF8charbytes(s, i)
 
       -- validate byte 2
       if (c == 224 and (c2 < 160 or c2 > 191)) then
-         print("Invalid UTF-8 character ("..tostring(i)..",3,1): "..s)
+         print("Invalid UTF-8 character (" .. tostring(i) .. ",3,1): " .. s)
          return 1;
       elseif (c == 237 and (c2 < 128 or c2 > 159)) then
-         print("Invalid UTF-8 character ("..tostring(i)..",3,2): "..s);
+         print("Invalid UTF-8 character (" .. tostring(i) .. ",3,2): " .. s);
          return 1;
       elseif (c2 < 128 or c2 > 191) then
-         print("Invalid UTF-8 character ("..tostring(i)..",3,3): "..s);
+         print("Invalid UTF-8 character (" .. tostring(i) .. ",3,3): " .. s);
          return 1;
       end
 
       -- validate byte 3
       if (c3 < 128 or c3 > 191) then
-         print("Invalid UTF-8 character ("..tostring(i)..",3,4): "..s);
+         print("Invalid UTF-8 character (" .. tostring(i) .. ",3,4): " .. s);
          return 2;
       end
 
@@ -182,7 +182,7 @@ function AS_UTF8charbytes(s, i)
       local c4 = strbyte(s, i + 3);
 
       if ((not c2) or (not c3) or (not c4)) then
-         print("UTF-8 string terminated early ("..tostring(i)..",4,0): "..s);
+         print("UTF-8 string terminated early (" .. tostring(i) .. ",4,0): " .. s);
          if (not c2) then
             return 1;
          elseif (not c3) then
@@ -194,29 +194,32 @@ function AS_UTF8charbytes(s, i)
 
       -- validate byte 2
       if (c == 240 and (c2 < 144 or c2 > 191)) then
-         print("Invalid UTF-8 character ("..tostring(i)..",4,1): "..s);
+         print("Invalid UTF-8 character (" .. tostring(i) .. ",4,1): " .. s);
          return 1;
       elseif (c == 244 and (c2 < 128 or c2 > 143)) then
-         print("Invalid UTF-8 character ("..tostring(i)..",4,2): "..s);
+         print("Invalid UTF-8 character (" .. tostring(i) .. ",4,2): " .. s);
          return 1;
       elseif (c2 < 128 or c2 > 191) then
-         print("Invalid UTF-8 character ("..tostring(i)..",4,3): "..s);
+         print("Invalid UTF-8 character (" .. tostring(i) .. ",4,3): " .. s);
          return 1;
       end
 
       -- validate byte 3
       if (c3 < 128 or c3 > 191) then
-         print("Invalid UTF-8 character ("..tostring(i)..",4,4): "..s);
+         print("Invalid UTF-8 character (" .. tostring(i) .. ",4,4): " .. s);
          return 2;
       end
 
       -- validate byte 4
       if (c4 < 128 or c4 > 191) then
-         print("Invalid UTF-8 character ("..tostring(i)..",4,5): "..s);
+         print("Invalid UTF-8 character (" .. tostring(i) .. ",4,5): " .. s);
          return 3;
       end
 
       return 4;
+   elseif (c >= 128 and c <= 193) or c >= 245 then
+      print("Handling invalid UTF-8 byte: " .. c);
+      return 1; -- Treat as a single-byte character
    else
       print("Invalid UTF-8 character: " .. c);
    end
@@ -229,7 +232,7 @@ end
 -------------------------------------------------------------------------------------------------------
 function AS_UTF8len(s)
    local len = 0;
-   if (s) then          -- argument checking
+   if (s) then -- argument checking
       local pos = 1;
       local bytes = strlen(s);
       while (pos <= bytes) do
@@ -253,9 +256,9 @@ end
 -------------------------------------------------------------------------------------------------------
 function AS_UTF8find(s, c)
    local odp = false;
-   if (s and c) then                                  -- check if arguments are not empty (nil)
+   if (s and c) then           -- check if arguments are not empty (nil)
       local pos = 1;
-      local bytes = strlen(s);                        -- number of length of the string s in bytes
+      local bytes = strlen(s); -- number of length of the string s in bytes
       local charbytes;
       local char1;
 
@@ -290,7 +293,7 @@ end
 -- instead of bytes; Parameters: s=arabic UTF8 text, i=starting position, j=ending position (not given=end the text); first element is 1, not 0
 -------------------------------------------------------------------------------------------------------
 function AS_UTF8sub(s, i, j)
-   j = j or -1;            -- argument defaults, is not required
+   j = j or -1; -- argument defaults, is not required
 
    -- argument checking
    if (type(s) ~= "string") then
@@ -303,9 +306,9 @@ function AS_UTF8sub(s, i, j)
       error("bad argument #3 to 'AS_UTF8sub' (number expected, got " .. type(j) .. ")");
    end
 
-   local pos   = 1;
-   local bytes = strlen(s);
-   local len   = 0;
+   local pos       = 1;
+   local bytes     = strlen(s);
+   local len       = 0;
 
    -- only set l if i or j is negative
    local l         = (i >= 0 and j >= 0) or AS_UTF8len(s);
@@ -354,11 +357,11 @@ end
 -- Reverses the order of UTF-8 letters with ReShaping; Parameters: s=arabic UTF8 text
 -------------------------------------------------------------------------------------------------------
 function AS_UTF8reverse(s)
-   if not s or #s == 0 then return "" end  -- Check if string is empty or nil
+   if not s or #s == 0 then return "" end -- Check if string is empty or nil
 
-   local newstrParts = {};  -- Use table to collect parts of the new string
+   local newstrParts = {};                -- Use table to collect parts of the new string
    local bytes = strlen(s);
-   local index = 1;         -- Keep track of insert position in table
+   local index = 1;                       -- Keep track of insert position in table
    local pos = 1;
    while pos <= bytes do
       local charbytes = AS_UTF8charbytes(s, pos)
@@ -371,8 +374,8 @@ function AS_UTF8reverse(s)
    for i = 1, math.floor(#newstrParts / 2) do
       newstrParts[i], newstrParts[#newstrParts - i + 1] = newstrParts[#newstrParts - i + 1], newstrParts[i];
    end
-   
-   return table.concat(newstrParts);  -- Join parts into final string
+
+   return table.concat(newstrParts); -- Join parts into final string
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -380,39 +383,39 @@ end
 -- Reverses the order of UTF-8 letters with ReShaping - using for chat
 function AS_UTF8reverseRS(s)
    local newstr = "";
-   if (s) then                                   -- check if argument is not empty (nil)
+   if (s) then -- check if argument is not empty (nil)
       local bytes = strlen(s);
       local pos = 1;
       local char0 = '';
       local char1, char2, char3;
       local charbytes1, charbytes2, charbytes3;
-      local position = -1;           -- not specified
+      local position = -1; -- not specified
       local nextletter = 0;
-      local spaces = '( )?؟!,.;:،';  -- letters that we treat as a space
+      local spaces = '( )?؟!,.;:،'; -- letters that we treat as a space
 
       while (pos <= bytes) do
          charbytes1 = AS_UTF8charbytes(s, pos);        -- count of bytes (liczba bajtów znaku)
-         char1 = strsub(s, pos, pos + charbytes1 - 1);  -- current character
+         char1 = strsub(s, pos, pos + charbytes1 - 1); -- current character
          pos = pos + charbytes1;
-         
+
          if (pos <= bytes) then
-            charbytes2 = AS_UTF8charbytes(s, pos);        -- count of bytes (liczba bajtów znaku)
-            char2 = strsub(s, pos, pos + charbytes2 - 1);  -- next character
-            if (pos+charbytes2 <= bytes) then              -- 3rd next letter is available
-               charbytes3 = AS_UTF8charbytes(s, pos+charbytes2);                   -- count of bytes (liczba bajtów znaku)
-               char3 = strsub(s, pos+charbytes2, pos+charbytes2 + charbytes3 - 1);  -- 3rd next character
+            charbytes2 = AS_UTF8charbytes(s, pos);                                 -- count of bytes (liczba bajtów znaku)
+            char2 = strsub(s, pos, pos + charbytes2 - 1);                          -- next character
+            if (pos + charbytes2 <= bytes) then                                    -- 3rd next letter is available
+               charbytes3 = AS_UTF8charbytes(s, pos + charbytes2);                 -- count of bytes (liczba bajtów znaku)
+               char3 = strsub(s, pos + charbytes2, pos + charbytes2 + charbytes3 - 1); -- 3rd next character
             else
                charbytes3 = 0;
                char3 = 'X';
             end
-            
-            if (AS_UTF8find(spaces,char2)) then
-               nextletter = 1;      -- space, question mark, exclamation mark, comma, dot, etc.
+
+            if (AS_UTF8find(spaces, char2)) then
+               nextletter = 1; -- space, question mark, exclamation mark, comma, dot, etc.
             else
-               nextletter = 2;      -- normal letter
+               nextletter = 2; -- normal letter
             end
          else
-            nextletter = 0;         -- no more letters
+            nextletter = 0; -- no more letters
             char2 = 'X';
             char3 = 'X';
             charbytes2 = 0;
@@ -420,56 +423,56 @@ function AS_UTF8reverseRS(s)
          end
 
          -- first determine the original position of the letter in the word
-         if (AS_UTF8find(spaces,char1)) then
-            position = -1;      -- space, question mark, exclamation mark, comma, dot, etc.
-         elseif (position < 0) then        -- not specified yet (start the word)
-            if ((nextletter == 0) or (nextletter == 1)) then    -- end of file or space on as a next letter
-               position = 0;           -- isolated letter
+         if (AS_UTF8find(spaces, char1)) then
+            position = -1;                                                   -- space, question mark, exclamation mark, comma, dot, etc.
+         elseif (position < 0) then                                          -- not specified yet (start the word)
+            if ((nextletter == 0) or (nextletter == 1)) then                 -- end of file or space on as a next letter
+               position = 0;                                                 -- isolated letter
             else
-               position = 1;           -- initial letter
+               position = 1;                                                 -- initial letter
             end
-         elseif ((position == 0) or (position == 1) or (position == 2)) then       -- it was isolated or initial or middle letter
-            if ((nextletter == 0) or (nextletter == 1)) then    -- end of file or space on next letter
-               position = 3;           -- final letter
+         elseif ((position == 0) or (position == 1) or (position == 2)) then -- it was isolated or initial or middle letter
+            if ((nextletter == 0) or (nextletter == 1)) then                 -- end of file or space on next letter
+               position = 3;                                                 -- final letter
             else
-               if (position == 0) then    -- it was isolated letter
-                  position = 1;           -- initial letter
+               if (position == 0) then                                       -- it was isolated letter
+                  position = 1;                                              -- initial letter
                else
-                  position = 2;           -- middle letter
+                  position = 2;                                              -- middle letter
                end
-            end         
-         else                             -- it was final letter (position == 3)
+            end
+         else -- it was final letter (position == 3)
             position = -1;
          end
 
-         -- now modifications to the form of the letter depending on the preceding special letters   
-         if ((char0 == "ﻼ") or (char0 == "ﻸ") or (char0 == "ﻺ") or (char0 == "ﻶ") or (char0 == "ا") or (char0 == "أ") or (char0 == "إ") or (char0 == "آ") or (char0 == "لا") or (char0 == "ﻷ") or (char0 == "ﻹ") or (char0 == "ﻵ") or (char0 == "ﻵا") or (char0 == "ﻷا") or (char0 == "ﻹا") or (char0 == "ﻻا")) then    -- previous letter was ALEF, DA, THA, RA, ZAI, WA or LA, current should be in isolated form, only if this letter is the last in the word, otherwise form must be initial
-            if (AS_UTF8find(spaces,char1)) then                                     -- current character is space
-               position = 0;                                                        -- isolated letter
-            elseif ((nextletter == 0) or (nextletter == 1)) then                    -- end of file or space on as a next letter OR letter is ALEF
-               position = 0;      
+         -- now modifications to the form of the letter depending on the preceding special letters
+         if ((char0 == "ﻼ") or (char0 == "ﻸ") or (char0 == "ﻺ") or (char0 == "ﻶ") or (char0 == "ا") or (char0 == "أ") or (char0 == "إ") or (char0 == "آ") or (char0 == "لا") or (char0 == "ﻷ") or (char0 == "ﻹ") or (char0 == "ﻵ") or (char0 == "ﻵا") or (char0 == "ﻷا") or (char0 == "ﻹا") or (char0 == "ﻻا")) then -- previous letter was ALEF, DA, THA, RA, ZAI, WA or LA, current should be in isolated form, only if this letter is the last in the word, otherwise form must be initial
+            if (AS_UTF8find(spaces, char1)) then -- current character is space
+               position = 0; -- isolated letter
+            elseif ((nextletter == 0) or (nextletter == 1)) then -- end of file or space on as a next letter OR letter is ALEF
+               position = 0;
             else
-               position = 1;                                                        -- initial letter
+               position = 1; -- initial letter
             end
-         elseif (char0 == "ذ") and (char1 == "ه") then                              -- previous letter was THA, current HA should be in isolated form, only if HA is the last in the word, otherwise form must be initial
-            if ((nextletter == 0) or (nextletter == 1)) then                        -- end of file or space on as a next letter
-               position = 0;                                                        -- isolated letter
+         elseif (char0 == "ذ") and (char1 == "ه") then -- previous letter was THA, current HA should be in isolated form, only if HA is the last in the word, otherwise form must be initial
+            if ((nextletter == 0) or (nextletter == 1)) then -- end of file or space on as a next letter
+               position = 0; -- isolated letter
             else
-               position = 1;                                                        -- initial letter
+               position = 1; -- initial letter
             end
-         elseif  (char0 == "د") or (char0 == "ذ") or (char0 == "ر") or (char0 == "ز") or (char0 == "و") or (char0 == "ؤ") then
-            if (AS_UTF8find(spaces,char1)) then                                     -- current character is space
-               position = 0;                                                        -- isolated letter
-            elseif ((nextletter == 0) or (nextletter == 1)) then                    -- next character is space
-               position = 0;                                                        -- isolated letter
+         elseif (char0 == "د") or (char0 == "ذ") or (char0 == "ر") or (char0 == "ز") or (char0 == "و") or (char0 == "ؤ") then
+            if (AS_UTF8find(spaces, char1)) then                 -- current character is space
+               position = 0;                                     -- isolated letter
+            elseif ((nextletter == 0) or (nextletter == 1)) then -- next character is space
+               position = 0;                                     -- isolated letter
             else
-               position = 1;                                                        -- initial letter
+               position = 1;                                     -- initial letter
             end
          end
-         
-         
-         if ((AS_Reshaping_Rules3[char1..char2..char3]) and (position >= 0)) then  -- ligature 3 characters
-            local ligature = AS_Reshaping_Rules3[char1..char2..char3];
+
+
+         if ((AS_Reshaping_Rules3[char1 .. char2 .. char3]) and (position >= 0)) then -- ligature 3 characters
+            local ligature = AS_Reshaping_Rules3[char1 .. char2 .. char3];
             if (position == 0) then
                char1 = ligature.isolated;
             elseif (position == 1) then
@@ -479,9 +482,9 @@ function AS_UTF8reverseRS(s)
             else
                char1 = ligature.final;
             end
-            pos = pos + charbytes2 + charbytes3;    -- we omit the next preceding letters
-         elseif ((AS_Reshaping_Rules2[char1..char2]) and (position >= 0)) then     -- ligature 2 characters
-            local ligature = AS_Reshaping_Rules2[char1..char2];
+            pos = pos + charbytes2 + charbytes3;                               -- we omit the next preceding letters
+         elseif ((AS_Reshaping_Rules2[char1 .. char2]) and (position >= 0)) then -- ligature 2 characters
+            local ligature = AS_Reshaping_Rules2[char1 .. char2];
             if (position == 0) then
                char1 = ligature.isolated;
             elseif (position == 1) then
@@ -491,41 +494,41 @@ function AS_UTF8reverseRS(s)
             else
                char1 = ligature.final;
             end
-            pos = pos + charbytes2;    -- we omit the next preceding letter
-         end   
-         
+            pos = pos + charbytes2; -- we omit the next preceding letter
+         end
+
 
          -- check if the character has reshaping rules
          local rules = AS_Reshaping_Rules[char1];
          if (rules) then
             -- apply reshaping rules based on the character's position in the string
-            if (position == 0) then       -- isolated letter
+            if (position == 0) then -- isolated letter
                if (debug_show_form == 1) then
-                  newstr = '0'..rules.isolated .. newstr;
+                  newstr = '0' .. rules.isolated .. newstr;
                else
                   newstr = rules.isolated .. newstr;
                end
-            elseif (position == 1) then   -- initial letter
+            elseif (position == 1) then -- initial letter
                if (debug_show_form == 1) then
-                  newstr = '1'..rules.initial .. newstr;
+                  newstr = '1' .. rules.initial .. newstr;
                else
                   newstr = rules.initial .. newstr;
                end
-            elseif (position == 2) then   -- middle letter
+            elseif (position == 2) then -- middle letter
                if (debug_show_form == 1) then
-                  newstr = '2'..rules.middle .. newstr;
+                  newstr = '2' .. rules.middle .. newstr;
                else
                   newstr = rules.middle .. newstr;
                end
-            else                          -- final letter
+            else -- final letter
                if (debug_show_form == 1) then
-                  newstr = '3'..rules.final .. newstr;
+                  newstr = '3' .. rules.final .. newstr;
                else
                   newstr = rules.final .. newstr;
                end
             end
-         else  -- character has no reshaping rules, add it to the result string as is
-            if (char1 == "<") then        -- we need to reverse the directions of the parentheses
+         else                      -- character has no reshaping rules, add it to the result string as is
+            if (char1 == "<") then -- we need to reverse the directions of the parentheses
                char1 = ">";
             elseif (char1 == ">") then
                char1 = "<";
@@ -535,12 +538,12 @@ function AS_UTF8reverseRS(s)
                char1 = "(";
             end
             if (debug_show_form == 1) then
-               newstr = position..char1 .. newstr;
+               newstr = position .. char1 .. newstr;
             else
                newstr = char1 .. newstr;
             end
          end
-         char0 = char1;    --save to previous letter
+         char0 = char1; --save to previous letter
       end
    end
    return newstr;
@@ -578,7 +581,7 @@ function AS_CreateTestLine()
    AS_TestLine.text:SetSize(DEFAULT_CHAT_FRAME:GetWidth(), 0);
    AS_TestLine.text:SetJustifyH("LEFT");
    AS_TestLine.CloseButton:SetPoint("TOPRIGHT", AS_TestLine, "TOPRIGHT", 0, 0);
-   AS_TestLine:Hide();     -- the frame is invisible in the game
+   AS_TestLine:Hide(); -- the frame is invisible in the game
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -594,34 +597,34 @@ end
 --    - retstr (string): The processed text ready for display.
 -------------------------------------------------------------------------------------------------------
 function AS_ReverseAndPrepareLineText(Atext, Awidth, Afont, AfontSize)
-   local retstr = ""; 
+   local retstr = "";
    if (Atext and Awidth and AfontSize) then
-      if (AS_TestLine == nil) then 
-         AS_CreateTestLine(); 
+      if (AS_TestLine == nil) then
+         AS_CreateTestLine();
       end
       Atext = string.gsub(Atext, " #", "#");
       Atext = string.gsub(Atext, "# ", "#");
-      
+
       local bytes = strlen(Atext);
       local pos = 1;
-      local counter = 0; 
-      local link_start_stop = false; 
-      local newstr = ""; 
-      local nextstr = ""; 
+      local counter = 0;
+      local link_start_stop = false;
+      local newstr = "";
+      local nextstr = "";
       local charbytes;
       --local newstrR; -- Removed as unused
       local char1 = "";
-      local char2 = ""; 
-      local last_space = 0; 
+      local char2 = "";
+      local last_space = 0;
 
-      while (pos <= bytes) do 
-         charbytes = AS_UTF8charbytes(Atext, pos); 
-         char1 = strsub(Atext, pos, pos + charbytes - 1); 
-         newstr = newstr .. char1; 
+      while (pos <= bytes) do
+         charbytes = AS_UTF8charbytes(Atext, pos);
+         char1 = strsub(Atext, pos, pos + charbytes - 1);
+         newstr = newstr .. char1;
 
          if ((char2 .. char1 == "|r") and (pos < bytes)) then
-            link_start_stop = true; 
-         elseif ((char2 .. char1 == "|c") and (pos < bytes)) then 
+            link_start_stop = true;
+         elseif ((char2 .. char1 == "|c") and (pos < bytes)) then
             link_start_stop = false;
          end
 
@@ -632,33 +635,33 @@ function AS_ReverseAndPrepareLineText(Atext, Awidth, Afont, AfontSize)
             nextstr = nextstr .. char1;
             last_space = last_space + charbytes;
          end
-         
-         if (link_start_stop == false) then 
-            AS_TestLine.text:SetWidth(Awidth); 
-            AS_TestLine.text:SetFont(Afont, AfontSize); 
-            AS_TestLine.text:SetText(AS_UTF8reverse(newstr)); 
-            if ((char1 == '#') or (AS_TestLine.text:GetHeight() > AfontSize * 1.5)) then 
-               newstr = string.sub(newstr, 1, strlen(newstr) - last_space); 
+
+         if (link_start_stop == false) then
+            AS_TestLine.text:SetWidth(Awidth);
+            AS_TestLine.text:SetFont(Afont, AfontSize);
+            AS_TestLine.text:SetText(AS_UTF8reverse(newstr));
+            if ((char1 == '#') or (AS_TestLine.text:GetHeight() > AfontSize * 1.5)) then
+               newstr = string.sub(newstr, 1, strlen(newstr) - last_space);
                newstr = string.gsub(newstr, "#", "");
                -- *** MODIFICATION: Remove call to AS_AddSpaces ***
-               retstr = retstr .. AS_UTF8reverse(newstr) .. "\n"; 
+               retstr = retstr .. AS_UTF8reverse(newstr) .. "\n";
                newstr = nextstr;
-               nextstr = ""; 
+               nextstr = "";
                --counter = 0; -- Removed counter reset
             end
          end
-         char2 = char1; 
-         pos = pos + charbytes; 
+         char2 = char1;
+         pos = pos + charbytes;
       end
-      
+
       -- *** MODIFICATION: Remove call to AS_AddSpaces for the last line ***
-      retstr = retstr .. AS_UTF8reverse(newstr); 
+      retstr = retstr .. AS_UTF8reverse(newstr);
       retstr = string.gsub(retstr, "#", "");
-      retstr = string.gsub(retstr, " \n", "\n"); 
-      retstr = string.gsub(retstr, "\n ", "\n"); 
+      retstr = string.gsub(retstr, " \n", "\n");
+      retstr = string.gsub(retstr, "\n ", "\n");
    end
-   
-   return retstr; 
+
+   return retstr;
 end
 
 --------------------------------------------------------------------------------------------------------
@@ -698,15 +701,15 @@ function AS_ReverseAndPrepareLineText_RIGHT(Atext, Awidth, Afont, AfontSize)
             link_start_stop = false;
          end
 
-         if ((char1 == '#') or ((char1 == " ") and (link_start_stop == false))) then   -- we have a space, not inside a link
+         if ((char1 == '#') or ((char1 == " ") and (link_start_stop == false))) then -- we have a space, not inside a link
             last_space = 0;
             nextstr = "";
          else
             nextstr = nextstr .. char1; -- characters following the last space
             last_space = last_space + charbytes;
          end
-         if (link_start_stop == false) then -- we are not inside a link - can check
-            AS_TestLine.text:SetWidth(Awidth);   -- set the frame width to the text
+         if (link_start_stop == false) then    -- we are not inside a link - can check
+            AS_TestLine.text:SetWidth(Awidth); -- set the frame width to the text
             AS_TestLine.text:SetFont(Afont, AfontSize);
             AS_TestLine.text:SetText(AS_UTF8reverse(newstr));
             if ((char1 == '#') or (AS_TestLine.text:GetHeight() > AfontSize * 1.5)) then -- text no longer fits in one line
@@ -726,7 +729,7 @@ function AS_ReverseAndPrepareLineText_RIGHT(Atext, Awidth, Afont, AfontSize)
       retstr = string.gsub(retstr, " \n", "\n"); -- space before newline code is useless
       retstr = string.gsub(retstr, "\n ", "\n"); -- space after newline code is useless
    end
-   
+
    return retstr;
 end
 
@@ -766,14 +769,13 @@ function AS_AddSpaces(txt, width, fontfile, fontsize)
    return (txt);
 end
 
-
 -------------------------------------------------------------------------------------------------------
 function BB_LineChat(txt, font_size, more_chars)
    local retstr = "";
    if (txt and font_size) then
       local more_chars = more_chars or 0;
-      local chat_width = DEFAULT_CHAT_FRAME:GetWidth();             -- width of 1 chat line
-      local chars_limit = chat_width / (0.35*font_size+0.8)*1.1 ;   -- so much max. characters can fit on one line
+      local chat_width = DEFAULT_CHAT_FRAME:GetWidth();           -- width of 1 chat line
+      local chars_limit = chat_width / (0.35 * font_size + 0.8) * 1.1; -- so much max. characters can fit on one line
       local bytes = strlen(txt);
       local pos = 1;
       local counter = 0;
@@ -783,17 +785,17 @@ function BB_LineChat(txt, font_size, more_chars)
       local newstrR;
       local char1;
       while (pos <= bytes) do
-         local c = strbyte(txt, pos);                      -- read the character (odczytaj znak)
-         charbytes = AS_UTF8charbytes(txt, pos);    -- count of bytes (liczba bajtów znaku)
+         local c = strbyte(txt, pos);            -- read the character (odczytaj znak)
+         charbytes = AS_UTF8charbytes(txt, pos); -- count of bytes (liczba bajtów znaku)
          char1 = strsub(txt, pos, pos + charbytes - 1);
          newstr = newstr .. char1;
          pos = pos + charbytes;
-         
+
          counter = counter + 1;
          if ((char1 >= "A") and (char1 <= "z")) then
-            counter = counter + 1;        -- latin letters are 2x wider, then Arabic
+            counter = counter + 1;                                        -- latin letters are 2x wider, then Arabic
          end
-         if ((char1 == " ") and (counter-more_chars>=chars_limit-3)) then      -- break line here
+         if ((char1 == " ") and (counter - more_chars >= chars_limit - 3)) then -- break line here
             newstrR = BB_AddSpaces(AS_UTF8reverse(newstr), second);
             retstr = retstr .. newstrR .. "\n";
             newstr = "";
@@ -804,47 +806,47 @@ function BB_LineChat(txt, font_size, more_chars)
       end
       newstrR = BB_AddSpaces(AS_UTF8reverse(newstr), second);
       retstr = retstr .. newstrR;
-      retstr = string.gsub(retstr, "\n ", "\n");        -- space after newline code is useless
+      retstr = string.gsub(retstr, "\n ", "\n"); -- space after newline code is useless
    end
    return retstr;
 end
 
 --------------------------------------------------------------------------------------------------------
-function BB_AddSpaces(txt, snd)                                 -- snd = second or next line (interspace 2 on right)
-   local _fontC, _sizeC, _C = DEFAULT_CHAT_FRAME:GetFont();     -- read current font, size and flag of the chat object
-   local chat_widthC = DEFAULT_CHAT_FRAME:GetWidth();           -- width of 1 chat line
-   local chars_limitC = chat_widthC / (0.35*_sizeC+0.8);        -- so much max. characters can fit on one line
-   
-   if (BB_TestLine == nil) then     -- a own frame for displaying the translation of texts and determining the length
+function BB_AddSpaces(txt, snd)                             -- snd = second or next line (interspace 2 on right)
+   local _fontC, _sizeC, _C = DEFAULT_CHAT_FRAME:GetFont(); -- read current font, size and flag of the chat object
+   local chat_widthC = DEFAULT_CHAT_FRAME:GetWidth();       -- width of 1 chat line
+   local chars_limitC = chat_widthC / (0.35 * _sizeC + 0.8); -- so much max. characters can fit on one line
+
+   if (BB_TestLine == nil) then                             -- a own frame for displaying the translation of texts and determining the length
       BB_CreateTestLine();
-   end   
-   BB_TestLine:SetWidth(DEFAULT_CHAT_FRAME:GetWidth()+50);
-   BB_TestLine:Hide();     -- the frame is invisible in the game
+   end
+   BB_TestLine:SetWidth(DEFAULT_CHAT_FRAME:GetWidth() + 50);
+   BB_TestLine:Hide(); -- the frame is invisible in the game
    BB_TestLine.text:SetFont(_fontC, _sizeC, _C);
    local count = 0;
    local text = txt;
    BB_TestLine.text:SetText(text);
-   while ((BB_TestLine.text:GetHeight() < _sizeC*1.5) and (count < chars_limitC)) do
+   while ((BB_TestLine.text:GetHeight() < _sizeC * 1.5) and (count < chars_limitC)) do
       count = count + 1;
-      text = " "..text;
+      text = " " .. text;
       BB_TestLine.text:SetText(text);
    end
 
-   if (count < chars_limitC) then    -- failed to properly add leading spaces
-      for i=4,count-snd,1 do         -- spaces are added to the left of the text
-         txt = " "..txt;
+   if (count < chars_limitC) then -- failed to properly add leading spaces
+      for i = 4, count - snd, 1 do -- spaces are added to the left of the text
+         txt = " " .. txt;
       end
    end
    BB_TestLine.text:SetText(txt);
-   
-   return(txt);
+
+   return (txt);
 end
 
 --------------------------------------------------------------------------------------------------------
 function BB_CreateTestLine()
    BB_TestLine = CreateFrame("Frame", "BB_TestLine", UIParent, "BasicFrameTemplateWithInset");
    BB_TestLine:SetHeight(150);
-   BB_TestLine:SetWidth(DEFAULT_CHAT_FRAME:GetWidth()+50);
+   BB_TestLine:SetWidth(DEFAULT_CHAT_FRAME:GetWidth() + 50);
    BB_TestLine:ClearAllPoints();
    BB_TestLine:SetPoint("TOPLEFT", 20, -300);
    BB_TestLine.title = BB_TestLine:CreateFontString(nil, "OVERLAY", "GameFontHighlight");
@@ -853,12 +855,12 @@ function BB_CreateTestLine()
    BB_TestLine.ScrollFrame = CreateFrame("ScrollFrame", nil, BB_TestLine, "UIPanelScrollFrameTemplate");
    BB_TestLine.ScrollFrame:SetPoint("TOPLEFT", BB_TestLine.InsetBg, "TOPLEFT", 10, -40);
    BB_TestLine.ScrollFrame:SetPoint("BOTTOMRIGHT", BB_TestLine.InsetBg, "BOTTOMRIGHT", -5, 10);
-  
+
    BB_TestLine.ScrollFrame.ScrollBar:ClearAllPoints();
-   BB_TestLine.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", BB_TestLine.ScrollFrame, "TOPRIGHT", -12, -18);
-   BB_TestLine.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", BB_TestLine.ScrollFrame, "BOTTOMRIGHT", -7, 15);
+   BB_TestLine.ScrollBar:SetPoint("TOPLEFT", BB_TestLine.ScrollFrame, "TOPRIGHT", -12, -18);
+   BB_TestLine.ScrollBar:SetPoint("BOTTOMRIGHT", BB_TestLine.ScrollFrame, "BOTTOMRIGHT", -7, 15);
    BBchild = CreateFrame("Frame", nil, BB_TestLine.ScrollFrame);
-   BBchild:SetSize(552,100);
+   BBchild:SetSize(552, 100);
    BBchild.bg = BBchild:CreateTexture(nil, "BACKGROUND");
    BBchild.bg:SetAllPoints(true);
    BBchild.bg:SetColorTexture(0, 0.05, 0.1, 0.8);
@@ -866,8 +868,8 @@ function BB_CreateTestLine()
    BB_TestLine.text = BBchild:CreateFontString(nil, "OVERLAY", "GameFontHighlight");
    BB_TestLine.text:SetPoint("TOPLEFT", BBchild, "TOPLEFT", 2, 0);
    BB_TestLine.text:SetText("");
-   BB_TestLine.text:SetSize(DEFAULT_CHAT_FRAME:GetWidth(),0);
+   BB_TestLine.text:SetSize(DEFAULT_CHAT_FRAME:GetWidth(), 0);
    BB_TestLine.text:SetJustifyH("LEFT");
    BB_TestLine.CloseButton:SetPoint("TOPRIGHT", BB_TestLine, "TOPRIGHT", 0, 0);
-   BB_TestLine:Hide();     -- the frame is invisible in the game
+   BB_TestLine:Hide(); -- the frame is invisible in the game
 end

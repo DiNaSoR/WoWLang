@@ -8,27 +8,27 @@ NONBREAKINGSPACE = " ";
 WOWTR_player_name = UnitName("player");
 WOWTR_player_race = UnitRace("player");
 WOWTR_player_class = UnitClass("player");
-WOWTR_player_sex = UnitSex("player");     -- 1:neutral,  2:male,  3:female
+WOWTR_player_sex = UnitSex("player"); -- 1:neutral,  2:male,  3:female
 WOWTR_waitTable = {};
 WOWTR_waitFrame = nil;
-WOWTR_time_ver = GetTime() - 15*60;
-WOWTR_lastNotificationTime = 0;      -- Son bildirim zamanını sakla
-WOWTR_notificationCooldown = 10800;  -- 3 saat (10800 saniye) cooldown süresi
+WOWTR_time_ver = GetTime() - 15 * 60;
+WOWTR_lastNotificationTime = 0;     -- Son bildirim zamanını sakla
+WOWTR_notificationCooldown = 10800; -- 3 saat (10800 saniye) cooldown süresi
 
 ---------------------------------------------------------------------------------------------------------
 
-function StringHash(text)           -- funkcja tworząca Hash (32-bitowa liczba) podanego tekstu
-   if (not text or (#text == 0)) then return 0 end  -- Check if string is empty or nil
+function StringHash(text)                          -- funkcja tworząca Hash (32-bitowa liczba) podanego tekstu
+   if (not text or (#text == 0)) then return 0 end -- Check if string is empty or nil
    local counter = 1;
    local pomoc = 0;
    local dlug = string.len(text);
-   for i = 1, dlug, 3 do 
-      counter = math.fmod(counter*8161, 4294967279);  -- 2^32 - 17: Prime!
-      pomoc = (string.byte(text,i)*16776193);
+   for i = 1, dlug, 3 do
+      counter = math.fmod(counter * 8161, 4294967279); -- 2^32 - 17: Prime!
+      pomoc = (string.byte(text, i) * 16776193);
       counter = counter + pomoc;
-      pomoc = ((string.byte(text,i+1) or (dlug-i+256))*8372226);
+      pomoc = ((string.byte(text, i + 1) or (dlug - i + 256)) * 8372226);
       counter = counter + pomoc;
-      pomoc = ((string.byte(text,i+2) or (dlug-i+256))*3932164);
+      pomoc = ((string.byte(text, i + 2) or (dlug - i + 256)) * 3932164);
       counter = counter + pomoc;
    end
    return math.fmod(counter, 4294967291) -- 2^32 - 5: Prime (and different from the prime in the loop)
@@ -36,22 +36,22 @@ end
 
 ----------------------------------------------------------------------------------------------------------------------------------------
 
-function WOWTR_wait(delay, func, ...)           -- można też użyć funkcji systemowej: C_Timer.After(sekundy, funkcja)
-   if(type(delay)~="number" or type(func)~="function") then
+function WOWTR_wait(delay, func, ...) -- można też użyć funkcji systemowej: C_Timer.After(sekundy, funkcja)
+   if (type(delay) ~= "number" or type(func) ~= "function") then
       return false;
    end
    if (WOWTR_waitFrame == nil) then
       WOWTR_waitFrame = CreateFrame("Frame", "WOWTR_WaitFrame", UIParent);
-      WOWTR_waitFrame:SetScript("onUpdate", function (self,elapse)
+      WOWTR_waitFrame:SetScript("onUpdate", function(self, elapse)
          local count = #WOWTR_waitTable;
          local i = 1;
-         while(i<=count) do
-            local waitRecord = tremove(WOWTR_waitTable,i);
-            local d = tremove(waitRecord,1);
-            local f = tremove(waitRecord,1);
-            local p = tremove(waitRecord,1);
-            if(d>elapse) then
-               tinsert(WOWTR_waitTable,i,{d-elapse,f,p});
+         while (i <= count) do
+            local waitRecord = tremove(WOWTR_waitTable, i);
+            local d = tremove(waitRecord, 1);
+            local f = tremove(waitRecord, 1);
+            local p = tremove(waitRecord, 1);
+            if (d > elapse) then
+               tinsert(WOWTR_waitTable, i, { d - elapse, f, p });
                i = i + 1;
             else
                count = count - 1;
@@ -60,7 +60,7 @@ function WOWTR_wait(delay, func, ...)           -- można też użyć funkcji sy
          end
       end);
    end
-   tinsert(WOWTR_waitTable,{delay,func,{...}});
+   tinsert(WOWTR_waitTable, { delay, func, { ... } });
    return true;
 end
 
@@ -85,9 +85,8 @@ function StartTicker(frame, func, interval)
    end
 end
 
-
 function StartDelayedFunction(func, delay)
-    C_Timer.After(delay, func)
+   C_Timer.After(delay, func)
 end
 
 ----------------------------------------------------------------------------------------------------------------------------------------
@@ -107,27 +106,27 @@ function WOWTR_CheckVars()
    if (not QTR_GOSSIP) then
       QTR_GOSSIP = {};
    end
-   
+
    if (not BB_PM) then
       BB_PM = {};
    end
    if (not BB_PS) then
       BB_PS = {};
    end
-  if (not BB_TR) then
-     BB_TR = {};
-  end
-   
+   if (not BB_TR) then
+      BB_TR = {};
+   end
+
    if (not MF_PM) then
       MF_PM = {};
    end
    if (not MF_PS) then
       MF_PS = {};
    end
-   
+
    -- table for original gossip texts
    QTR_GS = {};
-   
+
 
    -- show addon icon next to minimap
    if (not QTR_PS["icon"]) then
@@ -138,111 +137,111 @@ function WOWTR_CheckVars()
       QTR_PS["active"] = "1";
    end
    -- activate the translations of quest TITLE
-   if (not QTR_PS["transtitle"] ) then
-      QTR_PS["transtitle"] = "1";   
+   if (not QTR_PS["transtitle"]) then
+      QTR_PS["transtitle"] = "1";
    end
    -- activate the gossip translation
-   if (not QTR_PS["gossip"] ) then
-      QTR_PS["gossip"] = "1";   
+   if (not QTR_PS["gossip"]) then
+      QTR_PS["gossip"] = "1";
    end
    -- gossip translation font size
-   if (not QTR_PS["fontsize"] ) then
-      QTR_PS["fontsize"] = "13";   
+   if (not QTR_PS["fontsize"]) then
+      QTR_PS["fontsize"] = "13";
    end
    -- display own names in translation language (active in Polish version)
-   if (not QTR_PS["ownnames"] ) then
-      QTR_PS["ownnames"] = "0";   
+   if (not QTR_PS["ownnames"]) then
+      QTR_PS["ownnames"] = "0";
    end
    -- activate the quest tracker translation ONLINE
-   if (not QTR_PS["tracker"] ) then
-      QTR_PS["tracker"] = "1";   
+   if (not QTR_PS["tracker"]) then
+      QTR_PS["tracker"] = "1";
    end
    -- save of untranslated quests
-   if (not QTR_PS["saveQS"] ) then
-      QTR_PS["saveQS"] = "1";   
+   if (not QTR_PS["saveQS"]) then
+      QTR_PS["saveQS"] = "1";
    end
    -- save of untranslated gossip texts
-   if (not QTR_PS["saveGS"] ) then
-      QTR_PS["saveGS"] = "1";   
+   if (not QTR_PS["saveGS"]) then
+      QTR_PS["saveGS"] = "1";
    end
    -- activate translations in Classic Quest Log addon
-   if (not QTR_PS["questlog"] ) then
-      QTR_PS["questlog"] = "1";   
+   if (not QTR_PS["questlog"]) then
+      QTR_PS["questlog"] = "1";
    end
    -- activate translations in Immersion addon
-   if (not QTR_PS["immersion"] ) then
-      QTR_PS["immersion"] = "1";   
+   if (not QTR_PS["immersion"]) then
+      QTR_PS["immersion"] = "1";
    end
    -- activate translations in StoryLine addon
-   if (not QTR_PS["storyline"] ) then
-      QTR_PS["storyline"] = "1";   
+   if (not QTR_PS["storyline"]) then
+      QTR_PS["storyline"] = "1";
    end
    -- activate translations in DialogueUI addon
-   if (not QTR_PS["dialogueui"] ) then
-      QTR_PS["dialogueui"] = "1";   
+   if (not QTR_PS["dialogueui"]) then
+      QTR_PS["dialogueui"] = "1";
    end
    -- display EN text first on Quests and Gossip
-   if (not QTR_PS["en_first"] ) then
-      QTR_PS["en_first"] = "0";   
+   if (not QTR_PS["en_first"]) then
+      QTR_PS["en_first"] = "0";
    end
    -- current font file
-   if (not QTR_PS["FontFile"] ) then
-      QTR_PS["FontFile"] = WOWTR_Fonts[1];   
+   if (not QTR_PS["FontFile"]) then
+      QTR_PS["FontFile"] = WOWTR_Fonts[1];
    end
    if (#WOWTR_Fonts > 1) then
-      WOWTR_Font2 = WoWTR_Localization.mainFolder.."\\Fonts\\"..QTR_PS["FontFile"];
+      WOWTR_Font2 = WoWTR_Localization.mainFolder .. "\\Fonts\\" .. QTR_PS["FontFile"];
    end
 
-   if (not QTR_PS.firstTimeLoaded) then   -- Automatic log cleaning (reset saved texts)
+   if (not QTR_PS.firstTimeLoaded) then -- Automatic log cleaning (reset saved texts)
       QTR_PS.firstTimeLoaded = true;
       WOWTR_ResetVariables(1);
    end
 
    -- initialize check options
-   if (not BB_PM["active"] ) then    -- dodatek aktywny
-      BB_PM["active"] = "1";   
+   if (not BB_PM["active"]) then  -- dodatek aktywny
+      BB_PM["active"] = "1";
    end
-   if (not BB_PM["chat-en"] ) then   -- pokaż tekst angielski w oknie czatu
-      BB_PM["chat-en"] = "0";   
+   if (not BB_PM["chat-en"]) then  -- pokaż tekst angielski w oknie czatu
+      BB_PM["chat-en"] = "0";
    end
-   if (not BB_PM["chat-tr"] ) then   -- pokaż tekst przetłumaczony w oknie czatu
-      BB_PM["chat-tr"] = "1";   
+   if (not BB_PM["chat-tr"]) then  -- pokaż tekst przetłumaczony w oknie czatu
+      BB_PM["chat-tr"] = "1";
    end
-   if (not BB_PM["saveNB"] ) then    -- zapisz nieprzetłumaczone dymki
-      BB_PM["saveNB"] = "1";   
+   if (not BB_PM["saveNB"]) then  -- zapisz nieprzetłumaczone dymki
+      BB_PM["saveNB"] = "1";
    end
-   if (not BB_PM["TRonline"] ) then  -- tłumaczenie online
-      BB_PM["TRonline"] = "0";   
+   if (not BB_PM["TRonline"]) then  -- tłumaczenie online
+      BB_PM["TRonline"] = "0";
    end
-   if (not BB_PM["setsize"] ) then   -- uaktywnij zmiany wielkości czcionki
-      BB_PM["setsize"] = "0";   
+   if (not BB_PM["setsize"]) then  -- uaktywnij zmiany wielkości czcionki
+      BB_PM["setsize"] = "0";
    end
-   if (not BB_PM["fontsize"] ) then  -- wielkość czcionki
-      BB_PM["fontsize"] = "13";   
+   if (not BB_PM["fontsize"]) then  -- wielkość czcionki
+      BB_PM["fontsize"] = "13";
    end
-   if (not BB_PM["sex"] ) then       -- wybór płci wypowiedzi do gracza
-      BB_PM["sex"] = "4";            -- zależne od płci postaci
+   if (not BB_PM["sex"]) then      -- wybór płci wypowiedzi do gracza
+      BB_PM["sex"] = "4";          -- zależne od płci postaci
    end
-   if (not BB_PM["dungeon"] ) then   -- pokaż dumek w lochach
-      BB_PM["dungeon"] = "0";   
+   if (not BB_PM["dungeon"]) then  -- pokaż dumek w lochach
+      BB_PM["dungeon"] = "0";
    end
    BB_PM["dungeonF"] = "0";
-   if (not BB_PM["dungeonF1"] ) then   -- pozycja pionowa okna 1
+   if (not BB_PM["dungeonF1"]) then  -- pozycja pionowa okna 1
       BB_PM["dungeonF1"] = 270;
    end
-   if (not BB_PM["dungeonF2"] ) then   -- pozycja pionowa okna 2
+   if (not BB_PM["dungeonF2"]) then  -- pozycja pionowa okna 2
       BB_PM["dungeonF2"] = 270;
    end
-   if (not BB_PM["dungeonF3"] ) then   -- pozycja pionowa okna 3
+   if (not BB_PM["dungeonF3"]) then  -- pozycja pionowa okna 3
       BB_PM["dungeonF3"] = 270;
    end
-   if (not BB_PM["dungeonF4"] ) then   -- pozycja pionowa okna 4
+   if (not BB_PM["dungeonF4"]) then  -- pozycja pionowa okna 4
       BB_PM["dungeonF4"] = 270;
    end
-   if (not BB_PM["dungeonF5"] ) then   -- pozycja pionowa okna 5
+   if (not BB_PM["dungeonF5"]) then  -- pozycja pionowa okna 5
       BB_PM["dungeonF5"] = 270;
    end
-   if (not BB_PM["timeDisplay"] ) then   -- czas wyświetlania tłumaczenia w naszej ramce w lochach
+   if (not BB_PM["timeDisplay"]) then  -- czas wyświetlania tłumaczenia w naszej ramce w lochach
       BB_PM["timeDisplay"] = "5";
    end
    WOWBB1.vertical = BB_PM["dungeonF1"];
@@ -252,82 +251,86 @@ function WOWTR_CheckVars()
    WOWBB5.vertical = BB_PM["dungeonF5"];
 
    -- initialize check options
-   if (not MF_PM["active"] ) then      -- dodatek aktywny
-      MF_PM["active"] = "1";   
+   if (not MF_PM["active"]) then  -- dodatek aktywny
+      MF_PM["active"] = "1";
    end
-   if (not MF_PM["intro"] ) then       -- pokaż przetłumaczone napisy tekstów startowych Intro
-      MF_PM["intro"] = "1";   
+   if (not MF_PM["intro"]) then  -- pokaż przetłumaczone napisy tekstów startowych Intro
+      MF_PM["intro"] = "1";
    end
-   if (not MF_PM["movie"] ) then       -- pokaż przetłumzaczone napisy tekstów Filmów
-      MF_PM["movie"] = "1";   
+   if (not MF_PM["movie"]) then  -- pokaż przetłumzaczone napisy tekstów Filmów
+      MF_PM["movie"] = "1";
    end
-   if (not MF_PM["cinematic"] ) then   -- pokaż przetłumaczone napisy tekstów Cinematic
-      MF_PM["cinematic"] = "1";   
+   if (not MF_PM["cinematic"]) then  -- pokaż przetłumaczone napisy tekstów Cinematic
+      MF_PM["cinematic"] = "1";
    end
-   if (not MF_PM["save"] ) then        -- zapisz nieprzetłumaczone napisy
-      MF_PM["save"] = "1";   
+   if (not MF_PM["save"]) then  -- zapisz nieprzetłumaczone napisy
+      MF_PM["save"] = "1";
    end
 
    if (not TT_PS) then
       TT_PS = {};
    end
-   if (not TT_PS["active"] ) then      -- dodatek tutorial aktywny
-      TT_PS["active"] = "1";   
+   if (not TT_PS["active"]) then  -- dodatek tutorial aktywny
+      TT_PS["active"] = "1";
    end
-   if (not TT_PS["save"] ) then        -- zapisz nieprzetłumaczony tutorial
-      TT_PS["save"] = "1";   
+   if (not TT_PS["save"]) then  -- zapisz nieprzetłumaczony tutorial
+      TT_PS["save"] = "1";
    end
-   if (not TT_PS["saveui"] ) then      -- zapisz nieprzetłumaczony elementy UI
-      TT_PS["saveui"] = "1";   
+   if (not TT_PS["saveui"]) then  -- zapisz nieprzetłumaczony elementy UI
+      TT_PS["saveui"] = "1";
    end
-   if (not TT_PS["ui1"] ) then         -- wyświetlaj tłumaczenia Game Menu
-      TT_PS["ui1"] = "1";   
-   end   
-   if (not TT_PS["ui2"] ) then         -- wyświetlaj tłumaczenia Character Info
-      TT_PS["ui2"] = "1";   
+   if (not TT_PS["ui1"]) then  -- wyświetlaj tłumaczenia Game Menu
+      TT_PS["ui1"] = "1";
    end
-   if (not TT_PS["ui3"] ) then         -- wyświetlaj tłumaczenia Group Finder
-      TT_PS["ui3"] = "1";   
+   if (not TT_PS["ui2"]) then  -- wyświetlaj tłumaczenia Character Info
+      TT_PS["ui2"] = "1";
    end
-   if (not TT_PS["ui4"] ) then         -- wyświetlaj tłumaczenia Collections
-      TT_PS["ui4"] = "1";   
+   if (not TT_PS["ui3"]) then  -- wyświetlaj tłumaczenia Group Finder
+      TT_PS["ui3"] = "1";
    end
-   if (not TT_PS["ui5"] ) then         -- wyświetlaj tłumaczenia Adventure Guide
-      TT_PS["ui5"] = "1";   
+   if (not TT_PS["ui4"]) then  -- wyświetlaj tłumaczenia Collections
+      TT_PS["ui4"] = "1";
    end
-   if (not TT_PS["ui6"] ) then         -- wyświetlaj tłumaczenia Friend List
-      TT_PS["ui6"] = "1";   
+   if (not TT_PS["ui5"]) then  -- wyświetlaj tłumaczenia Adventure Guide
+      TT_PS["ui5"] = "1";
    end
-   if (not TT_PS["ui7"] ) then         -- wyświetlaj tłumaczenia Profession
-      TT_PS["ui7"] = "1";   
+   if (not TT_PS["ui6"]) then  -- wyświetlaj tłumaczenia Friend List
+      TT_PS["ui6"] = "1";
    end
-   if (not TT_PS["ui8"] ) then         -- wyświetlaj tłumaczenia UI (filter_openlist)
-      TT_PS["ui8"] = "1";   
-   end   
+   if (not TT_PS["ui7"]) then  -- wyświetlaj tłumaczenia Profession
+      TT_PS["ui7"] = "1";
+   end
+   if (not TT_PS["ui8"]) then  -- wyświetlaj tłumaczenia UI (filter_openlist)
+      TT_PS["ui8"] = "1";
+   end
+   -- ADDED: Initialize setting for Talents UI toggle
+   if (not TT_PS["ui_talents"]) then  -- Display Talents frame translations
+      TT_PS["ui_talents"] = "1";
+   end
    if (not TT_TUTORIALS) then
       TT_TUTORIALS = {};
-   end   
+   end
 
    if (not BT_PM) then
       BT_PM = {};
    end
-   if (not BT_PM["active"] ) then      -- dodatek aktywny
-      BT_PM["active"] = "1";   
+   if (not BT_PM["active"]) then  -- dodatek aktywny
+      BT_PM["active"] = "1";
    end
-   if (not BT_PM["title"] ) then
-      BT_PM["title"] = "1";   
+   if (not BT_PM["title"]) then
+      BT_PM["title"] = "1";
    end
-   if (not BT_PM["showID"] ) then
-      BT_PM["showID"] = "1";   
+   if (not BT_PM["showID"]) then
+      BT_PM["showID"] = "1";
    end
-   if (not BT_PM["setsize"] ) then
-      BT_PM["setsize"] = "0";   
+   if (not BT_PM["setsize"]) then
+      BT_PM["setsize"] = "0";
    end
-   if (not BT_PM["fontsize"] ) then
-      BT_PM["fontsize"] = 15;          -- wielkość czcionki książek
+   if (not BT_PM["fontsize"]) then
+      BT_PM["fontsize"] = 15;     -- wielkość czcionki książek
    end
-   if (not BT_PM["saveNW"] ) then      -- zapisz nieprzetłumaczony teksty książek
-      BT_PM["saveNW"] = "1";   
+   if (not BT_PM["saveNW"]) then  -- zapisz nieprzetłumaczony teksty książek
+      BT_PM["saveNW"] = "1";
    end
    if (not BT_SAVED) then
       BT_SAVED = {};
@@ -336,73 +339,72 @@ function WOWTR_CheckVars()
    if (not ST_PM) then
       ST_PM = {};
    end
-   if (not ST_PS) then         -- tablica informacji o obiekcie (item, spell, talent)
+   if (not ST_PS) then -- tablica informacji o obiekcie (item, spell, talent)
       ST_PS = {};
    end
-   if (not ST_PH) then         -- tablica nieprzetłumaczonych tekstów
+   if (not ST_PH) then -- tablica nieprzetłumaczonych tekstów
       ST_PH = {};
    end
    -- initialize check options
-   if (not ST_PM["active"] ) then    -- dodatek aktywny
-      ST_PM["active"] = "1";   
+   if (not ST_PM["active"]) then  -- dodatek aktywny
+      ST_PM["active"] = "1";
    end
-   if (not ST_PM["item"] ) then      -- pokaż tłumaczenia przedmiotów
-      ST_PM["item"] = "1";   
+   if (not ST_PM["item"]) then  -- pokaż tłumaczenia przedmiotów
+      ST_PM["item"] = "1";
    end
-   if (not ST_PM["spell"] ) then     -- pokaż tłumaczenia spelli
-      ST_PM["spell"] = "1";   
+   if (not ST_PM["spell"]) then  -- pokaż tłumaczenia spelli
+      ST_PM["spell"] = "1";
    end
-   if (not ST_PM["talent"] ) then    -- pokaż tłumaczenia talentów
-      ST_PM["talent"] = "1";   
+   if (not ST_PM["talent"]) then  -- pokaż tłumaczenia talentów
+      ST_PM["talent"] = "1";
    end
-   if (not ST_PM["transtitle"] ) then   -- pokaż tłumaczenie tytułu przedniotu, czaru lub talentu
-      ST_PM["transtitle"] = "0";   
+   if (not ST_PM["transtitle"]) then  -- pokaż tłumaczenie tytułu przedniotu, czaru lub talentu
+      ST_PM["transtitle"] = "0";
    end
-   if (not ST_PM["showID"] ) then    -- pokaż ID przedmiotu,spellu,talentu
-      ST_PM["showID"] = "0";   
+   if (not ST_PM["showID"]) then  -- pokaż ID przedmiotu,spellu,talentu
+      ST_PM["showID"] = "0";
    end
-   if (not ST_PM["showHS"] ) then    -- pokaż Hash tekstu przedmiotu,spellu,talentu
-      ST_PM["showHS"] = "0";   
+   if (not ST_PM["showHS"]) then  -- pokaż Hash tekstu przedmiotu,spellu,talentu
+      ST_PM["showHS"] = "0";
    end
-   if (not ST_PM["saveNW"] ) then    -- zapisz nieprzetłumaczone
-      ST_PM["saveNW"] = "1";   
+   if (not ST_PM["saveNW"]) then  -- zapisz nieprzetłumaczone
+      ST_PM["saveNW"] = "1";
    end
-   if (not ST_PM["sellprice"] ) then    -- ukryj cene skupu itemu
-      ST_PM["sellprice"] = "0";   
+   if (not ST_PM["sellprice"]) then  -- ukryj cene skupu itemu
+      ST_PM["sellprice"] = "0";
    end
-   if (not ST_PM["constantly"] ) then   -- wyświetlaj tłumaczenie stale
-      ST_PM["constantly"] = "1";   
+   if (not ST_PM["constantly"]) then  -- wyświetlaj tłumaczenie stale
+      ST_PM["constantly"] = "1";
    end
-   if (not ST_PM["timer"] ) then        -- uaktywnij zmiany timera przywracania oryginalnego tekstu
-      ST_PM["timer"] = "10";   
+   if (not ST_PM["timer"]) then  -- uaktywnij zmiany timera przywracania oryginalnego tekstu
+      ST_PM["timer"] = "10";
    end
-   
+
    if (WoWTR_Localization.lang == 'AR') then
       if not CH_PM then
          CH_PM = {};
       end
-      if (not CH_PM["active"] ) then   -- activate
-         CH_PM["active"] = "1";   
+      if (not CH_PM["active"]) then  -- activate
+         CH_PM["active"] = "1";
       end
       if not CH_PM["fontsize"] then
-         CH_PM["fontsize"] = "13";  -- Set a default value
+         CH_PM["fontsize"] = "13"; -- Set a default value
       end
    end
 
-   if (not WoWTR_minimapDB) then        -- inicjalizacja zmiennej globalnej na pozycję ikonki minimap
+   if (not WoWTR_minimapDB) then -- inicjalizacja zmiennej globalnej na pozycję ikonki minimap
       WoWTR_minimapDB = {};
    end
 
    -- save the version of the WoW Patch and current Locale
    QTR_PS["patch"] = GetBuildInfo();
    QTR_PS["locale"] = GetLocale();
-   
 end
 
 ----------------------------------------------------------------------------------------------------------------------------------------
 
 function WOWTR_onEvent(self, event, name, ...)
-   if (event=="ADDON_LOADED" and name==WoWTR_Localization.addonFolder) then
+   if (event == "ADDON_LOADED" and name == WoWTR_Localization.addonFolder) then
       --print("DEBUG: ADDON_LOADED fired for " .. name) -- Added debug print
       self:UnregisterEvent("ADDON_LOADED");
       self:RegisterEvent("QUEST_ACCEPTED");
@@ -441,11 +443,11 @@ function WOWTR_onEvent(self, event, name, ...)
       if (not PlayerChoiceFrame) then
          PlayerChoice_LoadUI();
       end
-      PlayerChoiceFrame:HookScript("OnShow", TT_onChoiceDelay);      -- tablica z zadaniami
+      PlayerChoiceFrame:HookScript("OnShow", TT_onChoiceDelay); -- tablica z zadaniami
       ItemTextFrame:HookScript("OnShow", function() BookTranslator_ShowTranslation() end);
       ItemTextNextPageButton:HookScript("OnClick", function() BookTranslator_ShowTranslation() end);
       ItemTextPrevPageButton:HookScript("OnClick", function() BookTranslator_ShowTranslation() end);
-      BT_ToggleButton0 = CreateFrame("Button",nil, ItemTextFrame, "UIPanelButtonTemplate");
+      BT_ToggleButton0 = CreateFrame("Button", nil, ItemTextFrame, "UIPanelButtonTemplate");
       BT_ToggleButton0:SetWidth(40);
       BT_ToggleButton0:SetHeight(20);
       BT_ToggleButton0:SetText("EN");
@@ -453,14 +455,14 @@ function WOWTR_onEvent(self, event, name, ...)
       BT_ToggleButton0:ClearAllPoints();
       BT_ToggleButton0:SetPoint("BOTTOMRIGHT", ItemTextFrame, "BOTTOMRIGHT", -29, 5);
       BT_ToggleButton0:SetScript("OnClick", BT_ON_OFF);
-      
+
       if (_G.ElvUI) then
          local E, L, V, P, G = unpack(ElvUI);
          E.SpellBookTooltip:HookScript("OnShow", function(self, ...)
             if (not WOWTR_wait(0.02, ST_ElvSpellBookTooltipOnShow)) then
-            -- opóźnienie 0.02 sek
+               -- opóźnienie 0.02 sek
             end
-         end );
+         end);
       end
 
       StaticPopup1:HookScript("OnShow", ST_StaticPopup1);
@@ -474,45 +476,49 @@ function WOWTR_onEvent(self, event, name, ...)
       FriendsFrame:HookScript("OnShow", function() StartTicker(FriendsFrame, ST_FriendsFrame, 0.1) end);
       HelpPlateTooltip:HookScript("OnShow", function() StartTicker(HelpPlateTooltip, ST_HelpPlateTooltip, 0.1) end);
       SplashFrame:HookScript("OnShow", function() StartTicker(SplashFrame, ST_SplashFrame, 0.1) end);
-      PingSystemTutorialTitleText:HookScript("OnShow", function() StartTicker(PingSystemTutorialTitleText, ST_PingSystemTutorial, 0.1) end);
+      PingSystemTutorialTitleText:HookScript("OnShow",
+         function() StartTicker(PingSystemTutorialTitleText, ST_PingSystemTutorial, 0.1) end);
       BankFrame:HookScript("OnShow", function() StartTicker(BankFrame, ST_WarbandBankFrm, 0.1) end);
       ItemRefTooltip:HookScript("OnShow", function() StartTicker(ItemRefTooltip, ST_ItemRefTooltip, 0.02) end);
-      EventToastManagerFrame:HookScript("OnShow", function() StartTicker(EventToastManagerFrame, ST_EventToastManagerFrame, 0.1) end);
+      EventToastManagerFrame:HookScript("OnShow",
+         function() StartTicker(EventToastManagerFrame, ST_EventToastManagerFrame, 0.1) end);
       RaidBossEmoteFrame:HookScript("OnShow", function() StartTicker(RaidBossEmoteFrame, ST_RaidBossEmoteFrame, 0.1) end);
-      ReputationFrame.ReputationDetailFrame:HookScript("OnShow", function() StartTicker(ReputationFrame.ReputationDetailFrame, ST_CharacterFrame, 0.1) end);
+      ReputationFrame.ReputationDetailFrame:HookScript("OnShow",
+         function() StartTicker(ReputationFrame.ReputationDetailFrame, ST_CharacterFrame, 0.1) end);
       PlayerChoiceFrame:HookScript("OnShow", function() StartTicker(PlayerChoiceFrame, TT_onChoiceShow, 0.1) end)
       BB_OknoTRonline();
-      
+
       WOWTR_ADDON_PREFIX = WoWTR_Localization.addonName .. "_ver";
-      WOWTR:RegisterEvent("CHAT_MSG_ADDON");      -- ukryty kanał addonu
+      WOWTR:RegisterEvent("CHAT_MSG_ADDON"); -- ukryty kanał addonu
       C_ChatInfo.RegisterAddonMessagePrefix(WOWTR_ADDON_PREFIX);
-   
-      DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..WoWTR_Localization.addonName.."  ver. "..WOWTR_version.." - "..WoWTR_Localization.started);
+
+      DEFAULT_CHAT_FRAME:AddMessage("|cffffff00" ..
+      WoWTR_Localization.addonName .. "  ver. " .. WOWTR_version .. " - " .. WoWTR_Localization.started);
       if ((not QTR_PS["welcome"]) and (string.len(WoWTR_Config_Interface.welcomeText) > 1)) then
          WOWTR_WelcomePanel();
       end
-   elseif (event=="PLAYER_ENTERING_WORLD") then
+   elseif (event == "PLAYER_ENTERING_WORLD") then
       TT_onTutorialShow();
-   elseif (event=="QUEST_DETAIL" or event=="QUEST_PROGRESS" or event=="QUEST_COMPLETE") then
-      if (event=="QUEST_DETAIL" and QTR_quest_ID>0) then      -- zapisz przypisanie questu do krainy
+   elseif (event == "QUEST_DETAIL" or event == "QUEST_PROGRESS" or event == "QUEST_COMPLETE") then
+      if (event == "QUEST_DETAIL" and QTR_quest_ID > 0) then -- zapisz przypisanie questu do krainy
          local QTR_mapID = C_Map.GetBestMapForUnit("player");
          local QTR_mapINFO = C_Map.GetMapInfo(QTR_mapID);
-         QTR_SAVED[QTR_quest_ID.." MAPID"]=QTR_mapID.."@"..QTR_mapINFO.name.."@"..QTR_mapINFO.mapType.."@"..QTR_mapINFO.parentMapID;     -- save mapID to locale place of this quest
+         QTR_SAVED[QTR_quest_ID .. " MAPID"] = QTR_mapID ..
+         "@" .. QTR_mapINFO.name .. "@" .. QTR_mapINFO.mapType .. "@" .. QTR_mapINFO.parentMapID;                                    -- save mapID to locale place of this quest
       end
-      if ( QuestFrame:IsVisible() or isImmersion() or IsDUIQuestFrame()) then
+      if (QuestFrame:IsVisible() or isImmersion() or IsDUIQuestFrame()) then
          QTR_QuestPrepare(event);
       elseif (isStoryline()) then
-         if (not WOWTR_wait(1,QTR_Storyline_Quest)) then
-         -- opóźnienie 1 sek
+         if (not WOWTR_wait(1, QTR_Storyline_Quest)) then
+            -- opóźnienie 1 sek
          end
-      end	-- QuestFrame is Visible
-      if (not WOWTR_wait(1,QTR_ObjectiveTracker_Check)) then
+      end -- QuestFrame is Visible
+      if (not WOWTR_wait(1, QTR_ObjectiveTracker_Check)) then
          -- opóźnienie 1 sek
       end
-   elseif (event=="QUEST_GREETING") then
+   elseif (event == "QUEST_GREETING") then
       --print("DEBUG: QUEST_GREETING event fired!")
-      
-   elseif (event=="GOSSIP_SHOW") then
+   elseif (event == "GOSSIP_SHOW") then
       --print("DEBUG: GOSSIP_SHOW event fired!")
       if (QTR_PS["gossip"] == "1") then
          -- First check if DUIPlugin exists and if the DialogueUI frame is active
@@ -529,31 +535,31 @@ function WOWTR_onEvent(self, event, name, ...)
             end
          end
       end
-   elseif (event=="PLAY_MOVIE") then
-      local WOWTR_movieID = name ;
+   elseif (event == "PLAY_MOVIE") then
+      local WOWTR_movieID = name;
       if ((WOWTR_movieID) and (MF_PM["active"] == "1") and (MF_PM["movie"] == "1")) then
          MF_PlayMovie(WOWTR_movieID);
       end
-   elseif (event=="CINEMATIC_START") then
+   elseif (event == "CINEMATIC_START") then
       MF_CinematicStart();
-   elseif (event=="CINEMATIC_STOP") then
+   elseif (event == "CINEMATIC_STOP") then
       MF_CinematicStop();
-   elseif (event=="TUTORIAL_TRIGGER") then
+   elseif (event == "TUTORIAL_TRIGGER") then
       TT_onTutorialShow();
-   elseif (isImmersion() and event=="QUEST_ACCEPTED") then
+   elseif (isImmersion() and event == "QUEST_ACCEPTED") then
       QTR_delayed3();
-   elseif (event == "CHAT_MSG_ADDON") then        -- ukryty kanał addonu
-      local msg, method, who = select (1, ...);
-      if (name == WOWTR_ADDON_PREFIX) then 
-         WOWTR_onChatMsgAddon(who,msg);
+   elseif (event == "CHAT_MSG_ADDON") then -- ukryty kanał addonu
+      local msg, method, who = select(1, ...);
+      if (name == WOWTR_ADDON_PREFIX) then
+         WOWTR_onChatMsgAddon(who, msg);
       end
-   elseif (GameTooltip:IsShown() and (event=="MODIFIER_STATE_CHANGED") and (name == "LSHIFT" or name == "RSHIFT") and (ST_PM["active"]=="1")) then
+   elseif (GameTooltip:IsShown() and (event == "MODIFIER_STATE_CHANGED") and (name == "LSHIFT" or name == "RSHIFT") and (ST_PM["active"] == "1")) then
       if (GameTooltip.processingInfo and GameTooltip.processingInfo.tooltipData.id and (ST_PM["item"] == "1")) then
-         if (GameTooltip.processingInfo.tooltipData.type == 0) then           -- items
+         if (GameTooltip.processingInfo.tooltipData.type == 0) then -- items
             if (ShoppingTooltip1 and ShoppingTooltip1:IsVisible()) then
                ShoppingTooltip1:Hide();
                if (ShoppingTooltip2 and ShoppingTooltip2:IsVisible()) then
-                   ShoppingTooltip2:Hide();
+                  ShoppingTooltip2:Hide();
                end
             else
                GameTooltip_ShowCompareItem();
@@ -571,11 +577,11 @@ end
 
 function WOWTR_SendVersion()
    local now = GetTime();
-   if (WOWTR_time_ver + 15*60 < now) then    -- every 15 minutes
-      if ( IsInGuild() ) then                -- the player is in the Guild
+   if (WOWTR_time_ver + 15 * 60 < now) then -- every 15 minutes
+      if (IsInGuild()) then               -- the player is in the Guild
          C_ChatInfo.SendAddonMessage(WOWTR_ADDON_PREFIX, WOWTR_version, "GUILD");
       end
-      if ( IsInRaid() ) then                 -- the player is in the Raid
+      if (IsInRaid()) then   -- the player is in the Raid
          C_ChatInfo.SendAddonMessage(WOWTR_ADDON_PREFIX, WOWTR_version, "RAID");
       end
       WOWTR_time_ver = now;
@@ -584,48 +590,37 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
-function WOWTR_onChatMsgAddon(who,msg)       -- received message from hidden addon channel
---print('QTR - MSG od '..who..': '..msg);
+function WOWTR_onChatMsgAddon(who, msg) -- received message from hidden addon channel
+   --print('QTR - MSG od '..who..': '..msg);
    if (tonumber(msg) > tonumber(WOWTR_version)) then
       local currentTime = GetTime();
       if (currentTime - WOWTR_lastNotificationTime) > WOWTR_notificationCooldown then
-         print("|cffffff00"..WoWTR_Localization.addonName.."|r - "..WoWTR_Localization.newVersionAvailable.." |cffffff00"..msg.."|r");
+         print("|cffffff00" ..
+         WoWTR_Localization.addonName .. "|r - " .. WoWTR_Localization.newVersionAvailable .. " |cffffff00" .. msg ..
+         "|r");
          UIErrorsFrame:SetTimeVisible(10);
          if (WoWTR_Localization.lang == 'AR') then
-            UIErrorsFrame:AddMessage(QTR_ReverseIfAR(WoWTR_Localization.addonName .. " - " .. WoWTR_Localization.newVersionAvailable .. WOWTR_AnsiReverse(msg)), 1,0.5,1);
+            UIErrorsFrame:AddMessage(
+            QTR_ReverseIfAR(WoWTR_Localization.addonName ..
+            " - " .. WoWTR_Localization.newVersionAvailable .. WOWTR_AnsiReverse(msg)), 1, 0.5, 1);
          else
-            UIErrorsFrame:AddMessage(WoWTR_Localization.addonName .. " - " .. WoWTR_Localization.newVersionAvailable .. msg, 1,0.5,1);
+            UIErrorsFrame:AddMessage(
+            WoWTR_Localization.addonName .. " - " .. WoWTR_Localization.newVersionAvailable .. msg, 1, 0.5, 1);
          end
-         WOWTR_lastNotificationTime = currentTime;    -- save current time
+         WOWTR_lastNotificationTime = currentTime; -- save current time
       end
    end
 end
 
--------------------------------------------------------------------------------------------------------
-
-function STspell_ON_OFF()
-   if (ST_PM["spell"] == "1") then
-      ST_PM["spell"] = "0";
-      WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_enDESC);
-      WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_ToggleButtonS:GetFontString():GetFont(), 7)
-   else
-      ST_PM["spell"] = "1";
-      if (WoWTR_Localization.lang == 'AR') then
-         WOWTR_ToggleButtonS:SetText(QTR_ReverseIfAR(WoWTR_Localization.WoWTR_Spellbook_trDESC));
-         WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_Font2, 7)
-      else
-         WOWTR_ToggleButtonS:SetText(WoWTR_Localization.WoWTR_Spellbook_trDESC);
-         WOWTR_ToggleButtonS:GetFontString():SetFont(WOWTR_ToggleButtonS:GetFontString():GetFont(), 7)
-      end
-   end
-end
 ----------------------------------------------------------------------------------------------------------------------------------------
 
-if ((GetLocale()=="enUS") or (GetLocale()=="enGB")) then
--- main frame of the addon
+if ((GetLocale() == "enUS") or (GetLocale() == "enGB")) then
+   -- main frame of the addon
    WOWTR = CreateFrame("Frame");
    WOWTR:SetScript("OnEvent", WOWTR_onEvent);
    WOWTR:RegisterEvent("ADDON_LOADED");
 else
-   DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..WoWTR_Localization.addonName.."|r  ver. "..WOWTR_version.." - add-on is not active because it was run in Locale |cffffff00"..GetLocale());
+   DEFAULT_CHAT_FRAME:AddMessage("|cffffff00" ..
+   WoWTR_Localization.addonName ..
+   "|r  ver. " .. WOWTR_version .. " - add-on is not active because it was run in Locale |cffffff00" .. GetLocale());
 end
