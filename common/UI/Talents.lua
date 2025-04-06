@@ -318,6 +318,43 @@ function ST_updateSpecContentsHook()
 
         -- Update description (handled as 'description' type by the helper)
         HandleElementUpdate(specContentFrame.Description, true)
+
+        -- <<< ADDED: Specific SaveNW Logic for Spec Description (if toggle ON and translation failed) >>>
+        if TT_PS["ui_talents"] == "1" and ST_PM and ST_PM["saveNW"] == "1" then
+            local descriptionElement = specContentFrame.Description
+            if descriptionElement then
+                local successGetText, originalText = pcall(descriptionElement.GetText, descriptionElement)
+                -- Check if text exists and wasn't translated (no NBSP added by HandleElementUpdate/ApplyTranslationIfFound)
+                if successGetText and originalText and #originalText > 0 and not string.find(originalText, NONBREAKINGSPACE) then
+                    local textForHash = ST_UsunZbedneZnaki(originalText)
+                    local ST_hash = StringHash(textForHash)
+                    -- Double-check if it's really not in the table (HandleElementUpdate->ApplyTranslationIfFound already checked)
+                    if not ST_TooltipsHS[ST_hash] then
+                        -- Get spec name safely (using RoleName as a potential source)
+                        local specName = "UnknownSpec"
+                        if specContentFrame.RoleName then -- Use RoleName as the spec identifier
+                            local successGetName, nameResult = pcall(specContentFrame.RoleName.GetText,
+                                specContentFrame.RoleName)
+                            if successGetName and nameResult then specName = nameResult end
+                            -- Fallback: Try SpecName if RoleName failed or wasn't present
+                        elseif specContentFrame.SpecName then
+                            local successGetName, nameResult = pcall(specContentFrame.SpecName.GetText,
+                                specContentFrame.SpecName)
+                            if successGetName and nameResult then specName = nameResult end
+                        end
+                        -- Construct placeholder string
+                        local placeholder = "SpecTab:" ..
+                            (WOWTR_player_class or "UnknownClass") .. ":" .. specName ..
+                            "@" ..
+                            ST_PrzedZapisem(originalText:gsub("(%%d),(%%d)", "%%1%%2"):gsub("\r", "")) -- Escaped % for gsub
+                        ST_PH = ST_PH or
+                        {}                                                                             -- Ensure placeholder table exists
+                        ST_PH[ST_hash] = placeholder
+                    end
+                end
+            end
+        end
+        -- <<< END ADDED >>>
     end
 end
 
@@ -349,7 +386,7 @@ function ST_updateHeroTalentHook()
                         if not ST_TooltipsHS[ST_hash] then
                             -- Get spec name safely
                             local specName = "UnknownSpec"
-                            if frame.SpecName then
+                            if frame.SpecName then -- Use SpecName here as it's likely correct for Hero Talents dialog
                                 local successGetName, nameResult = pcall(frame.SpecName.GetText, frame.SpecName)
                                 if successGetName and nameResult then specName = nameResult end
                             end
