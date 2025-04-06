@@ -202,7 +202,7 @@ function ST_UpdateFrameTitle(parentFrame)
                 local translatedTitle = QTR_ReverseIfAR(ST_SetText(_G[titleTextKey])) ..
                     NONBREAKINGSPACE -- ST_SetText handles lookup
 
-                if (WoWTR_Localization.lang ~= 'AR') then
+                if (WoWTR_Localization.lang == 'AR') then
                     pcall(function() if titleTextElement.SetFont then titleTextElement:SetFont(WOWTR_Font1, originalSize) end end)
                 else
                     pcall(function() if titleTextElement.SetFont then titleTextElement:SetFont(WOWTR_Font2, originalSize) end end)
@@ -227,7 +227,7 @@ function ST_UpdateFrameTitle(parentFrame)
                 local translatedTabText = QTR_ReverseIfAR(ST_SetText(_G["TALENT_FRAME_TAB_LABEL_TALENTS"])) ..
                     NONBREAKINGSPACE
 
-                if (WoWTR_Localization.lang ~= 'AR') then
+                if (WoWTR_Localization.lang == 'AR') then
                     pcall(function() if talentsTabButton.Text.SetFont then talentsTabButton.Text:SetFont(WOWTR_Font1,originalSize) end end)
                 else
                     pcall(function() if talentsTabButton.Text.SetFont then talentsTabButton.Text:SetFont(WOWTR_Font2,originalSize) end end)
@@ -251,7 +251,7 @@ function ST_UpdateFrameTitle(parentFrame)
 
                 local translatedTabText = QTR_ReverseIfAR(ST_SetText(_G["TALENT_FRAME_TAB_LABEL_SPEC"])) ..
                     NONBREAKINGSPACE
-                if (WoWTR_Localization.lang ~= 'AR') then
+                if (WoWTR_Localization.lang == 'AR') then
                     pcall(function() if specTabButton.Text.SetFont then specTabButton.Text:SetFont(WOWTR_Font1,originalSize) end end)
                 else
                     pcall(function() if specTabButton.Text.SetFont then specTabButton.Text:SetFont(WOWTR_Font2,originalSize) end end)
@@ -273,11 +273,12 @@ function ST_UpdateFrameTitle(parentFrame)
                 local successGetFont, font, size, flags = pcall(spellbookTabButton.Text.GetFont, spellbookTabButton.Text)
                 if successGetFont and size then originalSize = size end
 
-                local translatedTabText = QTR_ReverseIfAR(ST_SetText(_G["SPELLBOOK"])) ..
-                    NONBREAKINGSPACE
-                if (WoWTR_Localization.lang ~= 'AR') then
+                local translatedTabText = QTR_ReverseIfAR(ST_SetText(_G["SPELLBOOK"])) ..NONBREAKINGSPACE
+                if (WoWTR_Localization.lang == 'AR') then
+                    print("AR")
                     pcall(function() if spellbookTabButton.Text.SetFont then spellbookTabButton.Text:SetFont(WOWTR_Font1,originalSize) end end)
                 else
+                    print("EN")
                     pcall(function() if spellbookTabButton.Text.SetFont then spellbookTabButton.Text:SetFont(WOWTR_Font2,originalSize) end end)
                 end
                 -- Note: SetText is called on the button itself, not its .Text child typically
