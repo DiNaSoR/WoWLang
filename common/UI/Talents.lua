@@ -202,7 +202,11 @@ function ST_UpdateFrameTitle(parentFrame)
                 local translatedTitle = QTR_ReverseIfAR(ST_SetText(_G[titleTextKey])) ..
                     NONBREAKINGSPACE -- ST_SetText handles lookup
 
-                pcall(function() if titleTextElement.SetFont then titleTextElement:SetFont(WOWTR_Font2, originalSize) end end)
+                if (WoWTR_Localization.lang ~= 'AR') then
+                    pcall(function() if titleTextElement.SetFont then titleTextElement:SetFont(WOWTR_Font1, originalSize) end end)
+                else
+                    pcall(function() if titleTextElement.SetFont then titleTextElement:SetFont(WOWTR_Font2, originalSize) end end)
+                end
                 pcall(function() if titleTextElement.SetText then titleTextElement:SetText(translatedTitle) end end)
             end
         else
@@ -223,12 +227,11 @@ function ST_UpdateFrameTitle(parentFrame)
                 local translatedTabText = QTR_ReverseIfAR(ST_SetText(_G["TALENT_FRAME_TAB_LABEL_TALENTS"])) ..
                     NONBREAKINGSPACE
 
-                pcall(function()
-                    if talentsTabButton.Text.SetFont then
-                        talentsTabButton.Text:SetFont(WOWTR_Font2,
-                            originalSize)
-                    end
-                end)
+                if (WoWTR_Localization.lang ~= 'AR') then
+                    pcall(function() if talentsTabButton.Text.SetFont then talentsTabButton.Text:SetFont(WOWTR_Font1,originalSize) end end)
+                else
+                    pcall(function() if talentsTabButton.Text.SetFont then talentsTabButton.Text:SetFont(WOWTR_Font2,originalSize) end end)
+                end
                 -- Note: SetText is called on the button itself, not its .Text child typically
                 pcall(function() if talentsTabButton.SetText then talentsTabButton:SetText(translatedTabText) end end)
             end
@@ -248,8 +251,11 @@ function ST_UpdateFrameTitle(parentFrame)
 
                 local translatedTabText = QTR_ReverseIfAR(ST_SetText(_G["TALENT_FRAME_TAB_LABEL_SPEC"])) ..
                     NONBREAKINGSPACE
-
-                pcall(function() if specTabButton.Text.SetFont then specTabButton.Text:SetFont(WOWTR_Font2, originalSize) end end)
+                if (WoWTR_Localization.lang ~= 'AR') then
+                    pcall(function() if specTabButton.Text.SetFont then specTabButton.Text:SetFont(WOWTR_Font1,originalSize) end end)
+                else
+                    pcall(function() if specTabButton.Text.SetFont then specTabButton.Text:SetFont(WOWTR_Font2,originalSize) end end)
+                end
                 -- Note: SetText is called on the button itself, not its .Text child typically
                 pcall(function() if specTabButton.SetText then specTabButton:SetText(translatedTabText) end end)
             end
@@ -269,13 +275,11 @@ function ST_UpdateFrameTitle(parentFrame)
 
                 local translatedTabText = QTR_ReverseIfAR(ST_SetText(_G["SPELLBOOK"])) ..
                     NONBREAKINGSPACE
-
-                pcall(function()
-                    if spellbookTabButton.Text.SetFont then
-                        spellbookTabButton.Text:SetFont(WOWTR_Font2,
-                            originalSize)
-                    end
-                end)
+                if (WoWTR_Localization.lang ~= 'AR') then
+                    pcall(function() if spellbookTabButton.Text.SetFont then spellbookTabButton.Text:SetFont(WOWTR_Font1,originalSize) end end)
+                else
+                    pcall(function() if spellbookTabButton.Text.SetFont then spellbookTabButton.Text:SetFont(WOWTR_Font2,originalSize) end end)
+                end
                 -- Note: SetText is called on the button itself, not its .Text child typically
                 pcall(function() if spellbookTabButton.SetText then spellbookTabButton:SetText(translatedTabText) end end)
             end
@@ -330,16 +334,14 @@ function ST_updateSpecContentsHook()
                     local ST_hash = StringHash(textForHash)
                     -- Double-check if it's really not in the table (HandleElementUpdate->ApplyTranslationIfFound already checked)
                     if not ST_TooltipsHS[ST_hash] then
-                        -- Get spec name safely (using RoleName as a potential source)
+                        -- Get spec name safely (Prioritize SpecName for actual specialization)
                         local specName = "UnknownSpec"
-                        if specContentFrame.RoleName then -- Use RoleName as the spec identifier
-                            local successGetName, nameResult = pcall(specContentFrame.RoleName.GetText,
-                                specContentFrame.RoleName)
-                            if successGetName and nameResult then specName = nameResult end
-                            -- Fallback: Try SpecName if RoleName failed or wasn't present
-                        elseif specContentFrame.SpecName then
-                            local successGetName, nameResult = pcall(specContentFrame.SpecName.GetText,
-                                specContentFrame.SpecName)
+                        if specContentFrame.SpecName then -- <<<< PRIORITIZE THIS
+                             local successGetName, nameResult = pcall(specContentFrame.SpecName.GetText, specContentFrame.SpecName)
+                             if successGetName and nameResult then specName = nameResult end
+                        -- Fallback: Try RoleName if SpecName failed or wasn't present
+                        elseif specContentFrame.RoleName then -- <<<< FALLBACK
+                            local successGetName, nameResult = pcall(specContentFrame.RoleName.GetText, specContentFrame.RoleName)
                             if successGetName and nameResult then specName = nameResult end
                         end
                         -- Construct placeholder string
@@ -347,8 +349,7 @@ function ST_updateSpecContentsHook()
                             (WOWTR_player_class or "UnknownClass") .. ":" .. specName ..
                             "@" ..
                             ST_PrzedZapisem(originalText:gsub("(%%d),(%%d)", "%%1%%2"):gsub("\r", "")) -- Escaped % for gsub
-                        ST_PH = ST_PH or
-                        {}                                                                             -- Ensure placeholder table exists
+                        ST_PH = ST_PH or {} -- Ensure placeholder table exists
                         ST_PH[ST_hash] = placeholder
                     end
                 end
