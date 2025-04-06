@@ -202,7 +202,7 @@ function ST_UpdateFrameTitle(parentFrame)
                 local translatedTitle = QTR_ReverseIfAR(ST_SetText(_G[titleTextKey])) ..
                     NONBREAKINGSPACE -- ST_SetText handles lookup
 
-                pcall(function() if titleTextElement.SetFont then titleTextElement:SetFont(WOWTR_Font1, originalSize) end end)
+                pcall(function() if titleTextElement.SetFont then titleTextElement:SetFont(WOWTR_Font2, originalSize) end end)
                 pcall(function() if titleTextElement.SetText then titleTextElement:SetText(translatedTitle) end end)
             end
         else
@@ -225,7 +225,7 @@ function ST_UpdateFrameTitle(parentFrame)
 
                 pcall(function()
                     if talentsTabButton.Text.SetFont then
-                        talentsTabButton.Text:SetFont(WOWTR_Font1,
+                        talentsTabButton.Text:SetFont(WOWTR_Font2,
                             originalSize)
                     end
                 end)
@@ -249,7 +249,7 @@ function ST_UpdateFrameTitle(parentFrame)
                 local translatedTabText = QTR_ReverseIfAR(ST_SetText(_G["TALENT_FRAME_TAB_LABEL_SPEC"])) ..
                     NONBREAKINGSPACE
 
-                pcall(function() if specTabButton.Text.SetFont then specTabButton.Text:SetFont(WOWTR_Font1, originalSize) end end)
+                pcall(function() if specTabButton.Text.SetFont then specTabButton.Text:SetFont(WOWTR_Font2, originalSize) end end)
                 -- Note: SetText is called on the button itself, not its .Text child typically
                 pcall(function() if specTabButton.SetText then specTabButton:SetText(translatedTabText) end end)
             end
@@ -272,7 +272,7 @@ function ST_UpdateFrameTitle(parentFrame)
 
                 pcall(function()
                     if spellbookTabButton.Text.SetFont then
-                        spellbookTabButton.Text:SetFont(WOWTR_Font1,
+                        spellbookTabButton.Text:SetFont(WOWTR_Font2,
                             originalSize)
                     end
                 end)
