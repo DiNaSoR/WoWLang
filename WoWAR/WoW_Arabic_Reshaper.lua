@@ -131,13 +131,13 @@ function AS_UTF8charbytes(s, i)
       local c2 = strbyte(s, i + 1);
 
       if (not c2) then
-         print("UTF-8 string terminated early (" .. tostring(i) .. ",2,0): " .. s);
+         --print("UTF-8 string terminated early (" .. tostring(i) .. ",2,0): " .. s);
          return 1;
       end
 
       -- validate byte 2
       if (c2 < 128 or c2 > 191) then
-         print("Invalid UTF-8 character (" .. tostring(i) .. ",2,1): " .. s);
+         --print("Invalid UTF-8 character (" .. tostring(i) .. ",2,1): " .. s);
          return 1;
       end
 
@@ -148,7 +148,7 @@ function AS_UTF8charbytes(s, i)
       local c3 = strbyte(s, i + 2);
 
       if (not c2 or not c3) then
-         print("UTF-8 string terminated early (" .. tostring(i) .. ",3,0): " .. s);
+         --print("UTF-8 string terminated early (" .. tostring(i) .. ",3,0): " .. s);
          if (not c2) then
             return 1;
          else
@@ -158,19 +158,19 @@ function AS_UTF8charbytes(s, i)
 
       -- validate byte 2
       if (c == 224 and (c2 < 160 or c2 > 191)) then
-         print("Invalid UTF-8 character (" .. tostring(i) .. ",3,1): " .. s)
+         --print("Invalid UTF-8 character (" .. tostring(i) .. ",3,1): " .. s)
          return 1;
       elseif (c == 237 and (c2 < 128 or c2 > 159)) then
-         print("Invalid UTF-8 character (" .. tostring(i) .. ",3,2): " .. s);
+         --print("Invalid UTF-8 character (" .. tostring(i) .. ",3,2): " .. s);
          return 1;
       elseif (c2 < 128 or c2 > 191) then
-         print("Invalid UTF-8 character (" .. tostring(i) .. ",3,3): " .. s);
+         --print("Invalid UTF-8 character (" .. tostring(i) .. ",3,3): " .. s);
          return 1;
       end
 
       -- validate byte 3
       if (c3 < 128 or c3 > 191) then
-         print("Invalid UTF-8 character (" .. tostring(i) .. ",3,4): " .. s);
+         --print("Invalid UTF-8 character (" .. tostring(i) .. ",3,4): " .. s);
          return 2;
       end
 
@@ -182,7 +182,7 @@ function AS_UTF8charbytes(s, i)
       local c4 = strbyte(s, i + 3);
 
       if ((not c2) or (not c3) or (not c4)) then
-         print("UTF-8 string terminated early (" .. tostring(i) .. ",4,0): " .. s);
+         --print("UTF-8 string terminated early (" .. tostring(i) .. ",4,0): " .. s);
          if (not c2) then
             return 1;
          elseif (not c3) then
@@ -194,34 +194,34 @@ function AS_UTF8charbytes(s, i)
 
       -- validate byte 2
       if (c == 240 and (c2 < 144 or c2 > 191)) then
-         print("Invalid UTF-8 character (" .. tostring(i) .. ",4,1): " .. s);
+         --print("Invalid UTF-8 character (" .. tostring(i) .. ",4,1): " .. s);
          return 1;
       elseif (c == 244 and (c2 < 128 or c2 > 143)) then
-         print("Invalid UTF-8 character (" .. tostring(i) .. ",4,2): " .. s);
+         --print("Invalid UTF-8 character (" .. tostring(i) .. ",4,2): " .. s);
          return 1;
       elseif (c2 < 128 or c2 > 191) then
-         print("Invalid UTF-8 character (" .. tostring(i) .. ",4,3): " .. s);
+         --print("Invalid UTF-8 character (" .. tostring(i) .. ",4,3): " .. s);
          return 1;
       end
 
       -- validate byte 3
       if (c3 < 128 or c3 > 191) then
-         print("Invalid UTF-8 character (" .. tostring(i) .. ",4,4): " .. s);
+         --print("Invalid UTF-8 character (" .. tostring(i) .. ",4,4): " .. s);
          return 2;
       end
 
       -- validate byte 4
       if (c4 < 128 or c4 > 191) then
-         print("Invalid UTF-8 character (" .. tostring(i) .. ",4,5): " .. s);
+         --print("Invalid UTF-8 character (" .. tostring(i) .. ",4,5): " .. s);
          return 3;
       end
 
       return 4;
    elseif (c >= 128 and c <= 193) or c >= 245 then
-      print("Handling invalid UTF-8 byte: " .. c);
+      --print("Handling invalid UTF-8 byte: " .. c);
       return 1; -- Treat as a single-byte character
    else
-      print("Invalid UTF-8 character: " .. c);
+      --print("Invalid UTF-8 character: " .. c);
    end
 end
 
