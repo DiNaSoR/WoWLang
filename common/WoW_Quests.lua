@@ -824,6 +824,12 @@ function GossipOnQuestFrame()       -- frame: QuestFrame
    local QFGoodbyeBtext2 = QuestFrameGoodbyeButtonText;
    ST_CheckAndReplaceTranslationText(QFGoodbyeBtext2, true, "ui",false,true);
 
+   local QFCompleteButtontext = QuestFrameCompleteButtonText;
+   ST_CheckAndReplaceTranslationText(QFCompleteButtontext, true, "ui",false,true);
+
+   local QFCompleteNotice = QuestFrame.AccountCompletedNotice.Text;
+   ST_CheckAndReplaceTranslationText(QFCompleteNotice, true, "ui",false,true);
+	
    if (WoWTR_Localization.lang == 'AR') then
       if QuestInfoAccountCompletedNotice then -- Check if the element exists
          local QFNoticetext = QuestInfoAccountCompletedNotice;
