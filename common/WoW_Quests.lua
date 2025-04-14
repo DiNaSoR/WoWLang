@@ -1909,6 +1909,9 @@ function QTR_QuestPrepare(zdarzenie)
 
       local QuestMFrame04 = QuestMapFrame.DetailsFrame.TrackButton.Text;
       ST_CheckAndReplaceTranslationTextUI(QuestMFrame04, true, "ui");
+
+      local QuestMFrame05 = QuestMapFrame.QuestsFrame.DetailsFrame.BackFrame.AccountCompletedNotice.Text;
+      ST_CheckAndReplaceTranslationTextUI(QuestMFrame05, true, "ui");
    end
 end
 
