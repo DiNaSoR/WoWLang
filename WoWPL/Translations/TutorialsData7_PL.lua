@@ -2,7 +2,7 @@
 -- do dodatku WoWpoPolsku-Tutorials
 
 TT_lang = "PL";         -- translation language
-TT_date = "2025-02-26"; -- date of creation base
+TT_date = "2025-04-22"; -- date of creation base
 TT_base = "1354";      -- version (number of translations)
 
 -- tutorial translation table: [Hash] = "translation text" 
