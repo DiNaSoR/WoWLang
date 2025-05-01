@@ -1484,9 +1484,11 @@ function QTR_QuestLogQuests_Update()
 
    -- Helper function to apply text, font, and justification
    local function ApplyFormatting(element, textToSet, fontToSet, size, justification)
-       element:SetText(textToSet)
-       element:SetFont(fontToSet, size)
-       element:SetJustifyH(justification)
+       local oldH = element:GetHeight();
+       element:SetText(textToSet);
+       element:SetFont(fontToSet, size);
+       element:SetJustifyH(justification);
+       element:SetHeight(oldH);
    end
 
    -- 1. Process Quest Titles
