@@ -17,135 +17,160 @@ function BookTranslator_ShowTranslation()
       BT_ToggleButton0:SetText("EN");
       BT_ToggleButton0:SetWidth(40);
       BT_act_tr = "0";
-      BT_tytul_en=ItemTextGetItem();
-      BT_tekst_en=WOWTR_DetectAndReplacePlayerName(ItemTextGetText(), nil, "$N");
-      BT_nr_str=tostring(ItemTextGetPage());
-      if (BT_nr_str == nil) then
+
+      -- Metin bilgilerini al (Get text information) (Pobierz informacje tekstowe)
+      BT_tytul_en = ItemTextGetItem();
+      BT_tekst_en = WOWTR_DetectAndReplacePlayerName(ItemTextGetText(), nil, "$N");
+      BT_nr_str = tostring(ItemTextGetPage());
+
+      -- Sayfa numarası geçerli mi? (Check page number validity) (Sprawdź poprawność numeru strony)
+      if (not BT_nr_str or BT_nr_str == "nil" or BT_nr_str == "") then
          BT_nr_str = '1';
       end
-      BT_bookID = 0;
+
       local par1, par2, par3 = C_Item.GetItemInfo(ItemTextGetItem());
       local BT_bookIDsh = tostring(StringHash(BT_tekst_en));
-      if ((BT_tytul_en == "Plain Letter") or (BT_tytul_en == "Order of Night Propaganda") or (BT_Books[BT_bookIDsh])) then
-         BT_bookID = BT_bookIDsh;
-      elseif (par2) then
-         local pa1, itemID, pa3 = strsplit(":",par2);
-         BT_bookID = itemID;
-      else
-         local BT_beginTXT=string.gsub(BT_tekst_en,"\n","");
-         local BT_znacznik=BT_tytul_en.."#"..BT_nr_str.."#"..string.sub(BT_beginTXT,1,15);
-         if (BT_BooksID[BT_znacznik]) then             -- jest znacznik w bazie ID - pobierz bookID
-            BT_bookID = BT_BooksID[BT_znacznik];       -- jako string
-         else
-            BT_bookID = BT_bookIDsh;
+
+      -- Gerçek itemID'yi önceliklendir (Prioritize real itemID) (Uwzględnij rzeczywiste ID przedmiotu)
+      BT_bookID = nil;
+      if par2 and type(par2) == "string" then
+         local _, itemID, _ = strsplit(":", par2);
+         if itemID and tonumber(itemID) then
+            BT_bookID = itemID;  -- Gerçek itemID kullan (Use actual itemID) (Użyj rzeczywistego ID przedmiotu)
          end
       end
-      if (BT_bookID and (tonumber(BT_bookID)>0)) then
-         if (BT_Books[BT_bookID]) then	                   -- jest tłumaczenie tej książki
-            if (BT_Books[BT_bookID][BT_nr_str]) then      -- jest tłumaczenie tej strony
-               if ((BT_PM["title"] == "1") and (BT_Books[BT_bookID]["Title"]~='')) then            -- wyświetlaj tłumaczenie tytułu
-                  BT_tytul_tr=BT_Books[BT_bookID]["Title"];
-                  ItemTextFrameTitleText:SetText(QTR_ReverseIfAR(BT_tytul_tr));
-                  ItemTextFrameTitleText:SetFont(WOWTR_Font2, 11);
+
+      -- itemID yoksa hash tabanlı ID kullan (If no itemID, use hash-based ID) (Jeśli brak ID, użyj ID opartego na hash)
+      if not BT_bookID or BT_bookID == "" or BT_bookID == "|Hitem" then
+         if BT_tytul_en == "Plain Letter" or BT_tytul_en == "Order of Night Propaganda" or BT_Books[tostring(StringHash(BT_tekst_en))] then
+            BT_bookID = tostring(StringHash(BT_tekst_en));
+         else
+            local BT_beginTXT = string.gsub(BT_tekst_en, "\n", "");
+            local BT_znacznik = BT_tytul_en .. "#" .. BT_nr_str .. "#" .. string.sub(BT_beginTXT, 1, 15);
+            BT_bookID = BT_BooksID and BT_BooksID[BT_znacznik] or tostring(StringHash(BT_tekst_en));
+         end
+      end
+
+      -- Geçerli bir bookID var mı? (Is there a valid bookID?) (Czy istnieje poprawne ID książki?)
+      if not BT_bookID or BT_bookID == "" or BT_bookID == "|Hitem" then
+         BT_save_original();
+         return;
+      end
+
+      -- Eğer hala yoksa hash ile ayarla (If still missing, assign via hash) (Jeśli nadal brak, przypisz przez hash)
+      if not BT_bookID then
+         local BT_beginTXT = string.gsub(BT_tekst_en, "\n", "");
+         local BT_znacznik = BT_tytul_en .. "#" .. BT_nr_str .. "#" .. string.sub(BT_beginTXT, 1, 15);
+         BT_bookID = BT_BooksID and BT_BooksID[BT_znacznik] or BT_bookIDsh;
+      end
+
+      -- Çeviri mevcut mu? (Is translation available?) (Czy tłumaczenie jest dostępne?)
+      if BT_Books and BT_Books[BT_bookID] then
+         if BT_Books[BT_bookID][BT_nr_str] or (BT_PM["title"] == "1" and BT_Books[BT_bookID].Title and BT_Books[BT_bookID].Title ~= '') then
+
+            -- Başlık çevirisi varsa göster (Show title translation if exists) (Wyświetl tytuł jeśli istnieje tłumaczenie)
+            if BT_PM["title"] == "1" and BT_Books[BT_bookID].Title and BT_Books[BT_bookID].Title ~= '' then
+               BT_tytul_tr = BT_Books[BT_bookID]["Title"];
+               ItemTextFrameTitleText:SetText(QTR_ReverseIfAR(BT_tytul_tr));
+               ItemTextFrameTitleText:SetFont(WOWTR_Font2, 11);
+            end
+
+            -- İçerik çevirisi (Content translation) (Tłumaczenie treści)
+            BT_tekst_tr = string.gsub(BT_Books[BT_bookID][BT_nr_str], "$b", "$B");
+            BT_tekst_tr = string.gsub(BT_tekst_tr, "$B", "\n");
+            BT_tekst_tr = string.gsub(BT_tekst_tr, "$N", WOWTR_player_name);
+
+            -- $O kodu için çeviriler (Handling $O code for gender/person) ($O - obsługa form osobowych)
+            BT_tekst_tr = string.gsub(BT_tekst_tr, "$o", "$O");
+            local nr_poz = string.find(BT_tekst_tr, "$O");
+
+            while nr_poz and nr_poz > 0 do
+               local nr_1 = nr_poz + 1;
+               while string.sub(BT_tekst_tr, nr_1, nr_1) ~= "(" do
+                  nr_1 = nr_1 + 1;
                end
-               BT_tekst_tr=string.gsub(BT_Books[BT_bookID][BT_nr_str],"$b","$B");
-               BT_tekst_tr=string.gsub(BT_tekst_tr,"$B", "\n");
-               BT_tekst_tr=string.gsub(BT_tekst_tr,"$N", WOWTR_player_name);
-               
-               -- obsługa kodu $O(EN;PL)
-               BT_tekst_tr = string.gsub(BT_tekst_tr, "$o", "$O");
-               local nr_1, nr_2, nr_3 = 0;
-               local QTR_forma = "";
-               local NPC_sex = UnitSex("npc");       -- 1:neutral,  2:męski,  3:żeński
-               local nr_poz = string.find(BT_tekst_tr, "$O");    -- gdy nie znalazł, jest: nil
-               while (nr_poz and nr_poz>0) do
-                  nr_1 = nr_poz + 1;   
-                  while (string.sub(BT_tekst_tr, nr_1, nr_1) ~= "(") do
-                     nr_1 = nr_1 + 1;
-                  end
-                  if (string.sub(BT_tekst_tr, nr_1, nr_1) == "(") then
-                     nr_2 =  nr_1 + 1;
-                     while (string.sub(BT_tekst_tr, nr_2, nr_2) ~= ";") do
-                        nr_2 = nr_2 + 1;
-                     end
-                     if (string.sub(BT_tekst_tr, nr_2, nr_2) == ";") then
-                        nr_3 = nr_2 + 1;
-                        while (string.sub(BT_tekst_tr, nr_3, nr_3) ~= ")") do
-                           nr_3 = nr_3 + 1;
-                        end
-                        if (string.sub(BT_tekst_tr, nr_3, nr_3) == ")") then
-                           if (QTR_PS["ownname"] == "1") then        -- forma polska
-                              QTR_forma = string.sub(BT_tekst_tr,nr_2+1,nr_3-1);
-                           else                                      -- forma angielska
-                              QTR_forma = string.sub(BT_tekst_tr,nr_1+1,nr_2-1);
-                           end
-                           BT_tekst_tr = string.sub(BT_tekst_tr,1,nr_poz-1) .. QTR_forma .. string.sub(BT_tekst_tr,nr_3+1);
-                        end   
-                     end
-                  end
-                  nr_poz = string.find(BT_tekst_tr, "$O");
+               local nr_2 = nr_1 + 1;
+               while string.sub(BT_tekst_tr, nr_2, nr_2) ~= ";" do
+                  nr_2 = nr_2 + 1;
+               end
+               local nr_3 = nr_2 + 1;
+               while string.sub(BT_tekst_tr, nr_3, nr_3) ~= ")" do
+                  nr_3 = nr_3 + 1;
                end
 
-               local a1, a2, a3 = ItemTextPageText:GetFont("P");
-               if (BT_PM["setsize"]=="1") then
-                  ItemTextPageText:SetFont("P", WOWTR_Font2, tonumber(BT_PM["fontsize"]), a3);
+               local QTR_forma = "";
+               if QTR_PS["ownname"] == "1" then
+                  QTR_forma = string.sub(BT_tekst_tr, nr_2 + 1, nr_3 - 1);
                else
-                  ItemTextPageText:SetFont("P", WOWTR_Font2, a2, a3);
+                  QTR_forma = string.sub(BT_tekst_tr, nr_1 + 1, nr_2 - 1);
                end
-               ItemTextPageText:SetText(QTR_ExpandUnitInfo(BT_tekst_tr,false,ItemTextPageText,WOWTR_Font2,-10));
-               if (BT_PM["showID"]=="1") then             -- pokaż ID książki
-                  local fo = BT_ToggleButton0:CreateFontString();
-                  if (fo.SetFont) then
-                     fo:SetFont(WOWTR_Font2, 13);
-                     if (WoWTR_Localization.lang == 'AR') then
-                        fo:SetText("("..WoWTR_Localization.lang..") "..BT_bookID.." "..QTR_ReverseIfAR(WoWTR_Localization.bookID));
-                     else
-                        fo:SetText(WoWTR_Localization.bookID.." "..BT_bookID.." ("..WoWTR_Localization.lang..")");
-                     end
-                     BT_ToggleButton0:SetFontString(fo);
-                  end
-                  if (WoWTR_Localization.lang == 'AR') then
-                     BT_ToggleButton0:SetText("("..WoWTR_Localization.lang..") "..BT_bookID.." "..QTR_ReverseIfAR(WoWTR_Localization.bookID));
-                  else
-                     BT_ToggleButton0:SetText(WoWTR_Localization.bookID.." "..BT_bookID.." ("..WoWTR_Localization.lang..")");
-                  end
-                  BT_ToggleButton0:SetWidth(170);
-               else
-                  BT_ToggleButton0:SetText(WoWTR_Localization.lang);
-               end
-               BT_ToggleButton0:Enable();
-               BT_act_tr = "1";                           -- aktualnie jest wyświetlane polskie tłumaczenie
-            else                                          -- brak tłumaczenia
-               if (BT_PM["showID"] == "1") then           -- pokaż ID książki
-                  local fo = BT_ToggleButton0:CreateFontString();
-                  if (fo.SetFont) then
-                     fo:SetFont(WOWTR_Font2, 13);
-                     fo:SetText(WoWTR_Localization.bookID.." "..BT_bookID.." ("..WoWTR_Localization.lang..")");
-                     BT_ToggleButton0:SetFontString(fo);
-                  end
-                  BT_ToggleButton0:SetText(WoWTR_Localization.bookID.." "..BT_bookID.." (EN)");
-                  BT_ToggleButton0:SetWidth(170);
-               end  
-               BT_save_original();
+
+               BT_tekst_tr = string.sub(BT_tekst_tr, 1, nr_poz - 1) ..
+                             QTR_forma ..
+                             string.sub(BT_tekst_tr, nr_3 + 1);
+
+               nr_poz = string.find(BT_tekst_tr, "$O", nr_poz + 1);
             end
+
+            -- Yazı tipi ayarları (Font settings) (Ustawienia czcionki)
+            local a1, a2, a3 = ItemTextPageText:GetFont("P");
+            if (BT_PM["setsize"] == "1") then
+               ItemTextPageText:SetFont("P", WOWTR_Font2, tonumber(BT_PM["fontsize"]), a3);
+            else
+               ItemTextPageText:SetFont("P", WOWTR_Font2, a2, a3);
+            end
+
+            ItemTextPageText:SetText(QTR_ExpandUnitInfo(BT_tekst_tr, false, ItemTextPageText, WOWTR_Font2, -10));
+
+            -- ID Gösterme Ayarı (Show Book ID Option) (Opcja pokazywania ID książki)
+            if (BT_PM["showID"] == "1") then
+               local fo = BT_ToggleButton0:CreateFontString();
+               if fo and fo.SetFont then
+                  fo:SetFont(WOWTR_Font2, 13);
+                  if (WoWTR_Localization.lang == 'AR') then
+                     fo:SetText("("..WoWTR_Localization.lang..") "..BT_bookID.." "..QTR_ReverseIfAR(WoWTR_Localization.bookID));
+                  else
+                     fo:SetText(WoWTR_Localization.bookID.." "..BT_bookID.." ("..WoWTR_Localization.lang..")");
+                  end
+                  BT_ToggleButton0:SetFontString(fo);
+               end
+               if (WoWTR_Localization.lang == 'AR') then
+                  BT_ToggleButton0:SetText("("..WoWTR_Localization.lang..") "..BT_bookID.." "..QTR_ReverseIfAR(WoWTR_Localization.bookID));
+               else
+                  BT_ToggleButton0:SetText(WoWTR_Localization.bookID.." "..BT_bookID.." ("..WoWTR_Localization.lang..")");
+               end
+               BT_ToggleButton0:SetWidth(170);
+            else
+               BT_ToggleButton0:SetText(WoWTR_Localization.lang);
+            end
+
+            BT_ToggleButton0:Enable();
+            BT_act_tr = "1"; -- Tercüme aktif (Translation active) (Tłumaczenie aktywne)
          else
-            BT_save_original();       -- jest ID pisma,listu, ale nie ma tłumaczenia - zapisz je
+            BT_save_original(); -- Sayfa yoksa orijinal göster (Show original if page missing) (Pokaż oryginał jeśli brak strony)
          end
+      else
+         BT_save_original(); -- Kitap yoksa orijinal göster (Show original if book missing) (Pokaż oryginał jeśli brak książki)
       end
    else
       BT_ToggleButton0:Hide();
    end
-end 
+end
 
 -------------------------------------------------------------------------------------------------------
 
 function BT_save_original()
-   if (BT_PM["saveNW"] == "1") then              -- zapisz tekst angielski do pliku
+   if (BT_PM["saveNW"] == "1") then
       if (not BT_nr_str or BT_nr_str == "0") then return; end
-      if (strlen(BT_nr_str)==1) then
-         BT_nr_str="0"..BT_nr_str;
+      if (strlen(BT_nr_str) == 1) then
+         BT_nr_str = "0" .. BT_nr_str;
       end
-      BT_SAVED[BT_bookID.." STR"..BT_nr_str]=BT_tytul_en.."@"..BT_tekst_en;
+
+      -- Eğer BT_bookID nil ise, hash ile geçici ID oluştur
+      local safe_bookID = BT_bookID or tostring(StringHash(BT_tekst_en));
+
+      -- Kaydet
+      BT_SAVED[safe_bookID .. " STR" .. BT_nr_str] = BT_tytul_en .. "@" .. BT_tekst_en;
    end
 end
 
