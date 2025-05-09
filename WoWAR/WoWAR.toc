@@ -1,6 +1,6 @@
-﻿## Interface: 110100, 110105
-## Title: WoWAR |cff8080ffv11.14|r
-## Version: 11.14
+﻿## Interface: 110100, 110105, 110107
+## Title: WoWAR |cff8080ffv11.15|r
+## Version: 11.15
 ## Notes: World of Warcraft in Arabic.
 ## Author: Platine & Dragonarab
 ## E-mail: Dragonarab@gmail.com
