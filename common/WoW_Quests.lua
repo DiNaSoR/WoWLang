@@ -1980,7 +1980,11 @@ function QTR_Translate_On(typ,event)
                   QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].title, false, QuestInfoTitleHeader, WOWTR_Font1, -50));
                end
             end
-            QuestProgressTitleText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].title, false, QuestProgressTitleText, WOWTR_Font1, -50));
+            if (WoWTR_Localization.lang == 'AR') then
+               QuestProgressTitleText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].title, false, QuestProgressTitleText, WOWTR_Font1, -50, "RIGHT"));
+            else
+               QuestProgressTitleText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].title, false, QuestProgressTitleText, WOWTR_Font1, -50));
+            end
          end
          if (WoWTR_Localization.lang == 'AR') then
             QuestInfoDescriptionText:SetWidth(WOW_width - 50);
@@ -2105,6 +2109,7 @@ function QTR_Translate_Off(typ,event)
          QuestProgressText:SetJustifyH("LEFT");
          QuestInfoRewardText:SetJustifyH("LEFT");
          QuestInfoTitleHeader:SetJustifyH("LEFT");
+         QuestProgressTitleText:SetJustifyH("LEFT");
 
          -- Reset experience text
          QuestInfoXPFrame.ReceiveText:SetText(EXPERIENCE_COLON);
@@ -2537,6 +2542,7 @@ function QTR_ResetQuestToOriginal()
 
    QuestProgressRequiredItemsText:SetText(QTR_MessOrig.reqitems);
    QuestProgressRequiredItemsText:SetFont(Original_Font1, 18);
+   QuestProgressRequiredItemsText:SetJustifyH("LEFT");
 
    CurrentQuestsText:SetText(QTR_MessOrig.currquests);
    CurrentQuestsText:SetJustifyH("LEFT");
