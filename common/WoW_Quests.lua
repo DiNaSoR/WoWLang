@@ -824,6 +824,12 @@ function GossipOnQuestFrame()       -- frame: QuestFrame
    local QFGoodbyeBtext2 = QuestFrameGoodbyeButtonText;
    ST_CheckAndReplaceTranslationText(QFGoodbyeBtext2, true, "ui",false,true);
 
+   local QFCompleteButtontext = QuestFrameCompleteButtonText;
+   ST_CheckAndReplaceTranslationText(QFCompleteButtontext, true, "ui",false,true);
+
+   local QFCompleteNotice = QuestFrame.AccountCompletedNotice.Text;
+   ST_CheckAndReplaceTranslationText(QFCompleteNotice, true, "ui",false,true);
+	
    if (WoWTR_Localization.lang == 'AR') then
       if QuestInfoAccountCompletedNotice then -- Check if the element exists
          local QFNoticetext = QuestInfoAccountCompletedNotice;
@@ -1478,9 +1484,11 @@ function QTR_QuestLogQuests_Update()
 
    -- Helper function to apply text, font, and justification
    local function ApplyFormatting(element, textToSet, fontToSet, size, justification)
-       element:SetText(textToSet)
-       element:SetFont(fontToSet, size)
-       element:SetJustifyH(justification)
+       local oldH = element:GetHeight();
+       element:SetText(textToSet);
+       element:SetFont(fontToSet, size);
+       element:SetJustifyH(justification);
+       element:SetHeight(oldH);
    end
 
    -- 1. Process Quest Titles
@@ -1903,6 +1911,9 @@ function QTR_QuestPrepare(zdarzenie)
 
       local QuestMFrame04 = QuestMapFrame.DetailsFrame.TrackButton.Text;
       ST_CheckAndReplaceTranslationTextUI(QuestMFrame04, true, "ui");
+
+      local QuestMFrame05 = QuestMapFrame.QuestsFrame.DetailsFrame.BackFrame.AccountCompletedNotice.Text;
+      ST_CheckAndReplaceTranslationTextUI(QuestMFrame05, true, "ui");
    end
 end
 
