@@ -36,12 +36,12 @@ function BookTranslator_ShowTranslation()
       if par2 and type(par2) == "string" then
          local _, itemID, _ = strsplit(":", par2);
          if itemID and tonumber(itemID) then
-            BT_bookID = itemID;  -- Gerçek itemID kullan (Use actual itemID) (Użyj rzeczywistego ID przedmiotu)
+            BT_bookID = tostring(itemID);  -- Gerçek itemID kullan (Use actual itemID) (Użyj rzeczywistego ID przedmiotu)
          end
       end
 
       -- itemID yoksa hash tabanlı ID kullan (If no itemID, use hash-based ID) (Jeśli brak ID, użyj ID opartego na hash)
-      if not BT_bookID or BT_bookID == "" or BT_bookID == "|Hitem" then
+      if ((not BT_bookID) or (BT_bookID == "") or (BT_bookID == "|Hitem")) then
          if BT_tytul_en == "Plain Letter" or BT_tytul_en == "Order of Night Propaganda" or BT_Books[tostring(StringHash(BT_tekst_en))] then
             BT_bookID = tostring(StringHash(BT_tekst_en));
          else
@@ -52,13 +52,13 @@ function BookTranslator_ShowTranslation()
       end
 
       -- Geçerli bir bookID var mı? (Is there a valid bookID?) (Czy istnieje poprawne ID książki?)
-      if not BT_bookID or BT_bookID == "" or BT_bookID == "|Hitem" then
+      if ((not BT_bookID) or (BT_bookID == "") or (BT_bookID == "|Hitem")) then
          BT_save_original();
          return;
       end
 
       -- Eğer hala yoksa hash ile ayarla (If still missing, assign via hash) (Jeśli nadal brak, przypisz przez hash)
-      if not BT_bookID then
+      if (not BT_bookID) then
          local BT_beginTXT = string.gsub(BT_tekst_en, "\n", "");
          local BT_znacznik = BT_tytul_en .. "#" .. BT_nr_str .. "#" .. string.sub(BT_beginTXT, 1, 15);
          BT_bookID = BT_BooksID and BT_BooksID[BT_znacznik] or BT_bookIDsh;
