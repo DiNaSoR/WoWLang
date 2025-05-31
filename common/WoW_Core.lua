@@ -502,9 +502,11 @@ function WOWTR_onEvent(self, event, name, ...)
    elseif (event == "QUEST_DETAIL" or event == "QUEST_PROGRESS" or event == "QUEST_COMPLETE") then
       if (event == "QUEST_DETAIL" and QTR_quest_ID > 0) then -- zapisz przypisanie questu do krainy
          local QTR_mapID = C_Map.GetBestMapForUnit("player");
-         local QTR_mapINFO = C_Map.GetMapInfo(QTR_mapID);
-         QTR_SAVED[QTR_quest_ID .. " MAPID"] = QTR_mapID ..
-             "@" .. QTR_mapINFO.name .. "@" .. QTR_mapINFO.mapType .. "@" .. QTR_mapINFO.parentMapID; -- save mapID to locale place of this quest
+         if (QTR_mapID) then
+            local QTR_mapINFO = C_Map.GetMapInfo(QTR_mapID);
+            QTR_SAVED[QTR_quest_ID .. " MAPID"] = QTR_mapID ..
+               "@" .. QTR_mapINFO.name .. "@" .. QTR_mapINFO.mapType .. "@" .. QTR_mapINFO.parentMapID; -- save mapID to locale place of this quest
+         end
       end
       if (QuestFrame:IsVisible() or isImmersion() or IsDUIQuestFrame()) then
          QTR_QuestPrepare(event);
