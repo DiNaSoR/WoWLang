@@ -29,7 +29,14 @@ Translations\Tooltips_AR.lua
 
 WoW_Localization_AR.lua
 WoW_Core.lua
-WoW_Config.lua
+Config\Core.lua
+Config\TabAbout.lua
+Config\TabBooks.lua
+Config\TabBubbles.lua
+Config\TabQuests.lua
+Config\TabSubtitles.lua
+Config\TabTooltips.lua
+Config\TabTutorials.lua
 WoW_Tooltips.lua
 
 WoW_Arabic_Reshaper.lua
