@@ -3,7 +3,7 @@
 
 ST_lang = "AR";         -- translation language
 ST_type = "Reshaped";   -- type of saving text
-ST_date = "2025-04-24"; -- date of creation base
+ST_date = "2025-06-20"; -- date of creation base
 ST_base = "129";      -- version (number of translations)
 
 -- tooltips translation table: [Hash] = "translation text" 
