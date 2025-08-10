@@ -40,5 +40,6 @@ WoW_Tutorials.lua
 WoW_Books.lua
 
 Plugins\DUIPlugin.lua
+Plugins\ElvUIPlugin.lua
 UI\Professions.lua
 UI\Talents.lua
