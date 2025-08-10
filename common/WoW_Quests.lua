@@ -1152,89 +1152,28 @@ end
 -------------------------------------------------------------------------------------------------------------------
 
 function isClassicQuestLog()
-   if (ClassicQuestLog ~= nil ) then
-      if (QTR_ToggleButton3==nil) then
-         -- przycisk z nr ID questu w ClassicQuestLog
-         QTR_ToggleButton3 = CreateFrame("Button",nil, ClassicQuestLog, "UIPanelButtonTemplate");
-         QTR_ToggleButton3:SetWidth(150);
-         QTR_ToggleButton3:SetHeight(20);
-         QTR_ToggleButton3:SetText("Quest ID=?");
-         QTR_ToggleButton3:ClearAllPoints();
-         QTR_ToggleButton3:SetPoint("TOPLEFT", ClassicQuestLog, "TOPLEFT", 330, -33);
-         QTR_ToggleButton3:SetScript("OnClick", QTR_ON_OFF);
---         QTR_ToggleButton3:Disable();         -- wyłączam, bo uaktualnienie poniżej jest zbyt często
-         -- uaktualniono dane w QuestLogu
-         ClassicQuestLog:HookScript("OnUpdate", function() QTR_PrepareDelay(1) end);
-      end
-      if (QTR_PS["questlog"]=="0") then       -- jest aktywny Classic Quest Log, ale nie zezwolono na tłumaczenie
-         QTR_ToggleButton3:Hide();
-         return false;
-      else
-         QTR_ToggleButton3:Show();
-         return true;
-      end
-   else
-      return false;   
+   if ClassicQuestLogPlugin and ClassicQuestLogPlugin.isClassicQuestLog then
+      return ClassicQuestLogPlugin.isClassicQuestLog()
    end
+   return false
 end
 
 -------------------------------------------------------------------------------------------------------------------
 
 function isImmersion()
-   if (ImmersionFrame ~= nil ) then            -- jest uruchomiony dodatek Immersion
-      if (QTR_ToggleButton4==nil) then
-         -- przycisk z nr ID questu
-         QTR_ToggleButton4 = CreateFrame("Button",nil, ImmersionFrame.TalkBox, "UIPanelButtonTemplate");
-         QTR_ToggleButton4:SetWidth(150);
-         QTR_ToggleButton4:SetHeight(20);
-         QTR_ToggleButton4:SetText(QTR_ReverseIfAR(WoWTR_Localization.choiceQuestFirst));  -- może: QTR_ExpandUnitInfo ?
-         QTR_ToggleButton4:ClearAllPoints();
-         QTR_ToggleButton4:SetPoint("TOPLEFT", ImmersionFrame.TalkBox, "TOPRIGHT", -200, -116);
-         QTR_ToggleButton4:SetScript("OnClick", QTR_ON_OFF);
-         -- otworzono okno dodatku Immersion : wywołanie przez OnEvent
-         ImmersionFrame.TalkBox:HookScript("OnHide",function() QTR_ToggleButton4:Hide(); end);
-         QTR_ToggleButton4:Disable();          -- nie można na razie przyciskać przycisku
-      end
-      if (QTR_PS["immersion"]=="0") then       -- jest aktywny Immersion, ale nie zezwolono na tłumaczenie
-         QTR_ToggleButton4:Hide();
-         return false;
-      else
-         QTR_ToggleButton4:Show();
-         return true;
-      end
-   else   
-      return false;
+   if ImmersionPlugin and ImmersionPlugin.isImmersion then
+      return ImmersionPlugin.isImmersion()
    end
+   return false
 end
    
 -------------------------------------------------------------------------------------------------------------------
 
 function isStoryline()
-   if (Storyline_NPCFrame ~= nil ) then         -- jest uruchomiony dodatek StoryLine
-      if (QTR_ToggleButton5==nil) then
-         -- przycisk z nr ID questu
-         QTR_ToggleButton5 = CreateFrame("Button",nil, Storyline_NPCFrameChat, "UIPanelButtonTemplate");
-         QTR_ToggleButton5:SetWidth(150);
-         QTR_ToggleButton5:SetHeight(20);
-         QTR_ToggleButton5:SetText(QTR_ReverseIfAR(WoWTR_Localization.choiceQuestFirst));  -- może: QTR_ExpandUnitInfo ?
-         QTR_ToggleButton5:ClearAllPoints();
-         QTR_ToggleButton5:SetPoint("BOTTOMLEFT", Storyline_NPCFrameChat, "BOTTOMLEFT", 244, -16);
-         QTR_ToggleButton5:SetScript("OnClick", QTR_ON_OFF);
-         Storyline_NPCFrameObjectivesContent:HookScript("OnShow", function() QTR_Storyline_Objectives() end);
-         Storyline_NPCFrameRewards:HookScript("OnShow", function() QTR_Storyline_Rewards() end);
-         Storyline_NPCFrameChat:HookScript("OnHide", function() QTR_Storyline_Hide() end);
-         QTR_ToggleButton5:Disable();          -- nie można na razie przyciskać przycisku
-      end
-      if (QTR_PS["storyline"]=="0") then       -- jest aktywny StoryLine, ale nie zezwolono na tłumaczenie
-         QTR_ToggleButton5:Hide();
-         return false;
-      else
-         QTR_ToggleButton5:Show();
-         return true;
-      end
-   else
-      return false;
+   if StorylinePlugin and StorylinePlugin.isStoryline then
+      return StorylinePlugin.isStoryline()
    end
+   return false
 end
 
 -------------------------------------------------------------------------------------------------------------------
@@ -2816,289 +2755,97 @@ end;
 
 -------------------------------------------------------------------------------------------------------------------
 
-function QTR_Immersion()   -- wywoływanie tłumaczenia z opóźnieniem 0.2 sek
-   ImmersionContentFrame.ObjectivesText:SetFont(WOWTR_Font2, 14);
-   ImmersionContentFrame.ObjectivesText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].objectives,true,ImmersionContentFrame.ObjectivesText,WOWTR_Font2));
-   ImmersionFrame.TalkBox.NameFrame.Name:SetFont(WOWTR_Font1, 20);
-   ImmersionFrame.TalkBox.NameFrame.Name:SetText(QTR_ReverseIfAR(QTR_quest_LG[QTR_quest_ID].title));
-   ImmersionFrame.TalkBox.TextFrame.Text:SetFont(WOWTR_Font2, 14);
-   if (QTR_quest_EN[QTR_quest_ID].completion and (strlen(QTR_quest_LG[QTR_quest_ID].completion)>1)) then   -- mamy zdarzenie COMPLETION
-      ImmersionFrame.TalkBox.TextFrame.Text:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].completion,false,ImmersionFrame.TalkBox.TextFrame.Text,WOWTR_Font2));
-   elseif (QTR_quest_EN[QTR_quest_ID].progress and (strlen(QTR_quest_LG[QTR_quest_ID].progress)>1)) then   -- mamy zdarzenie PROGRESS
-      ImmersionFrame.TalkBox.TextFrame.Text:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].progress,false,ImmersionFrame.TalkBox.TextFrame.Text,WOWTR_Font2));
-   elseif (QTR_quest_EN[QTR_quest_ID].details and (strlen(QTR_quest_LG[QTR_quest_ID].details)>1)) then     -- mamy zdarzenie DETAILS
-      ImmersionFrame.TalkBox.TextFrame.Text:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].details,false,ImmersionFrame.TalkBox.TextFrame.Text,WOWTR_Font2));
-   end
-   QTR_Immersion_Static();        -- inne statyczne dane
- end
-
--------------------------------------------------------------------------------------------------------------------
-
-function QTR_Immersion_Static() 
-   ImmersionContentFrame.ObjectivesHeader:SetFont(WOWTR_Font1, 18);
-   ImmersionContentFrame.ObjectivesHeader:SetText(QTR_ReverseIfAR(QTR_Messages.objectives));                              -- "Zadanie"
-   ImmersionContentFrame.RewardsFrame.Header:SetFont(WOWTR_Font1, 18);
-   ImmersionContentFrame.RewardsFrame.Header:SetText(QTR_ReverseIfAR(QTR_Messages.rewards));                              -- "Nagrody"
-   ImmersionContentFrame.RewardsFrame.ItemChooseText:SetFont(WOWTR_Font2, 13);
-   ImmersionContentFrame.RewardsFrame.ItemChooseText:SetText(QTR_ReverseIfAR(QTR_quest_LG[QTR_quest_ID].itemchoose));     -- "Możesz wybrać nagrodę:"
-   ImmersionContentFrame.RewardsFrame.ItemReceiveText:SetFont(WOWTR_Font2, 13);
-   ImmersionContentFrame.RewardsFrame.ItemReceiveText:SetText(QTR_ReverseIfAR(QTR_quest_LG[QTR_quest_ID].itemreceive));   -- "Otrzymasz w nagrodę:"
-   ImmersionContentFrame.RewardsFrame.XPFrame.ReceiveText:SetFont(WOWTR_Font2, 13);
-   ImmersionContentFrame.RewardsFrame.XPFrame.ReceiveText:SetText(QTR_ReverseIfAR(QTR_Messages.experience));              -- "Doświadczenie"
-   ImmersionFrame.TalkBox.Elements.Progress.ReqText:SetFont(WOWTR_Font1, 18);
-   ImmersionFrame.TalkBox.Elements.Progress.ReqText:SetText(QTR_ReverseIfAR(QTR_Messages.reqitems));                      -- "Wymagane itemy:"
-   for fontString in ImmersionContentFrame.RewardsFrame.spellHeaderPool:EnumerateActive() do
-      if (fontString:GetText() == REWARD_AURA) then
-         fontString:SetText(QTR_ReverseIfAR(QTR_Messages.reward_aura));
-         fontString:SetFont(WOWTR_Font2, 13);
-      end
-      if (fontString:GetText() == REWARD_SPELL) then
-         fontString:SetText(QTR_ReverseIfAR(QTR_Messages.reward_spell));
-         fontString:SetFont(WOWTR_Font2, 13);
-      end
-      if (fontString:GetText() == REWARD_COMPANION) then
-         fontString:SetText(QTR_ReverseIfAR(QTR_Messages.reward_companion));
-         fontString:SetFont(WOWTR_Font2, 13);
-      end
-      if (fontString:GetText() == REWARD_FOLLOWER) then
-         fontString:SetText(QTR_ReverseIfAR(QTR_Messages.reward_follower));
-         fontString:SetFont(WOWTR_Font2, 13);
-      end
-      if (fontString:GetText() == REWARD_REPUTATION) then
-         fontString:SetText(QTR_ReverseIfAR(QTR_Messages.reward_reputation));
-         fontString:SetFont(WOWTR_Font2, 13);
-      end
-      if (fontString:GetText() == REWARD_TITLE) then
-         fontString:SetText(QTR_ReverseIfAR(QTR_Messages.reward_title));
-         fontString:SetFont(WOWTR_Font2, 13);
-      end
-      if (fontString:GetText() == REWARD_TRADESKILL) then
-         fontString:SetText(QTR_ReverseIfAR(QTR_Messages.reward_tradeskill));
-         fontString:SetFont(WOWTR_Font2, 13);
-      end
-      if (fontString:GetText() == REWARD_UNLOCK) then
-         fontString:SetText(QTR_ReverseIfAR(QTR_Messages.reward_unlock));
-         fontString:SetFont(WOWTR_Font2, 13);
-      end
-      if (fontString:GetText() == REWARD_BONUS) then
-         fontString:SetText(QTR_ReverseIfAR(QTR_Messages.reward_bonus));
-         fontString:SetFont(WOWTR_Font2, 13);
-      end
+function QTR_Immersion(...)
+   if ImmersionPlugin and ImmersionPlugin.QTR_Immersion then
+      return ImmersionPlugin.QTR_Immersion(...)
    end
 end
 
 -------------------------------------------------------------------------------------------------------------------
 
-function QTR_Immersion_OFF()   -- wywoływanie oryginału
-   ImmersionContentFrame.ObjectivesText:SetFont(Original_Font2, 14);
-   ImmersionContentFrame.ObjectivesText:SetText(QTR_quest_EN[QTR_quest_ID].objectives);
-   ImmersionFrame.TalkBox.NameFrame.Name:SetFont(Original_Font1, 20);
-   ImmersionFrame.TalkBox.NameFrame.Name:SetText(QTR_quest_EN[QTR_quest_ID].title);
-   ImmersionFrame.TalkBox.TextFrame.Text:SetFont(Original_Font2, 14);
-   if (QTR_quest_EN[QTR_quest_ID].completion and (strlen(QTR_quest_EN[QTR_quest_ID].completion)>0)) then   -- przywróć oryginalny tekst
-      ImmersionFrame.TalkBox.TextFrame.Text:SetText(QTR_quest_EN[QTR_quest_ID].completion);
-   elseif (QTR_quest_EN[QTR_quest_ID].progress and (strlen(QTR_quest_EN[QTR_quest_ID].progress)>0)) then
-      ImmersionFrame.TalkBox.TextFrame.Text:SetText(QTR_quest_EN[QTR_quest_ID].progress);
-   else
-      ImmersionFrame.TalkBox.TextFrame.Text:SetText(QTR_quest_EN[QTR_quest_ID].details);
-   end
-   QTR_Immersion_OFF_Static();       -- inne statyczne dane
-end
-
--------------------------------------------------------------------------------------------------------------------
-
-function QTR_Immersion_OFF_Static()
-   ImmersionContentFrame.ObjectivesHeader:SetFont(Original_Font1, 18);
-   ImmersionContentFrame.ObjectivesHeader:SetText(QTR_MessOrig.objectives);                               -- "Zadanie"
-   ImmersionContentFrame.RewardsFrame.Header:SetFont(Original_Font1, 18);
-   ImmersionContentFrame.RewardsFrame.Header:SetText(QTR_MessOrig.rewards);                               -- "Nagroda"
-   ImmersionContentFrame.RewardsFrame.ItemChooseText:SetFont(Original_Font2, 13);
-   ImmersionContentFrame.RewardsFrame.ItemChooseText:SetText(QTR_quest_EN[QTR_quest_ID].itemchoose);      -- "Możesz wybrać nagrodę:"
-   ImmersionContentFrame.RewardsFrame.ItemReceiveText:SetFont(Original_Font2, 13);
-   ImmersionContentFrame.RewardsFrame.ItemReceiveText:SetText(QTR_quest_EN[QTR_quest_ID].itemreceive);    -- "Otrzymasz w nagrodę:"
-   ImmersionContentFrame.RewardsFrame.XPFrame.ReceiveText:SetFont(Original_Font2, 13);
-   ImmersionContentFrame.RewardsFrame.XPFrame.ReceiveText:SetText(QTR_MessOrig.experience);               -- "Doświadczenie"
-   ImmersionFrame.TalkBox.Elements.Progress.ReqText:SetFont(Original_Font1, 18);
-   ImmersionFrame.TalkBox.Elements.Progress.ReqText:SetText(QTR_MessOrig.reqitems);                       -- "Wymagane itemy:"
-end
-
--------------------------------------------------------------------------------------------------------------------
-
-function QTR_Storyline_Delay()
-   QTR_Storyline(1);
-end
-
--------------------------------------------------------------------------------------------------------------------
-
-function QTR_Storyline_Quest()
-   if (QTR_PS["active"]=="1" and QTR_PS["storyline"]=="1" and Storyline_NPCFrame:IsVisible()) then
-      QTR_QuestPrepare('');
+function QTR_Immersion_Static(...)
+   if ImmersionPlugin and ImmersionPlugin.QTR_Immersion_Static then
+      return ImmersionPlugin.QTR_Immersion_Static(...)
    end
 end
 
 -------------------------------------------------------------------------------------------------------------------
 
-function QTR_Storyline_Hide()
-   if (QTR_PS["active"]=="1" and QTR_PS["storyline"]=="1") then
-      QTR_ToggleButton5:Hide();
+function QTR_Immersion_OFF(...)
+   if ImmersionPlugin and ImmersionPlugin.QTR_Immersion_OFF then
+      return ImmersionPlugin.QTR_Immersion_OFF(...)
    end
 end
 
 -------------------------------------------------------------------------------------------------------------------
 
-function QTR_Storyline_Objectives()
-   if (QTR_PS["active"]=="1" and QTR_PS["storyline"]=="1" and QTR_quest_ID>0) then
-      local string_ID= tostring(QTR_quest_ID);
-      Storyline_NPCFrameObjectivesContent.Title:SetText(QTR_ReverseIfAR(WoWTR_Localization.objectives));
-      Storyline_NPCFrameObjectivesContent.Title:SetFont(WOWTR_Font1, 13);
-      if (QTR_QuestData[string_ID] ) then
-         Storyline_NPCFrameObjectivesContent.Objectives:SetText(QTR_ExpandUnitInfo(QTR_QuestData[string_ID]["Objectives"],true,Storyline_NPCFrameObjectivesContent.Objectives,WOWTR_Font2,-40));
-         Storyline_NPCFrameObjectivesContent.Objectives:SetFont(WOWTR_Font2, 13);
-      end   
-      if (Storyline_RewardsHeader0) then
-         Storyline_RewardsHeader0:SetText(QTR_ReverseIfAR(QTR_quest_LG[QTR_quest_ID].itemreceive));
-         Storyline_RewardsHeader0:SetFont(WOWTR_Font1, 13);
-      end
-      if (Storyline_RewardsHeader1) then
-         if (Storyline_RewardsHeader1:GetText() == REWARD_AURA) then
-            Storyline_RewardsHeader1:SetText(QTR_ReverseIfAR(QTR_Messages.reward_aura));
-            Storyline_RewardsHeader1:SetFont(WOWTR_Font1, 13);
-         elseif (Storyline_RewardsHeader1:GetText() == REWARD_SPELL) then
-            Storyline_RewardsHeader1:SetText(QTR_ReverseIfAR(QTR_Messages.reward_spell));
-            Storyline_RewardsHeader1:SetFont(WOWTR_Font1, 13);
-         elseif (Storyline_RewardsHeader1:GetText() == REWARD_COMPANION) then
-            Storyline_RewardsHeader1:SetText(QTR_ReverseIfAR(QTR_Messages.reward_companion));
-            Storyline_RewardsHeader1:SetFont(WOWTR_Font1, 13);
-         elseif (Storyline_RewardsHeader1:GetText() == REWARD_FOLLOWER) then
-            Storyline_RewardsHeader1:SetText(QTR_ReverseIfAR(QTR_Messages.reward_follower));
-            Storyline_RewardsHeader1:SetFont(WOWTR_Font1, 13);
-         elseif (Storyline_RewardsHeader1:GetText() == REWARD_REPUTATION) then
-            Storyline_RewardsHeader1:SetText(QTR_ReverseIfAR(QTR_Messages.reward_reputation));
-            Storyline_RewardsHeader1:SetFont(WOWTR_Font1, 13);
-         elseif (Storyline_RewardsHeader1:GetText() == REWARD_TITLE) then
-            Storyline_RewardsHeader1:SetText(QTR_ReverseIfAR(QTR_Messages.reward_title));
-            Storyline_RewardsHeader1:SetFont(WOWTR_Font1, 13);
-         elseif (Storyline_RewardsHeader1:GetText() == REWARD_TRADESKILL) then
-            Storyline_RewardsHeader1:SetText(QTR_ReverseIfAR(QTR_Messages.reward_tradeskill));
-            Storyline_RewardsHeader1:SetFont(WOWTR_Font1, 13);
-         elseif (Storyline_RewardsHeader1:GetText() == REWARD_UNLOCK) then
-            Storyline_RewardsHeader1:SetText(QTR_ReverseIfAR(QTR_Messages.reward_unlock));
-            Storyline_RewardsHeader1:SetFont(WOWTR_Font1, 13);
-         elseif (Storyline_RewardsHeader1:GetText() == REWARD_BONUS) then
-            Storyline_RewardsHeader1:SetText(QTR_ReverseIfAR(QTR_Messages.reward_bonus));
-            Storyline_RewardsHeader1:SetFont(WOWTR_Font1, 13);
-         end
-      end
+function QTR_Immersion_OFF_Static(...)
+   if ImmersionPlugin and ImmersionPlugin.QTR_Immersion_OFF_Static then
+      return ImmersionPlugin.QTR_Immersion_OFF_Static(...)
    end
 end
 
 -------------------------------------------------------------------------------------------------------------------
 
-function QTR_Storyline_Rewards()
-   if (QTR_PS["active"]=="1" and QTR_PS["storyline"]=="1") then
-      Storyline_NPCFrameRewards.Content.Title:SetText(QTR_ReverseIfAR(WoWTR_Localization.rewards));
+function QTR_Storyline_Delay(...)
+   if StorylinePlugin and StorylinePlugin.QTR_Storyline_Delay then
+      return StorylinePlugin.QTR_Storyline_Delay(...)
    end
 end
 
 -------------------------------------------------------------------------------------------------------------------
 
-function QTR_Storyline(nr)
-   if (QTR_PS["transtitle"]=="1") then
-      Storyline_NPCFrame.Banner.Title:SetText(QTR_ReverseIfAR(QTR_quest_LG[QTR_quest_ID].title));
-      Storyline_NPCFrame.Banner.Title:SetFont(WOWTR_Font1, 18);
-   end
-   local string_ID= tostring(QTR_quest_ID);
-   local texts = { "" };
-   if ((Storyline_NPCFrameChat.event ~= nil) and (QTR_QuestData[string_ID] ~= nil))then
-      local event = Storyline_NPCFrameChat.event;
-      if (event=="QUEST_DETAIL") then
-     	   texts = { strsplit("\n", QTR_ExpandUnitInfo(QTR_QuestData[string_ID]["Description"],false,Storyline_NPCFrameChatText,WOWTR_Font2,-15)) };
-      end   
-      if (event=="QUEST_PROGRESS") then
-     	   texts = { strsplit("\n", QTR_ExpandUnitInfo(QTR_QuestData[string_ID]["Progress"],false,Storyline_NPCFrameChatText,WOWTR_Font2)) };
-      end   
-      if (event=="QUEST_COMPLETE") then
-     	   texts = { strsplit("\n", QTR_ExpandUnitInfo(QTR_QuestData[string_ID]["Completion"],false,Storyline_NPCFrameChatText,WOWTR_Font2)) };
-      end   
-   end
-   local ileOry = #Storyline_NPCFrameChat.texts;
-   local indeks = 0;
-   for i=1,#texts do
-      if texts[i]:len() > 0 then
-         if (indeks<ileOry) then
-            indeks=indeks+1;
-            Storyline_NPCFrameChat.texts[indeks]=texts[i];
-         end
-      end
-   end
-   Storyline_NPCFrameChatText:SetFont(WOWTR_Font2, 16);
-   if (nr==1) then      -- Reload text
-      Storyline_NPCFrameObjectivesContent:Hide();
-      Storyline_NPCFrame.chat.currentIndex = 0;
-      Storyline_API.playNext(Storyline_NPCFrameModelsYou);   -- reload
+function QTR_Storyline_Quest(...)
+   if StorylinePlugin and StorylinePlugin.QTR_Storyline_Quest then
+      return StorylinePlugin.QTR_Storyline_Quest(...)
    end
 end
 
 -------------------------------------------------------------------------------------------------------------------
 
-function QTR_Storyline_Gossip()
-   Storyline_NPCFrameChatText:SetFont(WOWTR_Font2, 16);
-   if (not txt0txt) then return; end
-   local texts = { "" };
-   texts = { strsplit("\n\n", txt0txt) };
-   if (Storyline_NPCFrameChat.texts) then
-      local ileOry = #Storyline_NPCFrameChat.texts;
-      local indeks = 0;
-      for i=1,#texts do
-         if texts[i]:len() > 0 then
-            if (indeks<ileOry) then
-               indeks=indeks+1;
-               Storyline_NPCFrameChat.texts[indeks]=texts[i];
-            end
-         end
-      end
-      Storyline_NPCFrameObjectivesContent:Hide();
-      Storyline_NPCFrame.chat.currentIndex = 0;
-      Storyline_API.playNext(Storyline_NPCFrameModelsYou);   -- reload
+function QTR_Storyline_Hide(...)
+   if StorylinePlugin and StorylinePlugin.QTR_Storyline_Hide then
+      return StorylinePlugin.QTR_Storyline_Hide(...)
    end
 end
 
 -------------------------------------------------------------------------------------------------------------------
 
-function QTR_Storyline_OFF(nr)
-   if (QTR_PS["transtitle"]=="1") then
-      Storyline_NPCFrame.Banner.Title:SetText(QTR_quest_EN[QTR_quest_ID].title);
-      Storyline_NPCFrame.Banner.Title:SetFont(Original_Font2, 18);
+function QTR_Storyline_Objectives(...)
+   if StorylinePlugin and StorylinePlugin.QTR_Storyline_Objectives then
+      return StorylinePlugin.QTR_Storyline_Objectives(...)
    end
-   local string_ID= tostring(QTR_quest_ID);
-   local texts = { "" };
-   if ((Storyline_NPCFrameChat.event ~= nil) and (QTR_QuestData[string_ID] ~= nil))then
-      local event = Storyline_NPCFrameChat.event;
-      if (event=="QUEST_DETAIL") then
-     	   texts = { strsplit("\n", GetQuestText()) };
-      end   
-      if (event=="QUEST_PROGRESS") then
-     	   texts = { strsplit("\n", GetProgressText()) };
-      end   
-      if (event=="QUEST_COMPLETE") then
-     	   texts = { strsplit("\n", GetRewardText()) };
-      end   
+end
+
+-------------------------------------------------------------------------------------------------------------------
+
+function QTR_Storyline_Rewards(...)
+   if StorylinePlugin and StorylinePlugin.QTR_Storyline_Rewards then
+      return StorylinePlugin.QTR_Storyline_Rewards(...)
    end
-   local ileOry = #Storyline_NPCFrameChat.texts;
-   local indeks = 0;
-   for i=1,#texts do
-      if texts[i]:len() > 0 then
-         if (indeks<ileOry) then
-            indeks=indeks+1;
-            Storyline_NPCFrameChat.texts[indeks]=texts[i];
-         end
-      end
+end
+
+-------------------------------------------------------------------------------------------------------------------
+
+function QTR_Storyline(...)
+   if StorylinePlugin and StorylinePlugin.QTR_Storyline then
+      return StorylinePlugin.QTR_Storyline(...)
    end
-   Storyline_NPCFrameChatText:SetFont(Original_Font2, 16);
-   if (nr==1) then      -- Reload text
-      Storyline_NPCFrameObjectivesContent:Hide();
-      Storyline_NPCFrame.chat.currentIndex = 0;
-      Storyline_API.playNext(Storyline_NPCFrameModelsYou);   -- reload
+end
+
+-------------------------------------------------------------------------------------------------------------------
+
+function QTR_Storyline_Gossip(...)
+   if StorylinePlugin and StorylinePlugin.QTR_Storyline_Gossip then
+      return StorylinePlugin.QTR_Storyline_Gossip(...)
+   end
+end
+
+-------------------------------------------------------------------------------------------------------------------
+
+function QTR_Storyline_OFF(...)
+   if StorylinePlugin and StorylinePlugin.QTR_Storyline_OFF then
+      return StorylinePlugin.QTR_Storyline_OFF(...)
    end
 end
 

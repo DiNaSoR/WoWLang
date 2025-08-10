@@ -40,6 +40,9 @@ WoW_MovieSubtitles.lua
 WoW_Tutorials.lua
 WoW_Books.lua
 
+Plugins\ClassicQuestLogPlugin.lua
+Plugins\ImmersionPlugin.lua
+Plugins\StorylinePlugin.lua
 Plugins\DUIPlugin.lua
 UI\Professions.lua
 UI\Talents.lua
