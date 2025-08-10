@@ -43,5 +43,6 @@ Plugins\ClassicQuestLogPlugin.lua
 Plugins\ImmersionPlugin.lua
 Plugins\StorylinePlugin.lua
 Plugins\DUIPlugin.lua
+Plugins\ElvUIPlugin.lua
 UI\Professions.lua
 UI\Talents.lua
