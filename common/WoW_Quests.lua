@@ -3578,26 +3578,6 @@ end
 -------------------------------------------------------------------------------------------------------------------
 
 --ADVANTURE MAP QUEST
-function ST_AdvantureMapFrm()			-- https://imgur.com/a/uQElPgm
-   if (QTR_PS["active"] == "1") then
-	local AdvMapFrm01 = AdventureMapQuestChoiceDialog.Details.Child.TitleHeader;
-	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm01, true, "Collections:Quest", WOWTR_Font1);
-	local AdvMapFrm02 = AdventureMapQuestChoiceDialog.Details.Child.DescriptionText;
-	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm02, true, "Collections:Quest");
-	local AdvMapFrm04 = AdventureMapQuestChoiceDialog.Details.Child.ObjectivesText;
-	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm04, true, "Collections:Quest");
-   end
-   if (TT_PS["ui1"] == "1") then
-	local AdvMapFrm03 = AdventureMapQuestChoiceDialog.Details.Child.ObjectivesHeader;
-	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm03, false, "ui", WOWTR_Font1);
-	local AdvMapFrm05 = AdventureMapQuestChoiceDialog.RewardsHeader;
-	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm05, false, "ui", WOWTR_Font1);
-	local AdvMapFrm06 = AdventureMapQuestChoiceDialog.AcceptButton.Text;
-	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm06, false, "ui");
-	local AdvMapFrm07 = AdventureMapQuestChoiceDialog.DeclineButton.Text;
-	ST_CheckAndReplaceTranslationTextUI(AdvMapFrm07, false, "ui");
-   end
-end
 
 -- --------------------------------------------------------------------------
 -- Overwrite the QuestObjectiveTracker.ContentsFrame.HeaderText each time
