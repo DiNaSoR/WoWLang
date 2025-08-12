@@ -32,6 +32,14 @@ WoW_Localization_PL.lua
 
 WoW_Core.lua
 WoW_Config.lua
+
+common\constants\constants.lua
+common\utils\utils.lua
+common\translation.lua
+common\ui\GameTooltip.lua
+common\ui\EncounterJournal.lua
+common\ui\MiscFrames.lua
+common\events\events.lua
 WoW_Tooltips.lua
 
 WoW_Quests.lua
