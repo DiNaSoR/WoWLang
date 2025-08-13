@@ -67,6 +67,83 @@ Original_Font2 = "Fonts\\FRIZQT__.ttf";
 
 -------------------------------------------------------------------------------------------------------------------
 
+-- Utility: Return the first FontString region from a frame
+local function QTR_GetFirstFontStringRegion(frame)
+   if not frame or not frame.GetRegions then
+      return nil;
+   end
+   local regions = { frame:GetRegions() };
+   for _, region in pairs(regions) do
+      if (region and region.GetObjectType and region:GetObjectType()=="FontString") then
+         return region;
+      end
+   end
+   return nil;
+end
+
+-- Utility: Apply LTR/RTL layout for a gossip option button (icon + text)
+local function QTR_ApplyOptionButtonLayout(buttonFrame, isArabic)
+   if not buttonFrame then return; end
+   local fontStringRegion = QTR_GetFirstFontStringRegion(buttonFrame);
+   if not fontStringRegion then return; end
+   local iconRegion = buttonFrame.Icon;
+
+   if isArabic then
+      if iconRegion then
+         iconRegion:ClearAllPoints();
+         iconRegion:SetPoint("TOPRIGHT", buttonFrame, "TOPRIGHT", -10, -2);
+         fontStringRegion:ClearAllPoints();
+         fontStringRegion:SetPoint("TOPRIGHT", iconRegion, "TOPLEFT", -5, 0);
+         fontStringRegion:SetJustifyH("RIGHT");
+      else
+         fontStringRegion:ClearAllPoints();
+         fontStringRegion:SetPoint("TOPRIGHT", buttonFrame, "TOPRIGHT", -10, -2);
+         fontStringRegion:SetJustifyH("RIGHT");
+      end
+   else
+      local leftPadding = 10;
+      if iconRegion then
+         iconRegion:ClearAllPoints();
+         iconRegion:SetPoint("TOPLEFT", buttonFrame, "TOPLEFT", 5, -2);
+         leftPadding = (iconRegion.GetWidth and iconRegion:GetWidth() or 0) + 10;
+      end
+      fontStringRegion:ClearAllPoints();
+      fontStringRegion:SetPoint("TOPLEFT", buttonFrame, "TOPLEFT", leftPadding, -2);
+      fontStringRegion:SetJustifyH("LEFT");
+   end
+end
+
+-- Utility: Bronze Timekeeper number formatting and placeholder substitution ($1..$6)
+local function QTR_FormatBronzeTimekeeper(sourceText, messageText)
+   local src = strtrim(sourceText or "");
+   local msg = messageText or "";
+   local wartab = {0,0,0,0,0,0};
+   local arg0 = 0;
+   for w in string.gmatch(src, "%d+") do
+      arg0 = arg0 + 1;
+      local num = tonumber(w) or 0;
+      if (num>999999) then
+         wartab[arg0] = tostring(math.floor(num)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2."):gsub("(%-?)$", "%1"):reverse();
+      elseif (num>99999) then
+         wartab[arg0] = tostring(math.floor(num)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2"):gsub("(%-?)$", "%1"):reverse();
+      elseif (num>999) then
+         wartab[arg0] = tostring(math.floor(num)):reverse():gsub("(%d%d%d)", "%1."):gsub("(%-?)$", "%1"):reverse();
+      else
+         wartab[arg0] = w;
+      end
+      if arg0>=6 then break; end
+   end
+   if (arg0>5 and wartab[6]) then msg = string.gsub(msg, "$6", wartab[6]); end
+   if (arg0>4 and wartab[5]) then msg = string.gsub(msg, "$5", wartab[5]); end
+   if (arg0>3 and wartab[4]) then msg = string.gsub(msg, "$4", wartab[4]); end
+   if (arg0>2 and wartab[3]) then msg = string.gsub(msg, "$3", wartab[3]); end
+   if (arg0>1 and wartab[2]) then msg = string.gsub(msg, "$2", wartab[2]); end
+   if (arg0>0 and wartab[1]) then msg = string.gsub(msg, "$1", wartab[1]); end
+   return msg;
+end
+
+-------------------------------------------------------------------------------------------------------------------
+
 function GS_ON_OFF()
    --print("GS_ON_OFF");
    if (QTR_curr_goss=="1") then         -- wyłącz tłumaczenie - pokaż oryginalny tekst
@@ -89,39 +166,8 @@ function GS_ON_OFF()
    else                                 -- pokaż tłumaczenie
       QTR_curr_goss="1";
       local Greeting_TR = GS_Gossip[QTR_curr_hash];
-      if (string.sub(Nazwa_NPC,1,17) == "Bronze Timekeeper") then       -- wyścigi na smokach - wyjątej z sekundami: $1.$2 oraz $3.$4
-         local wartab = {0,0,0,0,0,0};                                  -- max. 6 liczb całkowitych w tekście
-         local arg0 = 0;
-         for w in string.gmatch(strtrim(QTR_GS[QTR_curr_hash]), "%d+") do
-            arg0 = arg0 + 1;
-            if (math.floor(w)>999999) then
-               wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2."):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-            elseif (math.floor(w)>99999) then
-               wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2"):gsub("(%-?)$", "%1"):reverse();    -- tu mamy kolejne cyfry z oryginału
-            elseif (math.floor(w)>999) then
-               wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)", "%1."):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-            else   
-               wartab[arg0] = w;      -- tu mamy kolejne liczby całkowite z oryginału
-            end
-         end;
-         if (arg0>5) then
-            Greeting_TR=string.gsub(Greeting_TR, "$6", wartab[6]);
-         end
-         if (arg0>4) then
-            Greeting_TR=string.gsub(Greeting_TR, "$5", wartab[5]);
-         end
-         if (arg0>3) then
-            Greeting_TR=string.gsub(Greeting_TR, "$4", wartab[4]);
-         end
-         if (arg0>2) then
-            Greeting_TR=string.gsub(Greeting_TR, "$3", wartab[3]);
-         end
-         if (arg0>1) then
-            Greeting_TR=string.gsub(Greeting_TR, "$2", wartab[2]);
-         end
-         if (arg0>0) then
-            Greeting_TR=string.gsub(Greeting_TR, "$1", wartab[1]);
-         end
+      if (string.sub(Nazwa_NPC,1,17) == "Bronze Timekeeper") then
+         Greeting_TR = QTR_FormatBronzeTimekeeper(QTR_GS[QTR_curr_hash], Greeting_TR);
       end
       if (WoWTR_Localization.lang == 'AR') then
          GossipGreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR.." ",false,GossipGreetingText,WOWTR_Font2,-5));    -- dodano na końcu twardą spację
@@ -163,36 +209,8 @@ function GS_ON_OFF2()
          for k, v in pairs(QTR_goss_optionsEN) do -- k is the button frame, v is the original English text
             k:SetText(v or ""); -- Restore original English text, add fallback
 
-            local fontStringRegion = nil;
-            local iconRegion = k.Icon; -- Get the icon region if it exists
-            local regions = { k:GetRegions() };
-             for _, region in pairs(regions) do
-                if (region:GetObjectType() == "FontString") then
-                   fontStringRegion = region;
-                   break; -- Found the font string
-                end
-             end
-
-             if fontStringRegion then
-                -- === Reset Layout to LTR (English Standard) ===
-                local leftPadding = 10; -- Default left padding for text
-
-                if iconRegion then
-                   -- 1. Position Icon on the far left
-                   iconRegion:ClearAllPoints();
-                   -- Anchor TOPLEFT of icon to TOPLEFT of button, add small offset
-                   iconRegion:SetPoint("TOPLEFT", k, "TOPLEFT", 5, -2); -- 5px from left, 2px from top
-                   leftPadding = iconRegion:GetWidth() + 5 + 5; -- Icon width + icon padding + text padding
-                end
-
-                -- 2. Position Text to the right of the Icon (or default padding)
-                fontStringRegion:ClearAllPoints();
-                fontStringRegion:SetPoint("TOPLEFT", k, "TOPLEFT", leftPadding, -2); -- Position text
-                fontStringRegion:SetJustifyH("LEFT"); -- Ensure LTR justification for text
-
-                -- Optional: Reset font if it was changed for translation
-                -- fontStringRegion:SetFont(Original_Font2, tonumber(QTR_PS["fontsize"]));
-             end
+            local fontStringRegion = QTR_GetFirstFontStringRegion(k);
+            QTR_ApplyOptionButtonLayout(k, false);
 
              -- Resize the button frame after potential text/layout changes
              if k.Resize then k:Resize() end;
@@ -205,31 +223,9 @@ function GS_ON_OFF2()
       local Greeting_TR = GS_Gossip[QTR_curr_hash] or (QTR_GS[QTR_curr_hash] or ""); -- Get translation, fallback to original
       local isArabic = (WoWTR_Localization.lang == 'AR');
 
-      -- Handle special case: Bronze Timekeeper number formatting (Keep this logic)
+      -- Handle special case: Bronze Timekeeper number formatting
       if (string.sub(Nazwa_NPC or "",1,17) == "Bronze Timekeeper") then
-         local wartab = {0,0,0,0,0,0};
-         local arg0 = 0;
-         -- Using QTR_GS[QTR_curr_hash] which holds the original English text for number extraction
-         for w in string.gmatch(strtrim(QTR_GS[QTR_curr_hash] or ""), "%d+") do
-            arg0 = arg0 + 1;
-            local num_w = tonumber(w) or 0;
-            if (num_w>999999) then
-               wartab[arg0] = tostring(math.floor(num_w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2."):gsub("(%-?)$", "%1"):reverse();
-            elseif (num_w>99999) then
-               wartab[arg0] = tostring(math.floor(num_w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2"):gsub("(%-?)$", "%1"):reverse();
-            elseif (num_w>999) then
-               wartab[arg0] = tostring(math.floor(num_w)):reverse():gsub("(%d%d%d)", "%1."):gsub("(%-?)$", "%1"):reverse();
-            else
-               wartab[arg0] = w;
-            end
-         end;
-         -- Replace placeholders in the translated text
-         if (arg0>5 and wartab[6]) then Greeting_TR=string.gsub(Greeting_TR, "$6", wartab[6]); end
-         if (arg0>4 and wartab[5]) then Greeting_TR=string.gsub(Greeting_TR, "$5", wartab[5]); end
-         if (arg0>3 and wartab[4]) then Greeting_TR=string.gsub(Greeting_TR, "$4", wartab[4]); end
-         if (arg0>2 and wartab[3]) then Greeting_TR=string.gsub(Greeting_TR, "$3", wartab[3]); end
-         if (arg0>1 and wartab[2]) then Greeting_TR=string.gsub(Greeting_TR, "$2", wartab[2]); end
-         if (arg0>0 and wartab[1]) then Greeting_TR=string.gsub(Greeting_TR, "$1", wartab[1]); end
+         Greeting_TR = QTR_FormatBronzeTimekeeper(QTR_GS[QTR_curr_hash], Greeting_TR);
       end
 
       -- Format and set main gossip text based on language
@@ -249,48 +245,11 @@ function GS_ON_OFF2()
           for k, v in pairs(QTR_goss_optionsTR) do -- k is the button frame, v is the translated text
              k:SetText(v or ""); -- Set translated text, add fallback
 
-             local fontStringRegion = nil;
-             local iconRegion = k.Icon;
-             local regions = { k:GetRegions() };
-             for _, region in pairs(regions) do
-                if (region:GetObjectType() == "FontString") then
-                   fontStringRegion = region;
-                   break;
-                end
-             end
-
-             if fontStringRegion then
-                -- Apply translated font
-                fontStringRegion:SetFont(WOWTR_Font2, tonumber(QTR_PS["fontsize"]));
-
-                -- Apply layout based on language and icon presence
-                if iconRegion and isArabic then
-                    -- === ARABIC (RTL) WITH ICON ===
-                    iconRegion:ClearAllPoints();
-                    iconRegion:SetPoint("TOPRIGHT", k, "TOPRIGHT", -10, -2); -- Icon far right
-                    fontStringRegion:ClearAllPoints();
-                    fontStringRegion:SetPoint("TOPRIGHT", iconRegion, "TOPLEFT", -5, 0); -- Text left of icon
-                    fontStringRegion:SetJustifyH("RIGHT");
-
-                elseif isArabic then
-                    -- === ARABIC (RTL) WITHOUT ICON ===
-                    fontStringRegion:ClearAllPoints();
-                    fontStringRegion:SetPoint("TOPRIGHT", k, "TOPRIGHT", -10, -2); -- Text far right
-                    fontStringRegion:SetJustifyH("RIGHT");
-
-                else
-                    -- === LTR (English, etc.) or Non-AR ===
-                    local leftPadding = 10;
-                    if iconRegion then
-                       iconRegion:ClearAllPoints();
-                       iconRegion:SetPoint("TOPLEFT", k, "TOPLEFT", 5, -2); -- Icon far left
-                       leftPadding = iconRegion:GetWidth() + 5 + 5;
-                    end
-                    fontStringRegion:ClearAllPoints();
-                    fontStringRegion:SetPoint("TOPLEFT", k, "TOPLEFT", leftPadding, -2); -- Text right of icon/padding
-                    fontStringRegion:SetJustifyH("LEFT");
-                end
-             end
+              local fontStringRegion = QTR_GetFirstFontStringRegion(k);
+              if fontStringRegion then
+                 fontStringRegion:SetFont(WOWTR_Font2, tonumber(QTR_PS["fontsize"]));
+              end
+              QTR_ApplyOptionButtonLayout(k, isArabic);
 
              -- Resize the button frame after potential text/layout changes
              if k.Resize then k:Resize() end;
@@ -366,17 +325,8 @@ function QTR_Gossip_Show()
          Nazwa_NPC = string.gsub(Nazwa_NPC, '"', '\"');
          local Origin_Text = WOWTR_DetectAndReplacePlayerName(Greeting_Text);
          local Czysty_Text = WOWTR_DeleteSpecialCodes(Origin_Text);
-         if (string.sub(Nazwa_NPC,1,17) == "Bronze Timekeeper") then    -- wyścigi na smokach - wyjątek z sekundami
-            Czysty_Text = string.gsub(Czysty_Text, "0", "");
-            Czysty_Text = string.gsub(Czysty_Text, "1", "");
-            Czysty_Text = string.gsub(Czysty_Text, "2", "");
-            Czysty_Text = string.gsub(Czysty_Text, "3", "");
-            Czysty_Text = string.gsub(Czysty_Text, "4", "");
-            Czysty_Text = string.gsub(Czysty_Text, "5", "");
-            Czysty_Text = string.gsub(Czysty_Text, "6", "");
-            Czysty_Text = string.gsub(Czysty_Text, "7", "");
-            Czysty_Text = string.gsub(Czysty_Text, "8", "");
-            Czysty_Text = string.gsub(Czysty_Text, "9", "");
+         if (string.sub(Nazwa_NPC,1,17) == "Bronze Timekeeper") then
+            Czysty_Text = (Czysty_Text or ""):gsub("%d", "");
          end
          local Hash = StringHash(Czysty_Text);
          QTR_curr_hash = Hash;
@@ -390,39 +340,8 @@ function QTR_Gossip_Show()
          
          if ( GS_Gossip[Hash] ) then   -- istnieje tłumaczenie tekstu GOSSIP tego NPC
             local Greeting_TR = GS_Gossip[Hash];
-            if (string.sub(Nazwa_NPC,1,17) == "Bronze Timekeeper") then       -- wyścigi na smokach - wyjątej z sekundami: $1.$2 oraz $3.$4
-               local wartab = {0,0,0,0,0,0};                                  -- max. 6 liczb całkowitych w tekście
-               local arg0 = 0;
-               for w in string.gmatch(strtrim(Greeting_Text), "%d+") do
-                  arg0 = arg0 + 1;
-                  if (math.floor(w)>999999) then
-                     wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2."):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-                  elseif (math.floor(w)>99999) then
-                     wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2"):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-                  elseif (math.floor(w)>999) then
-                     wartab[arg0] = tostring(math.floor(w)):reverse():gsub("(%d%d%d)", "%1."):gsub("(%-?)$", "%1"):reverse();   -- tu mamy kolejne cyfry z oryginału
-                  else
-                     wartab[arg0] = w;      -- tu mamy kolejne liczby całkowite z oryginału
-                  end
-               end;
-               if (arg0>5) then
-                  Greeting_TR=string.gsub(Greeting_TR, "$6", wartab[6]);
-               end
-               if (arg0>4) then
-                  Greeting_TR=string.gsub(Greeting_TR, "$5", wartab[5]);
-               end
-               if (arg0>3) then
-                  Greeting_TR=string.gsub(Greeting_TR, "$4", wartab[4]);
-               end
-               if (arg0>2) then
-                  Greeting_TR=string.gsub(Greeting_TR, "$3", wartab[3]);
-               end
-               if (arg0>1) then
-                  Greeting_TR=string.gsub(Greeting_TR, "$2", wartab[2]);
-               end
-               if (arg0>0) then
-                  Greeting_TR=string.gsub(Greeting_TR, "$1", wartab[1]);
-               end
+            if (string.sub(Nazwa_NPC,1,17) == "Bronze Timekeeper") then
+               Greeting_TR = QTR_FormatBronzeTimekeeper(Greeting_Text, Greeting_TR);
             end
             if (GossipTextFrame) then
                QTR_ToggleButtonGS1:SetText("Gossip-Hash="..tostring(Hash).." "..WoWTR_Localization.lang);
