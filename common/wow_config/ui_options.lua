@@ -1497,20 +1497,20 @@ function WOWTR_BlizzardOptions()
             WOWTR_slider6:SetValue(13);
          end
       end
-      WOWTR_slider6:SetValueStep(1);
-      WOWTR_slider6:SetScript("OnValueChanged", function(self, event, arg1)
-         BB_PM["fontsize"] = string.format("%d", event);
-         WOWTR_sliderVal6:SetText(BB_PM["fontsize"]);
-      end);
-      WOWTR_sliderVal6 = WOWTR_OptionPanel3:CreateFontString(nil, "ARTWORK");
+             WOWTR_slider6:SetValueStep(1);
+       WOWTR_slider6:SetScript("OnValueChanged", function(self, event, arg1)
+          CH_PM["fontsize"] = string.format("%d", event);
+          WOWTR_sliderVal6:SetText(CH_PM["fontsize"]);
+       end);
+       WOWTR_sliderVal6 = WOWTR_OptionPanel3:CreateFontString(nil, "ARTWORK");
       WOWTR_sliderVal6:SetFontObject(GameFontNormal);
       WOWTR_sliderVal6:SetJustifyH("CENTER");
       WOWTR_sliderVal6:SetJustifyV("TOP");
       WOWTR_sliderVal6:ClearAllPoints();
-      WOWTR_sliderVal6:SetPoint("CENTER", WOWTR_slider6, "CENTER", 0, -12);
-      WOWTR_sliderVal6:SetText(BB_PM["fontsize"]);
-      WOWTR_sliderVal6:SetFont(WOWTR_Font2, 13);
-   end
+             WOWTR_sliderVal6:SetPoint("CENTER", WOWTR_slider6, "CENTER", 0, -12);
+       WOWTR_sliderVal6:SetText(CH_PM and CH_PM["fontsize"] or "");
+       WOWTR_sliderVal6:SetFont(WOWTR_Font2, 13);
+    end
 
    ----- TAB 4
 
