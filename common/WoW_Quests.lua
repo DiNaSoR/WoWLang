@@ -897,7 +897,7 @@ function QTR_START()
    QTR_ToggleButton0 = CreateFrame("Button", nil, QuestFrame, "UIPanelButtonTemplate")
    QTR_ToggleButton0:SetWidth(150)
    QTR_ToggleButton0:SetHeight(20)
-   QTR_ToggleButton0:SetText("Quest ID=?")
+   QTR_ToggleButton0:SetText("QID=?")
    QTR_ToggleButton0:Show()
    QTR_ToggleButton0:ClearAllPoints()
    QTR_ToggleButton0:SetPoint("TOPLEFT", QuestFrame, "TOPLEFT", 55, -20)
@@ -907,7 +907,7 @@ function QTR_START()
    QTR_ToggleButton1 = CreateFrame("Button", nil, QuestLogPopupDetailFrame, "UIPanelButtonTemplate")
    QTR_ToggleButton1:SetWidth(150)
    QTR_ToggleButton1:SetHeight(20)
-   QTR_ToggleButton1:SetText("Quest ID=?")
+   QTR_ToggleButton1:SetText("QID=?")
    QTR_ToggleButton1:Show()
    QTR_ToggleButton1:ClearAllPoints()
    QTR_ToggleButton1:SetPoint("TOPLEFT", QuestLogPopupDetailFrame, "TOPLEFT", 45, -31)
@@ -915,9 +915,9 @@ function QTR_START()
 
    -- Button in QuestMapDetailsScrollFrame
    QTR_ToggleButton2 = CreateFrame("Button", nil, QuestMapDetailsScrollFrame, "UIPanelButtonTemplate")
-   QTR_ToggleButton2:SetWidth(150)
-   QTR_ToggleButton2:SetHeight(22)
-   QTR_ToggleButton2:SetText("Quest ID=?")
+   QTR_ToggleButton2:SetWidth(110)
+   QTR_ToggleButton2:SetHeight(21)
+   QTR_ToggleButton2:SetText("QID=?")
    QTR_ToggleButton2:Show()
    QTR_ToggleButton2:ClearAllPoints()
    QTR_ToggleButton2:SetPoint("TOPLEFT", QuestMapDetailsScrollFrame, "TOPLEFT", 96, 32)
@@ -1748,18 +1748,18 @@ function QTR_QuestPrepare(zdarzenie)
                QTR_quest_LG[QTR_quest_ID].completion = QTR_quest_EN[QTR_quest_ID].completion;    -- If the translation is missing, the original text appears.
             end
          end   
-         QTR_ToggleButton0:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
-         QTR_ToggleButton1:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
-         QTR_ToggleButton2:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
+         QTR_ToggleButton0:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
+         QTR_ToggleButton1:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
+         QTR_ToggleButton2:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
 --         if (isClassicQuestLog()) then
---            QTR_ToggleButton3:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
+--            QTR_ToggleButton3:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
 --            QTR_ToggleButton3:Enable();
 --         end
          if (isImmersion()) then
-            QTR_ToggleButton4:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
+            QTR_ToggleButton4:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
          end
          if (isStoryline() and Storyline_NPCFrame:IsVisible()) then
-            QTR_ToggleButton5:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
+            QTR_ToggleButton5:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
          end
          QTR_Translate_On(1,zdarzenie);
          if ( QTR_PS["en_first"]=="1" ) then   -- przełącz na angielski
@@ -1772,11 +1772,11 @@ function QTR_QuestPrepare(zdarzenie)
 --         if (isClassicQuestLog()) then
 --            QTR_ToggleButton3:Disable();
 --         end
-         QTR_ToggleButton0:SetText("Quest ID="..str_ID);
-         QTR_ToggleButton1:SetText("Quest ID="..str_ID);
-         QTR_ToggleButton2:SetText("Quest ID="..str_ID);
+         QTR_ToggleButton0:SetText("QID="..str_ID);
+         QTR_ToggleButton1:SetText("QID="..str_ID);
+         QTR_ToggleButton2:SetText("QID="..str_ID);
          if (isClassicQuestLog()) then
-            QTR_ToggleButton3:SetText("Quest ID="..str_ID);
+            QTR_ToggleButton3:SetText("QID="..str_ID);
          end
          if (isImmersion()) then
             QTR_ToggleButton4:Disable();
@@ -1785,17 +1785,17 @@ function QTR_QuestPrepare(zdarzenie)
                   QTR_ToggleButton4:SetText(QTR_ReverseIfAR(WoWTR_Localization.choiceQuestFirst));
                end
             else
-               QTR_ToggleButton4:SetText("Quest ID="..str_ID);
+               QTR_ToggleButton4:SetText("QID="..str_ID);
             end
          end
          if (isStoryline()) then
             QTR_ToggleButton5:Disable();
-            QTR_ToggleButton5:SetText("Quest ID="..str_ID);
+            QTR_ToggleButton5:SetText("QID="..str_ID);
          end
          if (IsDUIQuestFrame()) then
             QTR_ToggleButton6:Hide();     -- przycisk w ramce DUIQuestFrame (gossip)
             QTR_ToggleButton7:Disable();
-            QTR_ToggleButton7:SetText("Quest ID="..str_ID);
+            QTR_ToggleButton7:SetText("QID="..str_ID);
             if (TT_PS["ui1"] == "1") then
                QTR_DUIbuttons();
             end
@@ -1808,31 +1808,31 @@ function QTR_QuestPrepare(zdarzenie)
       QTR_ToggleButton1:Disable();        -- przycisk w ramce QuestLogPopupDetailFrame
       QTR_ToggleButton2:Disable();        -- przycisk w ramce QuestMapDetailsScrollFrame
       if ( QTR_QuestData[str_ID] ) then   -- ale jest tłumaczenie w bazie
-         QTR_ToggleButton1:SetText("Quest ID="..str_ID.." (EN)");
-         QTR_ToggleButton2:SetText("Quest ID="..str_ID.." (EN)");
+         QTR_ToggleButton1:SetText("QID="..str_ID.." (EN)");
+         QTR_ToggleButton2:SetText("QID="..str_ID.." (EN)");
          if (isClassicQuestLog()) then
-            QTR_ToggleButton3:SetText("Quest ID="..str_ID.." (EN)");
+            QTR_ToggleButton3:SetText("QID="..str_ID.." (EN)");
          end
          if (isImmersion()) then
-            QTR_ToggleButton4:SetText("Quest ID="..str_ID.." (EN)");
+            QTR_ToggleButton4:SetText("QID="..str_ID.." (EN)");
          end
          if (isStoryline()) then
-            QTR_ToggleButton5:SetText("Quest ID="..str_ID.." (EN)");
+            QTR_ToggleButton5:SetText("QID="..str_ID.." (EN)");
          end
       else
-         QTR_ToggleButton1:SetText("Quest ID="..str_ID);
-         QTR_ToggleButton2:SetText("Quest ID="..str_ID);
+         QTR_ToggleButton1:SetText("QID="..str_ID);
+         QTR_ToggleButton2:SetText("QID="..str_ID);
          if (isClassicQuestLog()) then
-            QTR_ToggleButton3:SetText("Quest ID="..str_ID);
+            QTR_ToggleButton3:SetText("QID="..str_ID);
          end
          if (isImmersion()) then
-            QTR_ToggleButton4:SetText("Quest ID="..str_ID);
+            QTR_ToggleButton4:SetText("QID="..str_ID);
          end
          if (isStoryline()) then
-            QTR_ToggleButton5:SetText("Quest ID="..str_ID);
+            QTR_ToggleButton5:SetText("QID="..str_ID);
          end
          if (IsDUIQuestFrame()) then
-            QTR_ToggleButton7:SetText("Quest ID="..str_ID);
+            QTR_ToggleButton7:SetText("QID="..str_ID);
          end
       end
    end   -- tłumaczenia są włączone
@@ -1871,24 +1871,24 @@ function QTR_Translate_On(typ,event)
       local numer_ID = QTR_quest_ID;
       str_ID = tostring(numer_ID);
       if (numer_ID>0 and QTR_QuestData[str_ID]) then	-- przywróć przetłumaczoną wersję napisów
-         QTR_ToggleButton0:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
-         QTR_ToggleButton1:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
-         QTR_ToggleButton2:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
+         QTR_ToggleButton0:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
+         QTR_ToggleButton1:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
+         QTR_ToggleButton2:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
          if (isClassicQuestLog()) then
-            QTR_ToggleButton3:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
+            QTR_ToggleButton3:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
          end
          if (isImmersion()) then
-            QTR_ToggleButton4:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
+            QTR_ToggleButton4:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
             if (not WOWTR_wait(0.2,QTR_Immersion)) then    -- wywołaj podmienianie danych po 0.2 sek
                -- opóźnienie 0.2 sek
             end
          end
          if (isStoryline() and Storyline_NPCFrame:IsVisible()) then
-            QTR_ToggleButton5:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
+            QTR_ToggleButton5:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
             QTR_Storyline(1);
          end
          if (IsDUIQuestFrame()) then
-            QTR_ToggleButton7:SetText("Quest ID="..QTR_quest_ID.." ("..QTR_lang..")");
+            QTR_ToggleButton7:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")");
             QTR_ToggleButton7:Enable();
          end
 
@@ -2006,19 +2006,19 @@ function QTR_Translate_Off(typ,event)
       local numer_ID = QTR_quest_ID;
       str_ID = tostring(numer_ID);
       if (numer_ID>0 and QTR_QuestData[str_ID]) then
-         QTR_ToggleButton0:SetText("Quest ID="..QTR_quest_ID.." (EN)");
-         QTR_ToggleButton1:SetText("Quest ID="..QTR_quest_ID.." (EN)");
-         QTR_ToggleButton2:SetText("Quest ID="..QTR_quest_ID.." (EN)");
+         QTR_ToggleButton0:SetText("QID="..QTR_quest_ID.." (EN)");
+         QTR_ToggleButton1:SetText("QID="..QTR_quest_ID.." (EN)");
+         QTR_ToggleButton2:SetText("QID="..QTR_quest_ID.." (EN)");
          if (isClassicQuestLog()) then
-            QTR_ToggleButton3:SetText("Quest ID="..QTR_quest_ID.." (EN)");
+            QTR_ToggleButton3:SetText("QID="..QTR_quest_ID.." (EN)");
          end
          if (isImmersion()) then
-            QTR_ToggleButton4:SetText("Quest ID="..QTR_quest_ID.." (EN)");
+            QTR_ToggleButton4:SetText("QID="..QTR_quest_ID.." (EN)");
             QTR_Immersion_OFF();
             ImmersionFrame.TalkBox.TextFrame.Text:RepeatTexts();
          end
          if (isStoryline() and Storyline_NPCFrame:IsVisible()) then
-            QTR_ToggleButton5:SetText("Quest ID="..QTR_quest_ID.." (EN)");
+            QTR_ToggleButton5:SetText("QID="..QTR_quest_ID.." (EN)");
             QTR_Storyline_OFF(1);
          end
          local WOW_width = 280;
@@ -2853,23 +2853,30 @@ end
 
 function IsDUIQuestFrame()
    -- Load the DUIPlugin if it's not already loaded
-   local DUIPlugin = DUIPlugin
-   return DUIPlugin.IsDUIQuestFrame()
+    local plugin = DUIPlugin
+    if plugin and plugin.IsDUIQuestFrame then
+        return plugin.IsDUIQuestFrame()
+    end
+    return false
 end
 -------------------------------------------------------------------------------------------------------------------
 
 function QTR_DUIbuttons()
    -- Load the DUIPlugin if it's not already loaded
-   local DUIPlugin = DUIPlugin
-   DUIPlugin.QTR_DUIbuttons()
+    local plugin = DUIPlugin
+    if plugin and plugin.QTR_DUIbuttons then
+        plugin.QTR_DUIbuttons()
+    end
 end
    
 -------------------------------------------------------------------------------------------------------------------
 
 function DUI_ON_OFF()
    -- Load the DUIPlugin if it's not already loaded
-   local DUIPlugin = DUIPlugin
-   DUIPlugin.DUI_ON_OFF()
+    local plugin = DUIPlugin
+    if plugin and plugin.DUI_ON_OFF then
+        plugin.DUI_ON_OFF()
+    end
 end
 
 -------------------------------------------------------------------------------------------------------------------
@@ -2877,24 +2884,30 @@ end
 function QTR_DUIQuestFrame(event)
    --print("obsługa okna DUIQuestFrame");
    -- Load the DUIPlugin if it's not already loaded
-   local DUIPlugin = DUIPlugin
-   DUIPlugin.QTR_DUIQuestFrame(event)
+    local plugin = DUIPlugin
+    if plugin and plugin.QTR_DUIQuestFrame then
+        plugin.QTR_DUIQuestFrame(event)
+    end
 end
 
 -------------------------------------------------------------------------------------------------------------------
 
 function GossipDUI_ON_OFF()
    -- Load the DUIPlugin if it's not already loaded
-   local DUIPlugin = DUIPlugin
-   DUIPlugin.GossipDUI_ON_OFF()
+    local plugin = DUIPlugin
+    if plugin and plugin.GossipDUI_ON_OFF then
+        plugin.GossipDUI_ON_OFF()
+    end
 end
 
 -------------------------------------------------------------------------------------------------------------------
 
 function QTR_DUIGossipFrame()
    -- Load the DUIPlugin if it's not already loaded
-   local DUIPlugin = DUIPlugin
-   DUIPlugin.QTR_DUIGossipFrame()
+    local plugin = DUIPlugin
+    if plugin and plugin.QTR_DUIGossipFrame then
+        plugin.QTR_DUIGossipFrame()
+    end
 end
 
 -------------------------------------------------------------------------------------------------------------------
@@ -2956,13 +2969,21 @@ end
 
 -- Function to restore special codes
 function RestoreWoWSpecialCodes(msg, specialCodes)
-   return msg:gsub("\002(%d+)\001", function(i)
-       return specialCodes[tonumber(i)]
+   if not specialCodes then
+      return msg
+   end
+   -- Placeholders are inserted as \001<index>\002. Support both orders for safety.
+   msg = msg:gsub("\001(%d+)\002", function(i)
+      return specialCodes[tonumber(i)]
    end)
+   msg = msg:gsub("\002(%d+)\001", function(i)
+      return specialCodes[tonumber(i)]
+   end)
+   return msg
 end
 
 function WOW_ZmienKody(message, target)
-   msg = message;
+   local msg = message;
    if (WoWTR_Localization.lang == 'AR') then
       msg = string.gsub(msg, "{N}", "YOUR_NAME");
       msg = string.gsub(msg, "{B}", "NEW_LINE");
@@ -3368,6 +3389,7 @@ function QTR_ExpandUnitInfo(msg, OnObjectives, AR_obj, AR_font, AR_corr, AR_RIGH
          _corr = AR_corr;
       end
 
+      local specialCodes, prefix
       msg, specialCodes, prefix = HandleWoWSpecialCodes(msg)
 
       msg = string.gsub(msg, "{n}", "\n");
@@ -3425,6 +3447,7 @@ function QTR_ReverseIfAR(txt)
       local msg = WOW_ZmienKody(txt);
       
       -- Handle WoW special codes using HandleWoWSpecialCodes
+      local specialCodes, prefix
       msg, specialCodes, prefix = HandleWoWSpecialCodes(msg)
       
       -- Apply simple text replacements
