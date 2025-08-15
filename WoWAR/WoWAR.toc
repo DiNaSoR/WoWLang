@@ -29,6 +29,14 @@ Translations\Tooltips_AR.lua
 
 WoW_Localization_AR.lua
 WoW_Core.lua
+Config\Shared.lua
+Config\Tab1_Quests.lua
+Config\Tab2_Bubbles.lua
+Config\Tab3_Movies.lua
+Config\Tab4_TutorialsUI.lua
+Config\Tab5_Books.lua
+Config\Tab6_Tooltips.lua
+Config\Tab9_About.lua
 WoW_Config.lua
 WoW_Tooltips.lua
 
