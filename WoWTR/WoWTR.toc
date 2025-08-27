@@ -31,10 +31,25 @@ Translations\Tooltips_TR.lua
 WoW_Localization_TR.lua
 
 WoW_Core.lua
-WoW_Config.lua
+Config/Helpers.lua
+Config/Init.lua
+Config/Minimap.lua
+Config/Tabs/General.lua
+Config/Tabs/Bubbles.lua
+Config/Tabs/Subtitles.lua
+Config/Tabs/UI.lua
+Config/Tabs/Books.lua
+Config/Tabs/Tooltips.lua
+Config/Tabs/About.lua
 WoW_Tooltips.lua
 
+RTL.lua
 WoW_Quests.lua
+Quests/Utils.lua
+Quests/Gossip.lua
+Quests/Main.lua
+Quests/Tracker.lua
+Quests/UI.lua
 WoW_Bubbles.lua
 WoW_MovieSubtitles.lua
 WoW_Tutorials.lua
