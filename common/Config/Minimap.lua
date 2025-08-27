@@ -1,15 +1,20 @@
 -- Minimap button setup using Ace/LDB
 -------------------------------------------------------------------------------------------------------
 
-if ((GetLocale() == "enUS") or (GetLocale() == "enGB")) then
-  local addon = LibStub("AceAddon-3.0"):NewAddon(WoWTR_Localization.addonName, "AceConsole-3.0")
-  WOWTR_icon = LibStub("LibDBIcon-1.0");
-  WOWTR_minimapButton = LibStub("LibDataBroker-1.1"):NewDataObject("WOWTR_LDB", {
+local LDB = LibStub("LibDataBroker-1.1", true)
+local LDBIcon = LibStub("LibDBIcon-1.0", true)
+
+if LDB and LDBIcon then
+  WOWTR_minimapButton = LDB:NewDataObject("WOWTR_LDB", {
     type = "data source",
     text = "WOWTR_LDB",
     icon = WoWTR_Localization.mainFolder .. "\\Images\\icon.png",
     OnClick = function()
-      Settings.OpenToCategory(WOWTR.CategoryID);
+      if LibStub("AceConfigDialog-3.0", true) then
+        LibStub("AceConfigDialog-3.0"):Open("WOWTR")
+      elseif Settings and WOWTR and WOWTR.CategoryID then
+        Settings.OpenToCategory(WOWTR.CategoryID)
+      end
     end,
     OnTooltipShow = function(tooltip)
       if (WoWTR_Localization.lang == 'AR') then
@@ -24,10 +29,28 @@ if ((GetLocale() == "enUS") or (GetLocale() == "enGB")) then
     end,
   })
 
-  function addon:OnInitialize()
-    WOWTR.db = LibStub("AceDB-3.0"):New("WoWTR_minimapDB", { profile = { minimap = { hide = false, minimapPos = 238, }, }, });
-    WOWTR_icon:Register("WOWTR_LDB", WOWTR_minimapButton, WOWTR.db.profile.minimap);
+  -- Register icon using unified AceDB when available (set in Config/Main.lua)
+  local function TryRegisterIcon()
+    if WOWTR and WOWTR.db and WOWTR.db.profile and WOWTR.db.profile.minimap then
+      LDBIcon:Register("WOWTR_LDB", WOWTR_minimapButton, WOWTR.db.profile.minimap)
+      if WOWTR.db.profile.minimap.hide then
+        LDBIcon:Hide("WOWTR_LDB")
+      else
+        LDBIcon:Show("WOWTR_LDB")
+      end
+      return true
+    end
+    return false
+  end
+
+  -- Attempt now; if DB not ready yet, retry shortly after ADDON_LOADED
+  if not TryRegisterIcon() then
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("ADDON_LOADED")
+    f:SetScript("OnEvent", function(self, event, name)
+      if TryRegisterIcon() then
+        self:UnregisterEvent("ADDON_LOADED")
+      end
+    end)
   end
 end
-
-

@@ -17,7 +17,7 @@ function Quests.UI.QuestScrollFrame_OnShow()
          local _font1, _size1 = QuestScrollFrame.Contents.StoryHeader.Progress:GetFont()
          QuestScrollFrame.Contents.StoryHeader.Progress:SetText(txt)
          QuestScrollFrame.Contents.StoryHeader.Progress:SetFont(WOWTR_Font2, _size1)
-         if ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL() then
+         if Quests.Utils and Quests.Utils.IsRTL and Quests.Utils.IsRTL() then
             QuestScrollFrame.Contents.StoryHeader.Progress:ClearAllPoints()
             QuestScrollFrame.Contents.StoryHeader.Progress:SetPoint("TOPRIGHT", QuestScrollFrame.Contents.StoryHeader, "TOPRIGHT", -10, -40)
             QuestScrollFrame.Contents.StoryHeader.Progress:SetJustifyH("RIGHT")
@@ -71,4 +71,3 @@ function QTR_QuestScrollFrame_OnShow() return Quests.UI.QuestScrollFrame_OnShow(
 function QTR_QuestFrameButton_OnClick() return Quests.UI.QuestFrameButton_OnClick() end
 function QTR_QuestFrameWithoutOpenQuestFrame() return Quests.UI.QuestFrameWithoutOpenQuestFrame() end
 function QTR_Quest_Next() return Quests.UI.Quest_Next() end
-

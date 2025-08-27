@@ -29,22 +29,27 @@ WoW-Lang offers a suite of modules that translate various aspects of the game, i
 
 ### Configuration ⚙️
 
-Each language addon offers a comprehensive configuration panel accessible through the game's interface options. You can customize:
+The addon uses Ace3 for a clean, unified settings UI.
 
-* **Addon activation** for different modules (quests, bubbles, subtitles, etc.)
-* **Font size** for translated text
-* **Saving untranslated texts** to contribute to the project
-* **Integration** with other popular addons like Immersion, StoryLine, and Classic Quest Log
+- Open options: type `/wowtr` or click the minimap icon.
+- Tabs: General, Tooltips/UI, Bubbles, Subtitles, Books, About/Reset.
+- Profiles: switch/copy/reset profiles from the “Profiles” pane.
+- Fonts: pick any LibSharedMedia font (or use the bundled locale fonts) and adjust size.
+- Integrations: toggles for Immersion, Storyline, ClassicQuestLog, DialogueUI.
 
 ---
 
 ### Contributing 🤝
 
-We encourage everyone to contribute to WoW-Lang! Here are some ways you can help:
+We encourage everyone to contribute to WoW-Lang! Start here:
 
-🌐 **Translate missing texts:** Help us complete the translation database by translating untranslated texts saved by the addon.  
-🐛 **Report bugs:** If you encounter any issues or errors, please report them in the Issues section of this repository.  
-📢 **Spread the word:** Help us reach more players by sharing WoW-Lang with your friends and communities.
+- Read the contributor guide: see `CONTRIBUTING.md` (tabs, DB defaults, migration, TOC changes).
+- Architecture and conventions: see `AGENTS.md` (project layout, coding style, Ace3 config architecture).
+- Ways to help:
+  - 🌐 Translate missing texts saved by the addon.
+  - 🐛 Report bugs in GitHub Issues with screenshots/logs.
+  - 📢 Spread the word in your language communities.
+
 
 ---
 

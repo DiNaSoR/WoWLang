@@ -71,45 +71,20 @@ end
 -- Initialize buttons, hooks, and tracker headers
 function Quests.Start()
    -- Button in QuestFrame (NPC)
-   QTR_ToggleButton0 = CreateFrame("Button", nil, QuestFrame, "UIPanelButtonTemplate")
-   QTR_ToggleButton0:SetWidth(150)
-   QTR_ToggleButton0:SetHeight(20)
-   QTR_ToggleButton0:SetText("QID=?")
-   QTR_ToggleButton0:Show()
-   QTR_ToggleButton0:ClearAllPoints()
-   QTR_ToggleButton0:SetPoint("TOPLEFT", QuestFrame, "TOPLEFT", 55, -20)
-   QTR_ToggleButton0:SetScript("OnClick", Quests.ToggleTranslation)
+   QTR_ToggleButton0 = Quests.Utils.CreateButton(QuestFrame, 150, 20, "QID=?", "TOPLEFT", QuestFrame, "TOPLEFT", 55, -20, Quests.ToggleTranslation)
+   if QTR_ToggleButton0 then QTR_ToggleButton0:Show() end
 
    -- Button in QuestLogPopupDetailFrame
-   QTR_ToggleButton1 = CreateFrame("Button", nil, QuestLogPopupDetailFrame, "UIPanelButtonTemplate")
-   QTR_ToggleButton1:SetWidth(150)
-   QTR_ToggleButton1:SetHeight(20)
-   QTR_ToggleButton1:SetText("QID=?")
-   QTR_ToggleButton1:Show()
-   QTR_ToggleButton1:ClearAllPoints()
-   QTR_ToggleButton1:SetPoint("TOPLEFT", QuestLogPopupDetailFrame, "TOPLEFT", 45, -31)
-   QTR_ToggleButton1:SetScript("OnClick", Quests.ToggleTranslation)
+   QTR_ToggleButton1 = Quests.Utils.CreateButton(QuestLogPopupDetailFrame, 150, 20, "QID=?", "TOPLEFT", QuestLogPopupDetailFrame, "TOPLEFT", 45, -31, Quests.ToggleTranslation)
+   if QTR_ToggleButton1 then QTR_ToggleButton1:Show() end
 
    -- Button in QuestMapDetailsScrollFrame
-   QTR_ToggleButton2 = CreateFrame("Button", nil, QuestMapDetailsScrollFrame, "UIPanelButtonTemplate")
-   QTR_ToggleButton2:SetWidth(110)
-   QTR_ToggleButton2:SetHeight(21)
-   QTR_ToggleButton2:SetText("QID=?")
-   QTR_ToggleButton2:Show()
-   QTR_ToggleButton2:ClearAllPoints()
-   QTR_ToggleButton2:SetPoint("TOPLEFT", QuestMapDetailsScrollFrame, "TOPLEFT", 96, 32)
-   QTR_ToggleButton2:SetScript("OnClick", Quests.ToggleTranslation)
+   QTR_ToggleButton2 = Quests.Utils.CreateButton(QuestMapDetailsScrollFrame, 110, 21, "QID=?", "TOPLEFT", QuestMapDetailsScrollFrame, "TOPLEFT", 96, 32, Quests.ToggleTranslation)
+   if QTR_ToggleButton2 then QTR_ToggleButton2:Show() end
 
    -- Button in GossipFrame
-   QTR_ToggleButtonGS1 = CreateFrame("Button", nil, GossipFrame, "UIPanelButtonTemplate")
-   QTR_ToggleButtonGS1:SetWidth(220)
-   QTR_ToggleButtonGS1:SetHeight(20)
-   QTR_ToggleButtonGS1:SetText("Gossip-Hash=?")
-   QTR_ToggleButtonGS1:ClearAllPoints()
-   QTR_ToggleButtonGS1:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 75, -20)
-   QTR_ToggleButtonGS1:Disable()
-   QTR_ToggleButtonGS1:Show()
-   QTR_ToggleButtonGS1:SetScript("OnClick", GS_ON_OFF)
+   QTR_ToggleButtonGS1 = Quests.Utils.CreateButton(GossipFrame, 220, 20, "Gossip-Hash=?", "TOPLEFT", GossipFrame, "TOPLEFT", 75, -20, GS_ON_OFF)
+   if QTR_ToggleButtonGS1 then QTR_ToggleButtonGS1:Disable(); QTR_ToggleButtonGS1:Show() end
 
    QTR_IconAI = GossipFrame:CreateTexture(nil, "OVERLAY")
    QTR_IconAI:ClearAllPoints()
@@ -209,4 +184,3 @@ function QTR_ON_OFF() return Quests.ToggleTranslation() end
 function QTR_SaveQuest(event) return Quests.SaveQuest(event) end
 function QTR_GetQuestID() return Quests.GetQuestID() end
 function QTR_START() return Quests.Start() end
-

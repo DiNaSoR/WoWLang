@@ -54,6 +54,54 @@ function Quests.Utils.ApplyOptionButtonLayout(buttonFrame, isRTL)
    end
 end
 
+-- Return current RTL state using centralized helper
+function Quests.Utils.IsRTL()
+  return ns and ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL() or false
+end
+
+-- Apply text with proper shaping/justification for RTL or LTR
+-- fs: FontString; text: string; font: path or FontObject; size: number
+-- rtlOffset: number (optional negative width correction); ltrJustify: "LEFT" or "CENTER" or "RIGHT" (defaults to LEFT)
+function Quests.Utils.ApplyRTLText(fs, text, font, size, rtlOffset, ltrJustify)
+  if not fs or not text then return end
+  local isRTL = Quests.Utils.IsRTL()
+  if font and size then fs:SetFont(font, size) end
+  if isRTL then
+    fs:SetText(QTR_ExpandUnitInfo(text, false, fs, font or WOWTR_Font2, rtlOffset or -5))
+    if ns and ns.RTL and ns.RTL.JustifyFontString then
+      ns.RTL.JustifyFontString(fs, "LEFT")
+    else
+      fs:SetJustifyH("RIGHT")
+    end
+  else
+    fs:SetText(QTR_ExpandUnitInfo(text, false, fs, font or WOWTR_Font2))
+    local justify = ltrJustify or "LEFT"
+    if ns and ns.RTL and ns.RTL.JustifyFontString then
+      ns.RTL.JustifyFontString(fs, justify)
+    else
+      fs:SetJustifyH(justify)
+    end
+  end
+end
+
+-- Create a simple UIPanelButton with common properties
+-- Returns the created button
+function Quests.Utils.CreateButton(parent, width, height, text, point, relativeTo, relativePoint, x, y, onClick)
+  if not parent then return nil end
+  local btn = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+  if width then btn:SetWidth(width) end
+  if height then btn:SetHeight(height) end
+  if text then btn:SetText(text) end
+  btn:ClearAllPoints()
+  if point and relativeTo and relativePoint then
+    btn:SetPoint(point, relativeTo, relativePoint, x or 0, y or 0)
+  end
+  if type(onClick) == "function" then
+    btn:SetScript("OnClick", onClick)
+  end
+  return btn
+end
+
 -- Bronze Timekeeper number formatting and placeholder substitution ($1..$6)
 function Quests.Utils.FormatBronzeTimekeeper(sourceText, messageText)
    local src = strtrim(sourceText or "")
@@ -82,4 +130,3 @@ function Quests.Utils.FormatBronzeTimekeeper(sourceText, messageText)
    if (arg0>0 and wartab[1]) then msg = string.gsub(msg, "$1", wartab[1]) end
    return msg
 end
-

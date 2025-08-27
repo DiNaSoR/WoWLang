@@ -26,7 +26,7 @@ function Quests.Tracker.ObjectiveTrackerFrame_Titles()
       ScenarioObjectiveTracker.Header.Text:SetText(QTR_ReverseIfAR(WoWTR_Localization.scenariodung))
       ScenarioObjectiveTracker.Header.Text:SetFont(WOWTR_Font2, 14)
 
-      if ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL() then
+      if Quests.Utils and Quests.Utils.IsRTL and Quests.Utils.IsRTL() then
          ObjectiveTrackerFrame.Header.Text:SetFont(WOWTR_Font1, 14)
          QuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font1, 14)
          WorldQuestObjectiveTracker.Header.Text:SetFont(WOWTR_Font1, 14)
@@ -65,16 +65,13 @@ function Quests.Tracker.OverrideObjectiveTrackerHeader(tracker, quest, directID)
    if ( QTR_QuestData[tostring(questID)] ) and (QTR_PS["transtitle"] == "1") then
       local questDataTitle = QTR_QuestData[tostring(questID)]["Title"]
       if questDataTitle then
-         if ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL() then
-            block.HeaderText:SetFont(WOWTR_Font1, 14)
+         local size = 12
+         if Quests.Utils and Quests.Utils.IsRTL and Quests.Utils.IsRTL() then size = 14 end
+         if Quests.Utils and Quests.Utils.ApplyRTLText then
+            Quests.Utils.ApplyRTLText(block.HeaderText, questDataTitle, (Quests.Utils.IsRTL() and WOWTR_Font1 or WOWTR_Font2), size, -50, "LEFT")
          else
-            block.HeaderText:SetFont(WOWTR_Font2, 12)
-         end
-         block.HeaderText:SetText(QTR_ExpandUnitInfo(questDataTitle, false, block.HeaderText, WOWTR_Font1, -50))
-         if ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL() then
-            block.HeaderText:SetJustifyH("RIGHT")
-         else
-            block.HeaderText:SetJustifyH("LEFT")
+            block.HeaderText:SetText(QTR_ExpandUnitInfo(questDataTitle, false, block.HeaderText, WOWTR_Font1, -50))
+            block.HeaderText:SetJustifyH((ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL()) and "RIGHT" or "LEFT")
          end
       end
    end
@@ -84,7 +81,7 @@ end
 function Quests.Tracker.QuestLogQuests_Update()
    if not (QTR_PS["active"] == "1" and QTR_PS["tracker"] == "1") then return end
 
-   local isRTL = ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL() or false
+   local isRTL = Quests.Utils and Quests.Utils.IsRTL and Quests.Utils.IsRTL() or false
    local defaultJustification = "LEFT"
    local rtlJustification = "RIGHT"
 
@@ -189,4 +186,3 @@ end
 function QTR_ObjectiveTrackerFrame_Titles() return Quests.Tracker.ObjectiveTrackerFrame_Titles() end
 function QTR_QuestLogQuests_Update() return Quests.Tracker.QuestLogQuests_Update() end
 function QTR_OverrideObjectiveTrackerHeader(tracker, quest, directID) return Quests.Tracker.OverrideObjectiveTrackerHeader(tracker,quest,directID) end
-
