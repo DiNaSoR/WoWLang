@@ -38,3 +38,4 @@ function WOWTR.Config.Groups.Tooltips()
   }
 end
 
+

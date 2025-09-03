@@ -56,3 +56,4 @@ function WOWTR.Config.Groups.General()
   }
 end
 
+

@@ -25,3 +25,4 @@ function WOWTR.Config.Groups.Bubbles()
   }
 end
 
+
