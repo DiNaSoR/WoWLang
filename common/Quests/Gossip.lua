@@ -12,12 +12,66 @@ local function isRTL()
    return (Quests.Utils and Quests.Utils.IsRTL and Quests.Utils.IsRTL()) or false
 end
 
+-- Store original fonts so we can restore when switching back to EN
+local OriginalGossipFonts = setmetatable({}, { __mode = "k" })
+local function RememberFont(fs)
+   if fs and fs.GetFont and not OriginalGossipFonts[fs] then
+      local font, size, flags = fs:GetFont()
+      OriginalGossipFonts[fs] = { font = font, size = size, flags = flags }
+   end
+end
+
+local function RestoreOriginalFont(fs)
+   if not fs then return end
+   local o = OriginalGossipFonts[fs]
+   if o and o.font then fs:SetFont(o.font, o.size, o.flags) end
+end
+
+local function ApplyFontToGossipScrollTarget()
+   local size = tonumber(QTR_PS and QTR_PS["fontsize"] or 13)
+   local fontPath = WOWTR_Font2
+   local target = GossipFrame and GossipFrame.GreetingPanel and GossipFrame.GreetingPanel.ScrollBox and GossipFrame.GreetingPanel.ScrollBox.ScrollTarget
+   if not (target and fontPath and size) then return end
+   local function setFonts(frame)
+      if not (frame and frame.GetRegions) then return end
+      local regions = { frame:GetRegions() }
+      for _, region in pairs(regions) do
+         if region and region.GetObjectType and region:GetObjectType() == "FontString" then
+            RememberFont(region)
+            region:SetFont(fontPath, size)
+         end
+      end
+   end
+   setFonts(target)
+   local children = { target:GetChildren() }
+   for _, child in ipairs(children) do setFonts(child) end
+end
+
+local function RestoreFontInGossipScrollTarget()
+   local target = GossipFrame and GossipFrame.GreetingPanel and GossipFrame.GreetingPanel.ScrollBox and GossipFrame.GreetingPanel.ScrollBox.ScrollTarget
+   if not target then return end
+   local function restoreFonts(frame)
+      if not (frame and frame.GetRegions) then return end
+      local regions = { frame:GetRegions() }
+      for _, region in pairs(regions) do
+         if region and region.GetObjectType and region:GetObjectType() == "FontString" then
+            RestoreOriginalFont(region)
+         end
+      end
+   end
+   restoreFonts(target)
+   local children = { target:GetChildren() }
+   for _, child in ipairs(children) do restoreFonts(child) end
+end
+
 function Quests.Gossip.ToggleNPCGossip()
    if (QTR_curr_goss=="1") then         -- turn off translation, show original
       QTR_curr_goss="0"
       if GossipGreetingText and QTR_GS then
          GossipGreetingText:SetText(QTR_GS[QTR_curr_hash])
-         if ns and ns.RTL and ns.RTL.JustifyFontString then ns.RTL.JustifyFontString(GossipGreetingText, "LEFT") else GossipGreetingText:SetJustifyH("LEFT") end
+         GossipGreetingText:SetJustifyH("LEFT")
+         local size = tonumber(QTR_PS and QTR_PS["fontsize"] or 13)
+         if WOWTR_Font2 then GossipGreetingText:SetFont(WOWTR_Font2, size) end
       end
       if QTR_ToggleButtonGS1 then
          QTR_ToggleButtonGS1:SetText("Gossip-Hash="..tostring(QTR_curr_hash).." EN")
@@ -27,10 +81,20 @@ function Quests.Gossip.ToggleNPCGossip()
             if k and k.SetText then
                k:SetText(v)
                if Quests.Utils and Quests.Utils.ApplyOptionButtonLayout then Quests.Utils.ApplyOptionButtonLayout(k, false) end
+               local fr = Quests.Utils and Quests.Utils.GetFirstFontStringRegion and Quests.Utils.GetFirstFontStringRegion(k)
+               if fr and WOWTR_Font2 and QTR_PS then fr:SetFont(WOWTR_Font2, tonumber(QTR_PS["fontsize"])) end
                if k.Resize then k:Resize() end
             end
          end
       end
+      -- Also restore any ScrollBox choice strings we cached
+      if QTR_goss_optionsEN then
+         for frame, original in pairs(QTR_goss_optionsEN) do
+            if frame and frame.SetText then frame:SetText(original or "") end
+            if frame and frame.Resize then frame:Resize() end
+         end
+      end
+      RestoreFontInGossipScrollTarget()
    else                                   -- show translation
       QTR_curr_goss="1"
       local Greeting_TR = GS_Gossip and GS_Gossip[QTR_curr_hash]
@@ -50,10 +114,16 @@ function Quests.Gossip.ToggleNPCGossip()
             if k and k.SetText then
                k:SetText(v)
                if Quests.Utils and Quests.Utils.ApplyOptionButtonLayout then Quests.Utils.ApplyOptionButtonLayout(k, isRTL()) end
+               local fr = Quests.Utils and Quests.Utils.GetFirstFontStringRegion and Quests.Utils.GetFirstFontStringRegion(k)
+               if fr and WOWTR_Font2 and QTR_PS then fr:SetFont(WOWTR_Font2, tonumber(QTR_PS["fontsize"])) end
                if k.Resize then k:Resize() end
             end
          end
       end
+      -- Ensure fonts applied for pooled children after this toggle
+      ApplyFontToGossipScrollTarget()
+      StartDelayedFunction(ApplyFontToGossipScrollTarget, 0.02)
+      StartDelayedFunction(ApplyFontToGossipScrollTarget, 0.10)
    end
 end
 
@@ -63,7 +133,8 @@ function Quests.Gossip.ToggleQuestFrame()
       QTR_curr_goss="0"
       if GreetingText then
          GreetingText:SetText(QTR_GS[QTR_curr_hash] or "")
-         if ns and ns.RTL and ns.RTL.JustifyFontString then ns.RTL.JustifyFontString(GreetingText, "LEFT") else GreetingText:SetJustifyH("LEFT") end
+         GreetingText:SetJustifyH("LEFT")
+         RestoreOriginalFont(GreetingText)
       end
       if QTR_ToggleButton0 then
          QTR_ToggleButton0:SetText("Gossip-Hash="..tostring(QTR_curr_hash).." EN")
@@ -74,10 +145,13 @@ function Quests.Gossip.ToggleQuestFrame()
             if k and k.SetText then
                k:SetText(v or "")
                if Quests.Utils and Quests.Utils.ApplyOptionButtonLayout then Quests.Utils.ApplyOptionButtonLayout(k, false) end
+               local fr = Quests.Utils and Quests.Utils.GetFirstFontStringRegion and Quests.Utils.GetFirstFontStringRegion(k)
+               if fr then RestoreOriginalFont(fr) end
                if k.Resize then k:Resize() end
             end
          end
       end
+      RestoreFontInGossipScrollTarget()
    else                                   -- switch to translated (potentially RTL)
       if QTR_display_constants then QTR_display_constants(1) end
       QTR_curr_goss="1"
@@ -88,6 +162,7 @@ function Quests.Gossip.ToggleQuestFrame()
          end
       end
       if GreetingText and Quests.Utils and Quests.Utils.ApplyRTLText then
+         RememberFont(GreetingText)
          Quests.Utils.ApplyRTLText(GreetingText, (Greeting_TR or "") .. NONBREAKINGSPACE, WOWTR_Font2, tonumber(QTR_PS and QTR_PS["fontsize"] or 13), -5, "LEFT")
       end
       if QTR_ToggleButton0 then
@@ -99,6 +174,7 @@ function Quests.Gossip.ToggleQuestFrame()
                k:SetText(v or "")
                local fontStringRegion = Quests.Utils and Quests.Utils.GetFirstFontStringRegion and Quests.Utils.GetFirstFontStringRegion(k)
                if fontStringRegion and WOWTR_Font2 and QTR_PS then
+                  RememberFont(fontStringRegion)
                   fontStringRegion:SetFont(WOWTR_Font2, tonumber(QTR_PS["fontsize"]))
                end
                if Quests.Utils and Quests.Utils.ApplyOptionButtonLayout then Quests.Utils.ApplyOptionButtonLayout(k, isRTL()) end
@@ -167,6 +243,11 @@ function Quests.Gossip.Show()
       for _, GTxtframe in GossipFrame.GreetingPanel.ScrollBox:EnumerateFrames() do
          if (GTxtframe.GreetingText) then GossipTextFrame = GTxtframe end
       end
+
+      -- Ensure fonts are applied across all ScrollTarget descendants (freshly pooled widgets)
+      ApplyFontToGossipScrollTarget()
+      StartDelayedFunction(ApplyFontToGossipScrollTarget, 0.02)
+      StartDelayedFunction(ApplyFontToGossipScrollTarget, 0.10)
 
       if (Greeting_Text and (string.find(Greeting_Text, NONBREAKINGSPACE) == nil)) then
          Nazwa_NPC = string.gsub(Nazwa_NPC, '"', '\\"')
@@ -282,6 +363,9 @@ function Quests.Gossip.Show()
                end
                if transTR then
                   local GO_height = GTxtframe:GetHeight()
+                  -- Cache original and translated texts for toggling
+                  QTR_goss_optionsEN[GTxtframe] = GTxtframe:GetText()
+                  QTR_goss_optionsTR[GTxtframe] = transTR
                   GTxtframe:SetText(transTR)
                   if GTxtframe.Resize then GTxtframe:Resize() end
                   if (GossipTextFrame and GO_resized > 0) then
@@ -414,6 +498,10 @@ function Quests.Gossip.OnQuestFrame()
                   QTR_goss_optionsTR[GText] = transTR
                   GText:SetText(transTR)
                   if Quests.Utils and Quests.Utils.ApplyOptionButtonLayout then Quests.Utils.ApplyOptionButtonLayout(GText, (Quests.Utils.IsRTL and Quests.Utils.IsRTL() or false)) end
+                  do
+                     local fr = Quests.Utils and Quests.Utils.GetFirstFontStringRegion and Quests.Utils.GetFirstFontStringRegion(GText)
+                     if fr and WOWTR_Font2 and QTR_PS then fr:SetFont(WOWTR_Font2, tonumber(QTR_PS["fontsize"])) end
+                  end
                   if GText.Resize then GText:Resize() end
                   if (GText:GetHeight() > GO_height+1) then
                      GO_resized = GO_resized + GText:GetHeight() - GO_height
@@ -438,6 +526,7 @@ function Quests.Gossip.OnQuestFrame()
                      end
                      fontStringRegion:ClearAllPoints(); fontStringRegion:SetPoint("TOPLEFT", GText, "TOPLEFT", leftPadding, -2)
                      fontStringRegion:SetJustifyH("LEFT")
+                     if WOWTR_Font2 and QTR_PS then fontStringRegion:SetFont(WOWTR_Font2, tonumber(QTR_PS["fontsize"])) end
                   end
                   if GText.Resize then GText:Resize() end
                   if (GText:GetHeight() > GO_height+1) then

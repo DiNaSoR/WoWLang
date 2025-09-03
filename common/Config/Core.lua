@@ -248,9 +248,9 @@ function C.Init()
     C.MigrateLegacyToDB()
     C.SyncGlobalsFromDB()
     if WOWTR.db.RegisterCallback then
-      WOWTR.db:RegisterCallback(WOWTR, "OnProfileChanged", C.SyncGlobalsFromDB)
-      WOWTR.db:RegisterCallback(WOWTR, "OnProfileCopied", C.SyncGlobalsFromDB)
-      WOWTR.db:RegisterCallback(WOWTR, "OnProfileReset", C.SyncGlobalsFromDB)
+      WOWTR.db:RegisterCallback("OnProfileChanged", C.SyncGlobalsFromDB)
+      WOWTR.db:RegisterCallback("OnProfileCopied", C.SyncGlobalsFromDB)
+      WOWTR.db:RegisterCallback("OnProfileReset", C.SyncGlobalsFromDB)
     end
   end
   if AceConfig and AceConfigDialog then

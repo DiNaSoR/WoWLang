@@ -29,29 +29,40 @@ function Quests.Utils.ApplyOptionButtonLayout(buttonFrame, isRTL)
    if not fontStringRegion then return end
    local iconRegion = buttonFrame.Icon
 
+   -- Normalize height: make icon and text share vertical center and similar height
+   local _, currentFontSize = fontStringRegion:GetFont()
+   local textHeight = fontStringRegion:GetStringHeight() or currentFontSize or 13
+   local targetIconSize = math.max(currentFontSize or 13, 14)
+   if iconRegion and iconRegion.SetSize then iconRegion:SetSize(targetIconSize, targetIconSize) end
+   if fontStringRegion.SetJustifyV then fontStringRegion:SetJustifyV("MIDDLE") end
+
    if isRTL then
       if iconRegion then
          iconRegion:ClearAllPoints()
-         iconRegion:SetPoint("TOPRIGHT", buttonFrame, "TOPRIGHT", -10, -2)
+         iconRegion:SetPoint("RIGHT", buttonFrame, "RIGHT", -20, 0)
          fontStringRegion:ClearAllPoints()
-         fontStringRegion:SetPoint("TOPRIGHT", iconRegion, "TOPLEFT", -5, 0)
+         fontStringRegion:SetPoint("RIGHT", iconRegion, "LEFT", -5, 0)
          fontStringRegion:SetJustifyH("RIGHT")
       else
          fontStringRegion:ClearAllPoints()
-         fontStringRegion:SetPoint("TOPRIGHT", buttonFrame, "TOPRIGHT", -10, -2)
+         fontStringRegion:SetPoint("RIGHT", buttonFrame, "RIGHT", -20, 0)
          fontStringRegion:SetJustifyH("RIGHT")
       end
    else
       local leftPadding = 10
       if iconRegion then
          iconRegion:ClearAllPoints()
-         iconRegion:SetPoint("TOPLEFT", buttonFrame, "TOPLEFT", 5, -2)
+         iconRegion:SetPoint("LEFT", buttonFrame, "LEFT", 5, 0)
          leftPadding = (iconRegion.GetWidth and iconRegion:GetWidth() or 0) + 10
       end
       fontStringRegion:ClearAllPoints()
-      fontStringRegion:SetPoint("TOPLEFT", buttonFrame, "TOPLEFT", leftPadding, -2)
+      fontStringRegion:SetPoint("LEFT", buttonFrame, "LEFT", leftPadding, 0)
       fontStringRegion:SetJustifyH("LEFT")
    end
+
+   -- Ensure button height fits tallest element
+   local finalHeight = math.max(textHeight, targetIconSize) + 4
+   if buttonFrame.SetHeight then buttonFrame:SetHeight(finalHeight) end
 end
 
 -- Return current RTL state using centralized helper

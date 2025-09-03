@@ -11,6 +11,7 @@ Quests.Details = Quests.Details or {}
 -- Display translation
 function Quests.Details.TranslateOn(typ,event)
    QTR_display_constants(1)
+   QTR_curr_trans = "1"
    if (QuestNPCModelText:IsVisible() and (QTR_ModelTextHash>0)) then
       QuestNPCModelText:SetText(QTR_ExpandUnitInfo(QTR_ModelText_PL..NONBREAKINGSPACE,false,QuestNPCModelText,WOWTR_Font2,-15))
       QuestNPCModelText:SetFont(WOWTR_Font2, 13)
@@ -114,6 +115,7 @@ end
 -- Display original English text
 function Quests.Details.TranslateOff(typ,event)
    QTR_display_constants(0)
+   QTR_curr_trans = "0"
    if (QuestNPCModelText:IsVisible() and (QTR_ModelTextHash>0)) then
       QuestNPCModelText:SetText(QTR_ModelText_EN)
       QuestNPCModelText:SetFont(Original_Font2, 13)
@@ -137,6 +139,24 @@ function Quests.Details.TranslateOff(typ,event)
          end
          local WOW_width = 280
          if (QuestInfoRewardsFrame:IsVisible()) then WOW_width = 280 end
+         if QuestInfoDescriptionHeader then
+           QuestInfoDescriptionHeader:SetWidth(WOW_width + 40)
+           QuestInfoDescriptionHeader:SetFont(Original_Font1, 18)
+           QuestInfoDescriptionHeader:SetText(QTR_MessOrig.details)
+           QuestInfoDescriptionHeader:SetJustifyH("LEFT")
+         end
+         if QuestInfoObjectivesHeader then
+           QuestInfoObjectivesHeader:SetWidth(WOW_width + 10)
+           QuestInfoObjectivesHeader:SetFont(Original_Font1, 18)
+           QuestInfoObjectivesHeader:SetText(QTR_MessOrig.objectives)
+           QuestInfoObjectivesHeader:SetJustifyH("LEFT")
+         end
+         if QuestInfoRewardsFrame and QuestInfoRewardsFrame.Header then
+           QuestInfoRewardsFrame.Header:SetWidth(WOW_width + 10)
+           QuestInfoRewardsFrame.Header:SetFont(Original_Font1, 18)
+           QuestInfoRewardsFrame.Header:SetText(QTR_MessOrig.rewards)
+           QuestInfoRewardsFrame.Header:SetJustifyH("LEFT")
+         end
          QuestInfoTitleHeader:SetFont(Original_Font1, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtitle.size or 18)
          QuestProgressTitleText:SetFont(Original_Font1, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtitle.size or 18)
          QuestInfoTitleHeader:SetText(QTR_quest_EN[QTR_quest_ID].title)
@@ -217,6 +237,8 @@ end
 function QTR_Translate_On(typ, event) return Quests.Details.TranslateOn(typ, event) end
 function QTR_Translate_Off(typ, event) return Quests.Details.TranslateOff(typ, event) end
 function QTR_display_constants(lg) return Quests.Details.DisplayConstants(lg) end
+function QTR_QuestPrepare(event) return Quests.Details.QuestPrepare(event) end
+function QTR_PrepareReload() return Quests.Details.QuestPrepare() end
 
 -- Prepare quest data and switch translated view on
 function Quests.Details.QuestPrepare(event)
@@ -278,7 +300,7 @@ function Quests.Details.QuestPrepare(event)
       end
     end
 
-    QTR_curr_trans = "1"
+    QTR_curr_trans = QTR_curr_trans or "1"
     QTR_quest_EN[QTR_quest_ID].itemchoose = QTR_MessOrig.itemchoose0
     QTR_quest_EN[QTR_quest_ID].itemreceive = QTR_MessOrig.itemreceiv0
 
@@ -405,8 +427,12 @@ function Quests.Details.QuestPrepare(event)
       if (isImmersion and isImmersion() and QTR_ToggleButton4) then QTR_ToggleButton4:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")") end
       if (isStoryline and isStoryline() and Storyline_NPCFrame and Storyline_NPCFrame:IsVisible() and QTR_ToggleButton5) then QTR_ToggleButton5:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")") end
 
-      QTR_Translate_On(1, event)
-      if (QTR_PS["en_first"] == "1") then QTR_ON_OFF() end
+      if (QTR_curr_trans == "1") then
+        QTR_Translate_On(1, event)
+      else
+        QTR_Translate_Off(1, event)
+      end
+      if (QTR_PS["en_first"] == "1" and QTR_curr_trans == "1") then QTR_ON_OFF() end
     else
       -- No translation data available; leave view as EN but keep toggles consistent
       QTR_Translate_Off(1, event)
@@ -426,87 +452,7 @@ function Quests.Details.QuestPrepare(event)
   end
 end
 
--- Apply/reset constant labels and headers in quest UI
-function Quests.Details.DisplayConstants(lg)
-  local str_ID = QTR_quest_ID and tostring(QTR_quest_ID) or nil
-  local questDataExists = str_ID and QTR_QuestData and QTR_QuestData[str_ID]
-  local questLGData = questDataExists and QTR_quest_LG and QTR_quest_LG[QTR_quest_ID]
-
-  if lg == 1 then
-    local isRTL = Quests.Utils and Quests.Utils.IsRTL and Quests.Utils.IsRTL() or false
-    local WOW_width = WorldMapFrame and WorldMapFrame:IsVisible() and 245 or 265
-    local elvuiFontSize = C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtitle.size or 18
-
-    if QuestInfoObjectivesHeader then
-      QuestInfoObjectivesHeader:SetWidth(WOW_width+10)
-      QuestInfoObjectivesHeader:SetFont(WOWTR_Font1, elvuiFontSize)
-      QuestInfoObjectivesHeader:SetText(QTR_ExpandUnitInfo(QTR_Messages.objectives,false,QuestInfoObjectivesHeader,WOWTR_Font1,-10))
-      Quests.Utils.IsRTL() and QuestInfoObjectivesHeader:SetJustifyH("RIGHT") or QuestInfoObjectivesHeader:SetJustifyH("LEFT")
-    end
-    if QuestInfoDescriptionHeader then
-      QuestInfoDescriptionHeader:SetWidth(WOW_width+40)
-      QuestInfoDescriptionHeader:SetFont(WOWTR_Font1, elvuiFontSize)
-      QuestInfoDescriptionHeader:SetText(QTR_ExpandUnitInfo(QTR_Messages.details,false,QuestInfoDescriptionHeader,WOWTR_Font1,-10))
-      Quests.Utils.IsRTL() and QuestInfoDescriptionHeader:SetJustifyH("RIGHT") or QuestInfoDescriptionHeader:SetJustifyH("LEFT")
-    end
-    if QuestInfoRewardsFrame and QuestInfoRewardsFrame.Header then
-      QuestInfoRewardsFrame.Header:SetWidth(WOW_width+10)
-      QuestInfoRewardsFrame.Header:SetFont(WOWTR_Font1, elvuiFontSize)
-      QuestInfoRewardsFrame.Header:SetText(QTR_ExpandUnitInfo(QTR_Messages.rewards,false,QuestInfoRewardsFrame.Header,WOWTR_Font1,-12))
-      Quests.Utils.IsRTL() and QuestInfoRewardsFrame.Header:SetJustifyH("RIGHT") or QuestInfoRewardsFrame.Header:SetJustifyH("LEFT")
-    end
-    if QuestProgressRequiredItemsText then
-      QuestProgressRequiredItemsText:SetWidth(WOW_width+7)
-      QuestProgressRequiredItemsText:SetFont(WOWTR_Font1, elvuiFontSize)
-      QuestProgressRequiredItemsText:SetText(QTR_ExpandUnitInfo(QTR_Messages.reqitems,false,QuestProgressRequiredItemsText,WOWTR_Font1,-10))
-      Quests.Utils.IsRTL() and QuestProgressRequiredItemsText:SetJustifyH("RIGHT") or QuestProgressRequiredItemsText:SetJustifyH("LEFT")
-    end
-    if CurrentQuestsText then
-      CurrentQuestsText:SetFont(WOWTR_Font1, elvuiFontSize)
-      CurrentQuestsText:SetWidth(WOW_width)
-      CurrentQuestsText:SetText(QTR_ExpandUnitInfo(QTR_Messages.currquests,false,CurrentQuestsText,WOWTR_Font1,-30))
-      Quests.Utils.IsRTL() and CurrentQuestsText:SetJustifyH("RIGHT") or CurrentQuestsText:SetJustifyH("LEFT")
-    end
-    if AvailableQuestsText then
-      AvailableQuestsText:SetFont(WOWTR_Font1, elvuiFontSize)
-      AvailableQuestsText:SetText(QTR_ReverseIfAR(QTR_Messages.avaiquests))
-      AvailableQuestsText:SetWidth(WOW_width)
-      Quests.Utils.IsRTL() and AvailableQuestsText:SetJustifyH("RIGHT") or AvailableQuestsText:SetJustifyH("LEFT")
-    end
-  else
-    -- Reset to original Blizzard constants
-    if QuestInfoObjectivesHeader then
-      QuestInfoObjectivesHeader:SetFont(Original_Font1, 18)
-      QuestInfoObjectivesHeader:SetText(QTR_MessOrig.objectives)
-      QuestInfoObjectivesHeader:SetJustifyH("LEFT")
-    end
-    if QuestInfoDescriptionHeader then
-      QuestInfoDescriptionHeader:SetFont(Original_Font1, 18)
-      QuestInfoDescriptionHeader:SetText(QTR_MessOrig.details)
-      QuestInfoDescriptionHeader:SetJustifyH("LEFT")
-    end
-    if QuestInfoRewardsFrame and QuestInfoRewardsFrame.Header then
-      QuestInfoRewardsFrame.Header:SetFont(Original_Font1, 18)
-      QuestInfoRewardsFrame.Header:SetText(QTR_MessOrig.rewards)
-      QuestInfoRewardsFrame.Header:SetJustifyH("LEFT")
-    end
-    if QuestProgressRequiredItemsText then
-      QuestProgressRequiredItemsText:SetFont(Original_Font1, 18)
-      QuestProgressRequiredItemsText:SetText(QTR_MessOrig.reqitems)
-      QuestProgressRequiredItemsText:SetJustifyH("LEFT")
-    end
-    if CurrentQuestsText then
-      CurrentQuestsText:SetFont(Original_Font1, 18)
-      CurrentQuestsText:SetText(QTR_MessOrig.currquests)
-      CurrentQuestsText:SetJustifyH("LEFT")
-    end
-    if AvailableQuestsText then
-      AvailableQuestsText:SetFont(Original_Font1, 18)
-      AvailableQuestsText:SetText(QTR_MessOrig.avaiquests)
-      AvailableQuestsText:SetJustifyH("LEFT")
-    end
-  end
-end
+-- (removed duplicate DisplayConstants; keep the full implementation below)
 
 -- Popup quest details show handler
 function QTR_QuestLogPopupShow()
@@ -515,17 +461,7 @@ function QTR_QuestLogPopupShow()
   end
 end
 
-function Quests.Details.QuestPrepare(event)
-   if QTR_QuestPrepare_Impl then return QTR_QuestPrepare_Impl(event) end
-end
-
-function Quests.Details.QuestLogPopupShow()
-   if QTR_QuestLogPopupShow then return QTR_QuestLogPopupShow() end
-end
-
-function Quests.Details.PrepareReload()
-   if QTR_PrepareReload then return QTR_PrepareReload() end
-end
+-- Remove delegator stubs that would override real implementations
 
 function Quests.Details.DisplayConstants(lg)
    local str_ID = QTR_quest_ID and tostring(QTR_quest_ID) or nil

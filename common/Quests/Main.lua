@@ -15,6 +15,14 @@ function Quests.ToggleTranslation()
       QTR_curr_trans="1"
       if QTR_Translate_On then QTR_Translate_On(1) end
    end
+   if WorldMapFrame and WorldMapFrame:IsVisible() then
+      local questID = (QuestMapFrame and QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.questID) or (Quests.GetQuestID and Quests.GetQuestID())
+      if questID and QuestMapFrame_ShowQuestDetails then
+         QuestMapFrame_ShowQuestDetails(questID)
+      elseif QTR_PrepareReload then
+         QTR_PrepareReload()
+      end
+   end
 end
 
 -- Save quest original texts for translation
@@ -131,8 +139,20 @@ function Quests.Start()
       WOWTR_wait(0.01, QTR_ObjectiveTrackerFrame_Titles)
    end)
 
-   hooksecurefunc("QuestLogQuests_Update", QTR_QuestLogQuests_Update)
-   hooksecurefunc("QuestMapFrame_ShowQuestDetails", QTR_PrepareReload)
+   hooksecurefunc("QuestLogQuests_Update", function()
+      if QTR_QuestLogQuests_Update then
+         return QTR_QuestLogQuests_Update()
+      end
+   end)
+   hooksecurefunc("QuestMapFrame_ShowQuestDetails", function()
+      StartDelayedFunction(function()
+         if QTR_PrepareReload then
+            QTR_PrepareReload()
+         elseif Quests and Quests.Details and Quests.Details.QuestPrepare then
+            Quests.Details.QuestPrepare()
+         end
+      end, 0.02)
+   end)
 
    QuestFrame:HookScript("OnShow", GossipOnQuestFrame)
    QuestFrameAcceptButton:HookScript("OnClick", QTR_QuestFrameButton_OnClick)
