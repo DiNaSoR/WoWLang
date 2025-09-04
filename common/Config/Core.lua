@@ -288,6 +288,178 @@ end
 local function HookAceConfigDialogFonts()
   if FontsHooked then return end
   if not AceConfigDialog or not AceConfigDialog.Open then return end
+  
+  local function NudgeTabGroupDown(frameRef, topPad)
+    if not frameRef or not frameRef.obj or not frameRef.obj.children then return end
+    for _, child in pairs(frameRef.obj.children) do
+      if child and child.type == "TabGroup" and child.frame and child.frame.ClearAllPoints then
+        child.frame:ClearAllPoints()
+        child.frame:SetPoint("TOPLEFT", frameRef, "TOPLEFT", 6, -topPad)
+        child.frame:SetPoint("BOTTOMRIGHT", frameRef, "BOTTOMRIGHT", -6, 6)
+        if not child._wowtrHooked and child.frame.HookScript then
+          child._wowtrHooked = true
+          child.frame:HookScript("OnShow", function(f)
+            if f and f.ClearAllPoints then
+              f:ClearAllPoints(); f:SetPoint("TOPLEFT", frameRef, "TOPLEFT", 6, -topPad); f:SetPoint("BOTTOMRIGHT", frameRef, "BOTTOMRIGHT", -6, 6)
+            end
+          end)
+          child.frame:HookScript("OnSizeChanged", function(f)
+            if f and f.ClearAllPoints then
+              f:ClearAllPoints(); f:SetPoint("TOPLEFT", frameRef, "TOPLEFT", 6, -topPad); f:SetPoint("BOTTOMRIGHT", frameRef, "BOTTOMRIGHT", -6, 6)
+            end
+          end)
+        end
+        break
+      end
+    end
+  end
+  
+  local function ElevateTopControls(frameRef)
+    if not frameRef then return end
+    local function lift(f)
+      if f and f.SetFrameStrata then pcall(f.SetFrameStrata, f, "FULLSCREEN_DIALOG") end
+      if f and f.SetFrameLevel and frameRef.GetFrameLevel then
+        local base = (frameRef:GetFrameLevel() or 0) + 200
+        pcall(f.SetFrameLevel, f, base)
+      end
+    end
+    if frameRef.closebutton then lift(frameRef.closebutton) end
+    if frameRef.obj and frameRef.obj.closebutton then lift(frameRef.obj.closebutton) end
+    if frameRef.searchbox then lift(frameRef.searchbox) end
+    if frameRef.obj and frameRef.obj.searchbox then lift(frameRef.obj.searchbox) end
+    if frameRef.GetChildren then
+      local kids = { frameRef:GetChildren() }
+      for _, k in ipairs(kids) do
+        local t = k.GetObjectType and k:GetObjectType() or nil
+        if t == "Button" or t == "EditBox" then lift(k) end
+      end
+    end
+  end
+
+  local function HideFooterControls(frameRef)
+    if not frameRef then return end
+    local function kill(f)
+      if not f then return end
+      if f.Hide then pcall(f.Hide, f) end
+      if f.SetAlpha then pcall(f.SetAlpha, f, 0) end
+      if f.EnableMouse then pcall(f.EnableMouse, f, false) end
+      if f.SetFrameStrata then pcall(f.SetFrameStrata, f, "BACKGROUND") end
+      if f.ClearAllPoints and f.SetPoint then pcall(f.ClearAllPoints, f); pcall(f.SetPoint, f, "BOTTOMLEFT", frameRef, "BOTTOMLEFT", 0, -9999) end
+      if f.HookScript then pcall(f.HookScript, f, "OnShow", function(self) self:Hide() end) end
+    end
+    local closeBtn = (frameRef.obj and frameRef.obj.closebutton) or frameRef.closebutton
+    local searchBox = (frameRef.obj and frameRef.obj.searchbox) or frameRef.searchbox
+    kill(closeBtn); kill(searchBox)
+    if frameRef.GetChildren then
+      local kids = { frameRef:GetChildren() }
+      for _, k in ipairs(kids) do
+        local t = k.GetObjectType and k:GetObjectType() or nil
+        if (t == "Button" or t == "EditBox") and (k ~= frameRef.WOWTR_TopRightClose) then
+          -- Skip our top-right close and only target footer-like controls
+          local name = k.GetName and k:GetName() or ""
+          local p1 = k.GetPoint and select(1, k:GetPoint()) or nil
+          local anchoredBottom = p1 == "BOTTOM" or p1 == "BOTTOMLEFT" or p1 == "BOTTOMRIGHT"
+          local looksLikeFooter = anchoredBottom or (name and (name:find("Search") or name:find("Close")))
+          if looksLikeFooter then kill(k) end
+        end
+      end
+    end
+  end
+
+  local function EnsureTopRightClose(frameRef, appName)
+    if not frameRef then return end
+    HideFooterControls(frameRef)
+    if not frameRef.WOWTR_TopRightClose then
+      local btn = CreateFrame("Button", nil, frameRef, "UIPanelCloseButton")
+      frameRef.WOWTR_TopRightClose = btn
+      btn:SetPoint("TOPRIGHT", frameRef, "TOPRIGHT", -6, -6)
+      if btn.SetFrameStrata then btn:SetFrameStrata("FULLSCREEN_DIALOG") end
+      if btn.SetFrameLevel and frameRef.GetFrameLevel then btn:SetFrameLevel((frameRef:GetFrameLevel() or 0) + 250) end
+      btn:SetScript("OnClick", function() if AceConfigDialog and AceConfigDialog.Close then AceConfigDialog:Close(appName or "WOWTR") else frameRef:Hide() end end)
+    end
+    frameRef.WOWTR_TopRightClose:Show()
+    -- Keep footer controls removed even if AceGUI rebuilds them
+    if not frameRef.WOWTR_KillFooterHooked and frameRef.HookScript then
+      frameRef.WOWTR_KillFooterHooked = true
+      local acc = 0
+      frameRef:HookScript("OnUpdate", function(f, elapsed)
+        acc = (acc or 0) + (elapsed or 0)
+        if acc >= 0.5 then
+          acc = 0
+          HideFooterControls(f)
+        end
+      end)
+    end
+  end
+  local function NeutralizeFrameChrome(frameRef)
+    if not frameRef then return end
+    if frameRef.titlebg and frameRef.titlebg.Hide then frameRef.titlebg:Hide() end
+    if frameRef.statusbg and frameRef.statusbg.Hide then frameRef.statusbg:Hide() end
+  end
+
+  local function AttachConfigBanner(container)
+    if not container or not container.CreateTexture then return end
+    if not container.WOWTR_Banner then
+      local tex = container:CreateTexture(nil, "BACKGROUND")
+      container.WOWTR_Banner = tex
+      tex:SetHorizTile(false); tex:SetVertTile(false)
+      tex:SetAlpha(1)
+      tex:SetVertexColor(1, 1, 1, 1)
+      tex:SetPoint("TOPLEFT", container, "TOPLEFT", 8, -6)
+      tex:SetPoint("TOPRIGHT", container, "TOPRIGHT", -8, -6)
+      tex:SetHeight(96)
+    end
+    local path
+    if WoWTR_Localization and WoWTR_Localization.mainFolder then
+      path = WoWTR_Localization.mainFolder .. "\\Images\\bannar.png"
+    end
+    if path then container.WOWTR_Banner:SetTexture(path) end
+    container.WOWTR_Banner:Show()
+    NeutralizeFrameChrome(container)
+    local content = container.content
+    local bh = tonumber(container.WOWTR_Banner:GetHeight() or 0) or 0
+    local topPad = bh
+    if content and content.ClearAllPoints then
+      content:ClearAllPoints()
+      content:SetPoint("TOPLEFT", container, "TOPLEFT", 12, -topPad)
+      content:SetPoint("BOTTOMRIGHT", container, "BOTTOMRIGHT", -12, 12)
+    end
+    -- also nudge primary child (TabGroup) in case AceGUI reanchors content internally
+    if content and content.GetChildren then
+      local kids = { content:GetChildren() }
+      for _, child in ipairs(kids) do
+        if child and child.ClearAllPoints then
+          child:ClearAllPoints()
+          child:SetPoint("TOPLEFT", container, "TOPLEFT", 12, -topPad)
+          child:SetPoint("BOTTOMRIGHT", container, "BOTTOMRIGHT", -12, 12)
+          break
+        end
+      end
+    end
+    if not container.WOWTR_BannerHooked and container.HookScript then
+      container.WOWTR_BannerHooked = true
+      container:HookScript("OnShow", function(f)
+        local c = f.content
+        local b = f.WOWTR_Banner
+        if c and b and c.ClearAllPoints and b.GetHeight then
+          local bh2 = tonumber(b:GetHeight()) or 0
+          c:ClearAllPoints()
+          c:SetPoint("TOPLEFT", f, "TOPLEFT", 12, -bh2)
+          c:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -12, 12)
+        end
+      end)
+      container:HookScript("OnSizeChanged", function(f)
+        local c = f.content
+        local b = f.WOWTR_Banner
+        if c and b and c.ClearAllPoints and b.GetHeight then
+          local bh2 = tonumber(b:GetHeight()) or 0
+          c:ClearAllPoints()
+          c:SetPoint("TOPLEFT", f, "TOPLEFT", 12, -bh2)
+          c:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -12, 12)
+        end
+      end)
+    end
+  end
   local function wrap(methodName)
     local orig = AceConfigDialog[methodName]
     if type(orig) ~= "function" then return end
@@ -295,6 +467,26 @@ local function HookAceConfigDialogFonts()
       local ret = orig(self, appName, ...)
       if WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2 and self.OpenFrames and self.OpenFrames[appName] and self.OpenFrames[appName].frame then
         ApplyFontsRecursive(self.OpenFrames[appName].frame)
+      end
+      if self.OpenFrames and self.OpenFrames[appName] and self.OpenFrames[appName].frame then
+        local frameRef = self.OpenFrames[appName].frame
+        AttachConfigBanner(frameRef)
+        -- push content down by banner height so tabs do not overlap the image
+        local banner = frameRef and frameRef.WOWTR_Banner
+        local content = frameRef and frameRef.content
+        local bh = banner and banner.GetHeight and tonumber(banner:GetHeight()) or 96
+        local topPad = bh
+        if content and content.ClearAllPoints then
+          content:ClearAllPoints()
+          content:SetPoint("TOPLEFT", frameRef, "TOPLEFT", 12, -topPad)
+          content:SetPoint("BOTTOMRIGHT", frameRef, "BOTTOMRIGHT", -12, 12)
+        end
+        NudgeTabGroupDown(frameRef, topPad)
+        EnsureTopRightClose(frameRef, appName)
+        if C_Timer and C_Timer.After then
+          C_Timer.After(0, function() NudgeTabGroupDown(frameRef, topPad); EnsureTopRightClose(frameRef, appName) end)
+          C_Timer.After(0.1, function() NudgeTabGroupDown(frameRef, topPad); EnsureTopRightClose(frameRef, appName) end)
+        end
       end
       return ret
     end
