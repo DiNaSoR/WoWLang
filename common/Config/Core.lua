@@ -370,6 +370,7 @@ end
 local function BuildOptions()
   local options = {
     type = "group",
+    childGroups = "tab",
     name = function() return QTR_ReverseIfAR(WoWTR_Localization and WoWTR_Localization.optionTitle or "WoWLang") end,
     args = {}
   }
