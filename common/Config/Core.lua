@@ -314,27 +314,7 @@ local function HookAceConfigDialogFonts()
     end
   end
   
-  local function ElevateTopControls(frameRef)
-    if not frameRef then return end
-    local function lift(f)
-      if f and f.SetFrameStrata then pcall(f.SetFrameStrata, f, "FULLSCREEN_DIALOG") end
-      if f and f.SetFrameLevel and frameRef.GetFrameLevel then
-        local base = (frameRef:GetFrameLevel() or 0) + 200
-        pcall(f.SetFrameLevel, f, base)
-      end
-    end
-    if frameRef.closebutton then lift(frameRef.closebutton) end
-    if frameRef.obj and frameRef.obj.closebutton then lift(frameRef.obj.closebutton) end
-    if frameRef.searchbox then lift(frameRef.searchbox) end
-    if frameRef.obj and frameRef.obj.searchbox then lift(frameRef.obj.searchbox) end
-    if frameRef.GetChildren then
-      local kids = { frameRef:GetChildren() }
-      for _, k in ipairs(kids) do
-        local t = k.GetObjectType and k:GetObjectType() or nil
-        if t == "Button" or t == "EditBox" then lift(k) end
-      end
-    end
-  end
+  -- (removed) ElevateTopControls: superseded by EnsureTopRightClose/HideFooterControls
 
   local function HideFooterControls(frameRef)
     if not frameRef then return end
@@ -483,10 +463,6 @@ local function HookAceConfigDialogFonts()
         end
         NudgeTabGroupDown(frameRef, topPad)
         EnsureTopRightClose(frameRef, appName)
-        if C_Timer and C_Timer.After then
-          C_Timer.After(0, function() NudgeTabGroupDown(frameRef, topPad); EnsureTopRightClose(frameRef, appName) end)
-          C_Timer.After(0.1, function() NudgeTabGroupDown(frameRef, topPad); EnsureTopRightClose(frameRef, appName) end)
-        end
       end
       return ret
     end
