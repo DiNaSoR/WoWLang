@@ -3,4 +3,8 @@ description:
 globs:
 alwaysApply: true
 ---
-Always use context7 mcp for latest code and updates for World of Warcraft, WOWAPI
+Follow the following guidelines for all code:
+- Always use context7 mcp for latest code and updates for World of Warcraft, consider the latest code and updates for World of Warcraft, WOWAPI.
+- Always think about the codebase before writing code, consider the codebase before writing code.
+- Always use modular architecture for the codebase, consider breaking up the codebase into smaller modules.
+- Always use the existing helpers and libraries to reduce code size.
