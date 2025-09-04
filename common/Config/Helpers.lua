@@ -48,3 +48,16 @@ end
 
 
 
+
+-- Lightweight label helper for Ace3 options
+-- Uses WoWTR_Config_Interface key when present (and reverses only then),
+-- otherwise returns the provided English fallback without reversal.
+WOWTR = WOWTR or {}
+WOWTR.Config = WOWTR.Config or {}
+function WOWTR.Config.Label(key, fallback)
+  local v = (WoWTR_Config_Interface and WoWTR_Config_Interface[key]) or nil
+  if v and v ~= "" then
+    return QTR_ReverseIfAR(v)
+  end
+  return fallback
+end

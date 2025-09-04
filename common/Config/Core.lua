@@ -219,6 +219,154 @@ local function RegisterLSMFonts()
   end
 end
 
+-- Apply WOWTR_Font2 to AceConfigDialog UI when Arabic is active
+local FontsHooked = false
+local WOWTR_AceNormalFO, WOWTR_AceHighlightFO
+local function EnsureFontObjects()
+  if not (WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2) then return end
+  if not WOWTR_AceNormalFO then
+    WOWTR_AceNormalFO = CreateFont("WOWTR_AceNormal")
+    WOWTR_AceNormalFO:SetFont(WOWTR_Font2, 13, "")
+  end
+  if not WOWTR_AceHighlightFO then
+    WOWTR_AceHighlightFO = CreateFont("WOWTR_AceHighlight")
+    WOWTR_AceHighlightFO:SetFont(WOWTR_Font2, 13, "")
+  end
+end
+
+local function ApplyFontsRecursive(obj)
+  if not obj then return end
+  if not (WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2) then return end
+  EnsureFontObjects()
+
+  local function setFontOnRegion(region)
+    if not region then return end
+    if region.SetFont then
+      local ok, _, size, flags = pcall(region.GetFont, region)
+      if not ok or not size then size = 13 end
+      local f = type(flags) == "string" and flags or ""
+      pcall(region.SetFont, region, WOWTR_Font2, size, f)
+    end
+  end
+
+  local objType = obj.GetObjectType and obj:GetObjectType() or nil
+
+  if objType == "FontString" or objType == "EditBox" then
+    setFontOnRegion(obj)
+  end
+
+  if obj.GetFontString then
+    local fs = obj:GetFontString()
+    if fs then setFontOnRegion(fs) end
+  end
+
+  if obj.SetNormalFontObject and WOWTR_AceNormalFO then
+    pcall(obj.SetNormalFontObject, obj, WOWTR_AceNormalFO)
+  end
+  if obj.SetHighlightFontObject and WOWTR_AceHighlightFO then
+    pcall(obj.SetHighlightFontObject, obj, WOWTR_AceHighlightFO)
+  end
+  if obj.SetDisabledFontObject and WOWTR_AceNormalFO then
+    pcall(obj.SetDisabledFontObject, obj, WOWTR_AceNormalFO)
+  end
+
+  if obj.GetRegions then
+    local regions = { obj:GetRegions() }
+    for _, r in pairs(regions) do
+      if r and r.GetObjectType and r:GetObjectType() == "FontString" then
+        setFontOnRegion(r)
+      end
+    end
+  end
+
+  if obj.GetChildren then
+    local children = { obj:GetChildren() }
+    for _, c in pairs(children) do ApplyFontsRecursive(c) end
+  end
+end
+
+local function HookAceConfigDialogFonts()
+  if FontsHooked then return end
+  if not AceConfigDialog or not AceConfigDialog.Open then return end
+  local function wrap(methodName)
+    local orig = AceConfigDialog[methodName]
+    if type(orig) ~= "function" then return end
+    AceConfigDialog[methodName] = function(self, appName, ...)
+      local ret = orig(self, appName, ...)
+      if WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2 and self.OpenFrames and self.OpenFrames[appName] and self.OpenFrames[appName].frame then
+        ApplyFontsRecursive(self.OpenFrames[appName].frame)
+      end
+      return ret
+    end
+  end
+  wrap("Open")
+  wrap("SelectGroup")
+  wrap("FeedGroup")
+  FontsHooked = true
+end
+
+-- Hook tooltip frames to use WOWTR_Font2 for Arabic
+local TooltipsHooked = false
+local function ApplyTooltipFonts(tt)
+  if not tt or not tt.GetRegions then return end
+  if not (WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2) then return end
+  local function setFS(fs)
+    if not fs or not fs.SetFont then return end
+    local ok, _, size, flags = pcall(fs.GetFont, fs)
+    if not ok or not size then size = 13 end
+    local f = type(flags) == "string" and flags or ""
+    pcall(fs.SetFont, fs, WOWTR_Font2, size, f)
+  end
+
+  local regions = { tt:GetRegions() }
+  for _, r in pairs(regions) do
+    if r and r.GetObjectType and r:GetObjectType() == "FontString" then
+      setFS(r)
+    end
+  end
+
+  local name = tt.GetName and tt:GetName() or nil
+  if name then
+    for i = 1, 40 do
+      setFS(_G[name .. "TextLeft" .. i])
+      setFS(_G[name .. "TextRight" .. i])
+    end
+  end
+end
+
+local function HookTooltipFonts()
+  if TooltipsHooked then return end
+  -- Ensure base tooltip FontObjects use WOWTR_Font2
+  if WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2 then
+    local function SetFO(obj)
+      if not obj then return end
+      local ok, _, size, flags = pcall(obj.GetFont, obj)
+      if not ok or not size then size = 13 end
+      local f = type(flags) == "string" and flags or ""
+      pcall(obj.SetFont, obj, WOWTR_Font2, size, f)
+    end
+    SetFO(_G.GameTooltipHeaderText)
+    SetFO(_G.GameTooltipText)
+    SetFO(_G.GameTooltipTextSmall)
+    SetFO(_G.Tooltip_Med)
+    SetFO(_G.Tooltip_Small)
+  end
+
+  local names = { "GameTooltip", "ItemRefTooltip", "ShoppingTooltip1", "ShoppingTooltip2", "ShoppingTooltip3", "ItemRefShoppingTooltip1", "ItemRefShoppingTooltip2", "ItemRefShoppingTooltip3" }
+  for _, n in ipairs(names) do
+    local tt = _G[n]
+    if tt and tt.HookScript then
+      tt:HookScript("OnShow", ApplyTooltipFonts)
+      if tt:HasScript("OnTooltipSetText") then tt:HookScript("OnTooltipSetText", ApplyTooltipFonts) end
+      if tt:HasScript("OnTooltipSetItem") then tt:HookScript("OnTooltipSetItem", ApplyTooltipFonts) end
+      if tt:HasScript("OnTooltipSetSpell") then tt:HookScript("OnTooltipSetSpell", ApplyTooltipFonts) end
+      if tt:HasScript("OnTooltipSetUnit") then tt:HookScript("OnTooltipSetUnit", ApplyTooltipFonts) end
+      if tt:HasScript("OnUpdate") then tt:HookScript("OnUpdate", function(self) if self:IsShown() then ApplyTooltipFonts(self) end end) end
+    end
+  end
+  TooltipsHooked = true
+end
+
 local function BuildOptions()
   local options = {
     type = "group",
@@ -258,6 +406,8 @@ function C.Init()
     AceConfigDialog:AddToBlizOptions("WOWTR", QTR_ReverseIfAR(WoWTR_Localization and WoWTR_Localization.optionName or "WoWLang"))
   end
   RegisterLSMFonts()
+  HookAceConfigDialogFonts()
+  HookTooltipFonts()
 end
 
 function C.Open()
