@@ -64,7 +64,9 @@ common/Bubbles/Main.lua
 common/Movies/State.lua
 common/Movies/Utils.lua
 common/Movies/Main.lua
-common/WoW_Tutorials.lua
+common/Tutorials/State.lua
+common/Tutorials/Utils.lua
+common/Tutorials/Main.lua
 common/Books/Main.lua
 WoW_Chat.lua
 
