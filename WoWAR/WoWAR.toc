@@ -36,7 +36,6 @@ common/Core/State.lua
 common/Core/Main.lua
 common/Config/Helpers.lua
 common/Config/Core.lua
-common/Config/RTL_Config.lua
 common/Config/Tabs/General.lua
 common/Config/Tabs/Tooltips.lua
 common/Config/Tabs/Bubbles.lua
@@ -62,7 +61,9 @@ common/Text.lua
 common/Bubbles/State.lua
 common/Bubbles/Utils.lua
 common/Bubbles/Main.lua
-common/WoW_MovieSubtitles.lua
+common/Movies/State.lua
+common/Movies/Utils.lua
+common/Movies/Main.lua
 common/WoW_Tutorials.lua
 common/Books/Main.lua
 WoW_Chat.lua

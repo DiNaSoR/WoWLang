@@ -3,6 +3,7 @@ local addonName, ns = ...
 ns.Bubbles = ns.Bubbles or {}
 local Bubbles = ns.Bubbles
 local S = Bubbles.State
+local RTL = ns and ns.RTL
 
 -- Utility: find position of '%s'
 local function findPercentS(text)
@@ -22,9 +23,17 @@ local function setRegionFont(region)
   region:SetFont(WOWTR_Font2, (BB_PM and BB_PM["setsize"] == "1") and tonumber(BB_PM["fontsize"]) or size, flags)
 end
 
+local function normalizeBubbleText(text)
+  if text == nil then return "" end
+  if WOWTR_DeleteSpecialCodes then
+    return strtrim(WOWTR_DeleteSpecialCodes(text))
+  end
+  return strtrim(text)
+end
+
 local function applyBubbleTranslation(region, sourceText, translatedText)
-  if not region or not region.GetText or not region.SetText then return end
-  if region:GetText() ~= sourceText then return end
+  if not region or not region.GetText or not region.SetText then return false end
+  if normalizeBubbleText(region:GetText()) ~= normalizeBubbleText(sourceText) then return false end
   setRegionFont(region)
   region:SetWidth(math.max(region:GetWidth(), 100))
   if region.GetWidth and region:GetWidth() > 200 then
@@ -33,24 +42,27 @@ local function applyBubbleTranslation(region, sourceText, translatedText)
     region:SetText(QTR_ReverseIfAR(translatedText))
   end
   if region.SetJustifyH then region:SetJustifyH("CENTER") end
+  return true
 end
 
 local function processVisibleBubbles()
   if (not S or #S.bubblesQueue == 0) then return end
-  if (#C_ChatBubbles.GetAllChatBubbles(true) == #C_ChatBubbles.GetAllChatBubbles()) then
-    for _, bubble in pairs(C_ChatBubbles.GetAllChatBubbles(true)) do
-      for i = 1, bubble:GetNumChildren() do
-        local child = select(i, bubble:GetChildren())
-        if child and not child:IsForbidden() and child:GetObjectType() == "Frame" and child.String and child.Center then
-          for r = 1, child:GetNumRegions() do
-            local region = select(r, child:GetRegions())
-            if region and region.IsVisible and region:IsVisible() and region.GetText then
-              for idx = #S.bubblesQueue, 1, -1 do
-                local item = S.bubblesQueue[idx]
-                applyBubbleTranslation(region, item[1], item[2])
-                if region:GetText() ~= item[1] then
-                  table.remove(S.bubblesQueue, idx)
-                end
+  local bubbles = (C_ChatBubbles and C_ChatBubbles.GetAllChatBubbles and C_ChatBubbles.GetAllChatBubbles(true)) or {}
+  if (#bubbles == 0) and C_ChatBubbles and C_ChatBubbles.GetAllChatBubbles then
+    bubbles = C_ChatBubbles.GetAllChatBubbles()
+  end
+  for _, bubble in pairs(bubbles) do
+    for i = 1, bubble:GetNumChildren() do
+      local child = select(i, bubble:GetChildren())
+      if child and not child:IsForbidden() and child.GetObjectType and child:GetObjectType() == "Frame" then
+        for r = 1, child:GetNumRegions() do
+          local region = select(r, child:GetRegions())
+          if region and region.IsVisible and region:IsVisible() and region.GetText and region.GetObjectType and region:GetObjectType() == "FontString" then
+            for idx = #S.bubblesQueue, 1, -1 do
+              local item = S.bubblesQueue[idx]
+              local applied = applyBubbleTranslation(region, item[1], item[2])
+              if applied then
+                table.remove(S.bubblesQueue, idx)
               end
             end
           end
@@ -69,7 +81,7 @@ local function showDungeonTooltip(targetTooltip, xOffset, text, header)
   local fs = _G[targetTooltip:GetName() .. "TextLeft1"]
   if fs then fs:SetFont(WOWTR_Font2, (BB_PM and BB_PM["setsize"] == "1") and tonumber(BB_PM["fontsize"]) or 13) end
   targetTooltip:Show()
-  if (WoWTR_Localization and WoWTR_Localization.lang == 'AR') and fs then
+  if (RTL and RTL.IsRTL and RTL.IsRTL()) and fs then
     fs:SetText(QTR_ExpandUnitInfo(text, false, fs, WOWTR_Font2))
   end
   targetTooltip.header:SetText(header .. ":")
@@ -101,7 +113,7 @@ local function processTalkingHead()
   if (TalkingHeadFrame and TalkingHeadFrame:IsVisible()) then
     for idx = #S.bubblesQueue, 1, -1 do
       local item = S.bubblesQueue[idx]
-      if (TalkingHeadFrame.TextFrame.Text:GetText() == item[1]) then
+      if (normalizeBubbleText(TalkingHeadFrame.TextFrame.Text:GetText()) == normalizeBubbleText(item[1])) then
         local _, sz, fl = TalkingHeadFrame.TextFrame.Text:GetFont()
         TalkingHeadFrame.TextFrame.Text:SetFont(WOWTR_Font2, sz, fl)
         TalkingHeadFrame.TextFrame.Text:SetText(QTR_ExpandUnitInfo(item[2], false, TalkingHeadFrame.TextFrame.Text, WOWTR_Font2, -15))
@@ -113,7 +125,7 @@ end
 
 local function garbageCollectQueue()
   for idx = #S.bubblesQueue, 1, -1 do
-    if (S.bubblesQueue[idx][3] >= 100) then
+    if (S.bubblesQueue[idx][3] >= 600) then
       table.remove(S.bubblesQueue, idx)
     else
       S.bubblesQueue[idx][3] = S.bubblesQueue[idx][3] + 1
@@ -297,12 +309,12 @@ function Bubbles.ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
 
   if (event == "CHAT_MSG_MONSTER_SAY") then
     colorText = "|cFFFFFF9F"
-    if (GetCVar("ChatBubbles")) then changeBubble = true end
+    if (GetCVar("chatBubbles")) then changeBubble = true end
   elseif (event == "CHAT_MSG_MONSTER_PARTY") then
     colorText = "|cFFAAAAFF"
   elseif (event == "CHAT_MSG_MONSTER_YELL") then
     colorText = "|cFFFF4040"
-    if (GetCVar("ChatBubbles")) then changeBubble = true end
+    if (GetCVar("chatBubbles")) then changeBubble = true end
   elseif (event == "CHAT_MSG_MONSTER_WHISPER") then
     colorText = "|cFFFFB5EB"
   elseif (event == "CHAT_MSG_MONSTER_EMOTE") then
@@ -342,7 +354,7 @@ function Bubbles.ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
         local arg0 = 0
         for w in string.gmatch(strtrim(arg1), "%d+") do
           arg0 = arg0 + 1
-          local iw = math.floor(w)
+          local iw = tonumber(w) or 0
           if (iw > 999999) then
             wartab[arg0] = tostring(iw):reverse():gsub("(%d%d%d)(%d%d%d)", "%1.%2."):gsub("(%-?)$", "%1"):reverse()
           elseif (iw > 99999) then
@@ -379,7 +391,7 @@ function Bubbles.ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
           else
             fixed_message = strsub(NewMessage, 1, nr_poz - 1) .. WOWTR_AnsiReverse(name_NPC) .. strsub(NewMessage, nr_poz + 2)
           end
-          if (WoWTR_Localization and WoWTR_Localization.lang == 'AR') then
+          if (RTL and RTL.IsRTL and RTL.IsRTL()) then
             local qtrOffset = -10
             if C_AddOns.IsAddOnLoaded("Prat-3.0") then qtrOffset = -50 end
             DEFAULT_CHAT_FRAME:AddMessage(colorText .. QTR_ExpandUnitInfo(fixed_message, false, DEFAULT_CHAT_FRAME, WOWTR_Font2, qtrOffset, true))
@@ -390,7 +402,7 @@ function Bubbles.ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
           NewMessage = strsub(NewMessage, 3)
           DEFAULT_CHAT_FRAME:AddMessage(colorText .. QTR_ExpandUnitInfo(NewMessage:gsub("^%s*", ""), false, DEFAULT_CHAT_FRAME, WOWTR_Font2, -50, true) .. mark_AI)
         else
-          if (WoWTR_Localization and WoWTR_Localization.lang == 'AR') then
+          if (RTL and RTL.IsRTL and RTL.IsRTL()) then
             local qtrOffset = -10
             if C_AddOns.IsAddOnLoaded("Prat-3.0") then qtrOffset = -50 end
             DEFAULT_CHAT_FRAME:AddMessage(colorText .. QTR_ExpandUnitInfo("{r}" .. WOWTR_AnsiReverse(name_NPC) .. ":{cFFFFFFFF} " .. NewMessage, false, DEFAULT_CHAT_FRAME, WOWTR_Font2, qtrOffset, true))

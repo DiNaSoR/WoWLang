@@ -45,11 +45,10 @@ function WOWTR.Config.Groups.General()
         type = "group", inline = true, order = 10,
         name = WOWTR.Config.Label("integrationWithOtherAddons", "Plugins"),
         args = {
-          immersion = { type = "toggle", name = "Immersion", order = 11, width = "half" },
-          storyline = { type = "toggle", name = "Storyline", order = 12, width = "half" },
-          pluginsRowBreak = { type = "description", name = "", order = 12.5, width = "full" },
-          questlog = { type = "toggle", name = "ClassicQuestLog", order = 13, width = "half" },
-          dialogueui = { type = "toggle", name = "DialogueUI", order = 14, width = "half" },
+          immersion = { type = "toggle", name = "Immersion", order = 11, width = "full" },
+          storyline = { type = "toggle", name = "Storyline", order = 12, width = "full" },
+          questlog = { type = "toggle", name = "ClassicQuestLog", order = 13, width = "full" },
+          dialogueui = { type = "toggle", name = "DialogueUI", order = 14, width = "full" },
         }
       },
       fonts = {
