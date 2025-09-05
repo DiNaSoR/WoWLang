@@ -34,10 +34,10 @@ end
 local function alignFontsInFrame(frame)
   if not frame then return end
   
-  -- Skip entire widget if it's a button or dropdown (we don't want to touch those)
+  -- Skip entire widget if it's a button (we don't want to touch those)
   if frame.obj and frame.obj.type then
     local wtype = tostring(frame.obj.type)
-    if wtype == "Button" or wtype == "Dropdown" or wtype == "LSM30_Font" or wtype == "LSM30_Sound" or wtype == "LSM30_Statusbar" then
+    if wtype == "Button" or wtype == "LSM30_Font" or wtype == "LSM30_Sound" or wtype == "LSM30_Statusbar" then
       return
     end
   end
@@ -70,8 +70,8 @@ local function alignFontsInFrame(frame)
         local skipFS = false
         if parent and parent.obj and parent.obj.type then
           local pt = tostring(parent.obj.type)
-          if pt == "Button" or pt == "Dropdown" or pt:find("LSM30") then skipFS = true end
-          if pt == "CheckBox" then skipFS = false end
+          if pt == "Button" or pt:find("LSM30") then skipFS = true end
+          if pt == "CheckBox" or pt == "Dropdown" then skipFS = false end
         end
         if not skipFS then pcall(r.SetJustifyH, r, "RIGHT") end
       end
@@ -79,13 +79,27 @@ local function alignFontsInFrame(frame)
   end
   local t = frame.GetObjectType and frame:GetObjectType() or nil
   if t == "EditBox" and frame.SetJustifyH then pcall(frame.SetJustifyH, frame, "RIGHT") end
-  if (frame.obj and frame.obj.type == "CheckBox") then
-    -- AceGUI CheckBox widget
-    local fs, box = looksLikeAceGUICheckBox(frame)
-    if fs and box then
-      pcall(fs.SetJustifyH, fs, "RIGHT")
-      if box.ClearAllPoints then pcall(box.ClearAllPoints, box); pcall(box.SetPoint, box, "RIGHT", frame, "RIGHT", -6, 0) end
-      if fs.ClearAllPoints then pcall(fs.ClearAllPoints, fs); pcall(fs.SetPoint, fs, "RIGHT", box, "LEFT", -10, 0) end
+  if frame.obj and frame.obj.type then
+    local wtype = tostring(frame.obj.type)
+    if wtype == "CheckBox" then
+      -- AceGUI CheckBox widget
+      local fs, box = looksLikeAceGUICheckBox(frame)
+      if fs and box then
+        pcall(fs.SetJustifyH, fs, "RIGHT")
+        if box.ClearAllPoints then pcall(box.ClearAllPoints, box); pcall(box.SetPoint, box, "RIGHT", frame, "RIGHT", -6, 0) end
+        if fs.ClearAllPoints then pcall(fs.ClearAllPoints, fs); pcall(fs.SetPoint, fs, "RIGHT", box, "LEFT", -10, 0) end
+      end
+    elseif wtype == "Dropdown" then
+      -- AceGUI Dropdown: align the label header to RIGHT
+      local w = frame.obj
+      local label = w.label
+      if label and label.SetJustifyH then
+        pcall(label.SetJustifyH, label, "RIGHT")
+        if label.ClearAllPoints and w.frame then
+          pcall(label.ClearAllPoints, label)
+          pcall(label.SetPoint, label, "TOPRIGHT", w.frame, "TOPRIGHT", -2, 0)
+        end
+      end
     end
   elseif t == "CheckButton" then
     -- Blizzard CheckButton
