@@ -556,6 +556,10 @@ local function BuildOptions()
     options.args.profiles = AceDBOptions:GetOptionsTable(WOWTR.db)
     options.args.profiles.order = 99
   end
+  -- Reverse top-level tab order for AR
+  if WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR.Config and WOWTR.Config.RTL and WOWTR.Config.RTL.ReverseTabOrder then
+    WOWTR.Config.RTL.ReverseTabOrder(options)
+  end
   return options
 end
 
@@ -581,7 +585,14 @@ end
 
 function C.Open()
   if AceConfigDialog then
+    -- Default landing tab: General (quests)
     AceConfigDialog:Open("WOWTR")
+    if WoWTR_Localization and WoWTR_Localization.lang == 'AR' then
+      -- For AR, ensure the first logical tab is General; if RTL reversed, it still selects the first group by name
+      AceConfigDialog:SelectGroup("WOWTR", "general")
+    else
+      AceConfigDialog:SelectGroup("WOWTR", "general")
+    end
   elseif Settings and WOWTR and WOWTR.CategoryID then
     Settings.OpenToCategory(WOWTR.CategoryID)
   end
