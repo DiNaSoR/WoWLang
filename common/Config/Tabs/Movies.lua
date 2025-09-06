@@ -10,7 +10,10 @@ function WOWTR.Config.Groups.Movies()
     type = "group", order = 4,
     name = function() return WOWTR.Config.Label("titleTab3", "Subtitles") end,
     get = function(info) return WOWTR.db.profile.movies[info[#info]] end,
-    set = function(info, val) WOWTR.db.profile.movies[info[#info]] = val; WOWTR.Config.SyncGlobalsFromDB() end,
+    set = function(info, val)
+      WOWTR.db.profile.movies[info[#info]] = val
+      WOWTR.Config.SyncGlobalsFromDB()
+    end,
     args = {
       basics = {
         type = "group", inline = true, order = 1,

@@ -6,10 +6,16 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0", true)
 local AceDB = LibStub("AceDB-3.0", true)
 local AceDBOptions = LibStub("AceDBOptions-3.0", true)
 local LSM = LibStub("LibSharedMedia-3.0", true)
+local AceConfigRegistry = LibStub("AceConfigRegistry-3.0", true)
 
 WOWTR = WOWTR or {}
 WOWTR.Config = WOWTR.Config or {}
 local C = WOWTR.Config
+function C.NotifyChange()
+  if AceConfigRegistry then
+    AceConfigRegistry:NotifyChange("WOWTR")
+  end
+end
 
 local function b2s(v) return v and "1" or "0" end
 local function s2b(v) return v == true or v == 1 or v == "1" end
@@ -17,6 +23,9 @@ local function s2b(v) return v == true or v == 1 or v == "1" end
 C.defaults = {
   profile = {
     minimap = { hide = false, minimapPos = 238 },
+    core = {
+      lastShownChangelogVersion = "",
+    },
     quests = {
       active = true, transtitle = true, gossip = true, tracker = true,
       saveQS = true, saveGS = true, immersion = true, storyline = true,
@@ -260,6 +269,15 @@ local function ApplyFontsRecursive(obj)
     if fs then setFontOnRegion(fs) end
   end
 
+  -- Apply to AceGUI widget label/text if present on the frame (covers checkboxes, labels, headers)
+  if obj.obj then
+    local w = obj.obj
+    local okText, textRegion = pcall(function() return rawget(w, "text") end)
+    if okText and type(textRegion) == "table" and textRegion.SetFont then setFontOnRegion(textRegion) end
+    local okLabel, labelRegion = pcall(function() return rawget(w, "label") end)
+    if okLabel and type(labelRegion) == "table" and labelRegion.SetFont then setFontOnRegion(labelRegion) end
+  end
+
   if obj.SetNormalFontObject and WOWTR_AceNormalFO then
     pcall(obj.SetNormalFontObject, obj, WOWTR_AceNormalFO)
   end
@@ -289,29 +307,47 @@ local function HookAceConfigDialogFonts()
   if FontsHooked then return end
   if not AceConfigDialog or not AceConfigDialog.Open then return end
   
-  local function NudgeTabGroupDown(frameRef, topPad)
-    if not frameRef or not frameRef.obj or not frameRef.obj.children then return end
-    for _, child in pairs(frameRef.obj.children) do
-      if child and child.type == "TabGroup" and child.frame and child.frame.ClearAllPoints then
-        child.frame:ClearAllPoints()
-        child.frame:SetPoint("TOPLEFT", frameRef, "TOPLEFT", 6, -topPad)
-        child.frame:SetPoint("BOTTOMRIGHT", frameRef, "BOTTOMRIGHT", -6, 6)
-        if not child._wowtrHooked and child.frame.HookScript then
-          child._wowtrHooked = true
-          child.frame:HookScript("OnShow", function(f)
-            if f and f.ClearAllPoints then
-              f:ClearAllPoints(); f:SetPoint("TOPLEFT", frameRef, "TOPLEFT", 6, -topPad); f:SetPoint("BOTTOMRIGHT", frameRef, "BOTTOMRIGHT", -6, 6)
-            end
-          end)
-          child.frame:HookScript("OnSizeChanged", function(f)
-            if f and f.ClearAllPoints then
-              f:ClearAllPoints(); f:SetPoint("TOPLEFT", frameRef, "TOPLEFT", 6, -topPad); f:SetPoint("BOTTOMRIGHT", frameRef, "BOTTOMRIGHT", -6, 6)
-            end
-          end)
-        end
-        break
+  local function FixTitleWidth(frameRef)
+    if not frameRef or not frameRef.obj then return end
+    local widget = frameRef.obj
+    if widget.WOWTR_TitleHooked then return end
+    widget.WOWTR_TitleHooked = true
+    local origSetTitle = widget.SetTitle
+    if type(origSetTitle) ~= "function" then return end
+    widget.SetTitle = function(self, title)
+      origSetTitle(self, title)
+      local bg = self.titlebg
+      if not bg or not bg.SetWidth then return end
+      local tw = 0
+      if self.titletext and self.titletext.GetStringWidth then
+        tw = tonumber(self.titletext:GetStringWidth()) or 0
+      elseif self.titletext and self.titletext.GetWidth then
+        tw = tonumber(self.titletext:GetWidth()) or 0
+      elseif bg.GetWidth then
+        tw = tonumber(bg:GetWidth()) or 200
       end
+      tw = math.max(120, math.floor(tw + 12))
+      if not self.WOWTR_TitleFixedWidth or tw > self.WOWTR_TitleFixedWidth then
+        self.WOWTR_TitleFixedWidth = tw
+      end
+      bg:SetWidth(self.WOWTR_TitleFixedWidth)
     end
+    -- Apply immediately after fonts are set so first render is stable
+    local bg = widget.titlebg
+    local current = (bg and bg.GetWidth and tonumber(bg:GetWidth())) or 200
+    local tw = 0
+    if widget.titletext and widget.titletext.GetStringWidth then
+      tw = tonumber(widget.titletext:GetStringWidth()) or 0
+    elseif widget.titletext and widget.titletext.GetWidth then
+      tw = tonumber(widget.titletext:GetWidth()) or 0
+    end
+    local target = math.max(120, math.floor(math.max(current, tw + 12)))
+    widget.WOWTR_TitleFixedWidth = target
+    if bg and bg.SetWidth then bg:SetWidth(target) end
+  end
+  
+  local function NudgeTabGroupDown(frameRef, topPad)
+    -- No-op: rely on AceGUI's internal layout; our banner only adjusts content padding
   end
   
   -- (removed) ElevateTopControls: superseded by EnsureTopRightClose/HideFooterControls
@@ -385,9 +421,10 @@ local function HookAceConfigDialogFonts()
       tex:SetHorizTile(false); tex:SetVertTile(false)
       tex:SetAlpha(1)
       tex:SetVertexColor(1, 1, 1, 1)
-      tex:SetPoint("TOPLEFT", container, "TOPLEFT", 8, -6)
-      tex:SetPoint("TOPRIGHT", container, "TOPRIGHT", -8, -6)
-      tex:SetHeight(96)
+      tex:SetDrawLayer("ARTWORK")
+      tex:SetPoint("TOPLEFT", container, "TOPLEFT", 2, 73)
+      tex:SetPoint("TOPRIGHT", container, "TOPRIGHT", -2, 73)
+      tex:SetHeight(80)
     end
     local path
     if WoWTR_Localization and WoWTR_Localization.mainFolder then
@@ -397,44 +434,28 @@ local function HookAceConfigDialogFonts()
     container.WOWTR_Banner:Show()
     NeutralizeFrameChrome(container)
     local content = container.content
-    local bh = tonumber(container.WOWTR_Banner:GetHeight() or 0) or 0
-    local topPad = bh
+    -- Do not push content down; keep banner as a top overlay above the frame
     if content and content.ClearAllPoints then
       content:ClearAllPoints()
-      content:SetPoint("TOPLEFT", container, "TOPLEFT", 12, -topPad)
+      content:SetPoint("TOPLEFT", container, "TOPLEFT", 12, -12)
       content:SetPoint("BOTTOMRIGHT", container, "BOTTOMRIGHT", -12, 12)
     end
-    -- also nudge primary child (TabGroup) in case AceGUI reanchors content internally
-    if content and content.GetChildren then
-      local kids = { content:GetChildren() }
-      for _, child in ipairs(kids) do
-        if child and child.ClearAllPoints then
-          child:ClearAllPoints()
-          child:SetPoint("TOPLEFT", container, "TOPLEFT", 12, -topPad)
-          child:SetPoint("BOTTOMRIGHT", container, "BOTTOMRIGHT", -12, 12)
-          break
-        end
-      end
-    end
+    -- Do not re-anchor children; let AceGUI position TabGroup within content
     if not container.WOWTR_BannerHooked and container.HookScript then
       container.WOWTR_BannerHooked = true
       container:HookScript("OnShow", function(f)
         local c = f.content
-        local b = f.WOWTR_Banner
-        if c and b and c.ClearAllPoints and b.GetHeight then
-          local bh2 = tonumber(b:GetHeight()) or 0
+        if c and c.ClearAllPoints then
           c:ClearAllPoints()
-          c:SetPoint("TOPLEFT", f, "TOPLEFT", 12, -bh2)
+          c:SetPoint("TOPLEFT", f, "TOPLEFT", 12, -12)
           c:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -12, 12)
         end
       end)
       container:HookScript("OnSizeChanged", function(f)
         local c = f.content
-        local b = f.WOWTR_Banner
-        if c and b and c.ClearAllPoints and b.GetHeight then
-          local bh2 = tonumber(b:GetHeight()) or 0
+        if c and c.ClearAllPoints then
           c:ClearAllPoints()
-          c:SetPoint("TOPLEFT", f, "TOPLEFT", 12, -bh2)
+          c:SetPoint("TOPLEFT", f, "TOPLEFT", 12, -12)
           c:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -12, 12)
         end
       end)
@@ -451,6 +472,7 @@ local function HookAceConfigDialogFonts()
       if self.OpenFrames and self.OpenFrames[appName] and self.OpenFrames[appName].frame then
         local frameRef = self.OpenFrames[appName].frame
         AttachConfigBanner(frameRef)
+        FixTitleWidth(frameRef)
         -- push content down by banner height so tabs do not overlap the image
         local banner = frameRef and frameRef.WOWTR_Banner
         local content = frameRef and frameRef.content
@@ -463,13 +485,12 @@ local function HookAceConfigDialogFonts()
         end
         NudgeTabGroupDown(frameRef, topPad)
         EnsureTopRightClose(frameRef, appName)
+        -- no periodic nudge; anchors are applied immediately in this wrapper
       end
       return ret
     end
   end
   wrap("Open")
-  wrap("SelectGroup")
-  wrap("FeedGroup")
   FontsHooked = true
 end
 
@@ -535,11 +556,15 @@ local function HookTooltipFonts()
   TooltipsHooked = true
 end
 
+local function GetOptionTitle()
+  return QTR_ReverseIfAR(WoWTR_Localization and WoWTR_Localization.optionTitle or "WoWLang")
+end
+
 local function BuildOptions()
   local options = {
     type = "group",
     childGroups = "tab",
-    name = function() return QTR_ReverseIfAR(WoWTR_Localization and WoWTR_Localization.optionTitle or "WoWLang") end,
+    name = GetOptionTitle(),
     args = {}
   }
 
@@ -572,7 +597,7 @@ function C.Init()
   end
   if AceConfig and AceConfigDialog then
     AceConfig:RegisterOptionsTable("WOWTR", BuildOptions())
-    AceConfigDialog:AddToBlizOptions("WOWTR", QTR_ReverseIfAR(WoWTR_Localization and WoWTR_Localization.optionName or "WoWLang"))
+    AceConfigDialog:AddToBlizOptions("WOWTR", GetOptionTitle())
   end
   RegisterLSMFonts()
   HookAceConfigDialogFonts()

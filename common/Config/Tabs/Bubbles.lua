@@ -10,7 +10,10 @@ function WOWTR.Config.Groups.Bubbles()
     type = "group", order = 3,
     name = function() return WOWTR.Config.Label("titleTab2", "Bubbles") end,
     get = function(info) return WOWTR.db.profile.bubbles[info[#info]] end,
-    set = function(info, val) WOWTR.db.profile.bubbles[info[#info]] = val; WOWTR.Config.SyncGlobalsFromDB() end,
+    set = function(info, val)
+      WOWTR.db.profile.bubbles[info[#info]] = val
+      WOWTR.Config.SyncGlobalsFromDB()
+    end,
     args = {
       basics = {
         type = "group", inline = true, order = 1,

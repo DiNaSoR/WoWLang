@@ -28,7 +28,7 @@ function Core.Wait(delay, func, ...)
   end
   if (WOWTR_waitFrame == nil) then
     WOWTR_waitFrame = CreateFrame("Frame", "WOWTR_WaitFrame", UIParent)
-    WOWTR_waitFrame:SetScript("onUpdate", function(self, elapse)
+    WOWTR_waitFrame:SetScript("OnUpdate", function(self, elapse)
       local count = #WOWTR_waitTable
       local i = 1
       while (i <= count) do
@@ -296,11 +296,11 @@ function Core.OnEvent(self, event, name, ...)
     if BB_OknoTRonline then BB_OknoTRonline() end
 
     WOWTR_ADDON_PREFIX = WoWTR_Localization.addonName .. "_ver"
-    if WOWTR and WOWTR.RegisterEvent then
-      WOWTR:RegisterEvent("CHAT_MSG_ADDON")
+    if WOWTR_EventFrame and WOWTR_EventFrame.RegisterEvent then
+      WOWTR_EventFrame:RegisterEvent("CHAT_MSG_ADDON")
     else
-      WOWTR = WOWTR or CreateFrame("Frame")
-      WOWTR:RegisterEvent("CHAT_MSG_ADDON")
+      WOWTR_EventFrame = CreateFrame("Frame")
+      WOWTR_EventFrame:RegisterEvent("CHAT_MSG_ADDON")
     end
     C_ChatInfo.RegisterAddonMessagePrefix(WOWTR_ADDON_PREFIX)
 
@@ -310,6 +310,11 @@ function Core.OnEvent(self, event, name, ...)
     end
   elseif (event == "PLAYER_ENTERING_WORLD") then
     if TT_onTutorialShow then TT_onTutorialShow() end
+    -- Auto-open changelog once per version if needed
+    if WOWTR and WOWTR.Changelog and WOWTR.Changelog.ShouldShow and WOWTR.Changelog.ShouldShow() then
+      if WOWTR_ShowChangelog then WOWTR_ShowChangelog() end
+      if WOWTR.Changelog.MarkShown then WOWTR.Changelog.MarkShown() end
+    end
   elseif (event == "QUEST_DETAIL" or event == "QUEST_PROGRESS" or event == "QUEST_COMPLETE") then
     if (event == "QUEST_DETAIL" and QTR_quest_ID and QTR_quest_ID > 0) then
       local QTR_mapID = C_Map.GetBestMapForUnit("player")
@@ -385,9 +390,9 @@ function WOWTR_onChatMsgAddon(who, msg) return Core.OnChatMsgAddon(who, msg) end
 
 -- Bootstrap the root frame and events similar to legacy behavior
 if ((GetLocale() == "enUS") or (GetLocale() == "enGB")) then
-  WOWTR = WOWTR or CreateFrame("Frame")
-  WOWTR:SetScript("OnEvent", WOWTR_onEvent)
-  WOWTR:RegisterEvent("ADDON_LOADED")
+  WOWTR_EventFrame = WOWTR_EventFrame or CreateFrame("Frame")
+  WOWTR_EventFrame:SetScript("OnEvent", WOWTR_onEvent)
+  WOWTR_EventFrame:RegisterEvent("ADDON_LOADED")
 else
   DEFAULT_CHAT_FRAME:AddMessage("|cffffff00" .. (WoWTR_Localization and WoWTR_Localization.addonName or addonName) .. "|r  ver. " .. (WOWTR_version or "") .. " - add-on is not active because it was run in Locale |cffffff00" .. GetLocale())
 end

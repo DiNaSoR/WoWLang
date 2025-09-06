@@ -10,7 +10,10 @@ function WOWTR.Config.Groups.Books()
     type = "group", order = 5,
     name = function() return WOWTR.Config.Label("titleTab5", "Books") end,
     get = function(info) return WOWTR.db.profile.books[info[#info]] end,
-    set = function(info, val) WOWTR.db.profile.books[info[#info]] = val; WOWTR.Config.SyncGlobalsFromDB() end,
+    set = function(info, val)
+      WOWTR.db.profile.books[info[#info]] = val
+      WOWTR.Config.SyncGlobalsFromDB()
+    end,
     args = {
       basics = {
         type = "group", inline = true, order = 1,

@@ -19,7 +19,10 @@ function WOWTR.Config.Groups.General()
     type = "group", order = 1,
     name = function() return WOWTR.Config.Label("titleTab1", "General") end,
     get = function(info) return WOWTR.db.profile.quests[info[#info]] end,
-    set = function(info, val) WOWTR.db.profile.quests[info[#info]] = val; WOWTR.Config.SyncGlobalsFromDB() end,
+    set = function(info, val)
+      WOWTR.db.profile.quests[info[#info]] = val
+      WOWTR.Config.SyncGlobalsFromDB()
+    end,
     args = {
       core = {
         type = "group", inline = true, order = 1,

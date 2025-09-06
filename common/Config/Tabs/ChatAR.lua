@@ -11,7 +11,10 @@ function WOWTR.Config.Groups.ChatAR()
     name = function() return WOWTR.Config.Label("chatService", "Arabic Chat") end,
     hidden = function() return not (WoWTR_Localization and WoWTR_Localization.lang == 'AR') end,
     get = function(info) return WOWTR.db.profile.chatAR[info[#info]] end,
-    set = function(info, val) WOWTR.db.profile.chatAR[info[#info]] = val; WOWTR.Config.SyncGlobalsFromDB() end,
+    set = function(info, val)
+      WOWTR.db.profile.chatAR[info[#info]] = val
+      WOWTR.Config.SyncGlobalsFromDB()
+    end,
     args = {
       basics = {
         type = "group", inline = true, order = 1,

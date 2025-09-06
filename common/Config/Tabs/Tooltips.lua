@@ -10,7 +10,10 @@ function WOWTR.Config.Groups.Tooltips()
     type = "group", order = 2,
     name = function() return WOWTR.Config.Label("titleTab6", "Tooltips/UI") end,
     get = function(info) return WOWTR.db.profile.tooltips[info[#info]] end,
-    set = function(info, val) WOWTR.db.profile.tooltips[info[#info]] = val; WOWTR.Config.SyncGlobalsFromDB() end,
+    set = function(info, val)
+      WOWTR.db.profile.tooltips[info[#info]] = val
+      WOWTR.Config.SyncGlobalsFromDB()
+    end,
     args = {
       basics = {
         type = "group", inline = true, order = 1,

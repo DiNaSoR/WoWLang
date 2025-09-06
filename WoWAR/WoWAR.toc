@@ -32,6 +32,7 @@ Translations\Books_AR.lua
 Translations\Tooltips_AR.lua
 
 WoW_Localization_AR.lua
+Changelog_AR.lua
 common/Core/State.lua
 common/Core/Main.lua
 common/Config/Helpers.lua
@@ -68,6 +69,7 @@ common/Tutorials/State.lua
 common/Tutorials/Utils.lua
 common/Tutorials/Main.lua
 common/Books/Main.lua
+common/UI/Changelog.lua
 WoW_Chat.lua
 
 common/Plugins/ClassicQuestLogPlugin.lua
