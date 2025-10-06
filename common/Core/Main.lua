@@ -108,7 +108,20 @@ function Core.CheckVars()
 
   if (not QTR_PS.firstTimeLoaded) then
     QTR_PS.firstTimeLoaded = true
-    WOWTR_ResetVariables(1)
+    if WOWTR_ResetVariables then WOWTR_ResetVariables(1) end
+  end
+
+  -- One-time cleanup: strip accidental UE_COLOR: markers from saved gossip texts
+  if QTR_GOSSIP then
+    for k, v in pairs(QTR_GOSSIP) do
+      if type(v) == "string" and string.sub(v, 1, 9) == "UE_COLOR:" then
+        if WOWTR_StripUEColorMarker then
+          QTR_GOSSIP[k] = WOWTR_StripUEColorMarker(v)
+        else
+          QTR_GOSSIP[k] = v:gsub("^UE_COLOR:", "")
+        end
+      end
+    end
   end
 
   if (not BB_PM["active"]) then BB_PM["active"] = "1" end

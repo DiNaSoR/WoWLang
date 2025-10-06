@@ -188,6 +188,7 @@ end
 -- Show gossip on Blizzard GossipFrame, handling translations and options
 function Quests.Gossip.Show()
    -- print("QTR_Gossip_Show")
+   local Nazwa_NPC -- forward declare so ProcessOPT captures the local
    local function ProcessOPT(buttonString)
       local fontString = buttonString.Content.Name
       local GOptionText = WOWTR_DetectAndReplacePlayerName(fontString:GetText())
@@ -208,13 +209,22 @@ function Quests.Gossip.Show()
       if (GS_Gossip[OptHash]) then
          local transLN = prefix .. QTR_ExpandUnitInfo(GS_Gossip[OptHash], false, fontString, WOWTR_Font2, -40) .. sufix .. NONBREAKINGSPACE
          fontString:SetText(transLN)
+      else
+         -- Save missing DUI/Immersion option if saving is enabled
+         if (QTR_PS and QTR_PS["saveGS"] == "1") then
+            local orig = WOWTR_DetectAndReplacePlayerName(fontString:GetText())
+            orig = string.gsub(orig, '"', '\\"')
+            orig = WOWTR_StripUEColorMarker(orig)
+            local mapId = C_Map.GetBestMapForUnit("player") or 0
+            QTR_GOSSIP[(Nazwa_NPC or "Unknown").."@"..tostring(OptHash).."@"..tostring(mapId)] = orig.."@"..WOWTR_player_name..":"..WOWTR_player_race..":"..WOWTR_player_class
+         end
       end
       table.insert(Gossip2DUI_LN, fontString:GetText())
    end
 
    if QTR_IconAI then QTR_IconAI:Hide() end
    if GoQ_IconAI then GoQ_IconAI:Hide() end
-   local Nazwa_NPC = GossipFrameTitleText and GossipFrameTitleText:GetText() or nil
+   Nazwa_NPC = GossipFrameTitleText and GossipFrameTitleText:GetText() or nil
    if (isImmersion and isImmersion()) then
       if (not Nazwa_NPC) then
          Nazwa_NPC = ImmersionFrame.TalkBox.NameFrame.Name:GetText()
@@ -252,7 +262,7 @@ function Quests.Gossip.Show()
       if (Greeting_Text and (string.find(Greeting_Text, NONBREAKINGSPACE) == nil)) then
          Nazwa_NPC = string.gsub(Nazwa_NPC, '"', '\\"')
          local Origin_Text = WOWTR_DetectAndReplacePlayerName(Greeting_Text)
-         local Czysty_Text = WOWTR_DeleteSpecialCodes(Origin_Text)
+         local Czysty_Text = WOWTR_NormalizeForHash(Origin_Text)
          if (string.sub(Nazwa_NPC,1,17) == "Bronze Timekeeper") then
             Czysty_Text = (Czysty_Text or ""):gsub("%d", "")
          end
@@ -333,6 +343,7 @@ function Quests.Gossip.Show()
             end
             if (QTR_PS and QTR_PS["saveGS"] == "1") then
                Origin_Text = string.gsub(Origin_Text, '"', '\\"')
+               Origin_Text = WOWTR_StripUEColorMarker(Origin_Text)
                local map = C_Map.GetBestMapForUnit("player") or 0
                QTR_GOSSIP[Nazwa_NPC.."@"..tostring(Hash).."@"..tostring(map)] = Origin_Text.."@"..WOWTR_player_name..":"..WOWTR_player_race..":"..WOWTR_player_class
             end
@@ -340,18 +351,32 @@ function Quests.Gossip.Show()
       end
 
       for _, GTxtframe in GossipFrame.GreetingPanel.ScrollBox:EnumerateFrames() do
-         local GTtype = GTxtframe.GetElementData().buttonType
+         local GTtype = GTxtframe.GetElementData and GTxtframe.GetElementData().buttonType
          if (GTxtframe.GreetingText) then
             GossipTextFrame = GTxtframe
          else
-            if (((GTtype==3) or (GTtype==4) or (GTtype==5)) and (QTR_PS["gossip"]=="1") and (string.find(GTxtframe:GetText(),NONBREAKINGSPACE)==nil)) then
-               local GOptionText = WOWTR_DetectAndReplacePlayerName(GTxtframe:GetText(), nil, '$N')
+            -- Try to read option text from the button or its first FontString region
+            local rawText = (GTxtframe.GetText and GTxtframe:GetText()) or nil
+            if (not rawText) and GTxtframe.GetRegions then
+               local regions = { GTxtframe:GetRegions() }
+               for _, r in pairs(regions) do
+                  if r and r.GetObjectType and r:GetObjectType() == "FontString" and r.GetText then rawText = r:GetText(); break end
+               end
+            end
+            if (rawText and (QTR_PS["gossip"]=="1") and (string.find(rawText,NONBREAKINGSPACE)==nil)) then
+               local GOptionText = WOWTR_DetectAndReplacePlayerName(rawText, nil, '$N')
                local prefix, sufix = "", ""
-               if (string.sub(GOptionText,1,2) == "|c") then
-                  prefix = string.sub(GOptionText, 1, 10)
-                  sufix = "|r"
-                  GOptionText = string.gsub(GOptionText, prefix, "")
-                  GOptionText = string.gsub(GOptionText, sufix, "")
+               -- Strip both |cXXXXXXXX and |cnNAME: wrappers for hashing, preserve for display
+               if (string.sub(GOptionText,1,2) == "|c") or (string.sub(GOptionText,1,3) == "|cn") then
+                  local stripped = WOWTR_StripWoWColors(GOptionText)
+                  -- Try to capture visible prefix/suffix for rendering if desired
+                  if (string.sub(GOptionText,1,2) == "|c") then
+                     prefix = string.sub(GOptionText, 1, 10); sufix = "|r"
+                  elseif (string.sub(GOptionText,1,3) == "|cn") then
+                     local start = string.match(GOptionText, "^(|cn[%w_]+:)")
+                     if start then prefix = start; sufix = "|r" end
+                  end
+                  GOptionText = stripped
                end
                local Czysty_Text = WOWTR_DeleteSpecialCodes(GOptionText, '$N')
                local OptHash = StringHash(Czysty_Text)
@@ -380,6 +405,15 @@ function Quests.Gossip.Show()
                   if Quests.Utils and Quests.Utils.ApplyOptionButtonLayout then
                      Quests.Utils.ApplyOptionButtonLayout(GTxtframe, isRTL)
                   end
+               else
+                  -- No translation available: save original option text if enabled
+                  if (QTR_PS and QTR_PS["saveGS"] == "1") then
+                     local origText = WOWTR_DetectAndReplacePlayerName(rawText)
+                     origText = string.gsub(origText, '"', '\\"')
+                     origText = WOWTR_StripUEColorMarker(origText)
+                     local mapId = C_Map.GetBestMapForUnit("player") or 0
+                     QTR_GOSSIP[(Nazwa_NPC or "Unknown").."@"..tostring(OptHash).."@"..tostring(mapId)] = origText.."@"..WOWTR_player_name..":"..WOWTR_player_race..":"..WOWTR_player_class
+                  end
                end
             end
          end
@@ -402,7 +436,7 @@ function Quests.Gossip.OnQuestFrame()
          QTR_goss_optionsEN = {}
          QTR_goss_optionsTR = {}
          local Origin_Text = WOWTR_DetectAndReplacePlayerName(Greeting_Text)
-         local Czysty_Text = WOWTR_DeleteSpecialCodes(Origin_Text)
+         local Czysty_Text = WOWTR_NormalizeForHash(Origin_Text)
          local Hash = StringHash(Czysty_Text)
          QTR_curr_hash = Hash
          QTR_GS[Hash] = Greeting_Text
@@ -434,6 +468,7 @@ function Quests.Gossip.OnQuestFrame()
             if (QTR_PS and QTR_PS["saveGS"]=="1") then
                local Nazwa_NPC = QuestFrameTitleText:GetText()
                Origin_Text = string.gsub(Origin_Text, '"', '\\"')
+               Origin_Text = WOWTR_StripUEColorMarker(Origin_Text)
                local map = C_Map.GetBestMapForUnit("player")
                QTR_GOSSIP[Nazwa_NPC..'@'..tostring(Hash)..'@'..map] = Origin_Text..'@'..WOWTR_player_name..':'..WOWTR_player_race..':'..WOWTR_player_class
             end
@@ -468,9 +503,16 @@ function Quests.Gossip.OnQuestFrame()
                if not isTranslated then
                   local GOptionText = WOWTR_DetectAndReplacePlayerName(originalGossText, nil, '$N')
                   local cleanOptionText = GOptionText
-                  if prefix ~= "" then
-                     cleanOptionText = string.gsub(cleanOptionText, prefix, "")
-                     cleanOptionText = string.gsub(cleanOptionText, sufix, "")
+                  if (string.sub(cleanOptionText,1,2) == "|c") or (string.sub(cleanOptionText,1,3) == "|cn") then
+                     local detectedPrefix, detectedSuffix = "", ""
+                     if (string.sub(cleanOptionText,1,2) == "|c") then
+                        detectedPrefix = string.sub(cleanOptionText, 1, 10); detectedSuffix = "|r"
+                     else
+                        local start = string.match(cleanOptionText, "^(|cn[%w_]+:)")
+                        if start then detectedPrefix = start; detectedSuffix = "|r" end
+                     end
+                     if detectedPrefix ~= "" then prefix = detectedPrefix; sufix = detectedSuffix end
+                     cleanOptionText = WOWTR_StripWoWColors(cleanOptionText)
                   end
                   local Czysty_Text = WOWTR_DeleteSpecialCodes(cleanOptionText, '$N')
                   local TitleHash = StringHash(Czysty_Text)
@@ -483,8 +525,9 @@ function Quests.Gossip.OnQuestFrame()
                         local Nazwa_NPC = QuestFrameTitleText:GetText()
                         local textToSave = WOWTR_DetectAndReplacePlayerName(originalGossText)
                         textToSave = string.gsub(textToSave, '"', '\\"')
+                        textToSave = WOWTR_StripUEColorMarker(textToSave)
                         local mapId = C_Map.GetBestMapForUnit("player") or "0"
-                        QTR_GOSSIP[Nazwa_NPC..'@'..tostring(TitleHash).."@"..mapId] = GOptionText.."@"..WOWTR_player_name..":"..WOWTR_player_race..":"..WOWTR_player_class
+                        QTR_GOSSIP[Nazwa_NPC..'@'..tostring(TitleHash).."@"..mapId] = textToSave.."@"..WOWTR_player_name..":"..WOWTR_player_race..":"..WOWTR_player_class
                      end
                   end
                end

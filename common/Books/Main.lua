@@ -212,38 +212,41 @@ function Books.ShowTranslation()
   if (not page_str or page_str == "nil" or page_str == "") then page_str = '1' end
 
   local _, link = C_Item.GetItemInfo(ItemTextGetItem())
-  local hashID = tostring(StringHash(text_en))
-  bookID = nil
+  local hashID = tostring(StringHash(WOWTR_NormalizeForHash(text_en)))
+  bookID = ""
   if link and type(link) == "string" then
     local _, itemID = strsplit(":", link)
     if itemID and tonumber(itemID) then bookID = tostring(itemID) end
   end
 
   if ((not bookID) or (bookID == "") or (bookID == "|Hitem")) then
-    if title_en == "Plain Letter" or title_en == "Order of Night Propaganda" or (BT_Books and BT_Books[tostring(StringHash(text_en))]) then
-      bookID = tostring(StringHash(text_en))
+    if title_en == "Plain Letter" or title_en == "Order of Night Propaganda" or (_G["BT_Books"] and _G["BT_Books"][tostring(StringHash(WOWTR_NormalizeForHash(text_en)))]) then
+      bookID = tostring(StringHash(WOWTR_NormalizeForHash(text_en)))
     else
       local beginTXT = string.gsub(text_en, "\n", "")
       local marker = (title_en or "") .. "#" .. page_str .. "#" .. string.sub(beginTXT, 1, 15)
-      bookID = BT_BooksID and BT_BooksID[marker] or tostring(StringHash(text_en))
+      local gl_BT_BooksID = _G["BT_BooksID"]
+      bookID = (gl_BT_BooksID and gl_BT_BooksID[marker]) or tostring(StringHash(WOWTR_NormalizeForHash(text_en)))
     end
   end
-  if (not bookID) then
+  if (not bookID) or (bookID == "") then
     local beginTXT = string.gsub(text_en, "\n", "")
     local marker = (title_en or "") .. "#" .. page_str .. "#" .. string.sub(beginTXT, 1, 15)
-    bookID = BT_BooksID and BT_BooksID[marker] or hashID
+    local gl_BT_BooksID2 = _G["BT_BooksID"]
+    bookID = (gl_BT_BooksID2 and gl_BT_BooksID2[marker]) or hashID
   end
 
   if ((not bookID) or (bookID == "") or (bookID == "|Hitem")) then
     save_original(); return
   end
 
-  if BT_Books and BT_Books[bookID] then
-    local hasPage = BT_Books[bookID][page_str]
-    local hasTitle = (BT_PM and BT_PM["title"] == "1" and BT_Books[bookID].Title and BT_Books[bookID].Title ~= '')
+  local gl_BT_Books = _G["BT_Books"]
+  if gl_BT_Books and gl_BT_Books[bookID] then
+    local hasPage = gl_BT_Books[bookID][page_str]
+    local hasTitle = (BT_PM and BT_PM["title"] == "1" and gl_BT_Books[bookID].Title and gl_BT_Books[bookID].Title ~= '')
     if hasPage or hasTitle then
       if hasTitle then
-        title_tr = BT_Books[bookID]["Title"]
+        title_tr = gl_BT_Books[bookID]["Title"]
         if act_tr == "1" and title_tr and title_tr ~= "" then
           ItemTextFrameTitleText:SetText(QTR_ReverseIfAR(title_tr))
           ItemTextFrameTitleText:SetFont(WOWTR_Font2, 11)
@@ -252,7 +255,7 @@ function Books.ShowTranslation()
         end
       end
 
-      text_tr = BT_Books[bookID][page_str] or ""
+      text_tr = gl_BT_Books[bookID][page_str] or ""
       text_tr = string.gsub(text_tr, "$b", "$B")
       text_tr = string.gsub(text_tr, "$B", "\n")
       text_tr = string.gsub(text_tr, "$N", WOWTR_player_name or "")

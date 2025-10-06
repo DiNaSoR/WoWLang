@@ -393,6 +393,33 @@ function Text.DeleteSpecialCodes(txt, part)
   return text
 end
 
+-- Strip an internal color-prefix marker if present (added during RTL processing)
+function Text.StripUEColorMarker(txt)
+  if not txt then return "" end
+  return (txt:gsub("^UE_COLOR:", ""))
+end
+
+-- Remove WoW color codes from text (both |cFFFFFFFF and |cnNAME: variants)
+function Text.StripWoWColors(txt)
+  if not txt then return "" end
+  local text = txt
+  -- Remove any color-start tokens and resets; leave inner text intact
+  text = text:gsub("|c%x%x%x%x%x%x%x%x", "")
+  text = text:gsub("|cn[%w_]+:", "")
+  text = text:gsub("|r", "")
+  return text
+end
+
+-- Normalize a string before hashing: drop UE_COLOR, remove color tags, then delete addon placeholders
+function Text.NormalizeForHash(txt)
+  if not txt then return "" end
+  local s = Text.StripUEColorMarker(txt)
+  s = Text.StripWoWColors(s)
+  s = Text.DeleteSpecialCodes(s)
+  s = s:gsub('\r', '')
+  return s
+end
+
 -- Back-compat global wrappers
 function HandleWoWSpecialCodes(msg) return Text.HandleWoWSpecialCodes(msg) end
 function RestoreWoWSpecialCodes(msg, sc) return Text.RestoreWoWSpecialCodes(msg, sc) end
@@ -403,4 +430,7 @@ function WOWTR_AnsiReverse(txt) return Text.AnsiReverse(txt) end
 function WOWTR_ReplaceOnlyWholeWords(txt, f, r) return Text.ReplaceOnlyWholeWords(txt, f, r) end
 function WOWTR_DetectAndReplacePlayerName(txt, target, part) return Text.DetectAndReplacePlayerName(txt, target, part) end
 function WOWTR_DeleteSpecialCodes(txt, part) return Text.DeleteSpecialCodes(txt, part) end
+function WOWTR_StripUEColorMarker(txt) return Text.StripUEColorMarker(txt) end
+function WOWTR_StripWoWColors(txt) return Text.StripWoWColors(txt) end
+function WOWTR_NormalizeForHash(txt) return Text.NormalizeForHash(txt) end
 

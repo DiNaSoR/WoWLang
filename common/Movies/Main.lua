@@ -12,7 +12,7 @@ function Movies.ShowMovieSubtitles()
   local readText = fs:GetText()
   if (readText and (readText ~= S.lastSubtitle) and (string.find(readText, NONBREAKINGSPACE) == nil)) then
     readText = WOWTR_DetectAndReplacePlayerName(readText)
-    local cleaned = WOWTR_DeleteSpecialCodes(readText)
+    local cleaned = WOWTR_NormalizeForHash(readText)
     S.lineIndex = S.lineIndex + 1
     local lineIndexStr = U.leftPad2(S.lineIndex)
     S.lastSubtitle = readText
@@ -43,13 +43,13 @@ function Movies.ShowCinematicSubtitles()
     S.currentStartTime = GetTime() + 1
     local shouldSaveEN = true
     local replaced = WOWTR_DetectAndReplacePlayerName(text)
-    local cleaned = WOWTR_DeleteSpecialCodes(replaced)
+    local cleaned = WOWTR_NormalizeForHash(replaced)
     local hash = StringHash(cleaned)
     local p1 = select(1, string.find(replaced, ":"))
 
     if (p1 and p1 > 0 and p1 < 30) then
       local msg = WOWTR_DetectAndReplacePlayerName(string.sub(replaced, p1 + 2))
-      local msgClean = WOWTR_DeleteSpecialCodes(msg)
+      local msgClean = WOWTR_NormalizeForHash(msg)
       local hash2 = StringHash(msgClean)
       local gl_MF_Hash = _G["MF_Hash"]
       local gl_BB_Bubbles = _G["BB_Bubbles"]
