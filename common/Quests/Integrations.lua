@@ -5,7 +5,37 @@ local addonName, ns = ...
 ns = ns or {}
 ns.Quests = ns.Quests or {}
 
+-- Addon frame getters (avoid hard references to optional addons in core code)
+function GetClassicQuestLogFrame()
+  if C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded("ClassicQuestLog") then
+    return _G["ClassicQuestLog"]
+  end
+  return nil
+end
+
+function GetImmersionFrame()
+  if C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded("Immersion") then
+    return _G["ImmersionFrame"]
+  end
+  return nil
+end
+
+function GetImmersionContentFrame()
+  if C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded("Immersion") then
+    return _G["ImmersionContentFrame"]
+  end
+  return nil
+end
+
+function GetStorylineFrame()
+  if C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded("Storyline") then
+    return _G["Storyline_NPCFrame"]
+  end
+  return nil
+end
+
 -- Classic Quest Log
+---@diagnostic disable-next-line: lowercase-global
 function isClassicQuestLog()
   if ClassicQuestLogPlugin and ClassicQuestLogPlugin.isClassicQuestLog then
     return ClassicQuestLogPlugin.isClassicQuestLog()
@@ -14,6 +44,7 @@ function isClassicQuestLog()
 end
 
 -- Immersion
+---@diagnostic disable-next-line: lowercase-global
 function isImmersion()
   if ImmersionPlugin and ImmersionPlugin.isImmersion then
     return ImmersionPlugin.isImmersion()
@@ -21,31 +52,32 @@ function isImmersion()
   return false
 end
 
-function QTR_Immersion(...)
+function QTR_Immersion()
   if ImmersionPlugin and ImmersionPlugin.QTR_Immersion then
-    return ImmersionPlugin.QTR_Immersion(...)
+    return ImmersionPlugin.QTR_Immersion()
   end
 end
 
-function QTR_Immersion_Static(...)
+function QTR_Immersion_Static()
   if ImmersionPlugin and ImmersionPlugin.QTR_Immersion_Static then
-    return ImmersionPlugin.QTR_Immersion_Static(...)
+    return ImmersionPlugin.QTR_Immersion_Static()
   end
 end
 
-function QTR_Immersion_OFF(...)
+function QTR_Immersion_OFF()
   if ImmersionPlugin and ImmersionPlugin.QTR_Immersion_OFF then
-    return ImmersionPlugin.QTR_Immersion_OFF(...)
+    return ImmersionPlugin.QTR_Immersion_OFF()
   end
 end
 
-function QTR_Immersion_OFF_Static(...)
+function QTR_Immersion_OFF_Static()
   if ImmersionPlugin and ImmersionPlugin.QTR_Immersion_OFF_Static then
-    return ImmersionPlugin.QTR_Immersion_OFF_Static(...)
+    return ImmersionPlugin.QTR_Immersion_OFF_Static()
   end
 end
 
 -- Storyline
+---@diagnostic disable-next-line: lowercase-global
 function isStoryline()
   if StorylinePlugin and StorylinePlugin.isStoryline then
     return StorylinePlugin.isStoryline()
@@ -53,51 +85,51 @@ function isStoryline()
   return false
 end
 
-function QTR_Storyline_Delay(...)
+function QTR_Storyline_Delay()
   if StorylinePlugin and StorylinePlugin.QTR_Storyline_Delay then
-    return StorylinePlugin.QTR_Storyline_Delay(...)
+    return StorylinePlugin.QTR_Storyline_Delay()
   end
 end
 
-function QTR_Storyline_Quest(...)
+function QTR_Storyline_Quest()
   if StorylinePlugin and StorylinePlugin.QTR_Storyline_Quest then
-    return StorylinePlugin.QTR_Storyline_Quest(...)
+    return StorylinePlugin.QTR_Storyline_Quest()
   end
 end
 
-function QTR_Storyline_Hide(...)
+function QTR_Storyline_Hide()
   if StorylinePlugin and StorylinePlugin.QTR_Storyline_Hide then
-    return StorylinePlugin.QTR_Storyline_Hide(...)
+    return StorylinePlugin.QTR_Storyline_Hide()
   end
 end
 
-function QTR_Storyline_Objectives(...)
+function QTR_Storyline_Objectives()
   if StorylinePlugin and StorylinePlugin.QTR_Storyline_Objectives then
-    return StorylinePlugin.QTR_Storyline_Objectives(...)
+    return StorylinePlugin.QTR_Storyline_Objectives()
   end
 end
 
-function QTR_Storyline_Rewards(...)
+function QTR_Storyline_Rewards()
   if StorylinePlugin and StorylinePlugin.QTR_Storyline_Rewards then
-    return StorylinePlugin.QTR_Storyline_Rewards(...)
+    return StorylinePlugin.QTR_Storyline_Rewards()
   end
 end
 
-function QTR_Storyline(...)
+function QTR_Storyline(nr)
   if StorylinePlugin and StorylinePlugin.QTR_Storyline then
-    return StorylinePlugin.QTR_Storyline(...)
+    return StorylinePlugin.QTR_Storyline(nr)
   end
 end
 
-function QTR_Storyline_Gossip(...)
+function QTR_Storyline_Gossip()
   if StorylinePlugin and StorylinePlugin.QTR_Storyline_Gossip then
-    return StorylinePlugin.QTR_Storyline_Gossip(...)
+    return StorylinePlugin.QTR_Storyline_Gossip()
   end
 end
 
-function QTR_Storyline_OFF(...)
+function QTR_Storyline_OFF(nr)
   if StorylinePlugin and StorylinePlugin.QTR_Storyline_OFF then
-    return StorylinePlugin.QTR_Storyline_OFF(...)
+    return StorylinePlugin.QTR_Storyline_OFF(nr)
   end
 end
 

@@ -5,6 +5,7 @@ local addonName, ns = ...
 ns = ns or {}
 ns.Quests = ns.Quests or {}
 local Quests = ns.Quests
+local S = ns.Quests.State or {}
 
 -- Toggle quest translation on/off (keeps globals in sync)
 function Quests.ToggleTranslation()
@@ -79,20 +80,20 @@ end
 -- Initialize buttons, hooks, and tracker headers
 function Quests.Start()
    -- Button in QuestFrame (NPC)
-   QTR_ToggleButton0 = Quests.Utils.CreateButton(QuestFrame, 150, 20, "QID=?", "TOPLEFT", QuestFrame, "TOPLEFT", 55, -20, Quests.ToggleTranslation)
-   if QTR_ToggleButton0 then QTR_ToggleButton0:Show() end
+   QTR_ToggleButton0 = Quests.Utils.CreateButton(QuestFrame, 150, 20, "QID?", "TOPLEFT", QuestFrame, "TOPLEFT", 55, -20, Quests.ToggleTranslation)
+   if QTR_ToggleButton0 then QTR_ToggleButton0:Show(); if S and S.ui and S.ui.quest then S.ui.quest.toggleEN = QTR_ToggleButton0 end end
 
    -- Button in QuestLogPopupDetailFrame
-   QTR_ToggleButton1 = Quests.Utils.CreateButton(QuestLogPopupDetailFrame, 150, 20, "QID=?", "TOPLEFT", QuestLogPopupDetailFrame, "TOPLEFT", 45, -31, Quests.ToggleTranslation)
+   QTR_ToggleButton1 = Quests.Utils.CreateButton(QuestLogPopupDetailFrame, 150, 20, "QID?", "TOPLEFT", QuestLogPopupDetailFrame, "TOPLEFT", 45, -31, Quests.ToggleTranslation)
    if QTR_ToggleButton1 then QTR_ToggleButton1:Show() end
 
    -- Button in QuestMapDetailsScrollFrame
-   QTR_ToggleButton2 = Quests.Utils.CreateButton(QuestMapDetailsScrollFrame, 110, 21, "QID=?", "TOPLEFT", QuestMapDetailsScrollFrame, "TOPLEFT", 96, 32, Quests.ToggleTranslation)
+   QTR_ToggleButton2 = Quests.Utils.CreateButton(QuestMapDetailsScrollFrame, 110, 21, "QID?", "TOPLEFT", QuestMapDetailsScrollFrame, "TOPLEFT", 96, 32, Quests.ToggleTranslation)
    if QTR_ToggleButton2 then QTR_ToggleButton2:Show() end
 
    -- Button in GossipFrame
-   QTR_ToggleButtonGS1 = Quests.Utils.CreateButton(GossipFrame, 220, 20, "Gossip-Hash=?", "TOPLEFT", GossipFrame, "TOPLEFT", 75, -20, GS_ON_OFF)
-   if QTR_ToggleButtonGS1 then QTR_ToggleButtonGS1:Disable(); QTR_ToggleButtonGS1:Show() end
+   QTR_ToggleButtonGS1 = Quests.Utils.CreateButton(GossipFrame, 220, 20, "GH?", "TOPLEFT", GossipFrame, "TOPLEFT", 75, -20, GS_ON_OFF)
+   if QTR_ToggleButtonGS1 then QTR_ToggleButtonGS1:Disable(); QTR_ToggleButtonGS1:Show(); if S and S.ui and S.ui.gossip then S.ui.gossip.toggleGS = QTR_ToggleButtonGS1 end end
 
    QTR_IconAI = GossipFrame:CreateTexture(nil, "OVERLAY")
    QTR_IconAI:ClearAllPoints()
@@ -110,7 +111,7 @@ function Quests.Start()
       GameTooltip:Show()
    end)
    QTR_IconAI:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
-   QTR_IconAI:Hide()
+   QTR_IconAI:Hide(); if S and S.ui and S.ui.gossip then S.ui.gossip.iconAI = QTR_IconAI end
 
    GoQ_IconAI = QuestFrame:CreateTexture(nil, "OVERLAY")
    GoQ_IconAI:ClearAllPoints()
@@ -128,7 +129,7 @@ function Quests.Start()
       GameTooltip:Show()
    end)
    GoQ_IconAI:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
-   GoQ_IconAI:Hide()
+   GoQ_IconAI:Hide(); if S and S.ui and S.ui.quest then S.ui.quest.iconAI = GoQ_IconAI end
 
    -- Hooks and trackers
    WorldMapFrame:HookScript("OnHide", function()

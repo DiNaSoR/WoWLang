@@ -1,6 +1,8 @@
 -- StorylinePlugin.lua
 -- Plugin for handling Storyline addon integration
 
+-- luacheck: globals Storyline_NPCFrame Storyline_NPCFrameChat Storyline_NPCFrameObjectivesContent Storyline_NPCFrameRewards Storyline_NPCFrameChatText Storyline_API Storyline_NPCFrameModelsYou
+---@diagnostic disable: undefined-global
 StorylinePlugin = {}
 
 function StorylinePlugin.isStoryline()

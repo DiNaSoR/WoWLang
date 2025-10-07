@@ -1,10 +1,13 @@
 -- WoW_Quests_Gossip.lua
 -- Gossip toggle handlers (modularized)
 
+-- luacheck: globals QTR_display_constants
+
 local addonName, ns = ...
 ns = ns or {}
 ns.Quests = ns.Quests or {}
 local Quests = ns.Quests
+local S = ns.Quests.State or {}
 
 Quests.Gossip = Quests.Gossip or {}
 
@@ -73,9 +76,7 @@ function Quests.Gossip.ToggleNPCGossip()
          local size = tonumber(QTR_PS and QTR_PS["fontsize"] or 13)
          if WOWTR_Font2 then GossipGreetingText:SetFont(WOWTR_Font2, size) end
       end
-      if QTR_ToggleButtonGS1 then
-         QTR_ToggleButtonGS1:SetText("Gossip-Hash="..tostring(QTR_curr_hash).." EN")
-      end
+      do local ui = S and S.ui and S.ui.gossip; if ui and ui.toggleGS then ui.toggleGS:SetText("GH="..tostring(QTR_curr_hash).." EN") end end
       if (QTR_goss_optionsEN) then
          for k, v in pairs(QTR_goss_optionsEN) do
             if k and k.SetText then
@@ -98,6 +99,8 @@ function Quests.Gossip.ToggleNPCGossip()
    else                                   -- show translation
       QTR_curr_goss="1"
       local Greeting_TR = GS_Gossip and GS_Gossip[QTR_curr_hash]
+      -- Ensure local NPC name is available in this scope
+      local Nazwa_NPC = GossipFrameTitleText and GossipFrameTitleText:GetText() or UnitName("target")
       if (string.sub((Nazwa_NPC or ""),1,17) == "Bronze Timekeeper") then
          if Quests.Utils and Quests.Utils.FormatBronzeTimekeeper then
             Greeting_TR = Quests.Utils.FormatBronzeTimekeeper(QTR_GS[QTR_curr_hash], Greeting_TR)
@@ -106,9 +109,7 @@ function Quests.Gossip.ToggleNPCGossip()
       if GossipGreetingText and Quests.Utils and Quests.Utils.ApplyRTLText then
          Quests.Utils.ApplyRTLText(GossipGreetingText, (Greeting_TR or "") .. NONBREAKINGSPACE, WOWTR_Font2, tonumber(QTR_PS and QTR_PS["fontsize"] or 13), -5, "LEFT")
       end
-      if QTR_ToggleButtonGS1 then
-         QTR_ToggleButtonGS1:SetText("Gossip-Hash="..tostring(QTR_curr_hash).." "..WoWTR_Localization.lang)
-      end
+      do local ui = S and S.ui and S.ui.gossip; if ui and ui.toggleGS then ui.toggleGS:SetText("GH="..tostring(QTR_curr_hash).." "..WoWTR_Localization.lang) end end
       if (QTR_goss_optionsTR) then
          for k, v in pairs(QTR_goss_optionsTR) do
             if k and k.SetText then
@@ -129,16 +130,26 @@ end
 
 function Quests.Gossip.ToggleQuestFrame()
    if (QTR_curr_goss=="1") then         -- switch to English (LTR)
-      if QTR_display_constants then QTR_display_constants(0) end
+      -- Display constants wrapper lives in Details; call if present
+      do local dc = rawget(_G, "QTR_display_constants"); if dc then dc(0) end end
       QTR_curr_goss="0"
       if GreetingText then
          GreetingText:SetText(QTR_GS[QTR_curr_hash] or "")
          GreetingText:SetJustifyH("LEFT")
          RestoreOriginalFont(GreetingText)
       end
-      if QTR_ToggleButton0 then
-         QTR_ToggleButton0:SetText("Gossip-Hash="..tostring(QTR_curr_hash).." EN")
+      -- Ensure headers return to original Blizzard labels, fonts, and LTR alignment when translation is off
+      if CurrentQuestsText then
+         if CurrentQuestsText.SetText then CurrentQuestsText:SetText(CURRENT_QUESTS or "Current Quests") end
+         if CurrentQuestsText.SetJustifyH then CurrentQuestsText:SetJustifyH("LEFT") end
+         RestoreOriginalFont(CurrentQuestsText)
       end
+      if AvailableQuestsText then
+         if AvailableQuestsText.SetText then AvailableQuestsText:SetText(AVAILABLE_QUESTS or "Available Quests") end
+         if AvailableQuestsText.SetJustifyH then AvailableQuestsText:SetJustifyH("LEFT") end
+         RestoreOriginalFont(AvailableQuestsText)
+      end
+      do local uiq = S and S.ui and S.ui.quest; if uiq and uiq.toggleEN then uiq.toggleEN:SetText("GH="..tostring(QTR_curr_hash).." EN") end end
       -- Restore options to English LTR layout
       if (QTR_goss_optionsEN) then
          for k, v in pairs(QTR_goss_optionsEN) do
@@ -153,9 +164,12 @@ function Quests.Gossip.ToggleQuestFrame()
       end
       RestoreFontInGossipScrollTarget()
    else                                   -- switch to translated (potentially RTL)
-      if QTR_display_constants then QTR_display_constants(1) end
+      -- Display constants wrapper lives in Details; call if present
+      do local dc = rawget(_G, "QTR_display_constants"); if dc then dc(1) end end
       QTR_curr_goss="1"
       local Greeting_TR = (GS_Gossip and GS_Gossip[QTR_curr_hash]) or (QTR_GS[QTR_curr_hash] or "")
+      -- Ensure local NPC name is available in this scope
+      local Nazwa_NPC = GossipFrameTitleText and GossipFrameTitleText:GetText() or UnitName("target")
       if (string.sub((Nazwa_NPC or ""),1,17) == "Bronze Timekeeper") then
          if Quests.Utils and Quests.Utils.FormatBronzeTimekeeper then
             Greeting_TR = Quests.Utils.FormatBronzeTimekeeper(QTR_GS[QTR_curr_hash], Greeting_TR)
@@ -165,9 +179,7 @@ function Quests.Gossip.ToggleQuestFrame()
          RememberFont(GreetingText)
          Quests.Utils.ApplyRTLText(GreetingText, (Greeting_TR or "") .. NONBREAKINGSPACE, WOWTR_Font2, tonumber(QTR_PS and QTR_PS["fontsize"] or 13), -5, "LEFT")
       end
-      if QTR_ToggleButton0 then
-         QTR_ToggleButton0:SetText("Gossip-Hash="..tostring(QTR_curr_hash).." "..WoWTR_Localization.lang)
-      end
+      do local uiq = S and S.ui and S.ui.quest; if uiq and uiq.toggleEN then uiq.toggleEN:SetText("GH="..tostring(QTR_curr_hash).." "..WoWTR_Localization.lang) end end
       if (QTR_goss_optionsTR) then
          for k, v in pairs(QTR_goss_optionsTR) do
             if k and k.SetText then
@@ -222,8 +234,8 @@ function Quests.Gossip.Show()
       table.insert(Gossip2DUI_LN, fontString:GetText())
    end
 
-   if QTR_IconAI then QTR_IconAI:Hide() end
-   if GoQ_IconAI then GoQ_IconAI:Hide() end
+   do local ui = S and S.ui and S.ui.gossip; if ui and ui.iconAI then ui.iconAI:Hide() end end
+   do local uiq = S and S.ui and S.ui.quest; if uiq and uiq.iconAI then uiq.iconAI:Hide() end end
    Nazwa_NPC = GossipFrameTitleText and GossipFrameTitleText:GetText() or nil
    if (isImmersion and isImmersion()) then
       if (not Nazwa_NPC) then
@@ -235,7 +247,11 @@ function Quests.Gossip.Show()
       end
    elseif (isStoryline and isStoryline()) then
       if (not Nazwa_NPC) then
-         Nazwa_NPC = Storyline_NPCFrameChatName:GetText()
+         -- Guard Storyline globals; fall back if unavailable
+         local chatName = rawget(_G, "Storyline_NPCFrameChatName")
+         if chatName and chatName.GetText then
+            Nazwa_NPC = chatName:GetText()
+         end
       end
       if QTR_ToggleButton5 then
          QTR_ToggleButton5:SetText(QTR_ReverseIfAR(WoWTR_Localization.gossipText))
@@ -282,10 +298,7 @@ function Quests.Gossip.Show()
                Greeting_TR = Quests.Utils and Quests.Utils.FormatBronzeTimekeeper and Quests.Utils.FormatBronzeTimekeeper(Greeting_Text, Greeting_TR) or Greeting_TR
             end
             if (GossipTextFrame) then
-               if QTR_ToggleButtonGS1 then
-                  QTR_ToggleButtonGS1:SetText("Gossip-Hash="..tostring(Hash).." "..WoWTR_Localization.lang)
-                  QTR_ToggleButtonGS1:Enable()
-               end
+               do local ui = S and S.ui and S.ui.gossip; if ui and ui.toggleGS then ui.toggleGS:SetText("GH="..tostring(Hash).." "..WoWTR_Localization.lang); ui.toggleGS:Enable() end end
                GossipGreetingText = GossipTextFrame.GreetingText
                local GO_height = GossipGreetingText:GetHeight()
                local isRTL = Quests.Utils and Quests.Utils.IsRTL and Quests.Utils.IsRTL() or false
@@ -300,24 +313,40 @@ function Quests.Gossip.Show()
                if (GossipGreetingText:GetHeight() > GO_height+1) then
                   GO_resized = GO_resized + GossipGreetingText:GetHeight() - GO_height
                end
-               if (GS_AI and GS_AI[Hash] and QTR_IconAI) then
-                  QTR_IconAI:Show()
-               end
+            do
+               local gsAI = rawget(_G, "GS_AI")
+               do local ui = S and S.ui and S.ui.gossip; if (gsAI and gsAI[Hash] and ui and ui.iconAI) then ui.iconAI:Show() end end
+            end
             end
             if (isImmersion and isImmersion()) then
                ImmersionFrame.TalkBox.TextFrame.Text:SetFont(WOWTR_Font2, 14)
                ImmersionFrame.TalkBox.TextFrame.Text:SetText(QTR_ExpandUnitInfo(Greeting_TR,false,ImmersionFrame.TalkBox.TextFrame.Text,WOWTR_Font2))
             elseif (isStoryline and isStoryline()) then
-               if (Storyline_NPCFrameChat.texts == nil) then
-                  C_Timer.After(1.0, function() txt0txt = QTR_ExpandUnitInfo(Greeting_TR,false,Storyline_NPCFrameChat.texts[0],WOWTR_Font2); QTR_Storyline_Gossip(); end)
-               else
-                  txt0txt = QTR_ExpandUnitInfo(Greeting_TR,false,Storyline_NPCFrameChat.texts[0],WOWTR_Font2)
-                  if (not WOWTR_wait(1.0, QTR_Storyline_Gossip)) then end
+               -- Interact with Storyline via integration wrapper only; avoid undeclared globals
+               local function setStorylineText()
+                  local chat = rawget(_G, "Storyline_NPCFrameChat")
+                  if chat and chat.texts and chat.texts[0] then
+                     local prepared = QTR_ExpandUnitInfo(Greeting_TR,false,chat.texts[0],WOWTR_Font2)
+                     _G.txt0txt = prepared
+                     if QTR_Storyline_Gossip then QTR_Storyline_Gossip() end
+                  elseif QTR_Storyline_Gossip then
+                     local fallbackRegion = (ImmersionFrame and ImmersionFrame.TalkBox and ImmersionFrame.TalkBox.TextFrame and ImmersionFrame.TalkBox.TextFrame.Text) or GossipGreetingText
+                     _G.txt0txt = QTR_ExpandUnitInfo(Greeting_TR,false,fallbackRegion,WOWTR_Font2)
+                     QTR_Storyline_Gossip()
+                  end
+               end
+               do
+                  local chat = rawget(_G, "Storyline_NPCFrameChat")
+                  if not (chat and chat.texts) then
+                     C_Timer.After(1.0, setStorylineText)
+                  else
+                     setStorylineText()
+                  end
                end
             end
             if (IsDUIQuestFrame and IsDUIQuestFrame()) then
                if QTR_ToggleButton6 then
-                  QTR_ToggleButton6:SetText("Gossip-Hash="..tostring(Hash).." ("..WoWTR_Localization.lang..")")
+                  QTR_ToggleButton6:SetText("GH="..tostring(Hash).." ("..WoWTR_Localization.lang..")")
                   QTR_ToggleButton6:Enable()
                end
                if QTR_DUIGossipFrame then QTR_DUIGossipFrame() end
@@ -326,13 +355,10 @@ function Quests.Gossip.Show()
                QTR_first_ok = true
             end
          else
-            if QTR_ToggleButtonGS1 then
-               QTR_ToggleButtonGS1:SetText("Gossip-Hash="..tostring(Hash).." (EN)")
-               QTR_ToggleButtonGS1:Disable()
-            end
+            do local ui = S and S.ui and S.ui.gossip; if ui and ui.toggleGS then ui.toggleGS:SetText("GH="..tostring(Hash).." (EN)"); ui.toggleGS:Disable() end end
             if (IsDUIQuestFrame and IsDUIQuestFrame()) then
                if QTR_ToggleButton6 then
-                  QTR_ToggleButton6:SetText("Gossip-Hash="..tostring(Hash).." (EN)")
+                  QTR_ToggleButton6:SetText("GH="..tostring(Hash).." (EN)")
                   QTR_ToggleButton6:Show(); QTR_ToggleButton6:Disable()
                end
                if QTR_ToggleButton7 then QTR_ToggleButton7:Hide() end
@@ -426,10 +452,10 @@ end
 
 -- Process translations for the QuestFrame gossip section
 function Quests.Gossip.OnQuestFrame()
-   if QTR_IconAI then QTR_IconAI:Hide() end
-   if GoQ_IconAI then GoQ_IconAI:Hide() end
+   do local ui = S and S.ui and S.ui.gossip; if ui and ui.iconAI then ui.iconAI:Hide() end end
+   do local uiq = S and S.ui and S.ui.quest; if uiq and uiq.iconAI then uiq.iconAI:Hide() end end
    if ((GreetingText and GreetingText:IsVisible()) and (QTR_PS["gossip"]=="1")) then
-      if QTR_ToggleButton0 then QTR_ToggleButton0:Disable(); QTR_ToggleButton0:SetWidth(200) end
+      do local uiq = S and S.ui and S.ui.quest; if uiq and uiq.toggleEN then uiq.toggleEN:Disable(); uiq.toggleEN:SetWidth(150) end end
       local Greeting_Text = GreetingText:GetText()
       if (Greeting_Text and (string.find(Greeting_Text,NONBREAKINGSPACE)==nil)) then
          local GO_resized = 0
@@ -441,30 +467,32 @@ function Quests.Gossip.OnQuestFrame()
          QTR_curr_hash = Hash
          QTR_GS[Hash] = Greeting_Text
          if (GS_Gossip[Hash]) then
-            if QTR_ToggleButton0 then
-               QTR_ToggleButton0:SetText("Gossip-Hash="..tostring(Hash).." "..WoWTR_Localization.lang)
-               QTR_ToggleButton0:SetScript("OnClick", GS_ON_OFF2)
-               QTR_ToggleButton0:Enable()
-            end
+            do local uiq = S and S.ui and S.ui.quest; if uiq and uiq.toggleEN then uiq.toggleEN:SetText("GH="..tostring(Hash).." "..WoWTR_Localization.lang); uiq.toggleEN:SetScript("OnClick", GS_ON_OFF2); uiq.toggleEN:Enable() end end
             local Greeting_TR = GS_Gossip[Hash]
             local GO_height = GreetingText:GetHeight()
-            GreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR..NONBREAKINGSPACE,false,GreetingText,WOWTR_Font2))
-            GreetingText:SetFont(WOWTR_Font2, tonumber(QTR_PS and QTR_PS["fontsize"] or 13))
+            if Quests.Utils and Quests.Utils.ApplyRTLText then
+               Quests.Utils.ApplyRTLText(GreetingText, Greeting_TR..NONBREAKINGSPACE, WOWTR_Font2, tonumber(QTR_PS and QTR_PS["fontsize"] or 13), -5, "LEFT")
+            else
+               GreetingText:SetText(QTR_ExpandUnitInfo(Greeting_TR..NONBREAKINGSPACE,false,GreetingText,WOWTR_Font2))
+               GreetingText:SetFont(WOWTR_Font2, tonumber(QTR_PS and QTR_PS["fontsize"] or 13))
+               if ns and ns.RTL and ns.RTL.JustifyFontString then ns.RTL.JustifyFontString(GreetingText, "LEFT") end
+            end
             QTR_curr_goss="1"
             if (GreetingText:GetHeight() > GO_height+1) then
                GO_resized = GO_resized + GreetingText:GetHeight() - GO_height
             end
-            if (GS_AI and GS_AI[Hash] and GoQ_IconAI) then
-               GoQ_IconAI:Show()
+            do
+               local gsAI = rawget(_G, "GS_AI")
+               do local uiq = S and S.ui and S.ui.quest; if (gsAI and gsAI[Hash] and uiq and uiq.iconAI) then uiq.iconAI:Show() end end
             end
             if (IsDUIQuestFrame and IsDUIQuestFrame()) then
                if QTR_ToggleButton6 then
-                 QTR_ToggleButton6:SetText("Gossip-Hash="..tostring(Hash).." ("..WoWTR_Localization.lang..")"); QTR_ToggleButton6:Enable()
+                 QTR_ToggleButton6:SetText("GH="..tostring(Hash).." ("..WoWTR_Localization.lang..")"); QTR_ToggleButton6:Enable()
                end
                if QTR_DUIGossipFrame then QTR_DUIGossipFrame() end
             end
          else
-            if QTR_ToggleButton0 then QTR_ToggleButton0:SetText("Gossip-Hash="..tostring(Hash).." (EN)") end
+            do local uiq = S and S.ui and S.ui.quest; if uiq and uiq.toggleEN then uiq.toggleEN:SetText("GH="..tostring(Hash).." (EN)") end end
             if (QTR_PS and QTR_PS["saveGS"]=="1") then
                local Nazwa_NPC = QuestFrameTitleText:GetText()
                Origin_Text = string.gsub(Origin_Text, '"', '\\"')
@@ -474,17 +502,29 @@ function Quests.Gossip.OnQuestFrame()
             end
          end
 
-         if (CurrentQuestsText and CurrentQuestsText:IsVisible()) then
-            CurrentQuestsText:SetText(QTR_ExpandUnitInfo(QTR_Messages.currquests,false,CurrentQuestsText,WOWTR_Font1,-30))
-            CurrentQuestsText:SetFont(WOWTR_Font1, 18)
-         end
-         if (AvailableQuestsText and AvailableQuestsText:IsVisible()) then
-            AvailableQuestsText:SetText(QTR_ExpandUnitInfo(QTR_Messages.avaiquests,false,AvailableQuestsText,WOWTR_Font1,-30))
-            AvailableQuestsText:SetFont(WOWTR_Font1, 18)
-         end
+        if (CurrentQuestsText and CurrentQuestsText:IsVisible()) then
+           if Quests.Utils and Quests.Utils.ApplyRTLText then
+              Quests.Utils.ApplyRTLText(CurrentQuestsText, QTR_Messages.currquests, WOWTR_Font1, 18, -30, "LEFT")
+           else
+              CurrentQuestsText:SetText(QTR_ExpandUnitInfo(QTR_Messages.currquests,false,CurrentQuestsText,WOWTR_Font1,-30))
+              CurrentQuestsText:SetFont(WOWTR_Font1, 18)
+              if ns and ns.RTL and ns.RTL.JustifyFontString then ns.RTL.JustifyFontString(CurrentQuestsText, "LEFT") end
+           end
+           if CurrentQuestsText.SetWidth then CurrentQuestsText:SetWidth(265) end
+        end
+        if (AvailableQuestsText and AvailableQuestsText:IsVisible()) then
+           if Quests.Utils and Quests.Utils.ApplyRTLText then
+              Quests.Utils.ApplyRTLText(AvailableQuestsText, QTR_Messages.avaiquests, WOWTR_Font1, 18, -30, "LEFT")
+           else
+              AvailableQuestsText:SetText(QTR_ExpandUnitInfo(QTR_Messages.avaiquests,false,AvailableQuestsText,WOWTR_Font1,-30))
+              AvailableQuestsText:SetFont(WOWTR_Font1, 18)
+              if ns and ns.RTL and ns.RTL.JustifyFontString then ns.RTL.JustifyFontString(AvailableQuestsText, "LEFT") end
+           end
+           if AvailableQuestsText.SetWidth then AvailableQuestsText:SetWidth(265) end
+        end
 
          if (QTR_PS["gossip"]=="1") then
-            for GText in QuestFrameGreetingPanel.titleButtonPool:EnumerateActive() do
+           for GText in QuestFrameGreetingPanel.titleButtonPool:EnumerateActive() do
                local originalGossText = GText:GetText()
                local questID = GText.questID
                local transTR, prefix, sufix, isTranslated = nil, "", "", false
@@ -517,8 +557,13 @@ function Quests.Gossip.OnQuestFrame()
                   local Czysty_Text = WOWTR_DeleteSpecialCodes(cleanOptionText, '$N')
                   local TitleHash = StringHash(Czysty_Text)
                   if GS_Gossip[TitleHash] then
-                     local cleanTransTR = QTR_ExpandUnitInfo(GS_Gossip[TitleHash], false, GText, WOWTR_Font2, -40)
-                     transTR = prefix .. cleanTransTR .. sufix .. " "
+                  local cleanTransTR
+                  if Quests.Utils and Quests.Utils.IsRTL and Quests.Utils.IsRTL() then
+                     cleanTransTR = QTR_ExpandUnitInfo(GS_Gossip[TitleHash], false, GText, WOWTR_Font2, -40)
+                  else
+                     cleanTransTR = QTR_ExpandUnitInfo(GS_Gossip[TitleHash], false, GText, WOWTR_Font2, -40)
+                  end
+                  transTR = prefix .. cleanTransTR .. sufix .. " "
                      isTranslated = true
                   else
                      if (QTR_PS and QTR_PS["saveGS"]=="1") then
@@ -581,15 +626,15 @@ function Quests.Gossip.OnQuestFrame()
       end
    end
 
-   -- QuestFrame buttons' text
-   ST_CheckAndReplaceTranslationText(QuestFrameCompleteQuestButtonText, true, "ui", false, true)
-   ST_CheckAndReplaceTranslationText(QuestFrameCompleteButtonText, true, "ui", false, true)
-   ST_CheckAndReplaceTranslationText(QuestFrameAcceptButtonText, true, "ui", false, true)
-   ST_CheckAndReplaceTranslationText(QuestFrameDeclineButtonText, true, "ui", false, true)
-   ST_CheckAndReplaceTranslationText(QuestFrameContinueButtonText, true, "ui", false, true)
-   ST_CheckAndReplaceTranslationText(QuestFrameGreetingGoodbyeButtonText, true, "ui", false, true)
-   ST_CheckAndReplaceTranslationText(QuestFrameGoodbyeButtonText, true, "ui", false, true)
-   ST_CheckAndReplaceTranslationText(QuestFrameCompleteButtonText, true, "ui", false, true)
+  -- QuestFrame buttons' text (guarded lookups via rawget to avoid luacheck field warnings)
+  do local f=rawget(_G, "QuestFrameCompleteQuestButtonText"); if f then ST_CheckAndReplaceTranslationText(f, true, "ui", false, true) end end
+  do local f=rawget(_G, "QuestFrameCompleteButtonText"); if f then ST_CheckAndReplaceTranslationText(f, true, "ui", false, true) end end
+  do local f=rawget(_G, "QuestFrameAcceptButtonText"); if f then ST_CheckAndReplaceTranslationText(f, true, "ui", false, true) end end
+  do local f=rawget(_G, "QuestFrameDeclineButtonText"); if f then ST_CheckAndReplaceTranslationText(f, true, "ui", false, true) end end
+  do local f=rawget(_G, "QuestFrameContinueButtonText"); if f then ST_CheckAndReplaceTranslationText(f, true, "ui", false, true) end end
+  do local f=rawget(_G, "QuestFrameGreetingGoodbyeButtonText"); if f then ST_CheckAndReplaceTranslationText(f, true, "ui", false, true) end end
+  do local f=rawget(_G, "QuestFrameGoodbyeButtonText"); if f then ST_CheckAndReplaceTranslationText(f, true, "ui", false, true) end end
+  do local f=rawget(_G, "QuestFrameCompleteButtonText"); if f then ST_CheckAndReplaceTranslationText(f, true, "ui", false, true) end end
 
    local notice = QuestFrame.AccountCompletedNotice and QuestFrame.AccountCompletedNotice.Text
    if notice then

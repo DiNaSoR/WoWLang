@@ -49,10 +49,10 @@ end
 function DUIPlugin.GossipDUI_ON_OFF()
    if (QTR_curr_goss == "1") then      -- Turn off translation - show original text
       QTR_curr_goss = "0"
-      QTR_ToggleButton6:SetText("Gossip-Hash="..tostring(QTR_curr_hash).." (EN)")
+      QTR_ToggleButton6:SetText("GH="..tostring(QTR_curr_hash).." (EN)")
    else                                -- Show translation
       QTR_curr_goss = "1"
-      QTR_ToggleButton6:SetText("Gossip-Hash="..tostring(QTR_curr_hash).." ("..WoWTR_Localization.lang..")")
+      QTR_ToggleButton6:SetText("GH="..tostring(QTR_curr_hash).." ("..WoWTR_Localization.lang..")")
    end
    
    local countFontString = 0
@@ -169,7 +169,7 @@ function DUIPlugin.IsDUIQuestFrame()
          QTR_ToggleButton6 = CreateFrame("Button", nil, DUIQuestFrame, "UIPanelButtonTemplate")
          QTR_ToggleButton6:SetWidth(150)
          QTR_ToggleButton6:SetHeight(20)
-         QTR_ToggleButton6:SetText("Gossip-Hash=?")
+         QTR_ToggleButton6:SetText("GH=?")
          QTR_ToggleButton6:ClearAllPoints()
          QTR_ToggleButton6:SetPoint("TOPLEFT", DUIQuestFrame, "TOPLEFT", 25, -16)
          QTR_ToggleButton6:SetScript("OnClick", GossipDUI_ON_OFF)

@@ -4,6 +4,18 @@ ns.Bubbles = ns.Bubbles or {}
 local Bubbles = ns.Bubbles
 local S = Bubbles.State
 local RTL = ns and ns.RTL
+local Tutorials = ns and ns.Tutorials
+
+S.trControls = S.trControls or {}
+local function notifyTutorialSystem()
+  if Tutorials and Tutorials.OnTutorialShow then
+    Tutorials.OnTutorialShow()
+  else
+    local tt = rawget(_G, "TT_onTutorialShow")
+    if tt then tt() end
+  end
+end
+
 
 -- Utility: find position of '%s'
 local function findPercentS(text)
@@ -150,53 +162,58 @@ function Bubbles.EnqueueBubble(originalText, translatedText, npcName)
 end
 
 function Bubbles.ToggleTROnline()
+  local controls = S.trControls
   if (S.trVisible == 0) then
     S.trVisible = 1
-    if BB_Button8Save then BB_Button8Save:Show() end
-    if BB_Input1 then BB_Input1:Show() end
-    if BB_Input2 then BB_Input2:Show() end
-    if BB_ButtonZatrz then BB_ButtonZatrz:Show() end
+    if controls.buttonSave then controls.buttonSave:Show() end
+    if controls.inputOriginal then controls.inputOriginal:Show() end
+    if controls.inputTranslation then controls.inputTranslation:Show() end
+    if controls.buttonLatch then controls.buttonLatch:Show() end
   else
     S.trVisible = 0
-    if BB_Button8Save then BB_Button8Save:Hide() end
-    if BB_Input1 then BB_Input1:Hide() end
-    if BB_Input2 then BB_Input2:Hide() end
-    if BB_ButtonZatrz then BB_ButtonZatrz:Hide() end
+    if controls.buttonSave then controls.buttonSave:Hide() end
+    if controls.inputOriginal then controls.inputOriginal:Hide() end
+    if controls.inputTranslation then controls.inputTranslation:Hide() end
+    if controls.buttonLatch then controls.buttonLatch:Hide() end
   end
 end
 
 function Bubbles.ReleaseLatch()
+  local controls = S.trControls
   if (S.latchCount > 0) then
     S.latchCount = S.latchCount - 1
     if (S.latchCount == 0) then
-      if BB_ButtonZatrz then BB_ButtonZatrz:SetText("O") end
+      if controls.buttonLatch then controls.buttonLatch:SetText("O") end
     else
       for i = 1, S.latchCount, 1 do
         S.buffer[i] = S.buffer[i + 1]
       end
       S.buffer[S.latchCount + 1] = ""
       local _, _, p3 = strsplit("@", S.buffer[1])
-      if BB_Input1 then BB_Input1:SetText(p3) end
+      if controls.inputOriginal then controls.inputOriginal:SetText(p3) end
       if (S.latchCount == 1) then
-        if BB_ButtonZatrz then BB_ButtonZatrz:SetText("X") end
+        if controls.buttonLatch then controls.buttonLatch:SetText("X") end
       else
-        if BB_ButtonZatrz then BB_ButtonZatrz:SetText(tostring(S.latchCount)) end
+        if controls.buttonLatch then controls.buttonLatch:SetText(tostring(S.latchCount)) end
       end
     end
   else
-    if BB_Input1 then BB_Input1:SetText("czekam na tekst oryginalny z nieprzetlumaczonego dymku") end
+    if controls.inputOriginal then controls.inputOriginal:SetText("czekam na tekst oryginalny z nieprzetlumaczonego dymku") end
   end
-  if BB_Input2 then BB_Input2:SetText("") end
+  if controls.inputTranslation then controls.inputTranslation:SetText("") end
 end
 
 function Bubbles.SaveTROnline()
-  if (BB_Input2 and BB_Input2:GetText() == "") then
-    BB_Input2:SetText("?? - a gdzie tłumaczenie - ??")
+  local controls = S.trControls
+  if (controls.inputTranslation and controls.inputTranslation:GetText() == "") then
+    controls.inputTranslation:SetText("?? - a gdzie tłumaczenie - ??")
   else
     local p1, p2, p3 = strsplit("@", S.buffer[1])
-    BB_TR[p1 .. "@" .. p2] = BB_Input1:GetText() .. "@" .. BB_Input2:GetText()
-    BB_Input2:SetText("OK - zapisano tłumaczenie - OK")
-    BB_Input1:SetText("czekam na tekst oryginalny z nieprzetlumaczonego dymku")
+    if controls.inputOriginal and controls.inputTranslation then
+      BB_TR[p1 .. "@" .. p2] = controls.inputOriginal:GetText() .. "@" .. controls.inputTranslation:GetText()
+      controls.inputTranslation:SetText("OK - zapisano tłumaczenie - OK")
+      controls.inputOriginal:SetText("czekam na tekst oryginalny z nieprzetlumaczonego dymku")
+    end
     S.readyCount = S.readyCount + 1
     S.ready[S.readyCount] = S.buffer[1]
     Bubbles.ReleaseLatch()
@@ -225,6 +242,7 @@ function Bubbles.CreateTROnlineWindow()
   btn:SetPoint("TOPLEFT", f, "TOPLEFT", 3, -3)
   btn:SetScript("OnClick", Bubbles.ToggleTROnline)
   if (BB_PM and BB_PM["TRonline"] == "1") then btn:Show() end
+  S.trControls.toggleButton = btn
 
   local save = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
   save:SetWidth(60)
@@ -234,7 +252,7 @@ function Bubbles.CreateTROnlineWindow()
   save:SetPoint("TOPLEFT", btn, "BOTTOMLEFT", 0, 1)
   save:SetScript("OnClick", Bubbles.SaveTROnline)
   save:Hide()
-  BB_Button8Save = save
+  S.trControls.buttonSave = save
 
   local input1 = CreateFrame("EditBox", "BB_Input1", f, "InputBoxTemplate")
   input1:ClearAllPoints()
@@ -246,6 +264,7 @@ function Bubbles.CreateTROnlineWindow()
   input1:SetText("tutaj bedzie tekst oryginalny")
   input1:SetCursorPosition(0)
   input1:Hide()
+  S.trControls.inputOriginal = input1
 
   local input2 = CreateFrame("EditBox", "BB_Input2", f, "InputBoxTemplate")
   input2:ClearAllPoints()
@@ -259,6 +278,7 @@ function Bubbles.CreateTROnlineWindow()
   input2:SetFont(WOWTR_Font2, _size2, _flag3)
   input2:SetCursorPosition(0)
   input2:Hide()
+  S.trControls.inputTranslation = input2
 
   local toggleBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
   toggleBtn:SetWidth(30)
@@ -268,7 +288,7 @@ function Bubbles.CreateTROnlineWindow()
   toggleBtn:SetPoint("TOPLEFT", input1, "TOPRIGHT", -1, 0)
   toggleBtn:SetScript("OnClick", Bubbles.ReleaseLatch)
   toggleBtn:Hide()
-  BB_ButtonZatrz = toggleBtn
+  S.trControls.buttonLatch = toggleBtn
 
   BB_TRframe = f
   BB_Button8 = btn
@@ -299,7 +319,7 @@ end
 
 -- Chat filter implementation (back-compat signature)
 function Bubbles.ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
-  if (TT_onTutorialShow) then TT_onTutorialShow() end
+  notifyTutorialSystem()
 
   local changeBubble = false
   local colorText = ""
@@ -345,8 +365,9 @@ function Bubbles.ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
       HashCode = StringHash(Czysty_Text)
     end
 
-    if (BB_Bubbles and BB_Bubbles[HashCode]) then
-      local NewMessage = BB_Bubbles[HashCode]
+    local gl_BB_Bubbles = rawget(_G, "BB_Bubbles")
+    if (gl_BB_Bubbles and gl_BB_Bubbles[HashCode]) then
+      local NewMessage = gl_BB_Bubbles[HashCode]
       NewMessage = WOW_ZmienKody(NewMessage, arg5)
 
       if (string.sub(name_NPC, 1, 17) == "Bronze Timekeeper" or string.sub(name_NPC, 1, 16) == "Grimy Timekeeper") then
@@ -377,7 +398,7 @@ function Bubbles.ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
       local nr_poz = findPercentS(NewMessage)
 
       local mark_AI = ""
-      if (BB_AI and BB_AI[HashCode]) then mark_AI = " |c0000FFFF(AI)|r" end
+      do local gl_BB_AI = rawget(_G, "BB_AI"); if (gl_BB_AI and gl_BB_AI[HashCode]) then mark_AI = " |c0000FFFF(AI)|r" end end
 
       if (BB_PM["chat-tr"] == "1") then
         local _fontC, _sizeC, _C = DEFAULT_CHAT_FRAME:GetFont()
@@ -444,10 +465,10 @@ function Bubbles.ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
         end
         if (jest == 0) then
           if (S.latchCount == 0) then
-            if BB_Input1 then BB_Input1:SetText(original_txt) end
-            if BB_Input2 then BB_Input2:SetText("") end
+            if S.trControls.inputOriginal then S.trControls.inputOriginal:SetText(original_txt) end
+            if S.trControls.inputTranslation then S.trControls.inputTranslation:SetText("") end
             S.latchCount = 1
-            if BB_ButtonZatrz then BB_ButtonZatrz:SetText("X") end
+            if S.trControls.buttonLatch then S.trControls.buttonLatch:SetText("X") end
             S.latchNameNPC = name_NPC
             S.latchHashCode = tostring(HashCode)
             S.buffer[S.latchCount] = name_NPC .. "@" .. tostring(HashCode) .. "@" .. original_txt
@@ -459,7 +480,7 @@ function Bubbles.ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
             if (already == 0) then
               S.latchCount = S.latchCount + 1
               S.buffer[S.latchCount] = pomoc
-              if BB_ButtonZatrz then BB_ButtonZatrz:SetText(tostring(S.latchCount)) end
+              if S.trControls.buttonLatch then S.trControls.buttonLatch:SetText(tostring(S.latchCount)) end
             end
           end
         end
@@ -467,7 +488,7 @@ function Bubbles.ChatFilter(self, event, arg1, arg2, arg3, _, arg5, ...)
     end
   end
 
-  if (TT_onTutorialShow) then TT_onTutorialShow() end
+  notifyTutorialSystem()
   if ((BB_PM and BB_PM["chat-en"] == "1") or (BB_is_translation ~= "1")) then
     return false
   else

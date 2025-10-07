@@ -31,7 +31,8 @@ function Quests.Details.TranslateOn(typ,event)
             QTR_ToggleButton4:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")")
             if (not WOWTR_wait(0.2,QTR_Immersion)) then end
          end
-         if (isStoryline() and Storyline_NPCFrame:IsVisible()) then
+         local storylineFrame = GetStorylineFrame()
+         if (isStoryline() and storylineFrame and storylineFrame:IsVisible()) then
             QTR_ToggleButton5:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")")
             QTR_Storyline(1)
          end
@@ -105,7 +106,8 @@ function Quests.Details.TranslateOn(typ,event)
       end
    else
       if (QTR_curr_trans == "1") then
-         if ((ImmersionFrame ~= nil ) and (ImmersionFrame.TalkBox:IsVisible() )) then
+         local immersionFrame = GetImmersionFrame()
+         if (immersionFrame and immersionFrame.TalkBox and immersionFrame.TalkBox:IsVisible()) then
             if (not WOWTR_wait(0.2,QTR_Immersion_Static)) then end
          end
       end
@@ -131,9 +133,13 @@ function Quests.Details.TranslateOff(typ,event)
          if (isImmersion()) then
             QTR_ToggleButton4:SetText("QID="..QTR_quest_ID.." (EN)")
             QTR_Immersion_OFF()
-            ImmersionFrame.TalkBox.TextFrame.Text:RepeatTexts()
+            local immersionFrame = GetImmersionFrame()
+            if immersionFrame and immersionFrame.TalkBox and immersionFrame.TalkBox.TextFrame and immersionFrame.TalkBox.TextFrame.Text and immersionFrame.TalkBox.TextFrame.Text.RepeatTexts then
+              immersionFrame.TalkBox.TextFrame.Text:RepeatTexts()
+            end
          end
-         if (isStoryline() and Storyline_NPCFrame:IsVisible()) then
+         local storylineFrame = GetStorylineFrame()
+         if (isStoryline() and storylineFrame and storylineFrame:IsVisible()) then
             QTR_ToggleButton5:SetText("QID="..QTR_quest_ID.." (EN)")
             QTR_Storyline_OFF(1)
          end
@@ -252,14 +258,16 @@ function Quests.Details.QuestPrepare(event)
       return
     else
       if QTR_ToggleButton3 then QTR_ToggleButton3:Show() end
-      if (ClassicQuestLog and ClassicQuestLog:IsVisible() and (QTR_curr_trans == "0")) then
+      local classicQuestLogFrame = GetClassicQuestLogFrame()
+      if (classicQuestLogFrame and classicQuestLogFrame:IsVisible() and (QTR_curr_trans == "0")) then
         QTR_Translate_Off(1)
         return
       end
     end
   end
   if isImmersion and isImmersion() then
-    if (ImmersionContentFrame and ImmersionContentFrame:IsVisible() and (QTR_curr_trans == "0")) then
+    local immersionContentFrame = GetImmersionContentFrame()
+    if (immersionContentFrame and immersionContentFrame:IsVisible() and (QTR_curr_trans == "0")) then
       QTR_Translate_Off(1)
       return
     end
@@ -425,7 +433,10 @@ function Quests.Details.QuestPrepare(event)
       if QTR_ToggleButton1 then QTR_ToggleButton1:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")") end
       if QTR_ToggleButton2 then QTR_ToggleButton2:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")") end
       if (isImmersion and isImmersion() and QTR_ToggleButton4) then QTR_ToggleButton4:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")") end
-      if (isStoryline and isStoryline() and Storyline_NPCFrame and Storyline_NPCFrame:IsVisible() and QTR_ToggleButton5) then QTR_ToggleButton5:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")") end
+      do
+        local storylineFrame = GetStorylineFrame()
+        if (isStoryline and isStoryline() and storylineFrame and storylineFrame:IsVisible() and QTR_ToggleButton5) then QTR_ToggleButton5:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")") end
+      end
 
       if (QTR_curr_trans == "1") then
         QTR_Translate_On(1, event)
@@ -445,7 +456,8 @@ function Quests.Details.QuestPrepare(event)
     end
   else
     if (QTR_curr_trans == "1") then
-      if (ImmersionFrame and ImmersionFrame.TalkBox and ImmersionFrame.TalkBox:IsVisible()) then
+      local immersionFrame = GetImmersionFrame()
+      if (immersionFrame and immersionFrame.TalkBox and immersionFrame.TalkBox:IsVisible()) then
         if (not WOWTR_wait(0.2, QTR_Immersion_Static)) then end
       end
     end
@@ -467,6 +479,21 @@ function Quests.Details.DisplayConstants(lg)
    local str_ID = QTR_quest_ID and tostring(QTR_quest_ID) or nil
    local questDataExists = str_ID and QTR_QuestData and QTR_QuestData[str_ID]
    local questLGData = questDataExists and QTR_quest_LG and QTR_quest_LG[QTR_quest_ID]
+
+  -- Reposition the destination map button for RTL when translation is ON
+  do
+    local df = QuestMapFrame and QuestMapFrame.QuestsFrame and QuestMapFrame.QuestsFrame.DetailsFrame
+    local btn = df and df.DestinationMapButton
+    if btn and btn.ClearAllPoints and btn.SetPoint then
+      local rtl = (lg == 1) and (Quests.Utils and Quests.Utils.IsRTL and Quests.Utils.IsRTL()) or false
+      btn:ClearAllPoints()
+      if rtl then
+        btn:SetPoint("TOPLEFT", df, "TOPLEFT", 10, -50)
+      else
+        btn:SetPoint("TOPRIGHT", df, "TOPRIGHT", -10, -50)
+      end
+    end
+  end
 
    if lg == 1 then
         local isArabic = (Quests.Utils and Quests.Utils.IsRTL and Quests.Utils.IsRTL()) or false

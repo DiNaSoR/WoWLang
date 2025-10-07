@@ -1,6 +1,12 @@
 -- Quests/State.lua
 -- Centralized state tables and constants used by quest modules and plugins
 
+local addonName, ns = ...
+ns = ns or {}
+ns.Quests = ns.Quests or {}
+ns.Quests.State = ns.Quests.State or {}
+local S = ns.Quests.State
+
 -- English (original) labels for fallback/reset
 QTR_MessOrig = {
   details    = "Description",
@@ -61,4 +67,9 @@ QTR_curr_dialog = QTR_curr_dialog or "1"
 -- Original Blizzard font fallbacks
 Original_Font1 = Original_Font1 or "Fonts\\MORPHEUS.ttf"
 Original_Font2 = Original_Font2 or "Fonts\\FRIZQT__.ttf"
+
+-- UI handles registry (preferred over globals for intra-module access)
+S.ui = S.ui or {}
+S.ui.gossip = S.ui.gossip or {}
+S.ui.quest = S.ui.quest or {}
 

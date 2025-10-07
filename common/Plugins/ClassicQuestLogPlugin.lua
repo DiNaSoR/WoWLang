@@ -1,6 +1,8 @@
 -- ClassicQuestLogPlugin.lua
 -- Plugin for handling ClassicQuestLog addon integration
 
+-- luacheck: globals ClassicQuestLog
+---@diagnostic disable: undefined-global
 ClassicQuestLogPlugin = {}
 
 function ClassicQuestLogPlugin.isClassicQuestLog()
