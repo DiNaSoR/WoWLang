@@ -7,6 +7,37 @@ ns.Quests = ns.Quests or {}
 local Quests = ns.Quests
 
 Quests.Details = Quests.Details or {}
+-- Debounce state for rapid QuestPrepare calls from QuestMapFrame_ShowQuestDetails
+local _lastPrepareQuestID = 0
+local _lastPrepareAt = 0
+local _postLayoutTicker
+
+local function CancelPostLayoutTicker()
+  if _postLayoutTicker then
+    _postLayoutTicker:Cancel()
+    _postLayoutTicker = nil
+  end
+end
+
+function Quests.Details.SchedulePostLayoutRefresh()
+  CancelPostLayoutTicker()
+  if not (QuestMapFrame and QuestMapFrame:IsVisible()) then return end
+  local runs = 0
+  _postLayoutTicker = C_Timer.NewTicker(0.08, function()
+    runs = runs + 1
+    if QTR_curr_trans == "1" then
+      QTR_Translate_On(1, "__post__")
+    end
+    local shouldStop = (runs >= 4) or not (QuestMapFrame and QuestMapFrame:IsVisible()) or (QTR_curr_trans ~= "1")
+    if shouldStop then
+      CancelPostLayoutTicker()
+    end
+  end)
+end
+
+function Quests.Details.CancelPostLayoutRefresh()
+  CancelPostLayoutTicker()
+end
 
 -- Display translation
 function Quests.Details.TranslateOn(typ,event)
@@ -112,10 +143,14 @@ function Quests.Details.TranslateOn(typ,event)
          end
       end
    end
+   if event ~= "__post__" then
+      Quests.Details.SchedulePostLayoutRefresh()
+   end
 end
 
 -- Display original English text
 function Quests.Details.TranslateOff(typ,event)
+   Quests.Details.CancelPostLayoutRefresh()
    QTR_display_constants(0)
    QTR_curr_trans = "0"
    if (QuestNPCModelText:IsVisible() and (QTR_ModelTextHash>0)) then
@@ -275,6 +310,15 @@ function Quests.Details.QuestPrepare(event)
 
   local q_ID = Quests.GetQuestID and Quests.GetQuestID() or 0
   if (q_ID == 0) then return end
+  do
+    local now = GetTime()
+    local isForced = (event == "__force__")
+    if (not isForced) and (_lastPrepareQuestID == q_ID and (now - (_lastPrepareAt or 0)) < 0.05) then
+      return
+    end
+    _lastPrepareQuestID = q_ID
+    _lastPrepareAt = now
+  end
   QTR_quest_ID = q_ID
   local str_ID = tostring(q_ID)
 
@@ -355,10 +399,11 @@ function Quests.Details.QuestPrepare(event)
           QTR_quest_LG[QTR_quest_ID].objectives = QTR_quest_EN[QTR_quest_ID].objectives
         end
       else
-        if (not QTR_quest_EN[QTR_quest_ID].details and QuestInfoDescriptionText) then
+        -- Map quest panel path: when event is nil, read visible EN texts if frames are ready
+        if (not QTR_quest_EN[QTR_quest_ID].details and QuestInfoDescriptionText and QuestInfoDescriptionText.GetText) then
           QTR_quest_EN[QTR_quest_ID].details = QuestInfoDescriptionText:GetText()
         end
-        if (not QTR_quest_EN[QTR_quest_ID].objectives and QuestInfoObjectivesText) then
+        if (not QTR_quest_EN[QTR_quest_ID].objectives and QuestInfoObjectivesText and QuestInfoObjectivesText.GetText) then
           QTR_quest_EN[QTR_quest_ID].objectives = QuestInfoObjectivesText:GetText()
         end
         if (not quest_numReward[str_ID]) then
@@ -438,10 +483,26 @@ function Quests.Details.QuestPrepare(event)
         if (isStoryline and isStoryline() and storylineFrame and storylineFrame:IsVisible() and QTR_ToggleButton5) then QTR_ToggleButton5:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")") end
       end
 
-      if (QTR_curr_trans == "1") then
-        QTR_Translate_On(1, event)
-      else
+      -- Determine if we actually have localized text; if not, keep EN view
+      local hasTrans = false
+      do
+        local lg = QTR_quest_LG and QTR_quest_LG[QTR_quest_ID]
+        if lg then
+          local d = lg.details; local o = lg.objectives; local p = lg.progress; local c = lg.completion
+          hasTrans = ((d and d ~= "") or (o and o ~= "") or (p and p ~= "") or (c and c ~= "")) and true or false
+        end
+      end
+      if not hasTrans then
+        if Quests and Quests.Utils and Quests.Utils.DebugPrint then
+          Quests.Utils.DebugPrint("QuestPrepare: no LG text, fallback to EN", "qid=", tostring(QTR_quest_ID))
+        end
         QTR_Translate_Off(1, event)
+      else
+        if (QTR_curr_trans == "1") then
+          QTR_Translate_On(1, event)
+        else
+          QTR_Translate_Off(1, event)
+        end
       end
       if (QTR_PS["en_first"] == "1" and QTR_curr_trans == "1") then QTR_ON_OFF() end
     else

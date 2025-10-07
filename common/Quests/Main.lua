@@ -145,15 +145,34 @@ function Quests.Start()
          return QTR_QuestLogQuests_Update()
       end
    end)
-   hooksecurefunc("QuestMapFrame_ShowQuestDetails", function()
-      StartDelayedFunction(function()
-         if QTR_PrepareReload then
-            QTR_PrepareReload()
-         elseif Quests and Quests.Details and Quests.Details.QuestPrepare then
-            Quests.Details.QuestPrepare()
-         end
-      end, 0.02)
-   end)
+  do
+     -- Coalesce rapid hook bursts and ignore re-entrant hooks for a short window
+     local coalesceHandle = nil
+     local suppressUntil = 0.0
+     hooksecurefunc("QuestMapFrame_ShowQuestDetails", function()
+        local now = GetTime()
+        if now < suppressUntil then
+           return
+        end
+        if coalesceHandle then coalesceHandle:Cancel(); coalesceHandle = nil end
+        coalesceHandle = C_Timer.NewTimer(0.03, function()
+           if QuestMapFrame and QuestMapFrame:IsVisible() then
+              suppressUntil = GetTime() + 0.20
+              if Quests and Quests.Details and Quests.Details.QuestPrepare then
+                 Quests.Details.QuestPrepare("__force__")
+                 C_Timer.After(0.10, function()
+                    if QuestMapFrame and QuestMapFrame:IsVisible() then
+                       Quests.Details.QuestPrepare("__force__")
+                    end
+                 end)
+              elseif QTR_PrepareReload then
+                 QTR_PrepareReload()
+              end
+           end
+           coalesceHandle = nil
+        end)
+     end)
+  end
 
    QuestFrame:HookScript("OnShow", GossipOnQuestFrame)
    QuestFrameAcceptButton:HookScript("OnClick", QTR_QuestFrameButton_OnClick)
@@ -170,10 +189,23 @@ function Quests.Start()
       end
    end
 
-   if hooksecurefunc then
-      hooksecurefunc(QuestObjectiveTracker, "UpdateSingle", function(self, quest)
-         QTR_OverrideObjectiveTrackerHeader(self, quest)
-      end)
+  if hooksecurefunc then
+    hooksecurefunc(QuestObjectiveTracker, "UpdateSingle", function(self, quest)
+      QTR_OverrideObjectiveTrackerHeader(self, quest)
+    end)
+
+    local questInfoRefreshLocked = false
+    hooksecurefunc("QuestInfo_Display", function()
+      if QTR_curr_trans ~= "1" or (QuestMapFrame and QuestMapFrame:IsVisible()) then return end
+      if questInfoRefreshLocked then return end
+      if Quests and Quests.Details and Quests.Details.QuestPrepare then
+        questInfoRefreshLocked = true
+        Quests.Details.QuestPrepare("__force__")
+        C_Timer.After(0.05, function()
+          questInfoRefreshLocked = false
+        end)
+      end
+    end)
       local function ProcessTrackerBlockUpdates(tracker)
          local template = tracker.blockTemplate or "ObjectiveTrackerBlockTemplate"
          local questBlocks = tracker.usedBlocks and tracker.usedBlocks[template]
@@ -205,3 +237,4 @@ function QTR_ON_OFF() return Quests.ToggleTranslation() end
 function QTR_SaveQuest(event) return Quests.SaveQuest(event) end
 function QTR_GetQuestID() return Quests.GetQuestID() end
 function QTR_START() return Quests.Start() end
+

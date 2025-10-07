@@ -8,6 +8,7 @@ local Quests = ns.Quests
 
 Quests.Utils = Quests.Utils or {}
 
+
 -- Return the first FontString region from a frame
 function Quests.Utils.GetFirstFontStringRegion(frame)
    if not frame or not frame.GetRegions then

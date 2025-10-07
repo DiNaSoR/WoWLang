@@ -44,9 +44,16 @@ common/Config/Tabs/Movies.lua
 common/Config/Tabs/Books.lua
 common/Config/Tabs/ChatAR.lua
 common/Config/Tabs/About.lua
+common/Tooltips/State.lua
+common/Tooltips/Utils.lua
+common/Tooltips/Main.lua
+common/Tooltips/Hooks.lua
+common/Tooltips/GameTooltip.lua
+common/UI/AdventureGuide.lua
+common/UI/GroupFinder.lua
+common/UI/Frames.lua
 common/Config/Main.lua
 common/Config/Minimap.lua
-common/WoW_Tooltips.lua
 
 WoW_Arabic_Reshaper.lua
 common/RTL.lua
