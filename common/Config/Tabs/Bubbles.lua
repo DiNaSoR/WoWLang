@@ -13,6 +13,7 @@ function WOWTR.Config.Groups.Bubbles()
     set = function(info, val)
       WOWTR.db.profile.bubbles[info[#info]] = val
       WOWTR.Config.SyncGlobalsFromDB()
+      WOWTR.Config.NotifyChange()
     end,
     args = {
       basics = {

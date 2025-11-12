@@ -7,6 +7,10 @@ ns.Quests = ns.Quests or {}
 local Quests = ns.Quests
 local S = ns.Quests.State or {}
 
+-- Track last processed quest to avoid double processing
+_lastProcessedQuestID = _lastProcessedQuestID or 0
+_lastProcessedQuestTime = _lastProcessedQuestTime or 0
+
 -- Toggle quest translation on/off (keeps globals in sync)
 function Quests.ToggleTranslation()
    if (QTR_curr_trans=="1") then
@@ -155,20 +159,15 @@ function Quests.Start()
            return
         end
         if coalesceHandle then coalesceHandle:Cancel(); coalesceHandle = nil end
-        coalesceHandle = C_Timer.NewTimer(0.03, function()
-           if QuestMapFrame and QuestMapFrame:IsVisible() then
-              suppressUntil = GetTime() + 0.20
-              if Quests and Quests.Details and Quests.Details.QuestPrepare then
-                 Quests.Details.QuestPrepare("__force__")
-                 C_Timer.After(0.10, function()
-                    if QuestMapFrame and QuestMapFrame:IsVisible() then
-                       Quests.Details.QuestPrepare("__force__")
-                    end
-                 end)
-              elseif QTR_PrepareReload then
-                 QTR_PrepareReload()
-              end
-           end
+        coalesceHandle = C_Timer.NewTimer(0.01, function()
+                     if QuestMapFrame and QuestMapFrame:IsVisible() then
+                        suppressUntil = GetTime() + 0.05
+                        if Quests and Quests.Details and Quests.Details.QuestPrepare then
+                           Quests.Details.QuestPrepare("__force__")
+                        elseif QTR_PrepareReload then
+                           QTR_PrepareReload()
+                        end
+                     end
            coalesceHandle = nil
         end)
      end)
@@ -178,6 +177,36 @@ function Quests.Start()
    QuestFrameAcceptButton:HookScript("OnClick", QTR_QuestFrameButton_OnClick)
    QuestFrameCompleteQuestButton:HookScript("OnClick", QTR_QuestFrameButton_OnClick)
    QuestLogPopupDetailFrame:HookScript("OnShow", QTR_QuestLogPopupShow)
+   
+   -- Check if quest frames are already visible on initialization (e.g., after /reload)
+   -- Process them immediately so quest text displays correctly
+   print("WoWTR: Quests.Start() completed, checking for visible quest frames...")
+   C_Timer.After(0.01, function()
+      print("WoWTR: Initialization check running...")
+      print("WoWTR: QuestFrame exists:", QuestFrame ~= nil, "visible:", QuestFrame and QuestFrame:IsVisible())
+      print("WoWTR: QuestLogPopupDetailFrame exists:", QuestLogPopupDetailFrame ~= nil, "visible:", QuestLogPopupDetailFrame and QuestLogPopupDetailFrame:IsVisible())
+      print("WoWTR: QuestMapFrame exists:", QuestMapFrame ~= nil, "visible:", QuestMapFrame and QuestMapFrame:IsVisible())
+      print("WoWTR: QTR_QuestPrepare exists:", QTR_QuestPrepare ~= nil)
+      print("WoWTR: QTR_PS active:", QTR_PS and QTR_PS["active"])
+      
+      if QuestFrame and QuestFrame:IsVisible() and QTR_QuestPrepare then
+         print("WoWTR: Processing visible QuestFrame...")
+         QTR_QuestPrepare("__force__")
+      elseif QuestLogPopupDetailFrame and QuestLogPopupDetailFrame:IsVisible() and QTR_QuestPrepare then
+         print("WoWTR: Processing visible QuestLogPopupDetailFrame...")
+         QTR_QuestPrepare("QUEST_DETAIL")
+      elseif QuestMapFrame and QuestMapFrame:IsVisible() and QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.questID then
+         local questID = QuestMapFrame.DetailsFrame.questID
+         print("WoWTR: Processing visible QuestMapFrame, questID:", questID)
+         if questID and QuestMapFrame_ShowQuestDetails then
+            QuestMapFrame_ShowQuestDetails(questID)
+         elseif QTR_PrepareReload then
+            QTR_PrepareReload()
+         end
+      else
+         print("WoWTR: No visible quest frames found or QTR_QuestPrepare missing")
+      end
+   end)
 
    local versionString = select(4, GetBuildInfo())
    local versionNumber = tonumber(versionString)
@@ -196,14 +225,38 @@ function Quests.Start()
 
     local questInfoRefreshLocked = false
     hooksecurefunc("QuestInfo_Display", function()
-      if QTR_curr_trans ~= "1" or (QuestMapFrame and QuestMapFrame:IsVisible()) then return end
-      if questInfoRefreshLocked then return end
+      -- Don't process if QuestMapFrame is visible (it has its own handler)
+      if QuestMapFrame and QuestMapFrame:IsVisible() then 
+         print("WoWTR: QuestInfo_Display called but QuestMapFrame is visible, skipping")
+         return 
+      end
+      if questInfoRefreshLocked then 
+         print("WoWTR: QuestInfo_Display called but refresh is locked, skipping")
+         return 
+      end
+      -- Get current quest ID to check if we just processed it
+      local currentQuestID = Quests.GetQuestID and Quests.GetQuestID() or 0
+      local now = GetTime()
+      
+      -- Skip if we just processed this same quest (avoid double processing)
+      if currentQuestID > 0 and _lastProcessedQuestID == currentQuestID and (now - _lastProcessedQuestTime) < 0.5 then
+         print("WoWTR: QuestInfo_Display: Already processed quest", currentQuestID, "recently, skipping to avoid double processing")
+         return
+      end
+      
+      print("WoWTR: QuestInfo_Display hook fired, processing quest...")
+      print("WoWTR: QTR_QuestPrepare exists:", QTR_QuestPrepare ~= nil)
+      print("WoWTR: QTR_PS active:", QTR_PS and QTR_PS["active"])
       if Quests and Quests.Details and Quests.Details.QuestPrepare then
         questInfoRefreshLocked = true
-        Quests.Details.QuestPrepare("__force__")
-        C_Timer.After(0.05, function()
+        -- Delay to ensure Blizzard has finished populating the quest frame
+        C_Timer.After(0.01, function()
+          Quests.Details.QuestPrepare("__force__")
+          -- QuestPrepare marks the quest as processed internally, no need to do it here
           questInfoRefreshLocked = false
         end)
+      else
+        print("WoWTR: QuestInfo_Display: Quests.Details.QuestPrepare not available")
       end
     end)
       local function ProcessTrackerBlockUpdates(tracker)

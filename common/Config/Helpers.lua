@@ -7,7 +7,7 @@ function CreateToggleButton(parentFrame, settingsTable, settingKey, onText, offT
 
    local function SetupButton(button, text)
       button:SetSize(120, 22)
-      if WoWTR_Localization.lang == 'AR' and text == WoWTR_Localization.WoWTR_trDESC then
+      if (WoWTR_Localization and WoWTR_Localization.lang == 'AR' and text == (WoWTR_Localization.WoWTR_trDESC or text)) then
          button:SetText(QTR_ReverseIfAR(text))
          button:GetFontString():SetFont(WOWTR_Font2, 13)
       else

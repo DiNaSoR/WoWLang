@@ -329,6 +329,18 @@ function Core.OnEvent(self, event, name, ...)
       if WOWTR.Changelog.MarkShown then WOWTR.Changelog.MarkShown() end
     end
   elseif (event == "QUEST_DETAIL" or event == "QUEST_PROGRESS" or event == "QUEST_COMPLETE") then
+    print("WoWTR: Event received:", event)
+    
+    -- Get current quest ID
+    local currentQuestID = QTR_quest_ID or (Quests.GetQuestID and Quests.GetQuestID()) or 0
+    local now = GetTime()
+    
+    -- Skip if we just processed this same quest (avoid double processing)
+    if currentQuestID > 0 and _lastProcessedQuestID == currentQuestID and (now - _lastProcessedQuestTime) < 0.5 then
+       print("WoWTR: Event handler: Already processed quest", currentQuestID, "recently, skipping to avoid double processing")
+       return
+    end
+    
     if (event == "QUEST_DETAIL" and QTR_quest_ID and QTR_quest_ID > 0) then
       local QTR_mapID = C_Map.GetBestMapForUnit("player")
       if (QTR_mapID) then
@@ -338,14 +350,23 @@ function Core.OnEvent(self, event, name, ...)
         end
       end
     end
+    print("WoWTR: Checking visible quest frames...")
+    print("WoWTR: QuestFrame visible:", QuestFrame and QuestFrame:IsVisible())
+    print("WoWTR: isImmersion:", isImmersion and isImmersion())
+    print("WoWTR: IsDUIQuestFrame:", IsDUIQuestFrame and IsDUIQuestFrame())
     if ((QuestFrame and QuestFrame:IsVisible()) or (isImmersion and isImmersion()) or (IsDUIQuestFrame and IsDUIQuestFrame())) then
-      if QTR_QuestPrepare then QTR_QuestPrepare(event) end
+      print("WoWTR: Calling QTR_QuestPrepare from event handler...")
+      if QTR_QuestPrepare then 
+        QTR_QuestPrepare(event)
+        -- QuestPrepare marks the quest as processed internally, no need to do it here
+      end
     elseif (isStoryline and isStoryline()) then
+      print("WoWTR: Storyline detected, calling QTR_Storyline_Quest...")
       if QTR_Storyline_Quest then Core.Wait(1, QTR_Storyline_Quest) end
     end
     if QTR_ObjectiveTracker_Check then Core.Wait(1, QTR_ObjectiveTracker_Check) end
   elseif (event == "GOSSIP_SHOW") then
-    if (QTR_PS and QTR_PS["gossip"] == "1") then
+    if (QTR_PS and QTR_PS["active"] == "1" and QTR_PS["gossip"] == "1") then
       if DUIPlugin and IsDUIQuestFrame and IsDUIQuestFrame() then
         if QTR_DUIGossipFrame then QTR_DUIGossipFrame() end
       else

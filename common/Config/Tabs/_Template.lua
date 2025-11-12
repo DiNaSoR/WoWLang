@@ -14,6 +14,7 @@ function WOWTR.Config.Groups.MyFeature()
     set = function(info, val)
       WOWTR.db.profile.myfeature = WOWTR.db.profile.myfeature or {}
       WOWTR.db.profile.myfeature[info[#info]] = val
+      WOWTR.Config.NotifyChange()
       WOWTR.Config.SyncGlobalsFromDB()
     end,
     args = {

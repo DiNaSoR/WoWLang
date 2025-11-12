@@ -73,8 +73,7 @@ function Quests.Gossip.ToggleNPCGossip()
       if GossipGreetingText and QTR_GS then
          GossipGreetingText:SetText(QTR_GS[QTR_curr_hash])
          GossipGreetingText:SetJustifyH("LEFT")
-         local size = tonumber(QTR_PS and QTR_PS["fontsize"] or 13)
-         if WOWTR_Font2 then GossipGreetingText:SetFont(WOWTR_Font2, size) end
+         RestoreOriginalFont(GossipGreetingText) -- Restore original font instead of using WOWTR_Font2
       end
       do local ui = S and S.ui and S.ui.gossip; if ui and ui.toggleGS then ui.toggleGS:SetText("GH="..tostring(QTR_curr_hash).." EN") end end
       if (QTR_goss_optionsEN) then
@@ -83,7 +82,7 @@ function Quests.Gossip.ToggleNPCGossip()
                k:SetText(v)
                if Quests.Utils and Quests.Utils.ApplyOptionButtonLayout then Quests.Utils.ApplyOptionButtonLayout(k, false) end
                local fr = Quests.Utils and Quests.Utils.GetFirstFontStringRegion and Quests.Utils.GetFirstFontStringRegion(k)
-               if fr and WOWTR_Font2 and QTR_PS then fr:SetFont(WOWTR_Font2, tonumber(QTR_PS["fontsize"])) end
+               if fr then RestoreOriginalFont(fr) end -- Restore original font instead of using WOWTR_Font2
                if k.Resize then k:Resize() end
             end
          end
@@ -199,6 +198,31 @@ end
 
 -- Show gossip on Blizzard GossipFrame, handling translations and options
 function Quests.Gossip.Show()
+   -- Early exit if translations are disabled
+   if not QTR_PS or QTR_PS["active"] ~= "1" or QTR_PS["gossip"] ~= "1" then
+      -- If gossip frame is visible but active is off, ensure it's showing original text
+      if GossipFrame and GossipFrame:IsVisible() then
+         -- If currently translated, toggle off to restore everything
+         if QTR_curr_goss == "1" and GS_ON_OFF then
+            GS_ON_OFF() -- This will restore fonts, alignment, and text
+         else
+            -- Even if not translated, ensure fonts are restored
+            -- Restore greeting text font if it exists
+            for _, GTxtframe in GossipFrame.GreetingPanel.ScrollBox:EnumerateFrames() do
+               if GTxtframe.GreetingText then
+                  RestoreOriginalFont(GTxtframe.GreetingText)
+                  if GTxtframe.GreetingText.SetJustifyH then
+                     GTxtframe.GreetingText:SetJustifyH("LEFT")
+                  end
+               end
+            end
+            -- Restore all option button fonts
+            RestoreFontInGossipScrollTarget()
+         end
+         do local ui = S and S.ui and S.ui.gossip; if ui and ui.toggleGS then ui.toggleGS:Disable() end end
+      end
+      return
+   end
    -- print("QTR_Gossip_Show")
    local Nazwa_NPC -- forward declare so ProcessOPT captures the local
    local function ProcessOPT(buttonString)
@@ -268,6 +292,11 @@ function Quests.Gossip.Show()
       QTR_goss_optionsTR = {}
       for _, GTxtframe in GossipFrame.GreetingPanel.ScrollBox:EnumerateFrames() do
          if (GTxtframe.GreetingText) then GossipTextFrame = GTxtframe end
+      end
+
+      -- Remember original fonts BEFORE applying translation (so we can restore them later)
+      if GossipTextFrame and GossipTextFrame.GreetingText then
+         RememberFont(GossipTextFrame.GreetingText)
       end
 
       -- Ensure fonts are applied across all ScrollTarget descendants (freshly pooled widgets)
@@ -389,7 +418,7 @@ function Quests.Gossip.Show()
                   if r and r.GetObjectType and r:GetObjectType() == "FontString" and r.GetText then rawText = r:GetText(); break end
                end
             end
-            if (rawText and (QTR_PS["gossip"]=="1") and (string.find(rawText,NONBREAKINGSPACE)==nil)) then
+            if (rawText and QTR_PS and QTR_PS["active"] == "1" and QTR_PS["gossip"]=="1" and (string.find(rawText,NONBREAKINGSPACE)==nil)) then
                local GOptionText = WOWTR_DetectAndReplacePlayerName(rawText, nil, '$N')
                local prefix, sufix = "", ""
                -- Strip both |cXXXXXXXX and |cnNAME: wrappers for hashing, preserve for display
@@ -454,7 +483,7 @@ end
 function Quests.Gossip.OnQuestFrame()
    do local ui = S and S.ui and S.ui.gossip; if ui and ui.iconAI then ui.iconAI:Hide() end end
    do local uiq = S and S.ui and S.ui.quest; if uiq and uiq.iconAI then uiq.iconAI:Hide() end end
-   if ((GreetingText and GreetingText:IsVisible()) and (QTR_PS["gossip"]=="1")) then
+   if ((GreetingText and GreetingText:IsVisible()) and QTR_PS and QTR_PS["active"] == "1" and QTR_PS["gossip"]=="1") then
       do local uiq = S and S.ui and S.ui.quest; if uiq and uiq.toggleEN then uiq.toggleEN:Disable(); uiq.toggleEN:SetWidth(150) end end
       local Greeting_Text = GreetingText:GetText()
       if (Greeting_Text and (string.find(Greeting_Text,NONBREAKINGSPACE)==nil)) then
@@ -523,7 +552,7 @@ function Quests.Gossip.OnQuestFrame()
            if AvailableQuestsText.SetWidth then AvailableQuestsText:SetWidth(265) end
         end
 
-         if (QTR_PS["gossip"]=="1") then
+         if (QTR_PS and QTR_PS["active"] == "1" and QTR_PS["gossip"]=="1") then
            for GText in QuestFrameGreetingPanel.titleButtonPool:EnumerateActive() do
                local originalGossText = GText:GetText()
                local questID = GText.questID

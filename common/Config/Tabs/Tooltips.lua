@@ -13,6 +13,7 @@ function WOWTR.Config.Groups.Tooltips()
     set = function(info, val)
       WOWTR.db.profile.tooltips[info[#info]] = val
       WOWTR.Config.SyncGlobalsFromDB()
+      WOWTR.Config.NotifyChange()
     end,
     args = {
       basics = {

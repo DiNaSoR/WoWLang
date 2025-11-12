@@ -13,6 +13,7 @@ function WOWTR.Config.Groups.Movies()
     set = function(info, val)
       WOWTR.db.profile.movies[info[#info]] = val
       WOWTR.Config.SyncGlobalsFromDB()
+      WOWTR.Config.NotifyChange()
     end,
     args = {
       basics = {

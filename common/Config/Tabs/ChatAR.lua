@@ -14,6 +14,7 @@ function WOWTR.Config.Groups.ChatAR()
     set = function(info, val)
       WOWTR.db.profile.chatAR[info[#info]] = val
       WOWTR.Config.SyncGlobalsFromDB()
+      WOWTR.Config.NotifyChange()
     end,
     args = {
       basics = {

@@ -11,8 +11,27 @@ function WOWTR.Config.Groups.Books()
     name = function() return WOWTR.Config.Label("titleTab5", "Books") end,
     get = function(info) return WOWTR.db.profile.books[info[#info]] end,
     set = function(info, val)
-      WOWTR.db.profile.books[info[#info]] = val
+      local key = info[#info]
+      WOWTR.db.profile.books[key] = val
       WOWTR.Config.SyncGlobalsFromDB()
+      WOWTR.Config.NotifyChange()
+      
+      -- If "active" or "title" changed, refresh visible book frame immediately
+      if (key == "active" or key == "title") and ItemTextFrame and ItemTextFrame:IsVisible() then
+        if key == "active" and not val then
+          -- If turning off, hide button and revert to original text
+          if BT_ToggleButton0 then BT_ToggleButton0:Hide() end
+          -- Check if currently translated and toggle off
+          local gl_act_tr = rawget(_G, "act_tr")
+          if gl_act_tr == "1" and BT_ON_OFF then
+            BT_ON_OFF() -- Toggle off if currently translated
+          end
+        end
+        -- Refresh book display
+        if BookTranslator_ShowTranslation then
+          BookTranslator_ShowTranslation()
+        end
+      end
     end,
     args = {
       basics = {

@@ -20,8 +20,62 @@ function WOWTR.Config.Groups.General()
     name = function() return WOWTR.Config.Label("titleTab1", "General") end,
     get = function(info) return WOWTR.db.profile.quests[info[#info]] end,
     set = function(info, val)
-      WOWTR.db.profile.quests[info[#info]] = val
+      local key = info[#info]
+      WOWTR.db.profile.quests[key] = val
       WOWTR.Config.SyncGlobalsFromDB()
+      WOWTR.Config.NotifyChange()
+      
+      -- If "active" changed, refresh visible quest frames immediately
+      if key == "active" then
+        -- Disable/enable buttons based on new active state
+        if QTR_ToggleButton0 then
+          if val then QTR_ToggleButton0:Enable() else QTR_ToggleButton0:Disable() end
+        end
+        if QTR_ToggleButton1 then
+          if val then QTR_ToggleButton1:Enable() else QTR_ToggleButton1:Disable() end
+        end
+        if QTR_ToggleButton2 then
+          if val then QTR_ToggleButton2:Enable() else QTR_ToggleButton2:Disable() end
+        end
+        
+        -- If turning off, disable translation immediately
+        if not val and QTR_Translate_Off then
+          QTR_Translate_Off(1)
+        end
+        
+        -- Refresh visible quest frames
+        if QuestFrame and QuestFrame:IsVisible() and QTR_QuestPrepare then
+          QTR_QuestPrepare("__force__")
+        elseif QuestLogPopupDetailFrame and QuestLogPopupDetailFrame:IsVisible() and QTR_QuestPrepare then
+          QTR_QuestPrepare("QUEST_DETAIL")
+        elseif QuestMapFrame and QuestMapFrame:IsVisible() and QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.questID then
+          local questID = QuestMapFrame.DetailsFrame.questID
+          if questID and QuestMapFrame_ShowQuestDetails then
+            QuestMapFrame_ShowQuestDetails(questID)
+          elseif QTR_PrepareReload then
+            QTR_PrepareReload()
+          end
+        end
+        
+        -- Refresh visible gossip frame if active is turned off
+        if not val and GossipFrame and GossipFrame:IsVisible() then
+          -- Revert gossip to original text, fonts, alignment, etc.
+          local gl_QTR_curr_goss = rawget(_G, "QTR_curr_goss")
+          if gl_QTR_curr_goss == "1" then
+            local gl_GS_ON_OFF = rawget(_G, "GS_ON_OFF")
+            if gl_GS_ON_OFF then
+              gl_GS_ON_OFF() -- Toggle off - this will restore everything (fonts, alignment, text)
+            end
+          end
+          -- Also disable the gossip toggle button
+          local gl_S = rawget(_G, "WOWTR") and rawget(_G, "WOWTR").Config and rawget(_G, "WOWTR").Config.Groups
+          if gl_S and gl_S.General then
+            -- Button is managed by the gossip module, but we can ensure it's disabled
+            local gl_QTR_ToggleButtonGS1 = rawget(_G, "QTR_ToggleButtonGS1")
+            if gl_QTR_ToggleButtonGS1 then gl_QTR_ToggleButtonGS1:Disable() end
+          end
+        end
+      end
     end,
     args = {
       core = {
@@ -77,6 +131,7 @@ function WOWTR.Config.Groups.General()
               if LDBIcon then
                 if WOWTR.db.profile.minimap.hide then LDBIcon:Hide("WOWTR_LDB") else LDBIcon:Show("WOWTR_LDB") end
               end
+              WOWTR.Config.NotifyChange()
             end,
           },
         }
