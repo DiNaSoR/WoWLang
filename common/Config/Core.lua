@@ -508,21 +508,183 @@ end
 
 -- Hook tooltip frames to use WOWTR_Font2 for Arabic
 local TooltipsHooked = false
+-- Cache to track processed frames and prevent excessive processing
+local processedFrames = {}
 local function ApplyTooltipFonts(tt)
   if not tt or not tt.GetRegions then return end
   if not (WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2) then return end
+  
+  -- Helper function to get original WoW font
+  local function GetOriginalWoWFont()
+    if _G.ST_GetOriginalWoWFont then
+      return _G.ST_GetOriginalWoWFont()
+    end
+    -- Fallback to default WoW font
+    return "Fonts\\FRIZQT__.TTF", 12, ""
+  end
+  
+  -- Count processed FontStrings for debugging
+  local checkedCount = 0      -- Total FontStrings checked
+  local processedCount = 0   -- FontStrings that had fonts changed
+  local translationCount = 0 -- FontStrings with translations
+  local restoreCount = 0     -- FontStrings restored to original font
+  local skippedCount = 0     -- FontStrings skipped (empty or cached)
+  
   local function setFS(fs)
     if not fs or not fs.SetFont then return end
-    local ok, _, size, flags = pcall(fs.GetFont, fs)
+    local ok, currentFont, size, flags = pcall(fs.GetFont, fs)
     if not ok or not size then size = 13 end
     local f = type(flags) == "string" and flags or ""
-    pcall(fs.SetFont, fs, WOWTR_Font2, size, f)
+    local frameName = fs.GetName and fs:GetName() or "unknown"
+    local text = fs.GetText and fs:GetText() or ""
+    
+    -- Count all FontStrings checked
+    checkedCount = checkedCount + 1
+    
+    -- Skip empty frames
+    if not text or text == "" then
+      skippedCount = skippedCount + 1
+      return
+    end
+    
+    -- Check if text already has NONBREAKINGSPACE (processed marker)
+    local isProcessed = string.find(text, NONBREAKINGSPACE) ~= nil
+    
+    -- Create cache key for this frame+text combination
+    local cacheKey = frameName .. "|" .. text
+    local cached = processedFrames[cacheKey]
+    
+    -- If cached and font is already correct, skip
+    if cached and cached.font == currentFont then
+      skippedCount = skippedCount + 1
+      return
+    end
+    
+    -- Check if text has a translation in hash table
+    local hasTranslation = false
+    local translationReason = ""
+    local hash = nil
+    
+    if text and text ~= "" and _G.StringHash and _G.ST_UsunZbedneZnaki then
+      -- Remove NONBREAKINGSPACE for hash lookup (it's just a processing marker)
+      local textForHash = string.gsub(text, NONBREAKINGSPACE, "")
+      hash = StringHash(ST_UsunZbedneZnaki(textForHash))
+      local hs = rawget(_G, "ST_TooltipsHS")
+      if hs and hs[hash] then
+        hasTranslation = true
+        translationReason = "Hash:" .. tostring(hash)
+      end
+    end
+    
+    -- Special case: If text has NONBREAKINGSPACE and font is already WOWTR_Font2,
+    -- keep it as WOWTR_Font2 (it was already translated, don't restore)
+    -- This prevents restoring font when checking translated Arabic text
+    if isProcessed and currentFont == _G.WOWTR_Font2 and not hasTranslation then
+      -- Text is processed but hash check failed (likely translated text being re-checked)
+      -- Keep WOWTR_Font2 if it's already set
+      hasTranslation = true
+      translationReason = "Processed with WOWTR_Font2 (keep)"
+    end
+    
+    -- NONBREAKINGSPACE alone is NOT enough to mark as translated
+    -- We need either a hash translation OR the font is already WOWTR_Font2 with NONBREAKINGSPACE
+    
+    -- Determine target font
+    local targetFont, targetSize, targetFlags
+    if hasTranslation then
+      targetFont, targetSize, targetFlags = WOWTR_Font2, size, f
+    else
+      targetFont, targetSize, targetFlags = GetOriginalWoWFont()
+      targetSize = targetSize or size
+      targetFlags = targetFlags or f
+    end
+    
+    -- Only process if font needs to change or if not cached
+    local fontNeedsChange = (currentFont ~= targetFont) or 
+                           (currentFont == WOWTR_Font2 and not hasTranslation) or
+                           (currentFont ~= WOWTR_Font2 and hasTranslation)
+    
+    if fontNeedsChange or not cached then
+      -- Only restore if current font is WOWTR_Font2 and no translation, or if translation exists and font is not WOWTR_Font2
+      if (not hasTranslation and (currentFont == WOWTR_Font2 or (type(currentFont) == "string" and (string.find(currentFont, "WoWAR") or string.find(currentFont, "WOWTR"))))) or
+         (hasTranslation and currentFont ~= WOWTR_Font2) then
+        pcall(fs.SetFont, fs, targetFont, targetSize, targetFlags)
+        
+        -- If translation found and text doesn't already have NONBREAKINGSPACE, translate the text
+        if hasTranslation and hash and not string.find(text, NONBREAKINGSPACE) then
+          local hs = rawget(_G, "ST_TooltipsHS")
+          if hs and hs[hash] and fs.SetText then
+            local ST_tlumaczenie = hs[hash]
+            -- Use ST_TranslatePrepare if available
+            if _G.ST_TranslatePrepare then
+              ST_tlumaczenie = ST_TranslatePrepare(text, ST_tlumaczenie)
+            end
+            -- Expand unit info and set text with NONBREAKINGSPACE marker
+            if _G.QTR_ExpandUnitInfo then
+              local translatedText = QTR_ExpandUnitInfo(ST_tlumaczenie, false, fs, WOWTR_Font2, -5) .. NONBREAKINGSPACE
+              pcall(fs.SetText, fs, translatedText)
+            else
+              pcall(fs.SetText, fs, ST_tlumaczenie .. NONBREAKINGSPACE)
+            end
+          end
+        end
+        
+        -- Debug: Log font changes (only when actually changing)
+        if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+          local afterFont, afterSize, afterFlags = fs:GetFont()
+          local afterText = fs.GetText and fs:GetText() or text
+          local setSuccess = (afterFont == targetFont) and (math.abs((afterSize or 0) - (targetSize or 0)) < 0.1)
+          
+          if hasTranslation then
+            WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+              "[ApplyTooltipFonts] Translation found, setting WOWTR_Font2",
+              "| Frame:", frameName,
+              "| Reason:", translationReason,
+              "| Hash:", hash or "nil",
+              "| Before Font:", currentFont or "nil",
+              "| After Font:", afterFont or "nil",
+              "| SetFont Success:", setSuccess and "YES" or "NO",
+              "| Before Text:", string.sub(text or "", 1, 50) .. (string.len(text or "") > 50 and "..." or ""),
+              "| After Text:", string.sub(afterText or "", 1, 50) .. (string.len(afterText or "") > 50 and "..." or ""))
+          else
+            WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+              "[ApplyTooltipFonts] No translation, restoring original font",
+              "| Frame:", frameName,
+              "| Hash:", hash or "nil",
+              "| Before Font:", currentFont or "nil",
+              "| Restored Font:", targetFont or "nil",
+              "| After Font:", afterFont or "nil",
+              "| SetFont Success:", setSuccess and "YES" or "NO",
+              "| Text:", string.sub(text or "", 1, 50) .. (string.len(text or "") > 50 and "..." or ""))
+          end
+        end
+        
+        -- Cache this frame+text combination
+        processedFrames[cacheKey] = {
+          font = targetFont,
+          hasTranslation = hasTranslation,
+          time = GetTime()
+        }
+        
+        -- Increment counters for summary
+        processedCount = processedCount + 1
+        if hasTranslation then
+          translationCount = translationCount + 1
+        else
+          restoreCount = restoreCount + 1
+        end
+      end
+    end
   end
 
   local regions = { tt:GetRegions() }
   for _, r in pairs(regions) do
     if r and r.GetObjectType and r:GetObjectType() == "FontString" then
+      local oldCount = processedCount
       setFS(r)
+      if processedCount > oldCount then
+        -- Count was incremented in setFS
+      end
     end
   end
 
@@ -533,24 +695,51 @@ local function ApplyTooltipFonts(tt)
       setFS(_G[name .. "TextRight" .. i])
     end
   end
+  
+  -- Debug: Log summary only when fonts are actually changed (to reduce spam)
+  if processedCount > 0 and WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+    local tooltipName = name or (tt.GetName and tt:GetName()) or "unknown"
+    WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+      "[ApplyTooltipFonts] Summary",
+      "| Tooltip:", tooltipName,
+      "| Checked FontStrings:", checkedCount,
+      "| Changed Fonts:", processedCount,
+      "| With Translation:", translationCount,
+      "| Restored:", restoreCount,
+      "| Skipped (empty/cached):", skippedCount)
+  end
 end
 
 local function HookTooltipFonts()
   if TooltipsHooked then return end
   -- Ensure base tooltip FontObjects use WOWTR_Font2
+  -- NOTE: These FontObjects are templates - new tooltip lines inherit from them
+  -- They are ALWAYS set to WOWTR_Font2 (not conditional on translations)
+  -- Individual FontStrings are then checked and restored if no translation exists
   if WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2 then
-    local function SetFO(obj)
+    local function SetFO(obj, objName)
       if not obj then return end
-      local ok, _, size, flags = pcall(obj.GetFont, obj)
+      local ok, currentFont, size, flags = pcall(obj.GetFont, obj)
       if not ok or not size then size = 13 end
       local f = type(flags) == "string" and flags or ""
       pcall(obj.SetFont, obj, WOWTR_Font2, size, f)
+      
+      -- Debug: Log FontObject changes
+      if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+        WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+          "[HookTooltipFonts] Setting FontObject template",
+          "| FontObject:", objName or "unknown",
+          "| Before Font:", currentFont or "nil",
+          "| Set to: WOWTR_Font2",
+          "| Size:", size or "nil",
+          "| Note: This is a template - individual FontStrings are checked separately")
+      end
     end
-    SetFO(_G.GameTooltipHeaderText)
-    SetFO(_G.GameTooltipText)
-    SetFO(_G.GameTooltipTextSmall)
-    SetFO(_G.Tooltip_Med)
-    SetFO(_G.Tooltip_Small)
+    SetFO(_G.GameTooltipHeaderText, "GameTooltipHeaderText")
+    SetFO(_G.GameTooltipText, "GameTooltipText")
+    SetFO(_G.GameTooltipTextSmall, "GameTooltipTextSmall")
+    SetFO(_G.Tooltip_Med, "Tooltip_Med")
+    SetFO(_G.Tooltip_Small, "Tooltip_Small")
   end
 
   local names = { "GameTooltip", "ItemRefTooltip", "ShoppingTooltip1", "ShoppingTooltip2", "ShoppingTooltip3", "ItemRefShoppingTooltip1", "ItemRefShoppingTooltip2", "ItemRefShoppingTooltip3" }
@@ -562,7 +751,35 @@ local function HookTooltipFonts()
       if tt:HasScript("OnTooltipSetItem") then tt:HookScript("OnTooltipSetItem", ApplyTooltipFonts) end
       if tt:HasScript("OnTooltipSetSpell") then tt:HookScript("OnTooltipSetSpell", ApplyTooltipFonts) end
       if tt:HasScript("OnTooltipSetUnit") then tt:HookScript("OnTooltipSetUnit", ApplyTooltipFonts) end
-      if tt:HasScript("OnUpdate") then tt:HookScript("OnUpdate", function(self) if self:IsShown() then ApplyTooltipFonts(self) end end) end
+      -- Clear cache when tooltip is hidden
+      if tt:HasScript("OnHide") then
+        tt:HookScript("OnHide", function()
+          -- Clear cache for this tooltip's frames
+          local ttName = tt:GetName()
+          if ttName then
+            for key, _ in pairs(processedFrames) do
+              if string.find(key, "^" .. ttName) then
+                processedFrames[key] = nil
+              end
+            end
+          end
+        end)
+      end
+      -- Throttle OnUpdate to prevent excessive calls (only run every 0.1 seconds)
+      if tt:HasScript("OnUpdate") then
+        local lastUpdate = 0
+        tt:HookScript("OnUpdate", function(self, elapsed)
+          if self:IsShown() then
+            lastUpdate = lastUpdate + elapsed
+            if lastUpdate >= 0.1 then
+              ApplyTooltipFonts(self)
+              lastUpdate = 0
+            end
+          else
+            lastUpdate = 0
+          end
+        end)
+      end
     end
   end
   TooltipsHooked = true

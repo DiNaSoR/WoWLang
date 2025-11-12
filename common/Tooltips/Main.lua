@@ -11,6 +11,10 @@ Tooltips.API = Tooltips.API or {}
 
 -- Initialize module (called on ADDON_LOADED or PLAYER_LOGIN)
 function Tooltips.Init()
+  -- Initialize original font cache early (before HookTooltipFonts runs)
+  if Tooltips.Utils and Tooltips.Utils.InitializeOriginalFontCache then
+    Tooltips.Utils.InitializeOriginalFontCache()
+  end
   -- Reserved for future initialization steps when progressively migrating
   -- the logic out of common/WoW_Tooltips.lua into namespaced modules.
   return true

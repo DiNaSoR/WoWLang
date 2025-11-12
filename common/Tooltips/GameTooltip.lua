@@ -25,10 +25,56 @@ function GT.OnShow()
 
     GameTooltip.updateTooltipTimer = tonumber(ST_PM["timer"])
     if (_G["GameTooltipTextLeft1"] and _G["GameTooltipTextLeft1"]:GetText()) then
-      if (string.find(_G["GameTooltipTextLeft1"]:GetText(), NONBREAKINGSPACE)) then
+      local titleText = _G["GameTooltipTextLeft1"]:GetText()
+      if (string.find(titleText, NONBREAKINGSPACE)) then
         return
       end
-      _G["GameTooltipTextLeft1"]:SetText(QTR_ExpandUnitInfo(_G["GameTooltipTextLeft1"]:GetText(), WOWTR_Font2) .. NONBREAKINGSPACE)
+      -- Check if title has a translation in ST_TooltipsHS (for short words like "Currency")
+      local titleTextForHash = string.gsub(titleText, NONBREAKINGSPACE, "")
+      local titleHash = StringHash(ST_UsunZbedneZnaki(titleTextForHash))
+      if (ST_TooltipsHS and ST_TooltipsHS[titleHash]) then
+        -- Translation found, use it
+        local ST_tlumaczenie = ST_TooltipsHS[titleHash]
+        ST_tlumaczenie = ST_TranslatePrepare(titleText, ST_tlumaczenie)
+        _G["GameTooltipTextLeft1"]:SetText(QTR_ExpandUnitInfo(ST_tlumaczenie, false, _G["GameTooltipTextLeft1"], WOWTR_Font2) .. NONBREAKINGSPACE)
+        _font1, _size1, _1 = _G["GameTooltipTextLeft1"]:GetFont()
+        _G["GameTooltipTextLeft1"]:SetFont(WOWTR_Font2, _size1)
+        -- Debug: Log title translation
+        if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+          WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+            "[GT.OnShow] Title translated",
+            "| Original:", titleText,
+            "| Hash:", titleHash,
+            "| Translation:", ST_tlumaczenie)
+        end
+      else
+        -- No translation, restore original font
+        -- Add NONBREAKINGSPACE as processed marker to prevent reprocessing (ApplyTooltipFonts will check hash table to determine if translated)
+        _G["GameTooltipTextLeft1"]:SetText(QTR_ExpandUnitInfo(titleText, false) .. NONBREAKINGSPACE)
+        -- Restore original font
+        local titleObj = _G["GameTooltipTextLeft1"]
+        if titleObj and titleObj.SetFont then
+          local currentFont, currentSize, currentFlags = titleObj:GetFont()
+          if currentFont == _G.WOWTR_Font2 or (type(currentFont) == "string" and (string.find(currentFont, "WoWAR") or string.find(currentFont, "WOWTR"))) then
+            local restoreFont, restoreSize, restoreFlags
+            if Utils and Utils.GetOriginalWoWFont then
+              restoreFont, restoreSize, restoreFlags = Utils.GetOriginalWoWFont()
+              restoreSize = currentSize or restoreSize
+            else
+              restoreFont, restoreSize, restoreFlags = currentFont, currentSize, currentFlags
+            end
+            titleObj:SetFont(restoreFont, restoreSize, restoreFlags)
+          end
+        end
+        -- Debug: Log when title has no translation (only once per tooltip update)
+        if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+          WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+            "[GT.OnShow] Title NOT translated, restoring original font",
+            "| Text:", titleText,
+            "| Hash:", titleHash,
+            "| ST_TooltipsHS exists:", (ST_TooltipsHS ~= nil) and "YES" or "NO")
+        end
+      end
     end
 
     local ST_prefix = "h"
@@ -100,17 +146,63 @@ function GT.OnShow()
       _G["GameTooltipTextLeft1"]:SetText(QTR_ExpandUnitInfo(ST_TooltipsID_gl[ST_prefix], WOWTR_Font2) .. NONBREAKINGSPACE)
       _font1, _size1, _1 = _G["GameTooltipTextLeft1"]:GetFont()
       _G["GameTooltipTextLeft1"]:SetFont(WOWTR_Font2, _size1)
+    elseif (ST_PM["transtitle"] == "1") then
+      -- No title translation found, restore original font if it was set to WOWTR_Font2
+      local titleObj = _G["GameTooltipTextLeft1"]
+      if titleObj and titleObj.SetFont then
+        local currentFont, currentSize, currentFlags = titleObj:GetFont()
+        if currentFont == _G.WOWTR_Font2 or (type(currentFont) == "string" and (string.find(currentFont, "WoWAR") or string.find(currentFont, "WOWTR"))) then
+          local restoreFont, restoreSize, restoreFlags
+          if Utils and Utils.GetOriginalWoWFont then
+            restoreFont, restoreSize, restoreFlags = Utils.GetOriginalWoWFont()
+          else
+            restoreFont, restoreSize, restoreFlags = currentFont, currentSize, currentFlags
+          end
+            titleObj:SetFont(restoreFont, restoreSize, restoreFlags)
+            -- Debug: Log font restoration with detailed frame info
+            if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+              local frameName = titleObj.GetName and titleObj:GetName() or "unknown"
+              local afterFont, afterSize, afterFlags = titleObj:GetFont()
+              local setSuccess = (afterFont == restoreFont) and (afterSize == restoreSize) and (afterFlags == restoreFlags)
+              WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+                "[Font Restored] Title line: No translation found",
+                "| Frame:", frameName,
+                "| Before Font:", currentFont or "nil",
+                "| Before Size:", currentSize or "nil",
+                "| Before Flags:", currentFlags or "nil",
+                "| Restored Font:", restoreFont or "nil",
+                "| Restored Size:", restoreSize or "nil",
+                "| Restored Flags:", restoreFlags or "nil",
+                "| After Font:", afterFont or "nil",
+                "| After Size:", afterSize or "nil",
+                "| After Flags:", afterFlags or "nil",
+                "| SetFont Success:", setSuccess and "YES" or "NO")
+            end
+        end
+      end
     end
-
-    local lineObj = _G["GameTooltipTextLeft1"]
-    local originalFont, originalSize, originalFlags = lineObj:GetFont()
 
     for i = ST_fromLine, numLines, 1 do
       ST_leftText = _G["GameTooltipTextLeft" .. i]:GetText()
       if (ST_leftText and (string.find(ST_leftText, NONBREAKINGSPACE) == nil)) then
         leftColR, leftColG, leftColB = _G["GameTooltipTextLeft" .. i]:GetTextColor()
         ST_kodKoloru = OkreslKodKoloru(leftColR, leftColG, leftColB)
-        if (ST_leftText and (string.len(ST_leftText) > 15) and ((ST_kodKoloru == "c7") or (ST_kodKoloru == "c4") or (string.len(ST_leftText) > 30))) then
+        local lineObj = _G["GameTooltipTextLeft" .. i]
+        local originalFont, originalSize, originalFlags = lineObj:GetFont()
+        
+        -- Check if text meets criteria for translation (long text OR specific color codes)
+        local shouldTranslate = (ST_leftText and (string.len(ST_leftText) > 15) and ((ST_kodKoloru == "c7") or (ST_kodKoloru == "c4") or (string.len(ST_leftText) > 30)))
+        
+        -- Also check for short text translations (for words like "Currency", "Reputation", etc.)
+        local shortTextHash = nil
+        if not shouldTranslate and ST_leftText and string.len(ST_leftText) > 0 and string.len(ST_leftText) <= 15 then
+          shortTextHash = StringHash(ST_UsunZbedneZnaki(ST_leftText))
+          if (ST_TooltipsHS and ST_TooltipsHS[shortTextHash]) then
+            shouldTranslate = true
+          end
+        end
+        
+        if shouldTranslate then
           local gtProc2 = GameTooltip and rawget(GameTooltip, "processingInfo")
           local gtData2 = gtProc2 and gtProc2.tooltipData or nil
           if (gtData2 and gtData2.id and (gtData2.id == 6948)) then
@@ -127,7 +219,7 @@ function GT.OnShow()
               ST_hash = 3076025968
             end
           else
-            ST_hash = StringHash(ST_UsunZbedneZnaki(ST_leftText))
+            ST_hash = shortTextHash or StringHash(ST_UsunZbedneZnaki(ST_leftText))
           end
           if (((ST_kodKoloru == "c7") or (string.len(ST_leftText) > 30)) and (not ST_hash2)) then
             ST_hash2 = ST_hash
@@ -155,6 +247,15 @@ function GT.OnShow()
             _G["GameTooltipTextLeft" .. i]:SetFont(WOWTR_Font2, _size1)
             _G["GameTooltipTextLeft" .. i]:SetText(QTR_ExpandUnitInfo(ST_tlumaczenie, false, _G["GameTooltipTextLeft" .. i], WOWTR_Font2, -5) .. NONBREAKINGSPACE)
             _G["GameTooltipTextLeft" .. i].wrap = true
+            -- Debug: Log line translation
+            if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+              WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+                "[GT.OnShow] Line translated",
+                "| Line:", i,
+                "| Original:", string.sub(ST_leftText or "", 1, 50),
+                "| Hash:", ST_hash,
+                "| Translation:", string.sub(ST_tlumaczenie or "", 1, 50))
+            end
             local gtProc3 = GameTooltip and rawget(GameTooltip, "processingInfo")
             local gtData3 = gtProc3 and gtProc3.tooltipData or nil
             if (gtData3 and gtData3.id and (gtData3.id == 6948)) then
@@ -162,7 +263,38 @@ function GT.OnShow()
             end
           else
             if lineObj.SetFont then
-              lineObj:SetFont(originalFont, originalSize, originalFlags)
+              -- Check if captured font is WOWTR_Font2 (translation font), if so restore to original WoW font
+              local restoreFont, restoreSize, restoreFlags = originalFont, originalSize, originalFlags
+              if originalFont == _G.WOWTR_Font2 or (type(originalFont) == "string" and (string.find(originalFont, "WoWAR") or string.find(originalFont, "WOWTR"))) then
+                if Utils and Utils.GetOriginalWoWFont then
+                  restoreFont, restoreSize, restoreFlags = Utils.GetOriginalWoWFont()
+                end
+              end
+              
+              -- Check current font before restoration
+              local currentFont, currentSize, currentFlags = lineObj:GetFont()
+              lineObj:SetFont(restoreFont, restoreSize, restoreFlags)
+              -- Debug: Log font restoration when no translation found with detailed frame info
+              if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+                local frameName = lineObj.GetName and lineObj:GetName() or ("GameTooltipTextLeft" .. i)
+                local afterFont, afterSize, afterFlags = lineObj:GetFont()
+                local setSuccess = (afterFont == restoreFont) and (afterSize == restoreSize) and (afterFlags == restoreFlags)
+                local fontChanged = (currentFont ~= restoreFont) or (currentSize ~= restoreSize) or (currentFlags ~= restoreFlags)
+                WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS, 
+                  "[Font Restored] No translation found for line", i,
+                  "| Frame:", frameName,
+                  "| Before Font:", currentFont or "nil",
+                  "| Before Size:", currentSize or "nil",
+                  "| Before Flags:", currentFlags or "nil",
+                  "| Restored Font:", restoreFont or "nil",
+                  "| Restored Size:", restoreSize or "nil",
+                  "| Restored Flags:", restoreFlags or "nil",
+                  "| After Font:", afterFont or "nil",
+                  "| After Size:", afterSize or "nil",
+                  "| After Flags:", afterFlags or "nil",
+                  "| SetFont Success:", setSuccess and "YES" or "NO",
+                  "| Text:", string.sub(ST_leftText or "", 1, 50) .. (string.len(ST_leftText or "") > 50 and "..." or ""))
+              end
             end
             ST_nh = 1
             table.insert(ST_orygText, ST_leftText)
@@ -204,7 +336,87 @@ function GT.OnShow()
     end
 
     if ((ST_PM["constantly"] == "1") and (UnitLevel("player") > 60) and _G["GameTooltipTextLeft1"] and _G["GameTooltipTextLeft1"]:GetText()) then
-      _G["GameTooltipTextLeft1"]:SetText(QTR_ExpandUnitInfo(_G["GameTooltipTextLeft1"]:GetText(), WOWTR_Font2) .. NONBREAKINGSPACE)
+      local titleText = _G["GameTooltipTextLeft1"]:GetText()
+      -- Check if text has NONBREAKINGSPACE (processed marker)
+      local hasMarker = string.find(titleText, NONBREAKINGSPACE) ~= nil
+      
+      if hasMarker then
+        -- Text is processed, check if it's actually translated by checking hash table
+        local titleTextForHash = string.gsub(titleText, NONBREAKINGSPACE, "")
+        local titleHash = StringHash(ST_UsunZbedneZnaki(titleTextForHash))
+        local titleObj = _G["GameTooltipTextLeft1"]
+        
+        if (ST_TooltipsHS and ST_TooltipsHS[titleHash]) then
+          -- Translation exists, ensure font is WOWTR_Font2
+          if titleObj and titleObj.SetFont then
+            local currentFont, currentSize, currentFlags = titleObj:GetFont()
+            if currentFont ~= _G.WOWTR_Font2 then
+              titleObj:SetFont(WOWTR_Font2, currentSize or 12, currentFlags or "")
+            end
+          end
+          -- Debug: Log that we skipped restoration because text is translated
+          if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+            WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+              "[Constantly mode] Title translated, keeping WOWTR_Font2",
+              "| Title Text:", string.sub(titleText or "", 1, 50) .. (string.len(titleText or "") > 50 and "..." or ""),
+              "| Hash:", titleHash)
+          end
+        elseif currentFont == _G.WOWTR_Font2 then
+          -- Text is processed but not translated, and font is WOWTR_Font2 - keep it (ApplyTooltipFonts will handle restoration)
+          -- Don't restore here to avoid conflicts with ApplyTooltipFonts
+        end
+      else
+        -- Text not translated yet, check if translation exists
+        local titleTextForHash = string.gsub(titleText, NONBREAKINGSPACE, "")
+        local titleHash = StringHash(ST_UsunZbedneZnaki(titleTextForHash))
+        if (ST_TooltipsHS and ST_TooltipsHS[titleHash]) then
+          -- Translation exists, use WOWTR_Font2 (text will be translated by main loop)
+          local titleObj = _G["GameTooltipTextLeft1"]
+          if titleObj and titleObj.SetFont then
+            local currentFont, currentSize, currentFlags = titleObj:GetFont()
+            if currentFont ~= _G.WOWTR_Font2 then
+              titleObj:SetFont(WOWTR_Font2, currentSize or 12, currentFlags or "")
+            end
+          end
+        else
+          -- No translation, restore original font
+          local titleObj = _G["GameTooltipTextLeft1"]
+          if titleObj and titleObj.SetFont then
+            local currentFont, currentSize, currentFlags = titleObj:GetFont()
+            if currentFont == _G.WOWTR_Font2 or (type(currentFont) == "string" and (string.find(currentFont, "WoWAR") or string.find(currentFont, "WOWTR"))) then
+              local restoreFont, restoreSize, restoreFlags
+              if Utils and Utils.GetOriginalWoWFont then
+                restoreFont, restoreSize, restoreFlags = Utils.GetOriginalWoWFont()
+                -- Use current size if available (preserve original size), otherwise use restored size
+                restoreSize = currentSize or restoreSize
+              else
+                restoreFont, restoreSize, restoreFlags = currentFont, currentSize, currentFlags
+              end
+              titleObj:SetFont(restoreFont, restoreSize, restoreFlags)
+              -- Debug: Log font restoration with detailed frame info
+              if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+                local frameName = titleObj.GetName and titleObj:GetName() or "GameTooltipTextLeft1"
+                local afterFont, afterSize, afterFlags = titleObj:GetFont()
+                local setSuccess = (afterFont == restoreFont) and (afterSize == restoreSize) and (afterFlags == restoreFlags)
+                WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+                  "[Font Restored] Constantly mode: No translation found for title",
+                  "| Frame:", frameName,
+                  "| Before Font:", currentFont or "nil",
+                  "| Before Size:", currentSize or "nil",
+                  "| Before Flags:", currentFlags or "nil",
+                  "| Restored Font:", restoreFont or "nil",
+                  "| Restored Size:", restoreSize or "nil",
+                  "| Restored Flags:", restoreFlags or "nil",
+                  "| After Font:", afterFont or "nil",
+                  "| After Size:", afterSize or "nil",
+                  "| After Flags:", afterFlags or "nil",
+                  "| SetFont Success:", setSuccess and "YES" or "NO",
+                  "| Title Text:", string.sub(titleText or "", 1, 50) .. (string.len(titleText or "") > 50 and "..." or ""))
+              end
+            end
+          end
+        end
+      end
     end
     GameTooltip:Show()
     ST_lastNumLines = GameTooltip:NumLines()
@@ -437,7 +649,38 @@ function GT.CurrentEquipped(obj)
               _G[obj:GetName() .. "TextLeft" .. i].wrap = true
             else
               if lineObj.SetFont then
-                lineObj:SetFont(originalFont, originalSize, originalFlags)
+                -- Check if captured font is WOWTR_Font2 (translation font), if so restore to original WoW font
+                local restoreFont, restoreSize, restoreFlags = originalFont, originalSize, originalFlags
+                if originalFont == _G.WOWTR_Font2 or (type(originalFont) == "string" and (string.find(originalFont, "WoWAR") or string.find(originalFont, "WOWTR"))) then
+                  if Utils and Utils.GetOriginalWoWFont then
+                    restoreFont, restoreSize, restoreFlags = Utils.GetOriginalWoWFont()
+                  end
+                end
+                
+                -- Check current font before restoration
+                local currentFont, currentSize, currentFlags = lineObj:GetFont()
+                lineObj:SetFont(restoreFont, restoreSize, restoreFlags)
+                -- Debug: Log font restoration when no translation found with detailed frame info
+                if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+                  local frameName = lineObj.GetName and lineObj:GetName() or (obj:GetName() .. "TextLeft" .. i)
+                  local afterFont, afterSize, afterFlags = lineObj:GetFont()
+                  local setSuccess = (afterFont == restoreFont) and (afterSize == restoreSize) and (afterFlags == restoreFlags)
+                  local fontChanged = (currentFont ~= restoreFont) or (currentSize ~= restoreSize) or (currentFlags ~= restoreFlags)
+                  WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+                    "[Font Restored] GT.CurrentEquipped: No translation found for line", i,
+                    "| Frame:", frameName,
+                    "| Before Font:", currentFont or "nil",
+                    "| Before Size:", currentSize or "nil",
+                    "| Before Flags:", currentFlags or "nil",
+                    "| Restored Font:", restoreFont or "nil",
+                    "| Restored Size:", restoreSize or "nil",
+                    "| Restored Flags:", restoreFlags or "nil",
+                    "| After Font:", afterFont or "nil",
+                    "| After Size:", afterSize or "nil",
+                    "| After Flags:", afterFlags or "nil",
+                    "| SetFont Success:", setSuccess and "YES" or "NO",
+                    "| Text:", string.sub(ST_leftText or "", 1, 50) .. (string.len(ST_leftText or "") > 50 and "..." or ""))
+                end
               end
               ST_nh = 1
               table.insert(ST_orygText, ST_leftText)

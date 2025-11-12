@@ -8,6 +8,76 @@ local S = (ns.Tooltips and ns.Tooltips.State) or {}
 ns.Tooltips.Utils = ns.Tooltips.Utils or {}
 local U = ns.Tooltips.Utils
 
+-- Cache for original WoW font (captured once at initialization)
+local cachedOriginalFont, cachedOriginalSize, cachedOriginalFlags = nil, nil, nil
+
+-- Initialize original font cache early (before HookTooltipFonts runs)
+function U.InitializeOriginalFontCache()
+  if cachedOriginalFont then return end -- Already initialized
+  
+  local defaultFont, defaultSize, defaultFlags
+  
+  -- Try to get font from GameTooltipText FontObject before it's modified
+  -- This should be called before HookTooltipFonts runs
+  if _G.GameTooltipText and _G.GameTooltipText.GetFont then
+    local ok, font, size, flags = pcall(_G.GameTooltipText.GetFont, _G.GameTooltipText)
+    if ok and font and size then
+      local fontStr = tostring(font)
+      -- Check if this font hasn't been modified (not WOWTR_Font2 and not WoWAR path)
+      if font ~= _G.WOWTR_Font2 and not string.find(fontStr, "WoWAR") and not string.find(fontStr, "WOWTR") then
+        defaultFont, defaultSize, defaultFlags = font, size, flags or ""
+      end
+    end
+  end
+  
+  -- If we didn't get a good font, try GameTooltipTextSmall
+  if not defaultFont and _G.GameTooltipTextSmall and _G.GameTooltipTextSmall.GetFont then
+    local ok, font, size, flags = pcall(_G.GameTooltipTextSmall.GetFont, _G.GameTooltipTextSmall)
+    if ok and font and size then
+      local fontStr = tostring(font)
+      if font ~= _G.WOWTR_Font2 and not string.find(fontStr, "WoWAR") and not string.find(fontStr, "WOWTR") then
+        defaultFont, defaultSize, defaultFlags = font, size, flags or ""
+      end
+    end
+  end
+  
+  -- Fallback to common WoW default fonts if still not found
+  -- These are the standard WoW fonts used for tooltips
+  if not defaultFont then
+    -- Try common WoW default fonts in order of preference
+    local wowFonts = {
+      "Fonts\\FRIZQT__.TTF",  -- Friz Quadrata (most common WoW font)
+      "Fonts\\ARIALN.TTF",   -- Arial Narrow
+      "Fonts\\MORPHEUS.TTF", -- Morpheus
+    }
+    -- Use the first available font, or fallback to FRIZQT__
+    defaultFont = wowFonts[1]
+    defaultSize = 12
+    defaultFlags = ""
+  end
+  
+  -- Cache the result for future use
+  cachedOriginalFont = defaultFont
+  cachedOriginalSize = defaultSize
+  cachedOriginalFlags = defaultFlags
+end
+
+-- Get original WoW font (before any modifications)
+-- Returns the default WoW tooltip font, size, and flags
+function U.GetOriginalWoWFont()
+  -- Initialize cache if not already done
+  if not cachedOriginalFont then
+    U.InitializeOriginalFontCache()
+  end
+  
+  return cachedOriginalFont, cachedOriginalSize, cachedOriginalFlags
+end
+
+-- Make GetOriginalWoWFont globally accessible for ApplyTooltipFonts
+_G.ST_GetOriginalWoWFont = function()
+  return U.GetOriginalWoWFont()
+end
+
 -- Ignore settings used when saving untranslated lines from tooltips
 U.ignoreSettings = {
   words = {
@@ -138,6 +208,12 @@ function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse,
   local txt = obj:GetText()
   if not txt or string.find(txt, NONBREAKINGSPACE) ~= nil then return end
 
+  -- Capture original font before checking for translation
+  local originalFont, originalSize, originalFlags
+  if obj.GetFont then
+    originalFont, originalSize, originalFlags = obj:GetFont()
+  end
+
   local hash = StringHash(ST_UsunZbedneZnaki(txt))
   local hs = rawget(_G, "ST_TooltipsHS")
   local tr = hs and hs[hash]
@@ -156,9 +232,44 @@ function ST_CheckAndReplaceTranslationText(obj, sav, prefix, font1, onlyReverse,
     if justifyAlign and obj.SetJustifyH then
       obj:SetJustifyH(justifyAlign)
     end
-  elseif sav and _G.ST_PM and _G.ST_PM["saveNW"] == "1" then
-    _G.ST_PH = _G.ST_PH or {}
-    _G.ST_PH[hash] = (prefix or "") .. "@" .. ST_PrzedZapisem(txt)
+  else
+    -- Restore original font when translation is missing
+    if obj.SetFont and originalFont and originalSize then
+      -- Check if captured font is WOWTR_Font2 (translation font), if so restore to original WoW font
+      local restoreFont, restoreSize, restoreFlags = originalFont, originalSize, originalFlags
+      if originalFont == _G.WOWTR_Font2 or (type(originalFont) == "string" and (string.find(originalFont, "WoWAR") or string.find(originalFont, "WOWTR"))) then
+        restoreFont, restoreSize, restoreFlags = U.GetOriginalWoWFont()
+      end
+      
+      -- Check current font before restoration
+      local currentFont, currentSize, currentFlags = obj:GetFont()
+      obj:SetFont(restoreFont, restoreSize, restoreFlags)
+      -- Debug: Log font restoration when no translation found with detailed frame info
+      if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+        local frameName = obj.GetName and obj:GetName() or "unknown"
+        local afterFont, afterSize, afterFlags = obj:GetFont()
+        local setSuccess = (afterFont == restoreFont) and (afterSize == restoreSize) and (afterFlags == restoreFlags)
+        local fontChanged = (currentFont ~= restoreFont) or (currentSize ~= restoreSize) or (currentFlags ~= restoreFlags)
+        WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+          "[Font Restored] ST_CheckAndReplaceTranslationText: No translation found",
+          "| Frame:", frameName,
+          "| Before Font:", currentFont or "nil",
+          "| Before Size:", currentSize or "nil",
+          "| Before Flags:", currentFlags or "nil",
+          "| Restored Font:", restoreFont or "nil",
+          "| Restored Size:", restoreSize or "nil",
+          "| Restored Flags:", restoreFlags or "nil",
+          "| After Font:", afterFont or "nil",
+          "| After Size:", afterSize or "nil",
+          "| After Flags:", afterFlags or "nil",
+          "| SetFont Success:", setSuccess and "YES" or "NO",
+          "| Text:", string.sub(txt or "", 1, 50) .. (string.len(txt or "") > 50 and "..." or ""))
+      end
+    end
+    if sav and _G.ST_PM and _G.ST_PM["saveNW"] == "1" then
+      _G.ST_PH = _G.ST_PH or {}
+      _G.ST_PH[hash] = (prefix or "") .. "@" .. ST_PrzedZapisem(txt)
+    end
   end
 end
 
@@ -166,6 +277,13 @@ function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)
   if not (obj and obj.GetText) then return end
   local txt = obj:GetText()
   if not txt or string.find(txt, NONBREAKINGSPACE) ~= nil then return end
+  
+  -- Capture original font before checking for translation
+  local originalFont, originalSize, originalFlags
+  if obj.GetFont then
+    originalFont, originalSize, originalFlags = obj:GetFont()
+  end
+  
   local hash = StringHash(ST_UsunZbedneZnaki(txt))
   local hs = rawget(_G, "ST_TooltipsHS")
   local tr = hs and hs[hash]
@@ -175,9 +293,44 @@ function ST_CheckAndReplaceTranslationTextUI(obj, sav, prefix, font1)
       local _, size, flags = obj:GetFont()
       obj:SetFont(font1 or _G.WOWTR_Font2, size or 12, flags)
     end
-  elseif sav and _G.TT_PS and _G.TT_PS["saveui"] == "1" then
-    _G.ST_PH = _G.ST_PH or {}
-    _G.ST_PH[hash] = (prefix or "") .. "@" .. ST_PrzedZapisem(txt)
+  else
+    -- Restore original font when translation is missing
+    if obj.SetFont and originalFont and originalSize then
+      -- Check if captured font is WOWTR_Font2 (translation font), if so restore to original WoW font
+      local restoreFont, restoreSize, restoreFlags = originalFont, originalSize, originalFlags
+      if originalFont == _G.WOWTR_Font2 or (type(originalFont) == "string" and (string.find(originalFont, "WoWAR") or string.find(originalFont, "WOWTR"))) then
+        restoreFont, restoreSize, restoreFlags = U.GetOriginalWoWFont()
+      end
+      
+      -- Check current font before restoration
+      local currentFont, currentSize, currentFlags = obj:GetFont()
+      obj:SetFont(restoreFont, restoreSize, restoreFlags)
+      -- Debug: Log font restoration when no translation found with detailed frame info
+      if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+        local frameName = obj.GetName and obj:GetName() or "unknown"
+        local afterFont, afterSize, afterFlags = obj:GetFont()
+        local setSuccess = (afterFont == restoreFont) and (afterSize == restoreSize) and (afterFlags == restoreFlags)
+        local fontChanged = (currentFont ~= restoreFont) or (currentSize ~= restoreSize) or (currentFlags ~= restoreFlags)
+        WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+          "[Font Restored] ST_CheckAndReplaceTranslationTextUI: No translation found",
+          "| Frame:", frameName,
+          "| Before Font:", currentFont or "nil",
+          "| Before Size:", currentSize or "nil",
+          "| Before Flags:", currentFlags or "nil",
+          "| Restored Font:", restoreFont or "nil",
+          "| Restored Size:", restoreSize or "nil",
+          "| Restored Flags:", restoreFlags or "nil",
+          "| After Font:", afterFont or "nil",
+          "| After Size:", afterSize or "nil",
+          "| After Flags:", afterFlags or "nil",
+          "| SetFont Success:", setSuccess and "YES" or "NO",
+          "| Text:", string.sub(txt or "", 1, 50) .. (string.len(txt or "") > 50 and "..." or ""))
+      end
+    end
+    if sav and _G.TT_PS and _G.TT_PS["saveui"] == "1" then
+      _G.ST_PH = _G.ST_PH or {}
+      _G.ST_PH[hash] = (prefix or "") .. "@" .. ST_PrzedZapisem(txt)
+    end
   end
 end
 
@@ -190,6 +343,19 @@ function ST_SetText(txt)
     return ST_TranslatePrepare(txt, tr)
   end
   return txt
+end
+
+-- Initialize font cache early (try immediately, and again after a delay if needed)
+if _G.GameTooltipText then
+  -- Font objects exist, initialize immediately
+  U.InitializeOriginalFontCache()
+else
+  -- Font objects don't exist yet, try after a short delay
+  if C_Timer then
+    C_Timer.After(0.1, function()
+      U.InitializeOriginalFontCache()
+    end)
+  end
 end
 
 return Tooltips
