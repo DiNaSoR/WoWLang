@@ -162,13 +162,11 @@ function M.GameMenuTranslate()
   SafeUpdateText(GameMenuFrame.Header.Text)
 
   local function SafeInitButtons()
-    C_Timer.After(0.01, function()
-      if GameMenuFrame.buttonPool then
-        for buttonFrame in GameMenuFrame.buttonPool:EnumerateActive() do
-          SafeUpdateButton(buttonFrame)
-        end
+    if GameMenuFrame.buttonPool then
+      for buttonFrame in GameMenuFrame.buttonPool:EnumerateActive() do
+        SafeUpdateButton(buttonFrame)
       end
-    end)
+    end
   end
 
   hooksecurefunc(GameMenuFrame, "InitButtons", SafeInitButtons)

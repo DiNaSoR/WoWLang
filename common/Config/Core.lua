@@ -536,10 +536,45 @@ local function ApplyTooltipFonts(tt)
     if not ok or not size then size = 13 end
     local f = type(flags) == "string" and flags or ""
     local frameName = fs.GetName and fs:GetName() or "unknown"
-    local text = fs.GetText and fs:GetText() or ""
+    local textOk, textResult = pcall(function() 
+      if fs.GetText then
+        return fs:GetText()
+      end
+      return nil
+    end)
     
     -- Count all FontStrings checked
     checkedCount = checkedCount + 1
+    
+    -- Test if we can actually use the text value (secret values fail here)
+    local text = nil
+    if textOk and textResult ~= nil then
+      -- Try to use the value as a string - secret values will fail this test
+      -- We test the actual operations we'll need: comparison and length
+      local canUse, usableText = pcall(function()
+        -- Test comparison (secret values fail here)
+        local isEmpty = (textResult == "")
+        -- Test length (secret values fail here)  
+        local len = string.len(textResult)
+        -- If we got here, the value is usable - return it
+        return textResult
+      end)
+      
+      if canUse and usableText ~= nil then
+        -- Double-check it's actually a string type
+        if type(usableText) == "string" then
+          text = usableText
+        else
+          -- Not a string type - skip
+          skippedCount = skippedCount + 1
+          return
+        end
+      else
+        -- Secret value detected - skip this frame
+        skippedCount = skippedCount + 1
+        return
+      end
+    end
     
     -- Skip empty frames
     if not text or text == "" then
@@ -611,6 +646,8 @@ local function ApplyTooltipFonts(tt)
         pcall(fs.SetFont, fs, targetFont, targetSize, targetFlags)
         
         -- If translation found and text doesn't already have NONBREAKINGSPACE, translate the text
+        -- NOTE: GT.OnShow() handles most translations, so ApplyTooltipFonts should only translate
+        -- if GT.OnShow() hasn't already done it (i.e., text doesn't have NONBREAKINGSPACE yet)
         if hasTranslation and hash and not string.find(text, NONBREAKINGSPACE) then
           local hs = rawget(_G, "ST_TooltipsHS")
           if hs and hs[hash] and fs.SetText then
@@ -619,13 +656,38 @@ local function ApplyTooltipFonts(tt)
             if _G.ST_TranslatePrepare then
               ST_tlumaczenie = ST_TranslatePrepare(text, ST_tlumaczenie)
             end
-            -- Expand unit info and set text with NONBREAKINGSPACE marker
-            if _G.QTR_ExpandUnitInfo then
-              local translatedText = QTR_ExpandUnitInfo(ST_tlumaczenie, false, fs, WOWTR_Font2, -5) .. NONBREAKINGSPACE
-              pcall(fs.SetText, fs, translatedText)
+            -- For short text (like "Back", "Chest", etc.), use simple RTL reverse instead of QTR_ExpandUnitInfo
+            -- QTR_ExpandUnitInfo does line-breaking/shaping that can truncate short labels
+            local isShortText = text and string.len(text) <= 15
+            local translatedText
+            if isShortText and _G.QTR_ReverseIfAR then
+              -- Use simple RTL reverse for short labels to avoid truncation
+              translatedText = QTR_ReverseIfAR(ST_tlumaczenie) .. NONBREAKINGSPACE
+              -- Debug: Log the translation attempt
+              if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+                WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+                  "[ApplyTooltipFonts] Translating text (short, using QTR_ReverseIfAR)",
+                  "| Frame:", frameName,
+                  "| Original:", string.sub(text or "", 1, 50),
+                  "| Translation:", string.sub(ST_tlumaczenie or "", 1, 50),
+                  "| Result:", string.sub(translatedText or "", 1, 50))
+              end
+            elseif _G.QTR_ExpandUnitInfo then
+              -- Use QTR_ExpandUnitInfo for longer text
+              translatedText = QTR_ExpandUnitInfo(ST_tlumaczenie, false, fs, WOWTR_Font2, -5) .. NONBREAKINGSPACE
+              -- Debug: Log the translation attempt
+              if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+                WOWTR.Debug.Normal(WOWTR.Debug.Categories.TOOLTIPS,
+                  "[ApplyTooltipFonts] Translating text",
+                  "| Frame:", frameName,
+                  "| Original:", string.sub(text or "", 1, 50),
+                  "| Translation:", string.sub(ST_tlumaczenie or "", 1, 50),
+                  "| Expanded:", string.sub(translatedText or "", 1, 50))
+              end
             else
-              pcall(fs.SetText, fs, ST_tlumaczenie .. NONBREAKINGSPACE)
+              translatedText = ST_tlumaczenie .. NONBREAKINGSPACE
             end
+            pcall(fs.SetText, fs, translatedText)
           end
         end
         

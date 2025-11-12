@@ -318,7 +318,7 @@ function Core.OnEvent(self, event, name, ...)
 
     if StaticPopup1 and ST_StaticPopup1 then StaticPopup1:HookScript("OnShow", ST_StaticPopup1) end
     if StaticPopup2 and ST_StaticPopup1 then StaticPopup2:HookScript("OnShow", ST_StaticPopup1) end
-    if GameMenuFrame and ST_GameMenuTranslate then GameMenuFrame:HookScript("OnShow", ST_GameMenuTranslate) end
+    if GameMenuFrame and ST_GameMenuTranslate then GameMenuFrame:HookScript("OnShow", function() Core.StartTicker(GameMenuFrame, ST_GameMenuTranslate, 0.05) end) end
     if MerchantFrame and ST_MerchantFrame then MerchantFrame:HookScript("OnShow", ST_MerchantFrame) end
     if PVEFrame and ST_GroupFinder then PVEFrame:HookScript("OnShow", function() Core.StartTicker(PVEFrame, ST_GroupFinder, 0) end) end
     if WorldMapFrame and ST_WorldMapFunc then WorldMapFrame:HookScript("OnShow", function() Core.StartTicker(WorldMapFrame, ST_WorldMapFunc, 0.1) end) end

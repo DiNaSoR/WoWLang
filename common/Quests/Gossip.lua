@@ -299,11 +299,6 @@ function Quests.Gossip.Show()
          RememberFont(GossipTextFrame.GreetingText)
       end
 
-      -- Ensure fonts are applied across all ScrollTarget descendants (freshly pooled widgets)
-      ApplyFontToGossipScrollTarget()
-      StartDelayedFunction(ApplyFontToGossipScrollTarget, 0.02)
-      StartDelayedFunction(ApplyFontToGossipScrollTarget, 0.10)
-
       if (Greeting_Text and (string.find(Greeting_Text, NONBREAKINGSPACE) == nil)) then
          Nazwa_NPC = string.gsub(Nazwa_NPC, '"', '\\"')
          local Origin_Text = WOWTR_DetectAndReplacePlayerName(Greeting_Text)
@@ -383,7 +378,19 @@ function Quests.Gossip.Show()
             if (QTR_PS and QTR_PS["en_first"] == "1") then
                QTR_first_ok = true
             end
+            -- Ensure fonts are applied across all ScrollTarget descendants (freshly pooled widgets) when translation exists
+            ApplyFontToGossipScrollTarget()
+            StartDelayedFunction(ApplyFontToGossipScrollTarget, 0.02)
+            StartDelayedFunction(ApplyFontToGossipScrollTarget, 0.10)
          else
+            -- No translation found: restore original fonts, size, and alignment
+            if GossipTextFrame and GossipTextFrame.GreetingText then
+               RestoreOriginalFont(GossipTextFrame.GreetingText)
+               if GossipTextFrame.GreetingText.SetJustifyH then
+                  GossipTextFrame.GreetingText:SetJustifyH("LEFT")
+               end
+            end
+            RestoreFontInGossipScrollTarget()
             do local ui = S and S.ui and S.ui.gossip; if ui and ui.toggleGS then ui.toggleGS:SetText("GH="..tostring(Hash).." (EN)"); ui.toggleGS:Disable() end end
             if (IsDUIQuestFrame and IsDUIQuestFrame()) then
                if QTR_ToggleButton6 then
@@ -461,7 +468,18 @@ function Quests.Gossip.Show()
                      Quests.Utils.ApplyOptionButtonLayout(GTxtframe, isRTL)
                   end
                else
-                  -- No translation available: save original option text if enabled
+                  -- No translation available: restore original font, size, and alignment
+                  local fontStringRegion = Quests.Utils and Quests.Utils.GetFirstFontStringRegion and Quests.Utils.GetFirstFontStringRegion(GTxtframe)
+                  if fontStringRegion then
+                     RestoreOriginalFont(fontStringRegion)
+                     if fontStringRegion.SetJustifyH then
+                        fontStringRegion:SetJustifyH("LEFT")
+                     end
+                  end
+                  if Quests.Utils and Quests.Utils.ApplyOptionButtonLayout then
+                     Quests.Utils.ApplyOptionButtonLayout(GTxtframe, false)
+                  end
+                  -- Save original option text if enabled
                   if (QTR_PS and QTR_PS["saveGS"] == "1") then
                      local origText = WOWTR_DetectAndReplacePlayerName(rawText)
                      origText = string.gsub(origText, '"', '\\"')
@@ -487,6 +505,8 @@ function Quests.Gossip.OnQuestFrame()
       do local uiq = S and S.ui and S.ui.quest; if uiq and uiq.toggleEN then uiq.toggleEN:Disable(); uiq.toggleEN:SetWidth(150) end end
       local Greeting_Text = GreetingText:GetText()
       if (Greeting_Text and (string.find(Greeting_Text,NONBREAKINGSPACE)==nil)) then
+         -- Remember original font BEFORE applying translation
+         RememberFont(GreetingText)
          local GO_resized = 0
          QTR_goss_optionsEN = {}
          QTR_goss_optionsTR = {}
