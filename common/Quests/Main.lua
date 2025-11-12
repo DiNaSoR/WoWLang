@@ -18,7 +18,7 @@ function Quests.ToggleTranslation()
       if QTR_Translate_Off then QTR_Translate_Off(1) end
    else
       QTR_curr_trans="1"
-      if QTR_Translate_On then QTR_Translate_On(1) end
+      if QTR_Translate_On then QTR_Translate_On(1, "__toggle__") end
    end
    if WorldMapFrame and WorldMapFrame:IsVisible() then
       local questID = (QuestMapFrame and QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.questID) or (Quests.GetQuestID and Quests.GetQuestID())
@@ -178,33 +178,45 @@ function Quests.Start()
    QuestFrameCompleteQuestButton:HookScript("OnClick", QTR_QuestFrameButton_OnClick)
    QuestLogPopupDetailFrame:HookScript("OnShow", QTR_QuestLogPopupShow)
    
-   -- Check if quest frames are already visible on initialization (e.g., after /reload)
-   -- Process them immediately so quest text displays correctly
-   print("WoWTR: Quests.Start() completed, checking for visible quest frames...")
+  -- Check if quest frames are already visible on initialization (e.g., after /reload)
+  -- Process them immediately so quest text displays correctly
+  if WOWTR and WOWTR.Debug then
+    WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Quests.Start() completed, checking for visible quest frames...")
+  end
    C_Timer.After(0.01, function()
-      print("WoWTR: Initialization check running...")
-      print("WoWTR: QuestFrame exists:", QuestFrame ~= nil, "visible:", QuestFrame and QuestFrame:IsVisible())
-      print("WoWTR: QuestLogPopupDetailFrame exists:", QuestLogPopupDetailFrame ~= nil, "visible:", QuestLogPopupDetailFrame and QuestLogPopupDetailFrame:IsVisible())
-      print("WoWTR: QuestMapFrame exists:", QuestMapFrame ~= nil, "visible:", QuestMapFrame and QuestMapFrame:IsVisible())
-      print("WoWTR: QTR_QuestPrepare exists:", QTR_QuestPrepare ~= nil)
-      print("WoWTR: QTR_PS active:", QTR_PS and QTR_PS["active"])
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Initialization check running...")
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestFrame exists:", QuestFrame ~= nil, "visible:", QuestFrame and QuestFrame:IsVisible())
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestLogPopupDetailFrame exists:", QuestLogPopupDetailFrame ~= nil, "visible:", QuestLogPopupDetailFrame and QuestLogPopupDetailFrame:IsVisible())
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestMapFrame exists:", QuestMapFrame ~= nil, "visible:", QuestMapFrame and QuestMapFrame:IsVisible())
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QTR_QuestPrepare exists:", QTR_QuestPrepare ~= nil)
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QTR_PS active:", QTR_PS and QTR_PS["active"])
+      end
       
       if QuestFrame and QuestFrame:IsVisible() and QTR_QuestPrepare then
-         print("WoWTR: Processing visible QuestFrame...")
+         if WOWTR and WOWTR.Debug then
+           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Processing visible QuestFrame...")
+         end
          QTR_QuestPrepare("__force__")
       elseif QuestLogPopupDetailFrame and QuestLogPopupDetailFrame:IsVisible() and QTR_QuestPrepare then
-         print("WoWTR: Processing visible QuestLogPopupDetailFrame...")
+         if WOWTR and WOWTR.Debug then
+           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Processing visible QuestLogPopupDetailFrame...")
+         end
          QTR_QuestPrepare("QUEST_DETAIL")
       elseif QuestMapFrame and QuestMapFrame:IsVisible() and QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.questID then
          local questID = QuestMapFrame.DetailsFrame.questID
-         print("WoWTR: Processing visible QuestMapFrame, questID:", questID)
+         if WOWTR and WOWTR.Debug then
+           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Processing visible QuestMapFrame, questID:", questID)
+         end
          if questID and QuestMapFrame_ShowQuestDetails then
             QuestMapFrame_ShowQuestDetails(questID)
          elseif QTR_PrepareReload then
             QTR_PrepareReload()
          end
       else
-         print("WoWTR: No visible quest frames found or QTR_QuestPrepare missing")
+         if WOWTR and WOWTR.Debug then
+           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "No visible quest frames found or QTR_QuestPrepare missing")
+         end
       end
    end)
 
@@ -224,29 +236,37 @@ function Quests.Start()
     end)
 
     local questInfoRefreshLocked = false
-    hooksecurefunc("QuestInfo_Display", function()
-      -- Don't process if QuestMapFrame is visible (it has its own handler)
-      if QuestMapFrame and QuestMapFrame:IsVisible() then 
-         print("WoWTR: QuestInfo_Display called but QuestMapFrame is visible, skipping")
-         return 
-      end
-      if questInfoRefreshLocked then 
-         print("WoWTR: QuestInfo_Display called but refresh is locked, skipping")
-         return 
-      end
-      -- Get current quest ID to check if we just processed it
-      local currentQuestID = Quests.GetQuestID and Quests.GetQuestID() or 0
-      local now = GetTime()
+      hooksecurefunc("QuestInfo_Display", function()
+        -- Don't process if QuestMapFrame is visible (it has its own handler)
+        if QuestMapFrame and QuestMapFrame:IsVisible() then 
+           if WOWTR and WOWTR.Debug then
+             WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestInfo_Display called but QuestMapFrame is visible, skipping")
+           end
+           return 
+        end
+        if questInfoRefreshLocked then 
+           if WOWTR and WOWTR.Debug then
+             WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestInfo_Display called but refresh is locked, skipping")
+           end
+           return 
+        end
+        -- Get current quest ID to check if we just processed it
+        local currentQuestID = Quests.GetQuestID and Quests.GetQuestID() or 0
+        local now = GetTime()
+        
+        -- Skip if we just processed this same quest (avoid double processing)
+        if currentQuestID > 0 and _lastProcessedQuestID == currentQuestID and (now - _lastProcessedQuestTime) < 0.5 then
+           if WOWTR and WOWTR.Debug then
+             WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestInfo_Display: Already processed quest", currentQuestID, "recently, skipping to avoid double processing")
+           end
+           return
+        end
       
-      -- Skip if we just processed this same quest (avoid double processing)
-      if currentQuestID > 0 and _lastProcessedQuestID == currentQuestID and (now - _lastProcessedQuestTime) < 0.5 then
-         print("WoWTR: QuestInfo_Display: Already processed quest", currentQuestID, "recently, skipping to avoid double processing")
-         return
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestInfo_Display hook fired, processing quest...")
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QTR_QuestPrepare exists:", QTR_QuestPrepare ~= nil)
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QTR_PS active:", QTR_PS and QTR_PS["active"])
       end
-      
-      print("WoWTR: QuestInfo_Display hook fired, processing quest...")
-      print("WoWTR: QTR_QuestPrepare exists:", QTR_QuestPrepare ~= nil)
-      print("WoWTR: QTR_PS active:", QTR_PS and QTR_PS["active"])
       if Quests and Quests.Details and Quests.Details.QuestPrepare then
         questInfoRefreshLocked = true
         -- Delay to ensure Blizzard has finished populating the quest frame
@@ -255,8 +275,6 @@ function Quests.Start()
           -- QuestPrepare marks the quest as processed internally, no need to do it here
           questInfoRefreshLocked = false
         end)
-      else
-        print("WoWTR: QuestInfo_Display: Quests.Details.QuestPrepare not available")
       end
     end)
       local function ProcessTrackerBlockUpdates(tracker)

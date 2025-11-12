@@ -349,7 +349,7 @@ function GT.BuffOrDebuff()
     elseif ((ST_PM and ST_PM["saveNW"] == "1")) then
       local gtProc = GameTooltip and rawget(GameTooltip, "processingInfo")
       local gtData = gtProc and gtProc.tooltipData or nil
-      local ST_prefix = gtData and ("s" .. gtData.id) or "s0"
+      local ST_prefix = (gtData and gtData.id) and ("s" .. tostring(gtData.id)) or "s0"
       ST_PH[ST_hash] = ST_prefix .. "@" .. ST_PrzedZapisem(ST_leftText2)
     end
   end

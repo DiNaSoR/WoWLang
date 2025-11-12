@@ -8,6 +8,14 @@ local Quests = ns.Quests
 
 Quests.Utils = Quests.Utils or {}
 
+-- Debug print wrapper for quest module
+-- Usage: Quests.Utils.DebugPrint("message", arg1, arg2, ...)
+function Quests.Utils.DebugPrint(...)
+  if WOWTR and WOWTR.DebugPrint then
+    WOWTR.DebugPrint(...)
+  end
+end
+
 
 -- Return the first FontString region from a frame
 function Quests.Utils.GetFirstFontStringRegion(frame)

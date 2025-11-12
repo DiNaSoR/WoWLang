@@ -3,6 +3,25 @@ local addonName, ns = ...
 ns.Core = ns.Core or {}
 local Core = ns.Core
 
+-- Debug system: centralized debug printing that can be toggled
+-- Usage: Core.DebugPrint("message", arg1, arg2, ...)
+-- Or: WOWTR.DebugPrint("message", arg1, arg2, ...)
+-- Or better: WOWTR.Debug.Normal(WOWTR.Debug.Categories.QUESTS, "message", ...)
+function Core.DebugPrint(...)
+  if WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
+    -- Use new debug system if available
+    WOWTR.Debug.Normal(WOWTR.Debug.Categories.GENERAL, ...)
+  elseif WOWTR and WOWTR.db and WOWTR.db.profile and WOWTR.db.profile.core and WOWTR.db.profile.core.debug then
+    -- Fallback to simple debug print
+    local prefix = "|cFF00FF00WoWTR Debug:|r"
+    print(prefix, ...)
+  end
+end
+
+-- Global wrapper for backward compatibility
+WOWTR = WOWTR or {}
+WOWTR.DebugPrint = function(...) return Core.DebugPrint(...) end
+
 -- Hash function used across modules
 function Core.StringHash(text)
   if (not text or (#text == 0)) then return 0 end
@@ -255,6 +274,16 @@ function Core.OnEvent(self, event, name, ...)
     SLASH_WOWTR_BUBBLES5 = "/btr"
     SLASH_WOWTR_BUBBLES6 = "/str"
 
+    -- Register /wdebug command for debug UI
+    SlashCmdList["WOWTR_DEBUG"] = function(msg)
+      if WOWTR and WOWTR.DebugUI and WOWTR.DebugUI.Toggle then
+        WOWTR.DebugUI.Toggle()
+      else
+        DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00WoWTR Debug:|r Debug UI not available")
+      end
+    end
+    SLASH_WOWTR_DEBUG1 = "/wdebug"
+
     Core.CheckVars()
     if QTR_START then QTR_START() end
     if Config_OnEnable then Config_OnEnable() end
@@ -329,7 +358,9 @@ function Core.OnEvent(self, event, name, ...)
       if WOWTR.Changelog.MarkShown then WOWTR.Changelog.MarkShown() end
     end
   elseif (event == "QUEST_DETAIL" or event == "QUEST_PROGRESS" or event == "QUEST_COMPLETE") then
-    print("WoWTR: Event received:", event)
+    if WOWTR and WOWTR.Debug then
+      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Event received:", event)
+    end
     
     -- Get current quest ID
     local currentQuestID = QTR_quest_ID or (Quests.GetQuestID and Quests.GetQuestID()) or 0
@@ -337,7 +368,9 @@ function Core.OnEvent(self, event, name, ...)
     
     -- Skip if we just processed this same quest (avoid double processing)
     if currentQuestID > 0 and _lastProcessedQuestID == currentQuestID and (now - _lastProcessedQuestTime) < 0.5 then
-       print("WoWTR: Event handler: Already processed quest", currentQuestID, "recently, skipping to avoid double processing")
+       if WOWTR and WOWTR.Debug then
+         WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Event handler: Already processed quest", currentQuestID, "recently, skipping to avoid double processing")
+       end
        return
     end
     
@@ -350,18 +383,29 @@ function Core.OnEvent(self, event, name, ...)
         end
       end
     end
-    print("WoWTR: Checking visible quest frames...")
-    print("WoWTR: QuestFrame visible:", QuestFrame and QuestFrame:IsVisible())
-    print("WoWTR: isImmersion:", isImmersion and isImmersion())
-    print("WoWTR: IsDUIQuestFrame:", IsDUIQuestFrame and IsDUIQuestFrame())
+    if WOWTR and WOWTR.Debug then
+      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Checking visible quest frames...")
+      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestFrame visible:", QuestFrame and QuestFrame:IsVisible())
+      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "isImmersion:", isImmersion and isImmersion())
+      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "IsDUIQuestFrame:", IsDUIQuestFrame and IsDUIQuestFrame())
+    else
+      WOWTR.DebugPrint("Checking visible quest frames...")
+      WOWTR.DebugPrint("QuestFrame visible:", QuestFrame and QuestFrame:IsVisible())
+      WOWTR.DebugPrint("isImmersion:", isImmersion and isImmersion())
+      WOWTR.DebugPrint("IsDUIQuestFrame:", IsDUIQuestFrame and IsDUIQuestFrame())
+    end
     if ((QuestFrame and QuestFrame:IsVisible()) or (isImmersion and isImmersion()) or (IsDUIQuestFrame and IsDUIQuestFrame())) then
-      print("WoWTR: Calling QTR_QuestPrepare from event handler...")
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Calling QTR_QuestPrepare from event handler...")
+      end
       if QTR_QuestPrepare then 
         QTR_QuestPrepare(event)
         -- QuestPrepare marks the quest as processed internally, no need to do it here
       end
     elseif (isStoryline and isStoryline()) then
-      print("WoWTR: Storyline detected, calling QTR_Storyline_Quest...")
+        if WOWTR and WOWTR.Debug then
+          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Storyline detected, calling QTR_Storyline_Quest...")
+        end
       if QTR_Storyline_Quest then Core.Wait(1, QTR_Storyline_Quest) end
     end
     if QTR_ObjectiveTracker_Check then Core.Wait(1, QTR_ObjectiveTracker_Check) end

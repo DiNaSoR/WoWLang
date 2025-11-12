@@ -26,7 +26,9 @@ function Quests.Details.SchedulePostLayoutRefresh()
   if QTR_quest_ID > 0 then
     local now = GetTime()
     if _lastProcessedQuestID == QTR_quest_ID and (now - _lastProcessedQuestTime) < 0.2 then
-      print("WoWTR: SchedulePostLayoutRefresh: Just processed quest", QTR_quest_ID, ", skipping post-layout refresh")
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "SchedulePostLayoutRefresh: Just processed quest", QTR_quest_ID, ", skipping post-layout refresh")
+      end
       return
     end
   end
@@ -34,6 +36,7 @@ function Quests.Details.SchedulePostLayoutRefresh()
   _postLayoutTicker = C_Timer.NewTicker(0.08, function()
     runs = runs + 1
     if QTR_curr_trans == "1" then
+      -- Pass "__post__" event to prevent duplicate processing
       QTR_Translate_On(1, "__post__")
     end
     local shouldStop = (runs >= 4) or not (QuestMapFrame and QuestMapFrame:IsVisible()) or (QTR_curr_trans ~= "1")
@@ -53,13 +56,17 @@ function Quests.Details.TranslateOn(typ,event)
    if event == "__post__" and QTR_quest_ID > 0 then
       local now = GetTime()
       if _lastProcessedQuestID == QTR_quest_ID and (now - _lastProcessedQuestTime) < 0.3 then
-         print("WoWTR: TranslateOn: Already processed quest", QTR_quest_ID, "recently (__post__), skipping to avoid duplicate")
+         if WOWTR and WOWTR.Debug then
+           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Already processed quest", QTR_quest_ID, "recently (__post__), skipping to avoid duplicate")
+         end
          return
       end
    end
    
-   print("WoWTR: TranslateOn called with typ:", typ, "event:", event or "nil")
-   print("WoWTR: TranslateOn: QTR_quest_ID:", QTR_quest_ID)
+   if WOWTR and WOWTR.Debug then
+     WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn called with typ:", typ, "event:", event or "nil")
+     WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QTR_quest_ID:", QTR_quest_ID)
+   end
    QTR_display_constants(1)
    QTR_curr_trans = "1"
    if (QuestNPCModelText:IsVisible() and (QTR_ModelTextHash>0)) then
@@ -70,13 +77,17 @@ function Quests.Details.TranslateOn(typ,event)
    if (typ==1) then
       local numer_ID = QTR_quest_ID
       str_ID = tostring(numer_ID)
-      print("WoWTR: TranslateOn: Checking quest data for ID:", str_ID)
-      print("WoWTR: TranslateOn: QTR_QuestData[str_ID] exists:", QTR_QuestData and QTR_QuestData[str_ID] ~= nil)
-      print("WoWTR: TranslateOn: QTR_quest_EN[numer_ID] exists:", QTR_quest_EN and QTR_quest_EN[numer_ID] ~= nil)
-      print("WoWTR: TranslateOn: QTR_quest_LG[numer_ID] exists:", QTR_quest_LG and QTR_quest_LG[numer_ID] ~= nil)
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Checking quest data for ID:", str_ID)
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QTR_QuestData[str_ID] exists:", QTR_QuestData and QTR_QuestData[str_ID] ~= nil)
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QTR_quest_EN[numer_ID] exists:", QTR_quest_EN and QTR_quest_EN[numer_ID] ~= nil)
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QTR_quest_LG[numer_ID] exists:", QTR_quest_LG and QTR_quest_LG[numer_ID] ~= nil)
+      end
       
       if (numer_ID>0 and QTR_QuestData[str_ID]) then
-         print("WoWTR: TranslateOn: Quest data found, setting button text...")
+        if WOWTR and WOWTR.Debug then
+          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Quest data found, setting button text...")
+        end
          QTR_ToggleButton0:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")")
          QTR_ToggleButton1:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")")
          QTR_ToggleButton2:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")")
@@ -145,63 +156,116 @@ function Quests.Details.TranslateOn(typ,event)
          QuestProgressText:SetFont(WOWTR_Font2, sz)
          QuestInfoRewardText:SetFont(WOWTR_Font2, sz)
          
-         print("WoWTR: TranslateOn: About to set quest text...")
-         print("WoWTR: TranslateOn: QTR_quest_LG[numer_ID].details:", QTR_quest_LG[numer_ID] and QTR_quest_LG[numer_ID].details and string.len(QTR_quest_LG[numer_ID].details) or "nil", "chars")
-         print("WoWTR: TranslateOn: QTR_quest_LG[numer_ID].objectives:", QTR_quest_LG[numer_ID] and QTR_quest_LG[numer_ID].objectives and string.len(QTR_quest_LG[numer_ID].objectives) or "nil", "chars")
-         print("WoWTR: TranslateOn: QuestInfoDescriptionText exists:", QuestInfoDescriptionText ~= nil)
-         print("WoWTR: TranslateOn: QuestInfoObjectivesText exists:", QuestInfoObjectivesText ~= nil)
+         if WOWTR and WOWTR.Debug then
+           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: About to set quest text...")
+           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QTR_quest_LG[numer_ID].details:", QTR_quest_LG[numer_ID] and QTR_quest_LG[numer_ID].details and string.len(QTR_quest_LG[numer_ID].details) or "nil", "chars")
+           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QTR_quest_LG[numer_ID].objectives:", QTR_quest_LG[numer_ID] and QTR_quest_LG[numer_ID].objectives and string.len(QTR_quest_LG[numer_ID].objectives) or "nil", "chars")
+           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestInfoDescriptionText exists:", QuestInfoDescriptionText ~= nil)
+           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestInfoObjectivesText exists:", QuestInfoObjectivesText ~= nil)
+         end
          
          -- Check which panels are visible
          if QuestFrame then
-            print("WoWTR: TranslateOn: QuestFrame visible:", QuestFrame:IsVisible())
-            if QuestFrame.DetailPanel then
-               print("WoWTR: TranslateOn: QuestFrame.DetailPanel visible:", QuestFrame.DetailPanel:IsVisible())
-            end
-            if QuestFrame.ProgressPanel then
-               print("WoWTR: TranslateOn: QuestFrame.ProgressPanel visible:", QuestFrame.ProgressPanel:IsVisible())
-            end
-            if QuestFrame.RewardPanel then
-               print("WoWTR: TranslateOn: QuestFrame.RewardPanel visible:", QuestFrame.RewardPanel:IsVisible())
+            if WOWTR and WOWTR.Debug then
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestFrame visible:", QuestFrame:IsVisible())
+              if QuestFrame.DetailPanel then
+                WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestFrame.DetailPanel visible:", QuestFrame.DetailPanel:IsVisible())
+              end
+              if QuestFrame.ProgressPanel then
+                WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestFrame.ProgressPanel visible:", QuestFrame.ProgressPanel:IsVisible())
+              end
+              if QuestFrame.RewardPanel then
+                WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestFrame.RewardPanel visible:", QuestFrame.RewardPanel:IsVisible())
+              end
+            else
+              WOWTR.DebugPrint("TranslateOn: QuestFrame visible:", QuestFrame:IsVisible())
+              if QuestFrame.DetailPanel then
+                WOWTR.DebugPrint("TranslateOn: QuestFrame.DetailPanel visible:", QuestFrame.DetailPanel:IsVisible())
+              end
+              if QuestFrame.ProgressPanel then
+                WOWTR.DebugPrint("TranslateOn: QuestFrame.ProgressPanel visible:", QuestFrame.ProgressPanel:IsVisible())
+              end
+              if QuestFrame.RewardPanel then
+                WOWTR.DebugPrint("TranslateOn: QuestFrame.RewardPanel visible:", QuestFrame.RewardPanel:IsVisible())
+              end
             end
          end
          
          -- Check if text fields are visible and show them if needed
          if QuestInfoDescriptionText then
-            print("WoWTR: TranslateOn: QuestInfoDescriptionText visible:", QuestInfoDescriptionText:IsVisible())
-            print("WoWTR: TranslateOn: QuestInfoDescriptionText parent visible:", QuestInfoDescriptionText:GetParent() and QuestInfoDescriptionText:GetParent():IsVisible())
+            if WOWTR and WOWTR.Debug then
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestInfoDescriptionText visible:", QuestInfoDescriptionText:IsVisible())
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestInfoDescriptionText parent visible:", QuestInfoDescriptionText:GetParent() and QuestInfoDescriptionText:GetParent():IsVisible())
+            else
+              WOWTR.DebugPrint("TranslateOn: QuestInfoDescriptionText visible:", QuestInfoDescriptionText:IsVisible())
+              WOWTR.DebugPrint("TranslateOn: QuestInfoDescriptionText parent visible:", QuestInfoDescriptionText:GetParent() and QuestInfoDescriptionText:GetParent():IsVisible())
+            end
             local currentText = QuestInfoDescriptionText:GetText()
-            print("WoWTR: TranslateOn: QuestInfoDescriptionText current text length:", currentText and string.len(currentText) or 0)
+            if WOWTR and WOWTR.Debug then
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestInfoDescriptionText current text length:", currentText and string.len(currentText) or 0)
+            else
+              WOWTR.DebugPrint("TranslateOn: QuestInfoDescriptionText current text length:", currentText and string.len(currentText) or 0)
+            end
             
             -- If text field is hidden, try to show it and its parent
             if not QuestInfoDescriptionText:IsVisible() then
-               print("WoWTR: TranslateOn: QuestInfoDescriptionText is hidden, attempting to show...")
+               if WOWTR and WOWTR.Debug then
+                 WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestInfoDescriptionText is hidden, attempting to show...")
+               else
+                 WOWTR.DebugPrint("TranslateOn: QuestInfoDescriptionText is hidden, attempting to show...")
+               end
                if QuestInfoDescriptionText.Show then QuestInfoDescriptionText:Show() end
                local parent = QuestInfoDescriptionText:GetParent()
                if parent and parent.Show and not parent:IsVisible() then
                   parent:Show()
-                  print("WoWTR: TranslateOn: Showed parent of QuestInfoDescriptionText")
+                  if WOWTR and WOWTR.Debug then
+                    WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Showed parent of QuestInfoDescriptionText")
+                  else
+                    WOWTR.DebugPrint("TranslateOn: Showed parent of QuestInfoDescriptionText")
+                  end
                end
                -- Try showing DetailPanel if it exists
                if QuestFrame and QuestFrame.DetailPanel and QuestFrame.DetailPanel.Show then
                   QuestFrame.DetailPanel:Show()
-                  print("WoWTR: TranslateOn: Showed QuestFrame.DetailPanel")
+                  if WOWTR and WOWTR.Debug then
+                    WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Showed QuestFrame.DetailPanel")
+                  else
+                    WOWTR.DebugPrint("TranslateOn: Showed QuestFrame.DetailPanel")
+                  end
                end
             end
          end
          if QuestInfoObjectivesText then
-            print("WoWTR: TranslateOn: QuestInfoObjectivesText visible:", QuestInfoObjectivesText:IsVisible())
-            print("WoWTR: TranslateOn: QuestInfoObjectivesText parent visible:", QuestInfoObjectivesText:GetParent() and QuestInfoObjectivesText:GetParent():IsVisible())
+            if WOWTR and WOWTR.Debug then
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestInfoObjectivesText visible:", QuestInfoObjectivesText:IsVisible())
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestInfoObjectivesText parent visible:", QuestInfoObjectivesText:GetParent() and QuestInfoObjectivesText:GetParent():IsVisible())
+            else
+              WOWTR.DebugPrint("TranslateOn: QuestInfoObjectivesText visible:", QuestInfoObjectivesText:IsVisible())
+              WOWTR.DebugPrint("TranslateOn: QuestInfoObjectivesText parent visible:", QuestInfoObjectivesText:GetParent() and QuestInfoObjectivesText:GetParent():IsVisible())
+            end
             local currentText = QuestInfoObjectivesText:GetText()
-            print("WoWTR: TranslateOn: QuestInfoObjectivesText current text length:", currentText and string.len(currentText) or 0)
+            if WOWTR and WOWTR.Debug then
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestInfoObjectivesText current text length:", currentText and string.len(currentText) or 0)
+            else
+              WOWTR.DebugPrint("TranslateOn: QuestInfoObjectivesText current text length:", currentText and string.len(currentText) or 0)
+            end
             
             -- If text field is hidden, try to show it
             if not QuestInfoObjectivesText:IsVisible() then
-               print("WoWTR: TranslateOn: QuestInfoObjectivesText is hidden, attempting to show...")
+               if WOWTR and WOWTR.Debug then
+                 WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestInfoObjectivesText is hidden, attempting to show...")
+               else
+                 WOWTR.DebugPrint("TranslateOn: QuestInfoObjectivesText is hidden, attempting to show...")
+               end
                if QuestInfoObjectivesText.Show then QuestInfoObjectivesText:Show() end
                local parent = QuestInfoObjectivesText:GetParent()
                if parent and parent.Show and not parent:IsVisible() then
                   parent:Show()
-                  print("WoWTR: TranslateOn: Showed parent of QuestInfoObjectivesText")
+                  if WOWTR and WOWTR.Debug then
+                    WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Showed parent of QuestInfoObjectivesText")
+                  else
+                    WOWTR.DebugPrint("TranslateOn: Showed parent of QuestInfoObjectivesText")
+                  end
                end
             end
          end
@@ -209,7 +273,11 @@ function Quests.Details.TranslateOn(typ,event)
          -- Set the text immediately (Blizzard should have finished by now)
          -- Ensure text fields are visible before setting text
          if QuestInfoDescriptionText and not QuestInfoDescriptionText:IsVisible() then
-            print("WoWTR: TranslateOn: QuestInfoDescriptionText is hidden, showing it...")
+            if WOWTR and WOWTR.Debug then
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestInfoDescriptionText is hidden, showing it...")
+            else
+              WOWTR.DebugPrint("TranslateOn: QuestInfoDescriptionText is hidden, showing it...")
+            end
             if QuestInfoDescriptionText.Show then QuestInfoDescriptionText:Show() end
             local parent = QuestInfoDescriptionText:GetParent()
             if parent and parent.Show then parent:Show() end
@@ -219,7 +287,11 @@ function Quests.Details.TranslateOn(typ,event)
             end
          end
          if QuestInfoObjectivesText and not QuestInfoObjectivesText:IsVisible() then
-            print("WoWTR: TranslateOn: QuestInfoObjectivesText is hidden, showing it...")
+            if WOWTR and WOWTR.Debug then
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QuestInfoObjectivesText is hidden, showing it...")
+            else
+              WOWTR.DebugPrint("TranslateOn: QuestInfoObjectivesText is hidden, showing it...")
+            end
             if QuestInfoObjectivesText.Show then QuestInfoObjectivesText:Show() end
             local parent = QuestInfoObjectivesText:GetParent()
             if parent and parent.Show then parent:Show() end
@@ -228,17 +300,29 @@ function Quests.Details.TranslateOn(typ,event)
          if QuestInfoDescriptionText and QTR_quest_LG[QTR_quest_ID] and QTR_quest_LG[QTR_quest_ID].details then
             QuestInfoDescriptionText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].details, false, QuestInfoDescriptionText, WOWTR_Font2, -5))
             if rtl then QuestInfoDescriptionText:SetJustifyH("RIGHT") else QuestInfoDescriptionText:SetJustifyH("LEFT") end
-            print("WoWTR: TranslateOn: Description text set")
+            if WOWTR and WOWTR.Debug then
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Description text set")
+            else
+              WOWTR.DebugPrint("TranslateOn: Description text set")
+            end
          end
          if QuestInfoObjectivesText and QTR_quest_LG[QTR_quest_ID] and QTR_quest_LG[QTR_quest_ID].objectives then
             QuestInfoObjectivesText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].objectives,true,QuestInfoObjectivesText,WOWTR_Font2,-10))
             if rtl then QuestInfoObjectivesText:SetJustifyH("RIGHT") else QuestInfoObjectivesText:SetJustifyH("LEFT") end
-            print("WoWTR: TranslateOn: Objectives text set")
+            if WOWTR and WOWTR.Debug then
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Objectives text set")
+            else
+              WOWTR.DebugPrint("TranslateOn: Objectives text set")
+            end
          end
          if QuestProgressText and QTR_quest_LG[QTR_quest_ID] and QTR_quest_LG[QTR_quest_ID].progress then
             QuestProgressText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].progress,false,QuestProgressText,WOWTR_Font2))
             if rtl then QuestProgressText:SetJustifyH("RIGHT") else QuestProgressText:SetJustifyH("LEFT") end
-            print("WoWTR: TranslateOn: Progress text set")
+            if WOWTR and WOWTR.Debug then
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Progress text set")
+            else
+              WOWTR.DebugPrint("TranslateOn: Progress text set")
+            end
          end
          if QuestInfoRewardText and QTR_quest_LG[QTR_quest_ID] and QTR_quest_LG[QTR_quest_ID].completion then
             if rtl then
@@ -246,9 +330,17 @@ function Quests.Details.TranslateOn(typ,event)
             else
                QuestInfoRewardText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].completion,false,QuestInfoRewardText,WOWTR_Font2,-5))
             end
-            print("WoWTR: TranslateOn: Reward text set")
+            if WOWTR and WOWTR.Debug then
+              WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Reward text set")
+            else
+              WOWTR.DebugPrint("TranslateOn: Reward text set")
+            end
          end
-         print("WoWTR: TranslateOn: All quest text set successfully")
+         if WOWTR and WOWTR.Debug then
+           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: All quest text set successfully")
+         else
+           WOWTR.DebugPrint("TranslateOn: All quest text set successfully")
+         end
          
          -- Set fonts immediately (these shouldn't conflict)
          QuestInfoDescriptionText:SetFont(WOWTR_Font2, sz)
@@ -408,13 +500,21 @@ function QTR_PrepareReload() return Quests.Details.QuestPrepare() end
 
 -- Prepare quest data and switch translated view on
 function Quests.Details.QuestPrepare(event)
-  print("WoWTR: QuestPrepare called with event:", event or "nil")
+  local startTime = GetTime()
+  if WOWTR and WOWTR.Debug then
+    WOWTR.Debug.Enter("QuestPrepare", WOWTR.Debug.Categories.QUESTS, "Event:", event or "nil", "| Time:", startTime)
+  end
   QTR_PrepareTime = time()
   if QTR_IconAI then QTR_IconAI:Hide() end
   if GoQ_IconAI then GoQ_IconAI:Hide() end
 
   local q_ID = Quests.GetQuestID and Quests.GetQuestID() or 0
-  print("WoWTR: QuestPrepare: Quest ID:", q_ID)
+  if WOWTR and WOWTR.Debug then
+    WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Quest ID:", q_ID, "| Active frames:", 
+      (QuestFrame and QuestFrame:IsVisible() and "QuestFrame") or 
+      (QuestLogPopupDetailFrame and QuestLogPopupDetailFrame:IsVisible() and "QuestLogPopup") or
+      (QuestMapFrame and QuestMapFrame:IsVisible() and "QuestMapFrame") or "None")
+  end
   
   -- Check if we just processed this quest (avoid double processing)
   -- But allow reprocessing if the text isn't actually translated (Blizzard might have overwritten it)
@@ -422,50 +522,87 @@ function Quests.Details.QuestPrepare(event)
     local now = GetTime()
     if _lastProcessedQuestID == q_ID and (now - _lastProcessedQuestTime) < 0.5 then
       -- Check if text is actually translated - if not, allow reprocessing
+      -- But only allow ONE reprocessing attempt to avoid infinite loops
       local isActuallyTranslated = false
+      local shouldReprocess = false
+      
       if QuestInfoDescriptionText and QuestInfoDescriptionText:IsVisible() then
         local currentText = QuestInfoDescriptionText:GetText() or ""
         local expectedText = QTR_quest_LG[q_ID] and QTR_quest_LG[q_ID].details or ""
         -- If we have translation data and the current text doesn't match the English text, assume it's translated
         if expectedText ~= "" and QTR_quest_EN[q_ID] and QTR_quest_EN[q_ID].details then
           local englishText = QTR_quest_EN[q_ID].details or ""
+          local currentLen = string.len(currentText)
+          local englishLen = string.len(englishText)
+          local translatedLen = string.len(expectedText)
+          
           -- If current text is different from English and similar length to translated, assume translated
-          if currentText ~= englishText and math.abs(string.len(currentText) - string.len(expectedText)) < 100 then
+          if currentText ~= englishText and math.abs(currentLen - translatedLen) < 100 then
             isActuallyTranslated = true
+          -- If current text matches English length but we have translation, check if we've already tried reprocessing
+          elseif currentLen == englishLen and currentText == englishText then
+            -- Check if we've already attempted reprocessing for this quest
+            local reprocessKey = "_reprocess_" .. q_ID
+            if not _G[reprocessKey] then
+              -- First time seeing English text after processing - allow one reprocessing attempt
+              _G[reprocessKey] = true
+              shouldReprocess = true
+            else
+              -- Already tried reprocessing, don't allow again (to prevent infinite loop)
+              isActuallyTranslated = false -- Treat as translated to stop reprocessing
+            end
           end
         end
       end
       
       if isActuallyTranslated then
-        print("WoWTR: QuestPrepare: Already processed quest", q_ID, "recently and text is translated, skipping to avoid double processing")
+        if WOWTR and WOWTR.Debug then
+          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "SKIP | Quest", q_ID, "already processed | Text is translated | Time since last:", string.format("%.2f", now - _lastProcessedQuestTime), "s")
+        end
         return
-      else
-        print("WoWTR: QuestPrepare: Quest", q_ID, "was processed recently but text doesn't appear translated, allowing reprocessing")
-        -- Reset the timestamp so we can process it again
+      elseif shouldReprocess then
+        if WOWTR and WOWTR.Debug then
+          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "REPROCESS | Quest", q_ID, "was processed but text appears untranslated | Allowing ONE reprocessing attempt")
+        end
+        -- Reset the timestamp so we can process it again, but mark that we've tried reprocessing
         _lastProcessedQuestTime = 0
+      else
+        if WOWTR and WOWTR.Debug then
+          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "SKIP | Quest", q_ID, "already processed recently | Time since last:", string.format("%.2f", now - _lastProcessedQuestTime), "s")
+        end
+        return
       end
     end
     -- Mark that we're processing this quest now
     _lastProcessedQuestID = q_ID
     _lastProcessedQuestTime = now
+    -- Clear reprocess flag when starting fresh processing
+    local reprocessKey = "_reprocess_" .. q_ID
+    _G[reprocessKey] = nil
   end
   
   if (q_ID == 0) then 
-    print("WoWTR: QuestPrepare: Quest ID is 0, returning")
+    if WOWTR and WOWTR.Debug then
+      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "SKIP | Quest ID is 0 (invalid)")
+    end
     return 
   end
   
   if isClassicQuestLog and isClassicQuestLog() then
     if (QTR_PS["questlog"] == "0") then
       if QTR_ToggleButton3 then QTR_ToggleButton3:Hide() end
-      print("WoWTR: QuestPrepare: Classic quest log disabled, returning")
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "SKIP | Classic quest log disabled")
+      end
       return
     else
       if QTR_ToggleButton3 then QTR_ToggleButton3:Show() end
       local classicQuestLogFrame = GetClassicQuestLogFrame()
       if (classicQuestLogFrame and classicQuestLogFrame:IsVisible() and (QTR_curr_trans == "0")) then
         QTR_Translate_Off(1)
-        print("WoWTR: QuestPrepare: Classic quest log, translate off, returning")
+        if WOWTR and WOWTR.Debug then
+          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "SKIP | Classic quest log | Translate off | QTR_curr_trans:", QTR_curr_trans)
+        end
         return
       end
     end
@@ -474,7 +611,9 @@ function Quests.Details.QuestPrepare(event)
     local immersionContentFrame = GetImmersionContentFrame()
     if (immersionContentFrame and immersionContentFrame:IsVisible() and (QTR_curr_trans == "0")) then
       QTR_Translate_Off(1)
-      print("WoWTR: QuestPrepare: Immersion frame, translate off, returning")
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "SKIP | Immersion frame | Translate off | QTR_curr_trans:", QTR_curr_trans)
+      end
       return
     end
   end
@@ -483,7 +622,9 @@ function Quests.Details.QuestPrepare(event)
     local now = GetTime()
     local isForced = (event == "__force__")
     if (not isForced) and (_lastPrepareQuestID == q_ID and (now - (_lastPrepareAt or 0)) < 0.05) then
-      print("WoWTR: QuestPrepare: Skipping duplicate call (throttled)")
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "SKIP | Throttled duplicate call | Quest:", q_ID, "| Time since last:", string.format("%.3f", now - (_lastPrepareAt or 0)), "s")
+      end
       return
     end
     _lastPrepareQuestID = q_ID
@@ -497,15 +638,15 @@ function Quests.Details.QuestPrepare(event)
 
   if QTR_ToggleButton0 then QTR_ToggleButton0:SetWidth(150); QTR_ToggleButton0:SetScript("OnClick", QTR_ON_OFF) end
 
-  print("WoWTR: QuestPrepare: QTR_PS active:", QTR_PS and QTR_PS["active"])
+  if WOWTR and WOWTR.Debug then
+    WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Config | QTR_PS active:", QTR_PS and QTR_PS["active"], "| QTR_curr_trans:", QTR_curr_trans)
+  end
   if (QTR_PS["active"] == "1") then
-    print("WoWTR: QuestPrepare: Active is ON, processing translation...")
-    if QTR_ToggleButton0 then QTR_ToggleButton0:Enable() end
-    if QTR_ToggleButton1 then QTR_ToggleButton1:Enable() end
-    if QTR_ToggleButton2 then QTR_ToggleButton2:Enable() end
-    if isImmersion and isImmersion() and QTR_ToggleButton4 then QTR_ToggleButton4:Enable() end
-    if isStoryline and isStoryline() and QTR_ToggleButton5 then QTR_ToggleButton5:Enable() end
-    if IsDUIQuestFrame and IsDUIQuestFrame() and QTR_ToggleButton7 then QTR_ToggleButton7:Enable() end
+    if WOWTR and WOWTR.Debug then
+      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Processing translation for quest", q_ID, "| Event:", event or "nil")
+    end
+    -- Don't enable buttons yet - wait to see if translation data exists
+    -- Buttons will be enabled only if translation data is found
 
     -- Model text capture for translation (stored to GS tables for later use)
     if (QuestNPCModelText and QuestNPCModelText:IsVisible()) then
@@ -528,13 +669,14 @@ function Quests.Details.QuestPrepare(event)
     QTR_quest_EN[QTR_quest_ID].itemchoose = QTR_MessOrig.itemchoose0
     QTR_quest_EN[QTR_quest_ID].itemreceive = QTR_MessOrig.itemreceiv0
 
-    print("WoWTR: QuestPrepare: Checking for translation data...")
-    print("WoWTR: QuestPrepare: QTR_QuestData exists:", QTR_QuestData ~= nil)
-    print("WoWTR: QuestPrepare: str_ID:", str_ID)
-    print("WoWTR: QuestPrepare: QTR_QuestData[str_ID] exists:", QTR_QuestData and QTR_QuestData[str_ID] ~= nil)
+    if WOWTR and WOWTR.Debug then
+      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Translation data check | QTR_QuestData:", QTR_QuestData ~= nil, "| Quest ID:", str_ID, "| Has data:", QTR_QuestData and QTR_QuestData[str_ID] ~= nil)
+    end
     
     if (QTR_QuestData and QTR_QuestData[str_ID]) then
-      print("WoWTR: QuestPrepare: Translation data found for quest", str_ID)
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "[OK] Translation data FOUND for quest", str_ID, "| Loading translation...")
+      end
       if (not QTR_quest_EN[QTR_quest_ID].title) then
         QTR_quest_LG[QTR_quest_ID].title = QTR_QuestData[str_ID]["Title"]
         QTR_quest_EN[QTR_quest_ID].title = GetTitleText() ~= "" and GetTitleText() or (QuestInfoTitleHeader and QuestInfoTitleHeader:GetText())
@@ -670,40 +812,90 @@ function Quests.Details.QuestPrepare(event)
           hasTrans = ((d and d ~= "") or (o and o ~= "") or (p and p ~= "") or (c and c ~= "")) and true or false
         end
       end
-      print("WoWTR: QuestPrepare: hasTrans:", hasTrans)
-      print("WoWTR: QuestPrepare: QTR_curr_trans:", QTR_curr_trans)
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Translation check | hasTrans:", hasTrans, "| QTR_curr_trans:", QTR_curr_trans, 
+          "| Details:", (QTR_quest_LG[q_ID] and QTR_quest_LG[q_ID].details and string.len(QTR_quest_LG[q_ID].details) or 0) .. " chars",
+          "| Objectives:", (QTR_quest_LG[q_ID] and QTR_quest_LG[q_ID].objectives and string.len(QTR_quest_LG[q_ID].objectives) or 0) .. " chars")
+      end
+      
+      -- Enable toggle buttons only if we have translation data
+      if hasTrans then
+        if QTR_ToggleButton0 then QTR_ToggleButton0:Enable() end
+        if QTR_ToggleButton1 then QTR_ToggleButton1:Enable() end
+        if QTR_ToggleButton2 then QTR_ToggleButton2:Enable() end
+        if isImmersion and isImmersion() and QTR_ToggleButton4 then QTR_ToggleButton4:Enable() end
+        if isStoryline and isStoryline() and QTR_ToggleButton5 then QTR_ToggleButton5:Enable() end
+        if IsDUIQuestFrame and IsDUIQuestFrame() and QTR_ToggleButton7 then QTR_ToggleButton7:Enable() end
+      else
+        -- No translation available, disable buttons
+        if QTR_ToggleButton0 then QTR_ToggleButton0:Disable() end
+        if QTR_ToggleButton1 then QTR_ToggleButton1:Disable() end
+        if QTR_ToggleButton2 then QTR_ToggleButton2:Disable() end
+        if isImmersion and isImmersion() and QTR_ToggleButton4 then QTR_ToggleButton4:Disable() end
+        if isStoryline and isStoryline() and QTR_ToggleButton5 then QTR_ToggleButton5:Disable() end
+        if IsDUIQuestFrame and IsDUIQuestFrame() and QTR_ToggleButton7 then QTR_ToggleButton7:Disable() end
+      end
+      
       if not hasTrans then
-        print("WoWTR: QuestPrepare: No localized text, falling back to EN view")
+        if WOWTR and WOWTR.Debug then
+          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "|cFFFF0000[X] No localized text available|r | Falling back to English | Quest:", q_ID)
+        end
         if Quests and Quests.Utils and Quests.Utils.DebugPrint then
           Quests.Utils.DebugPrint("QuestPrepare: no LG text, fallback to EN", "qid=", tostring(QTR_quest_ID))
         end
-        print("WoWTR: QuestPrepare: Calling QTR_Translate_Off (no translation)...")
+        if WOWTR and WOWTR.Debug then
+          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Calling QTR_Translate_Off (no translation)...")
+        end
         QTR_Translate_Off(1, event)
-        print("WoWTR: QuestPrepare: QTR_Translate_Off completed")
+        if WOWTR and WOWTR.Debug then
+          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "[OK] QTR_Translate_Off completed")
+        end
       else
-        print("WoWTR: QuestPrepare: Has translation, checking QTR_curr_trans...")
-        if (QTR_curr_trans == "1") then
-          print("WoWTR: QuestPrepare: QTR_curr_trans is 1, calling QTR_Translate_On...")
-          QTR_Translate_On(1, event)
-          print("WoWTR: QuestPrepare: QTR_Translate_On completed")
-        else
-          print("WoWTR: QuestPrepare: QTR_curr_trans is 0, calling QTR_Translate_Off...")
-          QTR_Translate_Off(1, event)
-          print("WoWTR: QuestPrepare: QTR_Translate_Off completed")
+        if WOWTR and WOWTR.Debug then
+          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "[OK] Has translation | Setting QTR_curr_trans=1 | Calling QTR_Translate_On...")
+        end
+        -- Reset QTR_curr_trans to "1" if we have translation (so it always shows translated)
+        -- This ensures that if a previous quest without translation set it to "0", we restore it
+        QTR_curr_trans = "1"
+        QTR_Translate_On(1, event)
+        if WOWTR and WOWTR.Debug then
+          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "[OK] QTR_Translate_On completed")
         end
       end
       if (QTR_PS["en_first"] == "1" and QTR_curr_trans == "1") then 
-        print("WoWTR: QuestPrepare: en_first is 1, calling QTR_ON_OFF...")
-        QTR_ON_OFF() 
+        if WOWTR and WOWTR.Debug then
+          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "en_first enabled | Scheduling QTR_ON_OFF toggle in 0.1s...")
+        end
+        -- Use a small delay to ensure translation is fully applied before toggling
+        -- This prevents the toggle from interfering with the current processing
+        C_Timer.After(0.1, function()
+          if QTR_ON_OFF then QTR_ON_OFF() end
+        end)
       end
     else
-      -- No translation data available; leave view as EN but keep toggles consistent
-      print("WoWTR: QuestPrepare: No translation data found, displaying English...")
-      print("WoWTR: QuestPrepare: Calling QTR_Translate_Off (no data)...")
+      -- No translation data available; leave view as EN but disable toggles
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "|cFFFF0000[X] No translation data found|r | Quest:", str_ID, "| Displaying English | Saving quest data...")
+      end
+      -- Disable all toggle buttons since there's no translation available
+      if QTR_ToggleButton0 then QTR_ToggleButton0:Disable() end
+      if QTR_ToggleButton1 then QTR_ToggleButton1:Disable() end
+      if QTR_ToggleButton2 then QTR_ToggleButton2:Disable() end
+      if isImmersion and isImmersion() and QTR_ToggleButton4 then QTR_ToggleButton4:Disable() end
+      if isStoryline and isStoryline() and QTR_ToggleButton5 then QTR_ToggleButton5:Disable() end
+      if IsDUIQuestFrame and IsDUIQuestFrame() and QTR_ToggleButton7 then QTR_ToggleButton7:Disable() end
+      
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestPrepare: Calling QTR_Translate_Off (no data)...")
+      end
       QTR_Translate_Off(1, event)
-      print("WoWTR: QuestPrepare: Saving quest data...")
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestPrepare: Saving quest data...")
+      end
       QTR_SaveQuest(event)
-      print("WoWTR: QuestPrepare: QTR_SaveQuest completed")
+      if WOWTR and WOWTR.Debug then
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestPrepare: QTR_SaveQuest completed")
+      end
     end
 
     if (IsDUIQuestFrame and IsDUIQuestFrame()) then
@@ -712,7 +904,9 @@ function Quests.Details.QuestPrepare(event)
     end
   else
     -- Active is OFF - still need to save quest data and display in English
-    print("WoWTR: QuestPrepare: Active is OFF, processing English display...")
+    if WOWTR and WOWTR.Debug then
+      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Active is OFF | Processing English display | Quest:", q_ID)
+    end
     -- Disable all toggle buttons
     if QTR_ToggleButton0 then QTR_ToggleButton0:Disable() end
     if QTR_ToggleButton1 then QTR_ToggleButton1:Disable() end
@@ -722,28 +916,28 @@ function Quests.Details.QuestPrepare(event)
     if IsDUIQuestFrame and IsDUIQuestFrame() and QTR_ToggleButton7 then QTR_ToggleButton7:Disable() end
     
     -- Capture quest text data even when active is off (needed for display)
-    print("WoWTR: QuestPrepare: Capturing quest text...")
+    WOWTR.DebugPrint("QuestPrepare: Capturing quest text...")
     if (not QTR_quest_EN[QTR_quest_ID].title) then
       QTR_quest_EN[QTR_quest_ID].title = GetTitleText() ~= "" and GetTitleText() or (QuestInfoTitleHeader and QuestInfoTitleHeader:GetText()) or ""
-      print("WoWTR: QuestPrepare: Captured title:", QTR_quest_EN[QTR_quest_ID].title and string.len(QTR_quest_EN[QTR_quest_ID].title) or 0, "chars")
+      WOWTR.DebugPrint("QuestPrepare: Captured title:", QTR_quest_EN[QTR_quest_ID].title and string.len(QTR_quest_EN[QTR_quest_ID].title) or 0, "chars")
     end
     
     if (event == "QUEST_DETAIL") then
       if (not QTR_quest_EN[QTR_quest_ID].details) then
         QTR_quest_EN[QTR_quest_ID].details = GetQuestText() or ""
         QTR_quest_EN[QTR_quest_ID].objectives = GetObjectiveText() or ""
-        print("WoWTR: QuestPrepare: Captured details:", QTR_quest_EN[QTR_quest_ID].details and string.len(QTR_quest_EN[QTR_quest_ID].details) or 0, "chars")
-        print("WoWTR: QuestPrepare: Captured objectives:", QTR_quest_EN[QTR_quest_ID].objectives and string.len(QTR_quest_EN[QTR_quest_ID].objectives) or 0, "chars")
+        WOWTR.DebugPrint("QuestPrepare: Captured details:", QTR_quest_EN[QTR_quest_ID].details and string.len(QTR_quest_EN[QTR_quest_ID].details) or 0, "chars")
+        WOWTR.DebugPrint("QuestPrepare: Captured objectives:", QTR_quest_EN[QTR_quest_ID].objectives and string.len(QTR_quest_EN[QTR_quest_ID].objectives) or 0, "chars")
       end
     elseif QuestInfoDescriptionText and QuestInfoDescriptionText.GetText then
       -- For map quest panel or other events, read from visible frames
       if (not QTR_quest_EN[QTR_quest_ID].details) then
         QTR_quest_EN[QTR_quest_ID].details = QuestInfoDescriptionText:GetText() or ""
-        print("WoWTR: QuestPrepare: Captured details from frame:", QTR_quest_EN[QTR_quest_ID].details and string.len(QTR_quest_EN[QTR_quest_ID].details) or 0, "chars")
+        WOWTR.DebugPrint("QuestPrepare: Captured details from frame:", QTR_quest_EN[QTR_quest_ID].details and string.len(QTR_quest_EN[QTR_quest_ID].details) or 0, "chars")
       end
       if (not QTR_quest_EN[QTR_quest_ID].objectives and QuestInfoObjectivesText and QuestInfoObjectivesText.GetText) then
         QTR_quest_EN[QTR_quest_ID].objectives = QuestInfoObjectivesText:GetText() or ""
-        print("WoWTR: QuestPrepare: Captured objectives from frame:", QTR_quest_EN[QTR_quest_ID].objectives and string.len(QTR_quest_EN[QTR_quest_ID].objectives) or 0, "chars")
+        WOWTR.DebugPrint("QuestPrepare: Captured objectives from frame:", QTR_quest_EN[QTR_quest_ID].objectives and string.len(QTR_quest_EN[QTR_quest_ID].objectives) or 0, "chars")
       end
     end
     
@@ -752,16 +946,16 @@ function Quests.Details.QuestPrepare(event)
     QTR_quest_EN[QTR_quest_ID].itemreceive = QTR_quest_EN[QTR_quest_ID].itemreceive or QTR_MessOrig.itemreceiv0
     
     -- Save quest data even when active is off (so we have it if user re-enables)
-    print("WoWTR: QuestPrepare: Saving quest data...")
+    WOWTR.DebugPrint("QuestPrepare: Saving quest data...")
     QTR_SaveQuest(event)
     
     -- Ensure quest is displayed in English (not translated)
-    print("WoWTR: QuestPrepare: Calling QTR_Translate_Off...")
+    WOWTR.DebugPrint("QuestPrepare: Calling QTR_Translate_Off...")
     if QTR_Translate_Off then
       QTR_Translate_Off(1, event)
-      print("WoWTR: QuestPrepare: QTR_Translate_Off completed")
+      WOWTR.DebugPrint("QuestPrepare: QTR_Translate_Off completed")
     else
-      print("WoWTR: QuestPrepare: ERROR - QTR_Translate_Off is nil!")
+      WOWTR.DebugPrint("QuestPrepare: ERROR - QTR_Translate_Off is nil!")
     end
     
     -- Handle Immersion frame if visible
@@ -772,7 +966,9 @@ function Quests.Details.QuestPrepare(event)
       end
     end
   end
-  print("WoWTR: QuestPrepare: Function completed")
+  if WOWTR and WOWTR.Debug then
+    WOWTR.Debug.Exit("QuestPrepare", WOWTR.Debug.Categories.QUESTS, "Quest:", q_ID, "| Event:", event or "nil", "| Duration:", string.format("%.3f", GetTime() - startTime), "s")
+  end
 end
 
 -- (removed duplicate DisplayConstants; keep the full implementation below)

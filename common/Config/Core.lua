@@ -25,6 +25,18 @@ C.defaults = {
     minimap = { hide = false, minimapPos = 238 },
     core = {
       lastShownChangelogVersion = "",
+      debug = false, -- Debug mode toggle
+      debugConfig = {
+        quests = 3,    -- NORMAL by default
+        gossip = 3,
+        tooltips = 3,
+        books = 3,
+        movies = 3,
+        bubbles = 3,
+        chat = 3,
+        config = 3,
+        general = 3,
+      },
     },
     quests = {
       active = true, transtitle = true, gossip = true, tracker = true,
@@ -593,6 +605,10 @@ function C.Init()
       WOWTR.db:RegisterCallback("OnProfileChanged", C.SyncGlobalsFromDB)
       WOWTR.db:RegisterCallback("OnProfileCopied", C.SyncGlobalsFromDB)
       WOWTR.db:RegisterCallback("OnProfileReset", C.SyncGlobalsFromDB)
+    end
+    -- Initialize debug system after database is ready
+    if WOWTR and WOWTR.Debug and WOWTR.Debug.Initialize then
+      WOWTR.Debug.Initialize()
     end
   end
   if AceConfig and AceConfigDialog then
