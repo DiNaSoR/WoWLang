@@ -378,10 +378,7 @@ function Quests.Gossip.Show()
             if (QTR_PS and QTR_PS["en_first"] == "1") then
                QTR_first_ok = true
             end
-            -- Ensure fonts are applied across all ScrollTarget descendants (freshly pooled widgets) when translation exists
-            ApplyFontToGossipScrollTarget()
-            StartDelayedFunction(ApplyFontToGossipScrollTarget, 0.02)
-            StartDelayedFunction(ApplyFontToGossipScrollTarget, 0.10)
+            -- Note: Fonts are applied individually to translated elements only, not blanket-applied
          else
             -- No translation found: restore original fonts, size, and alignment
             if GossipTextFrame and GossipTextFrame.GreetingText then
@@ -426,6 +423,11 @@ function Quests.Gossip.Show()
                end
             end
             if (rawText and QTR_PS and QTR_PS["active"] == "1" and QTR_PS["gossip"]=="1" and (string.find(rawText,NONBREAKINGSPACE)==nil)) then
+               -- Remember original font BEFORE processing translation
+               local fontStringRegion = Quests.Utils and Quests.Utils.GetFirstFontStringRegion and Quests.Utils.GetFirstFontStringRegion(GTxtframe)
+               if fontStringRegion then
+                  RememberFont(fontStringRegion)
+               end
                local GOptionText = WOWTR_DetectAndReplacePlayerName(rawText, nil, '$N')
                local prefix, sufix = "", ""
                -- Strip both |cXXXXXXXX and |cnNAME: wrappers for hashing, preserve for display
@@ -454,6 +456,11 @@ function Quests.Gossip.Show()
                   QTR_goss_optionsEN[GTxtframe] = GTxtframe:GetText()
                   QTR_goss_optionsTR[GTxtframe] = transTR
                   GTxtframe:SetText(transTR)
+                  -- Apply translation font ONLY to translated option buttons
+                  local fontStringRegion = Quests.Utils and Quests.Utils.GetFirstFontStringRegion and Quests.Utils.GetFirstFontStringRegion(GTxtframe)
+                  if fontStringRegion and WOWTR_Font2 and QTR_PS then
+                     fontStringRegion:SetFont(WOWTR_Font2, tonumber(QTR_PS["fontsize"] or 13))
+                  end
                   if GTxtframe.Resize then GTxtframe:Resize() end
                   if (GossipTextFrame and GO_resized > 0) then
                      local point, relativeTo, relativePoint, xOfs, yOfs = GTxtframe:GetPoint(1)
@@ -541,6 +548,11 @@ function Quests.Gossip.OnQuestFrame()
                if QTR_DUIGossipFrame then QTR_DUIGossipFrame() end
             end
          else
+            -- No translation found: restore original font, size, and alignment
+            RestoreOriginalFont(GreetingText)
+            if GreetingText.SetJustifyH then
+               GreetingText:SetJustifyH("LEFT")
+            end
             do local uiq = S and S.ui and S.ui.quest; if uiq and uiq.toggleEN then uiq.toggleEN:SetText("GH="..tostring(Hash).." (EN)") end end
             if (QTR_PS and QTR_PS["saveGS"]=="1") then
                local Nazwa_NPC = QuestFrameTitleText:GetText()
@@ -574,6 +586,11 @@ function Quests.Gossip.OnQuestFrame()
 
          if (QTR_PS and QTR_PS["active"] == "1" and QTR_PS["gossip"]=="1") then
            for GText in QuestFrameGreetingPanel.titleButtonPool:EnumerateActive() do
+               -- Remember original font BEFORE processing translation
+               local fontStringRegion = Quests.Utils and Quests.Utils.GetFirstFontStringRegion and Quests.Utils.GetFirstFontStringRegion(GText)
+               if fontStringRegion then
+                  RememberFont(fontStringRegion)
+               end
                local originalGossText = GText:GetText()
                local questID = GText.questID
                local transTR, prefix, sufix, isTranslated = nil, "", "", false
@@ -644,6 +661,7 @@ function Quests.Gossip.OnQuestFrame()
                      GO_resized = GO_resized + GText:GetHeight() - GO_height
                   end
                else
+                  -- No translation available: restore original font, size, and alignment
                   if (GO_resized > 0) then
                      local point, relativeTo, relativePoint, xOfs, yOfs = GText:GetPoint(1)
                      GText:ClearAllPoints(); GText:SetPoint(point, relativeTo, relativePoint, xOfs, yOfs - GO_resized)
@@ -656,6 +674,7 @@ function Quests.Gossip.OnQuestFrame()
                      if (v:GetObjectType() == "FontString") then fontStringRegion = v; break end
                   end
                   if fontStringRegion then
+                     RestoreOriginalFont(fontStringRegion)
                      local leftPadding = 10
                      if iconRegion then
                         iconRegion:ClearAllPoints(); iconRegion:SetPoint("TOPLEFT", GText, "TOPLEFT", 5, -2)
@@ -663,7 +682,9 @@ function Quests.Gossip.OnQuestFrame()
                      end
                      fontStringRegion:ClearAllPoints(); fontStringRegion:SetPoint("TOPLEFT", GText, "TOPLEFT", leftPadding, -2)
                      fontStringRegion:SetJustifyH("LEFT")
-                     if WOWTR_Font2 and QTR_PS then fontStringRegion:SetFont(WOWTR_Font2, tonumber(QTR_PS["fontsize"])) end
+                  end
+                  if Quests.Utils and Quests.Utils.ApplyOptionButtonLayout then
+                     Quests.Utils.ApplyOptionButtonLayout(GText, false)
                   end
                   if GText.Resize then GText:Resize() end
                   if (GText:GetHeight() > GO_height+1) then
