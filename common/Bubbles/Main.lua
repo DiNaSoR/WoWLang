@@ -64,17 +64,21 @@ local function processVisibleBubbles()
     bubbles = C_ChatBubbles.GetAllChatBubbles()
   end
   for _, bubble in pairs(bubbles) do
-    for i = 1, bubble:GetNumChildren() do
-      local child = select(i, bubble:GetChildren())
-      if child and not child:IsForbidden() and child.GetObjectType and child:GetObjectType() == "Frame" then
-        for r = 1, child:GetNumRegions() do
-          local region = select(r, child:GetRegions())
-          if region and region.IsVisible and region:IsVisible() and region.GetText and region.GetObjectType and region:GetObjectType() == "FontString" then
-            for idx = #S.bubblesQueue, 1, -1 do
-              local item = S.bubblesQueue[idx]
-              local applied = applyBubbleTranslation(region, item[1], item[2])
-              if applied then
-                table.remove(S.bubblesQueue, idx)
+    -- Validate bubble is a valid frame before calling methods on it
+    if bubble and not bubble:IsForbidden() and bubble.GetNumChildren and bubble.GetChildren then
+      local numChildren = bubble:GetNumChildren()
+      for i = 1, numChildren do
+        local child = select(i, bubble:GetChildren())
+        if child and not child:IsForbidden() and child.GetObjectType and child:GetObjectType() == "Frame" then
+          for r = 1, child:GetNumRegions() do
+            local region = select(r, child:GetRegions())
+            if region and region.IsVisible and region:IsVisible() and region.GetText and region.GetObjectType and region:GetObjectType() == "FontString" then
+              for idx = #S.bubblesQueue, 1, -1 do
+                local item = S.bubblesQueue[idx]
+                local applied = applyBubbleTranslation(region, item[1], item[2])
+                if applied then
+                  table.remove(S.bubblesQueue, idx)
+                end
               end
             end
           end
