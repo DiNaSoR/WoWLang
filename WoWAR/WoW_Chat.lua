@@ -910,12 +910,14 @@ function CHAT_START()
 
    -- Rest of the original function (buttons, filters, etc.)
    
+   -- CH_ToggleButton is kept hidden but used for state tracking (IsEnabled checks)
+   -- The visible toggle is CH_ToggleButton2 which appears when chat editbox opens
    CH_ToggleButton = CreateFrame("Button", nil, DEFAULT_CHAT_FRAME, "UIPanelButtonTemplate");
    CH_ToggleButton:SetWidth(34);
    CH_ToggleButton:SetHeight(20);
    CH_ToggleButton:SetNormalFontObject("GameFontRed");      -- litery EN czerwone
    CH_ToggleButton:SetText("EN");
-   CH_ToggleButton:Show();
+   CH_ToggleButton:Hide();                                   -- Always hidden - use CH_ToggleButton2 instead
    CH_ToggleButton:ClearAllPoints();
    CH_ToggleButton:SetPoint("TOPRIGHT", DEFAULT_CHAT_FRAME, "BOTTOMLEFT", 1, -8);
    CH_ToggleButton:SetScript("OnClick", CH_AR_ON_OFF);
@@ -960,11 +962,7 @@ function CHAT_START()
    
    SlashCmdList["WOWAR"] = function(msg) CH_SlashCommand(msg); end
    SLASH_WOWINARABIC_CHAT1 = "/archat";
-   if (CH_PM["active"]=="1") then
-      CH_ToggleButton:Show();
-   else
-      CH_ToggleButton:Hide();
-   end
+   -- CH_ToggleButton is always hidden now - only CH_ToggleButton2 shows when editbox opens
 --   CH_CheckVars();
 --   CH_BlizzardOptions();
    
