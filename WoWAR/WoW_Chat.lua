@@ -567,6 +567,37 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------------------------------
+-- Helper function to rebuild and reshape text from buffer after deletion
+-- This ensures Arabic letters get correct contextual forms after characters are removed
+-------------------------------------------------------------------------------------------------------
+local function CH_RebuildAndReshapeFromBuffer(editBox)
+   if CH_BuforLength == 0 then
+      editBox:SetText("");
+      return;
+   end
+   
+   local newtext = "";
+   if (CH_ED_mode == 1) then        -- Arabic mode: rebuild with reshaping
+      for i = CH_BuforLength, 1, -1 do
+         if (string.sub(CH_BuforEditBox[i],1,1) == "|") then           -- item link
+            newtext = newtext .. CH_UTF8reverse(CH_BuforEditBox[i]);   -- reverse link characters
+         else
+            newtext = newtext .. CH_BuforEditBox[i];
+         end
+      end
+      newtext = AS_UTF8reverseRS(newtext);     -- Reverse + ReShaping with CORRECT contextual forms
+   else
+      for i = 1, CH_BuforLength do
+         newtext = newtext .. CH_BuforEditBox[i];
+      end
+   end
+   editBox:SetText(newtext);
+   editBox:SetCursorPosition(CH_Oblicz_Pozycje(CH_BuforCursor));
+end
+
+-------------------------------------------------------------------------------------------------------
+
 local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź czy wciśnięto BACKSPACE lub DELETE
    if (CH_PM["active"]=="0") then
       return;
@@ -585,68 +616,40 @@ local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź cz
    if (CH_ToggleButton:IsEnabled()) then                 -- obsługa bufora włączona?
       if (CH_ED_mode == 1) then        -- mamy tryb arabski
          if (key == "BACKSPACE") then  -- usuń znak poprzedzający, czyli 1 na prawo
-            local buf = self:GetText();              -- cały tekst
-            local pos = self:GetCursorPosition();    -- aktualna pozycja kursora
-            if (strlen(buf) > 0) then                -- nie jest to pusty tekst
-               if (pos < strlen(buf)) then           -- kursor nie jest na początku tekstu, skrajnie na prawo
-                  local charbytes = AS_UTF8charbytes(buf, pos+1);   -- liczba bajtów 1 znaku w pozycji pos
-                  self:SetCursorPosition(pos+charbytes);    -- przesuń kursor o 1 znak w prawo, aby usunięcie było tego znaku
-               else                                         -- nic nie usuwaj, jesteś na początku tekstu, skrajnie na prawo
-                  self:SetText(buf.." ");                   -- dodaj spację na początku, skrajnie na prawo
-                  self:SetCursorPosition(strlen(buf)+1);    -- przesuń kursor na początek tekstu w prawo, aby usunąć tę spację
-                  CH_BuforCursor = CH_BuforLength + 1;
-               end
-            end
-  
-            if (CH_BuforLength == 1) then               -- pierwszy znak z buforze
+            -- Update the buffer first
+            if (CH_BuforLength == 1) then               -- first character in buffer
                tremove(CH_BuforEditBox, 1);
                CH_BuforCursor = 0;
                CH_BuforLength = 0;
-            elseif (CH_BuforCursor <= CH_BuforLength) then
+            elseif (CH_BuforCursor <= CH_BuforLength) and (CH_BuforLength > 0) then
                if (CH_BuforCursor < 2) then
                   tremove(CH_BuforEditBox, 1);
                else
                   tremove(CH_BuforEditBox, CH_BuforCursor);
                end
-               if (CH_BuforLength > 0) then
-                  CH_BuforLength = CH_BuforLength - 1;
-               end
-            end
-            
-         elseif (key == "DELETE") then                -- usuń znak następujący, czyli 1 na lewo
-            local buf = self:GetText();
-            local pos = self:GetCursorPosition();
-            if (pos > 0) then                         -- kursor nie jest na końcu tekstu, skrajnie w lewo
-               -- ustal znak z lewej strony
---               if (pos == strlen(buf)) then           -- kursor jest skrajnie na prawo
-                  pos = pos - 1;
-                  if (pos > 0) then
-                     local c = strbyte(buf, pos);
-                     while (c >= 128 and c <= 191) do
-                        pos = pos - 1;
-                        c = strbyte(buf, pos);
-                     end
-                  end
---               end
-               pos = pos - 1;
-               if (pos > 0) then
-                  local c = strbyte(buf, pos);
-                  while (c >= 128 and c <= 191) do
-                     pos = pos - 1;
-                     c = strbyte(buf, pos);
-                  end
-               end
-               self:SetCursorPosition(pos);    -- przesuń kursor o 1 znak w lewo, aby usunięcie było tego znaku
-            else                             -- kursor jest na końcu tekstu, nie ma co usuwać - dodaj spację na końcu
-               self:SetText(" "..buf);
-               self:SetCursorPosition(0);    -- przesuń kursor na koniec tekstu w lewo, aby usunąć tę spację
-               CH_BuforCursor = 1;
-            end
-            if (CH_BuforCursor > 1) then
-               tremove(CH_BuforEditBox, CH_BuforCursor-1);
-               CH_BuforCursor = CH_BuforCursor - 1;
                CH_BuforLength = CH_BuforLength - 1;
             end
+            
+            -- CRITICAL FIX: Rebuild and reshape the entire text from buffer
+            -- This ensures Arabic letters get correct contextual forms after deletion
+            CH_RebuildAndReshapeFromBuffer(self);
+            return;  -- Prevent default BACKSPACE behavior since we handled it
+            
+         elseif (key == "DELETE") then                -- usuń znak następujący, czyli 1 na lewo
+            -- Update the buffer first
+            if (CH_BuforCursor > 1) and (CH_BuforLength > 0) then
+               tremove(CH_BuforEditBox, CH_BuforCursor - 1);
+               CH_BuforCursor = CH_BuforCursor - 1;
+               CH_BuforLength = CH_BuforLength - 1;
+            elseif (CH_BuforCursor == 1) and (CH_BuforLength > 0) then
+               -- Cursor at position 1, delete the last character (leftmost in RTL)
+               tremove(CH_BuforEditBox, CH_BuforLength);
+               CH_BuforLength = CH_BuforLength - 1;
+            end
+            
+            -- CRITICAL FIX: Rebuild and reshape the entire text from buffer
+            CH_RebuildAndReshapeFromBuffer(self);
+            return;  -- Prevent default DELETE behavior since we handled it
          end
          
       else           -- mamy tryb angielski
@@ -673,7 +676,7 @@ local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź cz
          local newtext = "";
          for i = CH_BuforLength, 1, -1 do
             if (string.sub(CH_BuforEditBox[i],1,1) == "|") then           -- mamy tu link do przedmiotu
-               newtext = newtext .. CH_UTF8reverseRS(CH_BuforEditBox[i]);   -- trzeba odwrócić znaki w linku przedmiotu
+               newtext = newtext .. CH_UTF8reverse(CH_BuforEditBox[i]);   -- trzeba odwrócić znaki w linku przedmiotu
             else
                newtext = newtext .. CH_BuforEditBox[i];
             end

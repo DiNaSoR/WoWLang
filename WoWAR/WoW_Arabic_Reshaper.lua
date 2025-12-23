@@ -1,12 +1,76 @@
 -- Author: Platine (email: platine.wow@gmail.com)
 -- Co-Author: DragonArab - Developed letter reshaping tables and ligatures (http://WoWAR.co)
 -- Based on: UTF8 library by Kyle Smith
+-- Enhanced: Added diacritics, Persian/Urdu support, performance optimizations, and bug fixes
 -------------------------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------------------------
 -- This variable controls whether or not to show the debug form.
 -------------------------------------------------------------------------------------------------------
 local debug_show_form = 0;
+
+-------------------------------------------------------------------------------------------------------
+-- Arabic Diacritics (Harakat/Tashkeel) - These are combining marks that don't change shape
+-- but need to be preserved and handled correctly during reshaping.
+-- Diacritics should stay attached to their base character and not affect position detection.
+-------------------------------------------------------------------------------------------------------
+AS_Diacritics = {
+   ["\217\139"] = true,  -- FATHATAN (ً) U+064B - tanween fath
+   ["\217\140"] = true,  -- DAMMATAN (ٌ) U+064C - tanween damm
+   ["\217\141"] = true,  -- KASRATAN (ٍ) U+064D - tanween kasr
+   ["\217\142"] = true,  -- FATHA (َ) U+064E - short a
+   ["\217\143"] = true,  -- DAMMA (ُ) U+064F - short u
+   ["\217\144"] = true,  -- KASRA (ِ) U+0650 - short i
+   ["\217\145"] = true,  -- SHADDA (ّ) U+0651 - gemination mark
+   ["\217\146"] = true,  -- SUKUN (ْ) U+0652 - no vowel
+   ["\217\147"] = true,  -- MADDAH ABOVE (ٓ) U+0653
+   ["\217\148"] = true,  -- HAMZA ABOVE (ٔ) U+0654
+   ["\217\149"] = true,  -- HAMZA BELOW (ٕ) U+0655
+   ["\217\176"] = true,  -- SUPERSCRIPT ALEF (ٰ) U+0670
+};
+
+-------------------------------------------------------------------------------------------------------
+-- Helper function to check if a character is a diacritic
+-------------------------------------------------------------------------------------------------------
+function AS_IsDiacritic(char)
+   return AS_Diacritics[char] == true;
+end
+
+-------------------------------------------------------------------------------------------------------
+-- Tatweel/Kashida - Arabic text elongation character
+-- This character connects and can be used between any connecting letters
+-------------------------------------------------------------------------------------------------------
+AS_TATWEEL = "\217\128";  -- TATWEEL (ـ) U+0640
+
+-------------------------------------------------------------------------------------------------------
+-- Arabic-Indic Numerals mapping (Eastern Arabic numerals)
+-- These don't need reshaping but should be recognized as non-connecting
+-------------------------------------------------------------------------------------------------------
+AS_ArabicIndicNumerals = {
+   ["\217\160"] = true,  -- ٠ (0) U+0660
+   ["\217\161"] = true,  -- ١ (1) U+0661
+   ["\217\162"] = true,  -- ٢ (2) U+0662
+   ["\217\163"] = true,  -- ٣ (3) U+0663
+   ["\217\164"] = true,  -- ٤ (4) U+0664
+   ["\217\165"] = true,  -- ٥ (5) U+0665
+   ["\217\166"] = true,  -- ٦ (6) U+0666
+   ["\217\167"] = true,  -- ٧ (7) U+0667
+   ["\217\168"] = true,  -- ٨ (8) U+0668
+   ["\217\169"] = true,  -- ٩ (9) U+0669
+};
+
+-------------------------------------------------------------------------------------------------------
+-- Extended Arabic Punctuation
+-------------------------------------------------------------------------------------------------------
+AS_ArabicPunctuation = {
+   ["\216\159"] = true,  -- ؟ Arabic Question Mark U+061F
+   ["\216\155"] = true,  -- ؛ Arabic Semicolon U+061B
+   ["\216\140"] = true,  -- ، Arabic Comma U+060C
+   ["\217\170"] = true,  -- ٪ Arabic Percent Sign U+066A
+   ["\217\171"] = true,  -- ٫ Arabic Decimal Separator U+066B
+   ["\217\172"] = true,  -- ٬ Arabic Thousands Separator U+066C
+};
+
 -------------------------------------------------------------------------------------------------------
 -- AS_Reshaping_Rules is a table that contains reshaping rules for Arabic characters.
 -- Each key-value pair in the table represents a specific Arabic character and its reshaping rules.
@@ -16,46 +80,63 @@ local debug_show_form = 0;
 -- The reshaped forms are used to correctly display Arabic text in different contexts.
 -------------------------------------------------------------------------------------------------------
 AS_Reshaping_Rules = {
-   ["\216\167"] = { isolated = "\216\167", initial = "\216\167", middle = "\239\186\142", final = "\239\186\142" },                 -- ALEF
-   ["\216\162"] = { isolated = "\239\186\129", initial = "\239\186\129", middle = "\239\186\142", final = "\239\186\142" },         -- ALEF WITH MADDA ABOVE
-   ["\216\163"] = { isolated = "\216\163", initial = "\216\163", middle = "\239\186\132", final = "\239\186\132" },                 -- ALEF WITH HAMZA ABOVE
-   ["\216\165"] = { isolated = "\216\165", initial = "\216\165", middle = "\239\186\136", final = "\239\186\136" },                 -- ALEF WITH HAMZA BELOW
-   ["\216\168"] = { isolated = "\216\168", initial = "\239\186\145", middle = "\239\186\146", final = "\239\186\144" },             -- BEH
-   ["\216\170"] = { isolated = "\216\170", initial = "\239\186\151", middle = "\239\186\152", final = "\239\186\150" },             -- TEH
-   ["\216\171"] = { isolated = "\216\171", initial = "\239\186\155", middle = "\239\186\156", final = "\239\186\154" },             -- THA
-   ["\216\172"] = { isolated = "\216\172", initial = "\239\186\159", middle = "\239\186\160", final = "\239\186\158" },             -- JIM
-   ["\216\173"] = { isolated = "\216\173", initial = "\239\186\163", middle = "\239\186\164", final = "\239\186\162" },             -- HAH
-   ["\216\174"] = { isolated = "\216\174", initial = "\239\186\167", middle = "\239\186\168", final = "\239\186\166" },             -- KHAH
-   ["\216\175"] = { isolated = "\216\175", initial = "\216\175", middle = "\239\186\170", final = "\239\186\170" },                 -- DAL
-   ["\216\176"] = { isolated = "\216\176", initial = "\216\176", middle = "\239\186\172", final = "\239\186\172" },                 -- DHAL
-   ["\216\177"] = { isolated = "\216\177", initial = "\216\177", middle = "\239\186\174", final = "\239\186\174" },                 -- RA
-   ["\216\178"] = { isolated = "\216\178", initial = "\216\178", middle = "\239\186\176", final = "\239\186\176" },                 -- ZAIN
-   ["\216\179"] = { isolated = "\216\179", initial = "\239\186\179", middle = "\239\186\180", final = "\239\186\178" },             -- SIN
-   ["\216\180"] = { isolated = "\216\180", initial = "\239\186\183", middle = "\239\186\184", final = "\239\186\182" },             -- SHIN
-   ["\216\181"] = { isolated = "\216\181", initial = "\239\186\187", middle = "\239\186\188", final = "\239\186\186" },             -- SAD
-   ["\216\182"] = { isolated = "\216\182", initial = "\239\186\191", middle = "\239\187\128", final = "\239\186\190" },             -- DAD
-   ["\216\183"] = { isolated = "\216\183", initial = "\239\187\131", middle = "\239\187\132", final = "\239\187\130" },             -- TAH
-   ["\216\184"] = { isolated = "\216\184", initial = "\239\187\135", middle = "\239\187\136", final = "\239\187\134" },             -- ZAH
-   ["\216\185"] = { isolated = "\216\185", initial = "\239\187\139", middle = "\239\187\140", final = "\239\187\138" },             -- AIN
-   ["\216\186"] = { isolated = "\216\186", initial = "\239\187\143", middle = "\239\187\144", final = "\239\187\142" },             -- GHAIN
-   ["\217\129"] = { isolated = "\217\129", initial = "\239\187\147", middle = "\239\187\148", final = "\239\187\146" },             -- FEH
-   ["\217\130"] = { isolated = "\217\130", initial = "\239\187\151", middle = "\239\187\152", final = "\239\187\150" },             -- QAF
-   ["\217\131"] = { isolated = "\217\131", initial = "\239\187\155", middle = "\239\187\156", final = "\239\187\154" },             -- KAF
-   ["\217\132"] = { isolated = "\217\132", initial = "\239\187\159", middle = "\239\187\160", final = "\239\187\158" },             -- LAM
-   ["\217\133"] = { isolated = "\217\133", initial = "\239\187\163", middle = "\239\187\164", final = "\239\187\162" },             -- MIM
-   ["\217\134"] = { isolated = "\217\134", initial = "\239\187\167", middle = "\239\187\168", final = "\239\187\166" },             -- NUN
-   ["\217\138"] = { isolated = "\217\138", initial = "\239\187\179", middle = "\239\187\180", final = "\239\187\178" },             -- YA
-   ["\216\166"] = { isolated = "\216\166", initial = "\239\186\139", middle = "\239\186\140", final = "\239\186\138" },             -- YEH WITH HAMZA ABOVE
-   ["\217\137"] = { isolated = "\217\137", initial = "\217\137", middle = "\217\137", final = "\239\187\176" },                     -- ALEF MAKSURA
-   ["\217\136"] = { isolated = "\217\136", initial = "\217\136", middle = "\239\187\174", final = "\239\187\174" },                 -- WAW
-   ["\216\164"] = { isolated = "\216\164", initial = "\216\164", middle = "\239\186\134", final = "\239\186\134" },                 -- WAW WITH HAMZA ABOVE
-   ["\217\135"] = { isolated = "\239\187\169", initial = "\239\187\171", middle = "\239\187\172", final = "\239\187\170" },         -- HAH
-   ["\216\169"] = { isolated = "\216\169", initial = "\216\169", middle = "\216\169", final = "\239\186\148" },                     -- TAH
-   ["\239\187\187"] = { isolated = "\239\187\187", initial = "\239\187\187", middle = "\239\187\188", final = "\239\187\188" },     -- LAM WITH ALEF
-   ["\239\187\181"] = { isolated = "\239\187\181", initial = "\239\187\181", middle = "\239\187\182", final = "\239\187\182" },     -- LAM WITH ALEF WITH MADDA
+   -- ===== BASIC ARABIC ALPHABET (28 letters + variants) =====
+   ["\216\167"] = { isolated = "\216\167", initial = "\216\167", middle = "\239\186\142", final = "\239\186\142" },                 -- ALEF (ا) U+0627
+   ["\216\162"] = { isolated = "\239\186\129", initial = "\239\186\129", middle = "\239\186\142", final = "\239\186\142" },         -- ALEF WITH MADDA ABOVE (آ) U+0622
+   ["\216\163"] = { isolated = "\216\163", initial = "\216\163", middle = "\239\186\132", final = "\239\186\132" },                 -- ALEF WITH HAMZA ABOVE (أ) U+0623
+   ["\216\165"] = { isolated = "\216\165", initial = "\216\165", middle = "\239\186\136", final = "\239\186\136" },                 -- ALEF WITH HAMZA BELOW (إ) U+0625
+   ["\216\168"] = { isolated = "\216\168", initial = "\239\186\145", middle = "\239\186\146", final = "\239\186\144" },             -- BEH (ب) U+0628
+   ["\216\170"] = { isolated = "\216\170", initial = "\239\186\151", middle = "\239\186\152", final = "\239\186\150" },             -- TEH (ت) U+062A
+   ["\216\171"] = { isolated = "\216\171", initial = "\239\186\155", middle = "\239\186\156", final = "\239\186\154" },             -- THEH (ث) U+062B
+   ["\216\172"] = { isolated = "\216\172", initial = "\239\186\159", middle = "\239\186\160", final = "\239\186\158" },             -- JEEM (ج) U+062C
+   ["\216\173"] = { isolated = "\216\173", initial = "\239\186\163", middle = "\239\186\164", final = "\239\186\162" },             -- HAH (ح) U+062D
+   ["\216\174"] = { isolated = "\216\174", initial = "\239\186\167", middle = "\239\186\168", final = "\239\186\166" },             -- KHAH (خ) U+062E
+   ["\216\175"] = { isolated = "\216\175", initial = "\216\175", middle = "\239\186\170", final = "\239\186\170" },                 -- DAL (د) U+062F - non-connecting
+   ["\216\176"] = { isolated = "\216\176", initial = "\216\176", middle = "\239\186\172", final = "\239\186\172" },                 -- THAL (ذ) U+0630 - non-connecting
+   ["\216\177"] = { isolated = "\216\177", initial = "\216\177", middle = "\239\186\174", final = "\239\186\174" },                 -- REH (ر) U+0631 - non-connecting
+   ["\216\178"] = { isolated = "\216\178", initial = "\216\178", middle = "\239\186\176", final = "\239\186\176" },                 -- ZAIN (ز) U+0632 - non-connecting
+   ["\216\179"] = { isolated = "\216\179", initial = "\239\186\179", middle = "\239\186\180", final = "\239\186\178" },             -- SEEN (س) U+0633
+   ["\216\180"] = { isolated = "\216\180", initial = "\239\186\183", middle = "\239\186\184", final = "\239\186\182" },             -- SHEEN (ش) U+0634
+   ["\216\181"] = { isolated = "\216\181", initial = "\239\186\187", middle = "\239\186\188", final = "\239\186\186" },             -- SAD (ص) U+0635
+   ["\216\182"] = { isolated = "\216\182", initial = "\239\186\191", middle = "\239\187\128", final = "\239\186\190" },             -- DAD (ض) U+0636
+   ["\216\183"] = { isolated = "\216\183", initial = "\239\187\131", middle = "\239\187\132", final = "\239\187\130" },             -- TAH (ط) U+0637
+   ["\216\184"] = { isolated = "\216\184", initial = "\239\187\135", middle = "\239\187\136", final = "\239\187\134" },             -- ZAH (ظ) U+0638
+   ["\216\185"] = { isolated = "\216\185", initial = "\239\187\139", middle = "\239\187\140", final = "\239\187\138" },             -- AIN (ع) U+0639
+   ["\216\186"] = { isolated = "\216\186", initial = "\239\187\143", middle = "\239\187\144", final = "\239\187\142" },             -- GHAIN (غ) U+063A
+   ["\217\129"] = { isolated = "\217\129", initial = "\239\187\147", middle = "\239\187\148", final = "\239\187\146" },             -- FEH (ف) U+0641
+   ["\217\130"] = { isolated = "\217\130", initial = "\239\187\151", middle = "\239\187\152", final = "\239\187\150" },             -- QAF (ق) U+0642
+   ["\217\131"] = { isolated = "\217\131", initial = "\239\187\155", middle = "\239\187\156", final = "\239\187\154" },             -- KAF (ك) U+0643
+   ["\217\132"] = { isolated = "\217\132", initial = "\239\187\159", middle = "\239\187\160", final = "\239\187\158" },             -- LAM (ل) U+0644
+   ["\217\133"] = { isolated = "\217\133", initial = "\239\187\163", middle = "\239\187\164", final = "\239\187\162" },             -- MEEM (م) U+0645
+   ["\217\134"] = { isolated = "\217\134", initial = "\239\187\167", middle = "\239\187\168", final = "\239\187\166" },             -- NOON (ن) U+0646
+   ["\217\138"] = { isolated = "\217\138", initial = "\239\187\179", middle = "\239\187\180", final = "\239\187\178" },             -- YEH (ي) U+064A
+   ["\216\166"] = { isolated = "\216\166", initial = "\239\186\139", middle = "\239\186\140", final = "\239\186\138" },             -- YEH WITH HAMZA ABOVE (ئ) U+0626
+   ["\217\137"] = { isolated = "\217\137", initial = "\217\137", middle = "\217\137", final = "\239\187\176" },                     -- ALEF MAKSURA (ى) U+0649 - non-connecting
+   ["\217\136"] = { isolated = "\217\136", initial = "\217\136", middle = "\239\187\174", final = "\239\187\174" },                 -- WAW (و) U+0648 - non-connecting
+   ["\216\164"] = { isolated = "\216\164", initial = "\216\164", middle = "\239\186\134", final = "\239\186\134" },                 -- WAW WITH HAMZA ABOVE (ؤ) U+0624 - non-connecting
+   ["\217\135"] = { isolated = "\239\187\169", initial = "\239\187\171", middle = "\239\187\172", final = "\239\187\170" },         -- HEH (ه) U+0647 (FIXED: was incorrectly labeled HAH)
+   ["\216\169"] = { isolated = "\216\169", initial = "\216\169", middle = "\216\169", final = "\239\186\148" },                     -- TEH MARBUTA (ة) U+0629 (FIXED: was incorrectly labeled TAH)
+   ["\239\187\187"] = { isolated = "\239\187\187", initial = "\239\187\187", middle = "\239\187\188", final = "\239\187\188" },     -- LAM WITH ALEF ligature
+   ["\239\187\181"] = { isolated = "\239\187\181", initial = "\239\187\181", middle = "\239\187\182", final = "\239\187\182" },     -- LAM WITH ALEF WITH MADDA ligature
    ["\217\132\216\163"] = { isolated = "\239\187\183", initial = "\239\187\183", middle = "\239\187\184", final = "\239\187\184" }, -- LAM WITH ALEF WITH HAMZA ABOVE
    ["\217\132\216\165"] = { isolated = "\239\187\185", initial = "\239\187\185", middle = "\239\187\186", final = "\239\187\186" }, -- LAM WITH ALEF WITH HAMZA BELOW
-   ["\216\161"] = { isolated = "\216\161", initial = "\216\161", middle = "\216\161", final = "\216\161" },                         -- HAMZA
+   ["\216\161"] = { isolated = "\216\161", initial = "\216\161", middle = "\216\161", final = "\216\161" },                         -- HAMZA (ء) U+0621 - non-connecting
+
+   -- ===== TATWEEL (Kashida) - Arabic text elongation =====
+   ["\217\128"] = { isolated = "\217\128", initial = "\217\128", middle = "\217\128", final = "\217\128" },                         -- TATWEEL (ـ) U+0640 - connects both sides
+
+   -- ===== PERSIAN/URDU EXTENSIONS =====
+   ["\217\190"] = { isolated = "\217\190", initial = "\239\186\161", middle = "\239\186\162", final = "\239\186\160" },             -- PEH (پ) U+067E - Persian P
+   ["\218\134"] = { isolated = "\218\134", initial = "\239\186\173", middle = "\239\186\174", final = "\239\186\172" },             -- TCHEH (چ) U+0686 - Persian CH
+   ["\218\152"] = { isolated = "\218\152", initial = "\218\152", middle = "\239\186\183", final = "\239\186\183" },                 -- JEH (ژ) U+0698 - Persian ZH - non-connecting
+   ["\218\175"] = { isolated = "\218\175", initial = "\239\186\179", middle = "\239\186\180", final = "\239\186\178" },             -- GAF (گ) U+06AF - Persian G
+   ["\218\169"] = { isolated = "\218\169", initial = "\239\187\139", middle = "\239\187\140", final = "\239\187\138" },             -- KEHEH (ک) U+06A9 - Persian/Urdu K variant
+   ["\218\140"] = { isolated = "\218\140", initial = "\239\187\183", middle = "\239\187\184", final = "\239\187\182" },             -- YEH WITH THREE DOTS (ۍ) U+068C
+   ["\219\140"] = { isolated = "\219\140", initial = "\239\187\187", middle = "\239\187\188", final = "\239\187\186" },             -- FARSI YEH (ی) U+06CC
+
+   -- ===== ADDITIONAL ARABIC LETTERS =====
+   -- Note: HAMZA (ء) U+0621 is already defined above at line 123
+   ["\218\129"] = { isolated = "\218\129", initial = "\218\129", middle = "\218\129", final = "\218\129" },                         -- HAMZA ON HIGH (ځ) U+0681
 };
 
 -------------------------------------------------------------------------------------------------------
@@ -72,13 +153,11 @@ AS_Reshaping_Rules = {
 -------------------------------------------------------------------------------------------------------
 
 AS_Reshaping_Rules2 = {
-   ["\217\132" .. "\216\167"] = { isolated = "\239\187\187", initial = "\239\187\187", middle = "\239\187\188", final = "\239\187\188" }, -- Arabic ligature LAM with ALEF
-   ["\217\132" .. "\216\163"] = { isolated = "\239\187\183", initial = "\239\187\183", middle = "\239\187\184", final = "\239\187\184" }, -- Arabic ligature LAM with ALEF with HAMZA above
-   ["\217\132" .. "\216\165"] = { isolated = "\239\187\185", initial = "\239\187\185", middle = "\239\187\186", final = "\239\187\186" }, -- Arabic ligature LAM with ALEF with HAMZA below
-   ["\217\132" .. "\216\162"] = { isolated = "\239\187\181", initial = "\239\187\181", middle = "\239\187\182", final = "\239\187\182" }, -- Arabic ligature LAM with ALEF with MADDA
-   ["ي" .. "ء"] = { isolated = "0", initial = "ءي", middle = "ءﻲ", final = "ءﻲ" },
-   --["ا" .. "ً"] = { isolated = "0", initial = "ﴽ", middle = "2", final = "3" },
-
+   -- ===== LAM-ALEF LIGATURES (mandatory in Arabic typography) =====
+   ["\217\132" .. "\216\167"] = { isolated = "\239\187\187", initial = "\239\187\187", middle = "\239\187\188", final = "\239\187\188" }, -- LAM + ALEF (لا) → ﻻ/ﻼ
+   ["\217\132" .. "\216\163"] = { isolated = "\239\187\183", initial = "\239\187\183", middle = "\239\187\184", final = "\239\187\184" }, -- LAM + ALEF HAMZA ABOVE (لأ) → ﻷ/ﻸ
+   ["\217\132" .. "\216\165"] = { isolated = "\239\187\185", initial = "\239\187\185", middle = "\239\187\186", final = "\239\187\186" }, -- LAM + ALEF HAMZA BELOW (لإ) → ﻹ/ﻺ
+   ["\217\132" .. "\216\162"] = { isolated = "\239\187\181", initial = "\239\187\181", middle = "\239\187\182", final = "\239\187\182" }, -- LAM + ALEF MADDA (لآ) → ﻵ/ﻶ
 };
 
 -------------------------------------------------------------------------------------------------------
@@ -89,6 +168,97 @@ AS_Reshaping_Rules2 = {
 AS_Reshaping_Rules3 = {
    --["ا".."ل".."آ"] = {isolated = "ﻵا",  initial="ﻵا", middle="ﻵا", final="ﻶا"},        -- Arabic ligature ALEF+LAM+(ALEF with MADA)
 };
+
+-------------------------------------------------------------------------------------------------------
+-- VERSION AND CAPABILITY INFO
+-------------------------------------------------------------------------------------------------------
+AS_RESHAPER_VERSION = "2.0.0";
+AS_RESHAPER_CAPABILITIES = {
+   diacritics = true,           -- Supports Arabic diacritics (harakat/tashkeel)
+   persian = true,              -- Supports Persian/Urdu extensions (پ چ ژ گ)
+   tatweel = true,              -- Supports Tatweel/Kashida (ـ)
+   arabic_indic_numerals = true, -- Recognizes Arabic-Indic numerals (٠-٩)
+   extended_punctuation = true,  -- Supports Arabic punctuation (؟ ؛ ،)
+};
+
+-------------------------------------------------------------------------------------------------------
+-- Utility function: Strip diacritics from Arabic text
+-- Removes all harakat/tashkeel marks, leaving only base letters
+-- Useful for search/comparison operations
+-------------------------------------------------------------------------------------------------------
+function AS_StripDiacritics(s)
+   if not s or #s == 0 then return "" end
+   
+   local resultParts = {};
+   local bytes = strlen(s);
+   local pos = 1;
+   
+   while pos <= bytes do
+      local charbytes = AS_UTF8charbytes(s, pos);
+      local char = strsub(s, pos, pos + charbytes - 1);
+      
+      if not AS_IsDiacritic(char) then
+         resultParts[#resultParts + 1] = char;
+      end
+      
+      pos = pos + charbytes;
+   end
+   
+   return table.concat(resultParts);
+end
+
+-------------------------------------------------------------------------------------------------------
+-- Utility function: Check if a string contains Arabic characters
+-- Returns true if the string contains at least one Arabic letter
+-------------------------------------------------------------------------------------------------------
+function AS_ContainsArabic(s)
+   if not s or #s == 0 then return false end
+   
+   local bytes = strlen(s);
+   local pos = 1;
+   
+   while pos <= bytes do
+      local charbytes = AS_UTF8charbytes(s, pos);
+      local char = strsub(s, pos, pos + charbytes - 1);
+      
+      -- Check if character is in our reshaping rules (i.e., is an Arabic letter)
+      if AS_Reshaping_Rules[char] then
+         return true;
+      end
+      
+      pos = pos + charbytes;
+   end
+   
+   return false;
+end
+
+-------------------------------------------------------------------------------------------------------
+-- Utility function: Check if a character is an Arabic letter (base letter, not diacritic)
+-------------------------------------------------------------------------------------------------------
+function AS_IsArabicLetter(char)
+   return AS_Reshaping_Rules[char] ~= nil;
+end
+
+-------------------------------------------------------------------------------------------------------
+-- Utility function: Check if a character is Arabic-Indic numeral
+-------------------------------------------------------------------------------------------------------
+function AS_IsArabicIndicNumeral(char)
+   return AS_ArabicIndicNumerals[char] == true;
+end
+
+-------------------------------------------------------------------------------------------------------
+-- Utility function: Check if a character is Arabic punctuation
+-------------------------------------------------------------------------------------------------------
+function AS_IsArabicPunctuation(char)
+   return AS_ArabicPunctuation[char] == true;
+end
+
+-------------------------------------------------------------------------------------------------------
+-- Utility function: Get the reshaper version
+-------------------------------------------------------------------------------------------------------
+function AS_GetReshaperVersion()
+   return AS_RESHAPER_VERSION;
+end
 
 -------------------------------------------------------------------------------------------------------
 -- returns the number of bytes used by the UTF-8 character at byte
@@ -380,173 +550,265 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------------------------------
+-- Helper function to check if a character is a non-connecting letter
+-- Non-connecting letters don't connect to the NEXT letter (but CAN receive connection from previous)
+-------------------------------------------------------------------------------------------------------
+local AS_NonConnecting = {
+   -- Standard Arabic non-connecting letters (these don't connect to the RIGHT)
+   ["\216\167"] = true,  -- ALEF (ا)
+   ["\216\162"] = true,  -- ALEF WITH MADDA ABOVE (آ)
+   ["\216\163"] = true,  -- ALEF WITH HAMZA ABOVE (أ)
+   ["\216\165"] = true,  -- ALEF WITH HAMZA BELOW (إ)
+   ["\216\175"] = true,  -- DAL (د)
+   ["\216\176"] = true,  -- THAL (ذ)
+   ["\216\177"] = true,  -- REH (ر)
+   ["\216\178"] = true,  -- ZAIN (ز)
+   ["\217\136"] = true,  -- WAW (و)
+   ["\216\164"] = true,  -- WAW WITH HAMZA ABOVE (ؤ)
+   ["\217\137"] = true,  -- ALEF MAKSURA (ى)
+   ["\216\169"] = true,  -- TEH MARBUTA (ة)
+   ["\216\161"] = true,  -- HAMZA (ء)
+   -- Persian/Urdu non-connecting
+   ["\218\152"] = true,  -- JEH (ژ)
+};
+
+local function AS_IsNonConnecting(char)
+   return AS_NonConnecting[char] == true;
+end
+
+-------------------------------------------------------------------------------------------------------
+-- Helper function to check if a character is a word separator (space, punctuation, etc.)
+-------------------------------------------------------------------------------------------------------
+local function AS_IsWordSeparator(char)
+   if not char or char == '' or char == 'X' then return true end
+   local spaces = '( )?؟!,.;:،؛٪\n\r\t';
+   if AS_UTF8find(spaces, char) then return true end
+   if AS_ArabicPunctuation[char] then return true end
+   if AS_ArabicIndicNumerals[char] then return true end
+   return false;
+end
+
+-------------------------------------------------------------------------------------------------------
 -- Reverses the order of UTF-8 letters with ReShaping - using for chat
+-- REWRITTEN: Uses a cleaner two-concept approach:
+--   1. connectedFromLeft: Is this letter connected FROM the previous letter?
+--   2. connectsToRight: Does this letter connect TO the next letter?
+-- Form determination:
+--   - isolated: not connected from left, doesn't connect to right
+--   - initial: not connected from left, connects to right
+--   - middle: connected from left, connects to right
+--   - final: connected from left, doesn't connect to right
+-------------------------------------------------------------------------------------------------------
 function AS_UTF8reverseRS(s)
-   local newstr = "";
-   if (s) then -- check if argument is not empty (nil)
-      local bytes = strlen(s);
-      local pos = 1;
-      local char0 = '';
-      local char1, char2, char3;
-      local charbytes1, charbytes2, charbytes3;
-      local position = -1; -- not specified
-      local nextletter = 0;
-      local spaces = '( )?؟!,.;:،'; -- letters that we treat as a space
+   if not s or #s == 0 then return "" end
+   
+   local resultParts = {};
+   local resultIndex = 1;
+   local bytes = strlen(s);
+   local pos = 1;
+   
+   -- Track previous character info for connection logic
+   local prevChar = nil;           -- Previous BASE character (nil = start of string or after separator)
+   local prevConnectsRight = false; -- Did the previous character connect to the right?
 
-      while (pos <= bytes) do
-         charbytes1 = AS_UTF8charbytes(s, pos);        -- count of bytes (liczba bajtów znaku)
-         char1 = strsub(s, pos, pos + charbytes1 - 1); -- current character
-         pos = pos + charbytes1;
-
-         if (pos <= bytes) then
-            charbytes2 = AS_UTF8charbytes(s, pos);                                 -- count of bytes (liczba bajtów znaku)
-            char2 = strsub(s, pos, pos + charbytes2 - 1);                          -- next character
-            if (pos + charbytes2 <= bytes) then                                    -- 3rd next letter is available
-               charbytes3 = AS_UTF8charbytes(s, pos + charbytes2);                 -- count of bytes (liczba bajtów znaku)
-               char3 = strsub(s, pos + charbytes2, pos + charbytes2 + charbytes3 - 1); -- 3rd next character
-            else
-               charbytes3 = 0;
-               char3 = 'X';
-            end
-
-            if (AS_UTF8find(spaces, char2)) then
-               nextletter = 1; -- space, question mark, exclamation mark, comma, dot, etc.
-            else
-               nextletter = 2; -- normal letter
-            end
+   while (pos <= bytes) do
+      -- Get current character
+      local charbytes1 = AS_UTF8charbytes(s, pos);
+      local char1 = strsub(s, pos, pos + charbytes1 - 1);
+      
+      -- Collect any diacritics attached to this character
+      local attachedDiacritics = {};
+      local nextPos = pos + charbytes1;
+      
+      while nextPos <= bytes do
+         local diacBytes = AS_UTF8charbytes(s, nextPos);
+         local diacChar = strsub(s, nextPos, nextPos + diacBytes - 1);
+         if AS_IsDiacritic(diacChar) then
+            attachedDiacritics[#attachedDiacritics + 1] = diacChar;
+            nextPos = nextPos + diacBytes;
          else
-            nextletter = 0; -- no more letters
-            char2 = 'X';
-            char3 = 'X';
-            charbytes2 = 0;
-            charbytes3 = 0;
+            break;
          end
+      end
+      
+      pos = nextPos;
 
-         -- first determine the original position of the letter in the word
-         if (AS_UTF8find(spaces, char1)) then
-            position = -1;                                                   -- space, question mark, exclamation mark, comma, dot, etc.
-         elseif (position < 0) then                                          -- not specified yet (start the word)
-            if ((nextletter == 0) or (nextletter == 1)) then                 -- end of file or space on as a next letter
-               position = 0;                                                 -- isolated letter
+      -- Handle diacritics - they don't affect reshaping logic
+      if AS_IsDiacritic(char1) then
+         resultParts[resultIndex] = char1;
+         resultIndex = resultIndex + 1;
+         -- Don't update prevChar or prevConnectsRight for diacritics
+      else
+         -- Find next base character (skipping diacritics)
+         local char2 = nil;
+         local charbytes2 = 0;
+         local lookPos = pos;
+         
+         while lookPos <= bytes do
+            local tempBytes = AS_UTF8charbytes(s, lookPos);
+            local tempChar = strsub(s, lookPos, lookPos + tempBytes - 1);
+            if AS_IsDiacritic(tempChar) then
+               lookPos = lookPos + tempBytes;
             else
-               position = 1;                                                 -- initial letter
-            end
-         elseif ((position == 0) or (position == 1) or (position == 2)) then -- it was isolated or initial or middle letter
-            if ((nextletter == 0) or (nextletter == 1)) then                 -- end of file or space on next letter
-               position = 3;                                                 -- final letter
-            else
-               if (position == 0) then                                       -- it was isolated letter
-                  position = 1;                                              -- initial letter
-               else
-                  position = 2;                                              -- middle letter
-               end
-            end
-         else -- it was final letter (position == 3)
-            position = -1;
-         end
-
-         -- now modifications to the form of the letter depending on the preceding special letters
-         if ((char0 == "ﻼ") or (char0 == "ﻸ") or (char0 == "ﻺ") or (char0 == "ﻶ") or (char0 == "ا") or (char0 == "أ") or (char0 == "إ") or (char0 == "آ") or (char0 == "لا") or (char0 == "ﻷ") or (char0 == "ﻹ") or (char0 == "ﻵ") or (char0 == "ﻵا") or (char0 == "ﻷا") or (char0 == "ﻹا") or (char0 == "ﻻا")) then -- previous letter was ALEF, DA, THA, RA, ZAI, WA or LA, current should be in isolated form, only if this letter is the last in the word, otherwise form must be initial
-            if (AS_UTF8find(spaces, char1)) then -- current character is space
-               position = 0; -- isolated letter
-            elseif ((nextletter == 0) or (nextletter == 1)) then -- end of file or space on as a next letter OR letter is ALEF
-               position = 0;
-            else
-               position = 1; -- initial letter
-            end
-         elseif (char0 == "ذ") and (char1 == "ه") then -- previous letter was THA, current HA should be in isolated form, only if HA is the last in the word, otherwise form must be initial
-            if ((nextletter == 0) or (nextletter == 1)) then -- end of file or space on as a next letter
-               position = 0; -- isolated letter
-            else
-               position = 1; -- initial letter
-            end
-         elseif (char0 == "د") or (char0 == "ذ") or (char0 == "ر") or (char0 == "ز") or (char0 == "و") or (char0 == "ؤ") then
-            if (AS_UTF8find(spaces, char1)) then                 -- current character is space
-               position = 0;                                     -- isolated letter
-            elseif ((nextletter == 0) or (nextletter == 1)) then -- next character is space
-               position = 0;                                     -- isolated letter
-            else
-               position = 1;                                     -- initial letter
+               char2 = tempChar;
+               charbytes2 = tempBytes;
+               break;
             end
          end
-
-
-         if ((AS_Reshaping_Rules3[char1 .. char2 .. char3]) and (position >= 0)) then -- ligature 3 characters
-            local ligature = AS_Reshaping_Rules3[char1 .. char2 .. char3];
-            if (position == 0) then
-               char1 = ligature.isolated;
-            elseif (position == 1) then
-               char1 = ligature.initial;
-            elseif (position == 2) then
-               char1 = ligature.middle;
-            else
-               char1 = ligature.final;
+         
+         -- Check for ligatures FIRST (they affect char1 and may skip char2)
+         local ligatureApplied = false;
+         local ligatureForm = nil;
+         
+         if char2 and AS_Reshaping_Rules2[char1 .. char2] then
+            ligatureForm = AS_Reshaping_Rules2[char1 .. char2];
+            ligatureApplied = true;
+            -- Skip char2 (and its diacritics)
+            pos = lookPos + charbytes2;
+            while pos <= bytes do
+               local skipBytes = AS_UTF8charbytes(s, pos);
+               local skipChar = strsub(s, pos, pos + skipBytes - 1);
+               if AS_IsDiacritic(skipChar) then
+                  pos = pos + skipBytes;
+               else
+                  break;
+               end
             end
-            pos = pos + charbytes2 + charbytes3;                               -- we omit the next preceding letters
-         elseif ((AS_Reshaping_Rules2[char1 .. char2]) and (position >= 0)) then -- ligature 2 characters
-            local ligature = AS_Reshaping_Rules2[char1 .. char2];
-            if (position == 0) then
-               char1 = ligature.isolated;
-            elseif (position == 1) then
-               char1 = ligature.initial;
-            elseif (position == 2) then
-               char1 = ligature.middle;
-            else
-               char1 = ligature.final;
+            -- Update char2 to what comes AFTER the ligature
+            lookPos = pos;
+            char2 = nil;
+            while lookPos <= bytes do
+               local tempBytes = AS_UTF8charbytes(s, lookPos);
+               local tempChar = strsub(s, lookPos, lookPos + tempBytes - 1);
+               if AS_IsDiacritic(tempChar) then
+                  lookPos = lookPos + tempBytes;
+               else
+                  char2 = tempChar;
+                  break;
+               end
             end
-            pos = pos + charbytes2; -- we omit the next preceding letter
          end
-
-
-         -- check if the character has reshaping rules
-         local rules = AS_Reshaping_Rules[char1];
-         if (rules) then
-            -- apply reshaping rules based on the character's position in the string
-            if (position == 0) then -- isolated letter
-               if (debug_show_form == 1) then
-                  newstr = '0' .. rules.isolated .. newstr;
+         
+         -- Determine if this character/ligature is a word separator
+         local isCurrentSeparator = AS_IsWordSeparator(char1);
+         local isNextSeparator = AS_IsWordSeparator(char2);
+         
+         if isCurrentSeparator then
+            -- Word separators pass through unchanged
+            local outputChar = char1;
+            -- Handle bracket reversal for separators
+            if (char1 == "<") then outputChar = ">";
+            elseif (char1 == ">") then outputChar = "<";
+            elseif (char1 == "(") then outputChar = ")";
+            elseif (char1 == ")") then outputChar = "(";
+            elseif (char1 == "[") then outputChar = "]";
+            elseif (char1 == "]") then outputChar = "[";
+            elseif (char1 == "{") then outputChar = "}";
+            elseif (char1 == "}") then outputChar = "{";
+            end
+            
+            resultParts[resultIndex] = outputChar;
+            resultIndex = resultIndex + 1;
+            
+            -- Reset connection state
+            prevChar = nil;
+            prevConnectsRight = false;
+         else
+            -- This is an Arabic letter - determine its form
+            
+            -- Step 1: Is this letter connected FROM the left?
+            -- It's connected from left if previous letter exists AND previous letter connects right
+            local connectedFromLeft = (prevChar ~= nil) and prevConnectsRight;
+            
+            -- Step 2: Does this letter connect TO the right?
+            -- It connects right if: (a) it's not a non-connecting letter, AND (b) next char is an Arabic letter
+            local currentConnectsRight = false;
+            if ligatureApplied then
+               -- Lam-Alef ligatures are non-connecting (don't connect to next letter)
+               currentConnectsRight = false;
+            elseif AS_IsNonConnecting(char1) then
+               -- Non-connecting letters don't connect to the right
+               currentConnectsRight = false;
+            elseif not isNextSeparator and char2 and AS_Reshaping_Rules[char2] then
+               -- Next character is an Arabic letter, so we connect to it
+               currentConnectsRight = true;
+            else
+               -- No next letter or next is separator
+               currentConnectsRight = false;
+            end
+            
+            -- Step 3: Determine form based on connection state
+            local position;
+            if connectedFromLeft and currentConnectsRight then
+               position = 2;  -- middle
+            elseif connectedFromLeft and not currentConnectsRight then
+               position = 3;  -- final
+            elseif not connectedFromLeft and currentConnectsRight then
+               position = 1;  -- initial
+            else
+               position = 0;  -- isolated
+            end
+            
+            -- Step 4: Apply reshaping
+            local outputChar;
+            
+            if ligatureApplied and ligatureForm then
+               -- Use ligature form
+               if position == 0 then
+                  outputChar = ligatureForm.isolated;
+               elseif position == 1 then
+                  outputChar = ligatureForm.initial;
+               elseif position == 2 then
+                  outputChar = ligatureForm.middle;
                else
-                  newstr = rules.isolated .. newstr;
+                  outputChar = ligatureForm.final;
                end
-            elseif (position == 1) then -- initial letter
-               if (debug_show_form == 1) then
-                  newstr = '1' .. rules.initial .. newstr;
+            else
+               -- Use regular reshaping rules
+               local rules = AS_Reshaping_Rules[char1];
+               if rules then
+                  if position == 0 then
+                     outputChar = rules.isolated;
+                  elseif position == 1 then
+                     outputChar = rules.initial;
+                  elseif position == 2 then
+                     outputChar = rules.middle;
+                  else
+                     outputChar = rules.final;
+                  end
                else
-                  newstr = rules.initial .. newstr;
-               end
-            elseif (position == 2) then -- middle letter
-               if (debug_show_form == 1) then
-                  newstr = '2' .. rules.middle .. newstr;
-               else
-                  newstr = rules.middle .. newstr;
-               end
-            else -- final letter
-               if (debug_show_form == 1) then
-                  newstr = '3' .. rules.final .. newstr;
-               else
-                  newstr = rules.final .. newstr;
+                  outputChar = char1;
                end
             end
-         else                      -- character has no reshaping rules, add it to the result string as is
-            if (char1 == "<") then -- we need to reverse the directions of the parentheses
-               char1 = ">";
-            elseif (char1 == ">") then
-               char1 = "<";
-            elseif (char1 == "(") then
-               char1 = ")";
-            elseif (char1 == ")") then
-               char1 = "(";
-            end
+            
+            -- Add debug info if enabled
             if (debug_show_form == 1) then
-               newstr = position .. char1 .. newstr;
-            else
-               newstr = char1 .. newstr;
+               outputChar = tostring(position) .. outputChar;
             end
+            
+            -- Add attached diacritics
+            for _, diac in ipairs(attachedDiacritics) do
+               outputChar = outputChar .. diac;
+            end
+            
+            resultParts[resultIndex] = outputChar;
+            resultIndex = resultIndex + 1;
+            
+            -- Update state for next iteration
+            prevChar = char1;
+            prevConnectsRight = currentConnectsRight;
          end
-         char0 = char1; --save to previous letter
       end
    end
-   return newstr;
+   
+   -- Reverse the parts and concatenate
+   local reversed = {};
+   for i = resultIndex - 1, 1, -1 do
+      reversed[#reversed + 1] = resultParts[i];
+   end
+   
+   return table.concat(reversed);
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -857,8 +1119,8 @@ function BB_CreateTestLine()
    BB_TestLine.ScrollFrame:SetPoint("BOTTOMRIGHT", BB_TestLine.InsetBg, "BOTTOMRIGHT", -5, 10);
 
    BB_TestLine.ScrollFrame.ScrollBar:ClearAllPoints();
-   BB_TestLine.ScrollBar:SetPoint("TOPLEFT", BB_TestLine.ScrollFrame, "TOPRIGHT", -12, -18);
-   BB_TestLine.ScrollBar:SetPoint("BOTTOMRIGHT", BB_TestLine.ScrollFrame, "BOTTOMRIGHT", -7, 15);
+   BB_TestLine.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", BB_TestLine.ScrollFrame, "TOPRIGHT", -12, -18);
+   BB_TestLine.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", BB_TestLine.ScrollFrame, "BOTTOMRIGHT", -7, 15);
    BBchild = CreateFrame("Frame", nil, BB_TestLine.ScrollFrame);
    BBchild:SetSize(552, 100);
    BBchild.bg = BBchild:CreateTexture(nil, "BACKGROUND");
@@ -873,3 +1135,4 @@ function BB_CreateTestLine()
    BB_TestLine.CloseButton:SetPoint("TOPRIGHT", BB_TestLine, "TOPRIGHT", 0, 0);
    BB_TestLine:Hide(); -- the frame is invisible in the game
 end
+
