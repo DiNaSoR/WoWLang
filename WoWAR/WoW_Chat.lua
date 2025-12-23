@@ -553,13 +553,39 @@ local function CH_OnChar(self, character)    -- wprowadzono znak litery z klawia
                end
             end
             newtext = AS_UTF8reverseRS(newtext);     -- odwróć kolejność liter + ReShaping
+            self:SetText(newtext);
+            self:SetCursorPosition(CH_Oblicz_Pozycje(CH_BuforCursor));
          else
+            -- EN mode: build LTR, but keep Arabic segments shaped to avoid "unshaping" after Shift+Alt toggling.
+            -- We must preserve cursor position even though Arabic glyph bytes can change after reshaping.
+            local rawCursor = CH_Oblicz_Pozycje(CH_BuforCursor);
             for i = 1, CH_BuforLength do
                newtext = newtext .. CH_BuforEditBox[i];
             end
+            if CH_Check_Arabic_Letters(newtext) then
+               -- Convert raw cursor byte offset -> UTF-8 char count in the raw string
+               local cursorChars = AS_UTF8len(strsub(newtext, 1, rawCursor));
+               -- Reshape Arabic without changing overall order
+               newtext = AS_ReshapeOnly(newtext);
+               -- Convert UTF-8 char count -> byte offset in reshaped string
+               local newCursor = 0;
+               if cursorChars > 0 then
+                  local bytes2 = strlen(newtext);
+                  local pos2 = 1;
+                  local count2 = 0;
+                  while (pos2 <= bytes2) and (count2 < cursorChars) do
+                     pos2 = pos2 + AS_UTF8charbytes(newtext, pos2);
+                     count2 = count2 + 1;
+                  end
+                  newCursor = pos2 - 1;
+               end
+               self:SetText(newtext);
+               self:SetCursorPosition(newCursor);
+            else
+               self:SetText(newtext);
+               self:SetCursorPosition(rawCursor);
+            end
          end
-         self:SetText(newtext);
-         self:SetCursorPosition(CH_Oblicz_Pozycje(CH_BuforCursor));
       end
       CH_last_letter = character;
    end
@@ -587,13 +613,35 @@ local function CH_RebuildAndReshapeFromBuffer(editBox)
          end
       end
       newtext = AS_UTF8reverseRS(newtext);     -- Reverse + ReShaping with CORRECT contextual forms
+      editBox:SetText(newtext);
+      editBox:SetCursorPosition(CH_Oblicz_Pozycje(CH_BuforCursor));
    else
+      local rawCursor = CH_Oblicz_Pozycje(CH_BuforCursor);
       for i = 1, CH_BuforLength do
          newtext = newtext .. CH_BuforEditBox[i];
       end
+      if CH_Check_Arabic_Letters(newtext) then
+         local cursorChars = AS_UTF8len(strsub(newtext, 1, rawCursor));
+         newtext = AS_ReshapeOnly(newtext);
+         local newCursor = 0;
+         if cursorChars > 0 then
+            local bytes2 = strlen(newtext);
+            local pos2 = 1;
+            local count2 = 0;
+            while (pos2 <= bytes2) and (count2 < cursorChars) do
+               pos2 = pos2 + AS_UTF8charbytes(newtext, pos2);
+               count2 = count2 + 1;
+            end
+            newCursor = pos2 - 1;
+         end
+         editBox:SetText(newtext);
+         editBox:SetCursorPosition(newCursor);
+         return;
+      end
+      editBox:SetText(newtext);
+      editBox:SetCursorPosition(rawCursor);
+      return;
    end
-   editBox:SetText(newtext);
-   editBox:SetCursorPosition(CH_Oblicz_Pozycje(CH_BuforCursor));
 end
 
 -------------------------------------------------------------------------------------------------------

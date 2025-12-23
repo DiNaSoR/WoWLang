@@ -261,6 +261,32 @@ function AS_GetReshaperVersion()
 end
 
 -------------------------------------------------------------------------------------------------------
+-- Reshape Arabic text while KEEPING string order unchanged
+-- Intended for WoW editboxes that build strings already reversed for RTL display.
+-- NOTE: We temporarily disable LAM-ALEF ligatures to preserve 1:1 character count
+-- (important for cursor position stability in EditBox).
+-------------------------------------------------------------------------------------------------------
+function AS_ReshapeOnly(s)
+   if not s or #s == 0 then return "" end
+
+   local savedRules2 = AS_Reshaping_Rules2;
+   AS_Reshaping_Rules2 = {}; -- disable ligatures during reshape-only
+
+   local ok, out = pcall(function()
+      -- Double-reverse trick: reverse input, then use reverse+reshape.
+      -- Net effect: order stays the same, Arabic gets contextual forms.
+      return AS_UTF8reverseRS(AS_UTF8reverse(s));
+   end);
+
+   AS_Reshaping_Rules2 = savedRules2;
+
+   if ok and out then
+      return out;
+   end
+   return s;
+end
+
+-------------------------------------------------------------------------------------------------------
 -- returns the number of bytes used by the UTF-8 character at byte
 -- Function: AS_UTF8charbytes
 -- Description: Determines the number of bytes needed to represent a UTF-8 character at a given index in a string.
