@@ -14,6 +14,39 @@ local debug_show_form = 0;
 -- but need to be preserved and handled correctly during reshaping.
 -- Diacritics should stay attached to their base character and not affect position detection.
 -------------------------------------------------------------------------------------------------------
+-- WoW's FontString renderer does not reliably position Unicode combining marks (tashkeel)
+-- using OpenType anchors, so marks like "ً" may appear on the baseline in-game.
+-- Workaround: convert common harakat (U+064B..U+0652) into Arabic Presentation Forms
+-- (U+FE70..U+FE7E) which are spacing glyphs that fonts often render in the correct vertical position.
+-- IMPORTANT: These presentation-form marks are *spacing* glyphs. In many fonts (e.g. Calibri),
+-- they have non-zero advance width and will visually separate joined Arabic letters.
+-- Therefore the default is OFF (keep proper joining). Enable only if your chosen font renders
+-- these marks with zero/near-zero width and correct placement.
+AS_USE_PRESENTATION_DIACRITICS = false;
+
+-- Map common combining harakat to their presentation-form equivalents.
+-- Also includes identity mappings for the presentation forms so round-trips remain stable.
+AS_DiacriticPresentationForms = {
+   -- U+064B..U+0652 → U+FE70..U+FE7E
+   ["\217\139"] = "\239\185\176", -- ً  FATHATAN → ﹰ  FE70
+   ["\217\140"] = "\239\185\178", -- ٌ  DAMMATAN → ﹲ  FE72
+   ["\217\141"] = "\239\185\180", -- ٍ  KASRATAN → ﹴ  FE74
+   ["\217\142"] = "\239\185\182", -- َ  FATHA    → ﹶ  FE76
+   ["\217\143"] = "\239\185\184", -- ُ  DAMMA    → ﹸ  FE78
+   ["\217\144"] = "\239\185\186", -- ِ  KASRA    → ﹺ  FE7A
+   ["\217\145"] = "\239\185\188", -- ّ  SHADDA   → ﹼ  FE7C
+   ["\217\146"] = "\239\185\190", -- ْ  SUKUN    → ﹾ  FE7E
+   -- identity for already-converted marks
+   ["\239\185\176"] = "\239\185\176", -- ﹰ
+   ["\239\185\178"] = "\239\185\178", -- ﹲ
+   ["\239\185\180"] = "\239\185\180", -- ﹴ
+   ["\239\185\182"] = "\239\185\182", -- ﹶ
+   ["\239\185\184"] = "\239\185\184", -- ﹸ
+   ["\239\185\186"] = "\239\185\186", -- ﹺ
+   ["\239\185\188"] = "\239\185\188", -- ﹼ
+   ["\239\185\190"] = "\239\185\190", -- ﹾ
+};
+
 AS_Diacritics = {
    ["\217\139"] = true,  -- FATHATAN (ً) U+064B - tanween fath
    ["\217\140"] = true,  -- DAMMATAN (ٌ) U+064C - tanween damm
@@ -23,6 +56,15 @@ AS_Diacritics = {
    ["\217\144"] = true,  -- KASRA (ِ) U+0650 - short i
    ["\217\145"] = true,  -- SHADDA (ّ) U+0651 - gemination mark
    ["\217\146"] = true,  -- SUKUN (ْ) U+0652 - no vowel
+   -- Presentation-form harakat (spacing marks) for WoW rendering compatibility
+   ["\239\185\176"] = true, -- ﹰ ARABIC FATHATAN ISOLATED FORM U+FE70
+   ["\239\185\178"] = true, -- ﹲ ARABIC DAMMATAN ISOLATED FORM U+FE72
+   ["\239\185\180"] = true, -- ﹴ ARABIC KASRATAN ISOLATED FORM U+FE74
+   ["\239\185\182"] = true, -- ﹶ ARABIC FATHA ISOLATED FORM U+FE76
+   ["\239\185\184"] = true, -- ﹸ ARABIC DAMMA ISOLATED FORM U+FE78
+   ["\239\185\186"] = true, -- ﹺ ARABIC KASRA ISOLATED FORM U+FE7A
+   ["\239\185\188"] = true, -- ﹼ ARABIC SHADDA ISOLATED FORM U+FE7C
+   ["\239\185\190"] = true, -- ﹾ ARABIC SUKUN ISOLATED FORM U+FE7E
    ["\217\147"] = true,  -- MADDAH ABOVE (ٓ) U+0653
    ["\217\148"] = true,  -- HAMZA ABOVE (ٔ) U+0654
    ["\217\149"] = true,  -- HAMZA BELOW (ٕ) U+0655
@@ -790,7 +832,11 @@ function AS_UTF8reverseRS(s, fixNumbers)
 
       -- Handle diacritics - they don't affect reshaping logic
       if AS_IsDiacritic(char1) then
-         resultParts[resultIndex] = char1;
+         local diacOut = char1;
+         if AS_USE_PRESENTATION_DIACRITICS and AS_DiacriticPresentationForms and AS_DiacriticPresentationForms[char1] then
+            diacOut = AS_DiacriticPresentationForms[char1];
+         end
+         resultParts[resultIndex] = diacOut;
          resultIndex = resultIndex + 1;
          -- Don't update prevChar or prevConnectsRight for diacritics
       else
@@ -951,7 +997,11 @@ function AS_UTF8reverseRS(s, fixNumbers)
             
             -- Add attached diacritics
             for _, diac in ipairs(attachedDiacritics) do
-               outputChar = outputChar .. diac;
+               if AS_USE_PRESENTATION_DIACRITICS and AS_DiacriticPresentationForms and AS_DiacriticPresentationForms[diac] then
+                  outputChar = outputChar .. AS_DiacriticPresentationForms[diac];
+               else
+                  outputChar = outputChar .. diac;
+               end
             end
             
             resultParts[resultIndex] = outputChar;
