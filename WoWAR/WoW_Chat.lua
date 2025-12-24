@@ -379,11 +379,22 @@ end
 
 function CH_Oblicz_Pozycje(curs)        -- oblicza pozycję (bytes) cursora w oknie edycji
    local pozycja = 0;
+   -- Defensive: cursor can legally be > buffer length (e.g. Length+1), and buffer entries can be nil
+   if (type(curs) ~= "number") then
+      return 0;
+   end
    if (CH_ED_cursor_move == 1) then    -- mamy tryb przesuwania w lewo (litera arabska)
       curs = curs - 1;
    end
+   if (curs < 0) then curs = 0 end
+   if (CH_BuforLength and curs > CH_BuforLength) then
+      curs = CH_BuforLength;
+   end
    for i = 1, curs do
-      pozycja = pozycja + strlen(CH_BuforEditBox[i]);   -- liczba bajtów znaku
+      local entry = CH_BuforEditBox[i];
+      if entry then
+         pozycja = pozycja + strlen(entry);   -- liczba bajtów znaku
+      end
    end
    return pozycja;
 end

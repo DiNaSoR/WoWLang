@@ -847,6 +847,14 @@ function AS_UTF8reverseRS(s, fixNumbers)
          -- Determine if this character/ligature is a word separator
          local isCurrentSeparator = AS_IsWordSeparator(char1);
          local isNextSeparator = AS_IsWordSeparator(char2);
+
+         -- IMPORTANT: Any non-Arabic character must break Arabic joining.
+         -- Previously, Latin letters (doom) were treated like "letters" and could incorrectly
+         -- connect to the next Arabic letter, producing wrong forms (e.g., ح becomes medial).
+         local isCurrentArabic = ligatureApplied or (AS_Reshaping_Rules[char1] ~= nil);
+         if (not isCurrentSeparator) and (not isCurrentArabic) then
+            isCurrentSeparator = true;
+         end
          
          if isCurrentSeparator then
             -- Word separators pass through unchanged
