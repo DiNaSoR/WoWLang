@@ -322,7 +322,7 @@ end
 local function CH_AR_ON_OFF()       -- funkcja włącz/wyłącza tryb arabski
    local txt = DEFAULT_CHAT_FRAME.editBox:GetText();
    if (CH_ED_mode == 0) then        -- mamy tryb EN - przełącz na tryb arabski
-      DEFAULT_CHAT_FRAME.editBox:SetJustifyH("RIGHT");
+      DEFAULT_CHAT_FRAME.editBox:SetJustifyH("LEFT");          -- Keep LEFT aligned (user preference)
       DEFAULT_CHAT_FRAME.editBox:SetCursorPosition(0);         -- przesuń kursor na skrajne lewo
       CH_ToggleButton:SetNormalFontObject("GameFontNormal");   -- litery AR żółte
       CH_ToggleButton:SetText("AR");
@@ -524,6 +524,10 @@ local function CH_OnChar(self, character)    -- wprowadzono znak litery z klawia
             if (CH_BuforCursor == 0) then
                CH_BuforCursor = 1;              -- tylko gdy = 0
             end
+            -- All characters (including digits) are inserted at cursor in Arabic mode
+            -- This naturally reverses sequences, but since display also reverses,
+            -- the final output is correct. Example: typing "1000" puts ['0','0','0','1']
+            -- in buffer, which displays as "1000" when read backwards.
             tinsert(CH_BuforEditBox, CH_BuforCursor, character);
          else                                   -- tu jest tryb przesuwania w prawo (litera łacińska)
             if (CH_BuforCursor < CH_BuforLength) then
@@ -531,13 +535,16 @@ local function CH_OnChar(self, character)    -- wprowadzono znak litery z klawia
             end
             tinsert(CH_BuforEditBox, CH_BuforCursor, character);
          end
-         local spaces = "( )?؟!,.;:،";             -- letters that we treat as a space
-         if (AS_UTF8find(spaces, character) == false) then       -- nie wprowadzono znaku z listy spaces      
+         -- Characters that are "neutral" - don't trigger direction switching
+         -- Includes: spaces, punctuation, AND digits (0-9)
+         -- Digits should flow with surrounding text, not switch direction
+         local neutralChars = "( )?؟!,.;:،0123456789";
+         if (AS_UTF8find(neutralChars, character) == false) then       -- not a neutral character
             if (((character >= "؀") and (character <= "ݿ")) or ((string.sub(character,1,1) == "|") and (CH_ED_mode == 1))) then  -- mamy literę arabską
                if (CH_ED_cursor_move == 0) then    -- mamy tryb przesuwania w prawo - przełącz na tryb przesuwania w lewo od wpisanego znaku
                   CH_INS_ON_OFF();                 -- zmień na przesuwanie w lewo
                end
-            else                                                 -- wprowadzono literę inną niż arabska
+            else                                                 -- wprowadzono literę inną niż arabska (but not digits)
                if (CH_ED_cursor_move == 1) then    -- mamy tryb przesuwania w lewo - przełącz na tryb przesuwania w prawo od wpisanego znaku
                   CH_INS_ON_OFF();
                end
@@ -552,7 +559,9 @@ local function CH_OnChar(self, character)    -- wprowadzono znak litery z klawia
                   newtext = newtext .. CH_BuforEditBox[i];
                end
             end
-            newtext = AS_UTF8reverseRS(newtext);     -- odwróć kolejność liter + ReShaping
+            -- NOTE: In the editbox pipeline we already reverse the buffer before calling AS_UTF8reverseRS.
+            -- That means numbers are already corrected by the double-reversal; don't apply digit-run fix here.
+            newtext = AS_UTF8reverseRS(newtext);     -- odwróć kolejność liter + ReShaping (with digit-run fix)
             self:SetText(newtext);
             self:SetCursorPosition(CH_Oblicz_Pozycje(CH_BuforCursor));
          else
@@ -612,7 +621,8 @@ local function CH_RebuildAndReshapeFromBuffer(editBox)
             newtext = newtext .. CH_BuforEditBox[i];
          end
       end
-      newtext = AS_UTF8reverseRS(newtext);     -- Reverse + ReShaping with CORRECT contextual forms
+      -- NOTE: Editbox rebuild uses pre-reversed buffer; disable digit-run fix to avoid flipping numbers (1000 -> 0001).
+      newtext = AS_UTF8reverseRS(newtext);     -- Reverse + ReShaping (with digit-run fix)
       editBox:SetText(newtext);
       editBox:SetCursorPosition(CH_Oblicz_Pozycje(CH_BuforCursor));
    else
@@ -661,10 +671,29 @@ local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź cz
       CH_highlight_text = true;
       CH_ToggleButton:SetNormalFontObject("GameFontBlack");   -- litery EN/AR czarne
    end
+   
+   -- CRITICAL: Handle DELETE/BACKSPACE when text is highlighted (Ctrl+A selection)
+   if CH_highlight_text and ((key == "DELETE") or (key == "BACKSPACE")) then
+      -- Clear the entire buffer
+      CH_BuforEditBox = {};
+      CH_BuforLength = 0;
+      CH_BuforCursor = 0;
+      CH_highlight_text = false;
+      self:SetText("");
+      self:SetCursorPosition(0);
+      if (CH_ED_mode == 0) then
+         CH_ToggleButton:SetNormalFontObject("GameFontRed");      -- litery EN czerwone
+      else
+         CH_ToggleButton:SetNormalFontObject("GameFontNormal");   -- litery AR żółte
+      end
+      return;  -- We handled it, stop here
+   end
+   
    if (CH_ToggleButton:IsEnabled()) then                 -- obsługa bufora włączona?
       if (CH_ED_mode == 1) then        -- mamy tryb arabski
-         if (key == "BACKSPACE") then  -- usuń znak poprzedzający, czyli 1 na prawo
-            -- Update the buffer first
+         if (key == "BACKSPACE") then  -- usuń znak poprzedzający, czyli 1 na prawo (visual right in RTL)
+            -- Update the buffer ONLY - DO NOT SetText here!
+            -- WoW's native backspace will fire after us, so we rebuild in OnKeyUp to overwrite it
             if (CH_BuforLength == 1) then               -- first character in buffer
                tremove(CH_BuforEditBox, 1);
                CH_BuforCursor = 0;
@@ -677,31 +706,24 @@ local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź cz
                end
                CH_BuforLength = CH_BuforLength - 1;
             end
+            -- NOTE: Rebuild happens in OnKeyUp AFTER WoW's native handler finishes
+            return;
             
-            -- CRITICAL FIX: Rebuild and reshape the entire text from buffer
-            -- This ensures Arabic letters get correct contextual forms after deletion
-            CH_RebuildAndReshapeFromBuffer(self);
-            return;  -- Prevent default BACKSPACE behavior since we handled it
-            
-         elseif (key == "DELETE") then                -- usuń znak następujący, czyli 1 na lewo
-            -- Update the buffer first
+         elseif (key == "DELETE") then                -- usuń znak następujący, czyli 1 na lewo (visual left in RTL)
+            -- DELETE in RTL removes the character to the visual LEFT of the cursor
+            -- In our buffer model: that's CH_BuforCursor - 1
             if (CH_BuforCursor > 1) and (CH_BuforLength > 0) then
                tremove(CH_BuforEditBox, CH_BuforCursor - 1);
                CH_BuforCursor = CH_BuforCursor - 1;
                CH_BuforLength = CH_BuforLength - 1;
-            elseif (CH_BuforCursor == 1) and (CH_BuforLength > 0) then
-               -- Cursor at position 1, delete the last character (leftmost in RTL)
-               tremove(CH_BuforEditBox, CH_BuforLength);
-               CH_BuforLength = CH_BuforLength - 1;
             end
-            
-            -- CRITICAL FIX: Rebuild and reshape the entire text from buffer
-            CH_RebuildAndReshapeFromBuffer(self);
-            return;  -- Prevent default DELETE behavior since we handled it
+            -- NOTE: If cursor is at position 0 or 1, DELETE does nothing (we're at the left edge)
+            -- NOTE: Rebuild happens in OnKeyUp AFTER WoW's native handler finishes
+            return;
          end
          
       else           -- mamy tryb angielski
-         if (key == "DELETE") then                -- usuń bieżący znak z bufora
+         if (key == "DELETE") then                -- usuń bieżący znak z bufora (character to the RIGHT of cursor in LTR)
             if (CH_BuforLength > CH_BuforCursor) then
                if (self:GetCursorPosition() == 0) then
                   tremove(CH_BuforEditBox, 1);
@@ -712,12 +734,16 @@ local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź cz
             elseif (CH_BuforLength == 0) then
                CH_BuforCursor = 0;
             end
+            -- NOTE: Rebuild happens in OnKeyUp AFTER WoW's native handler finishes
+            return;
          elseif (key == "BACKSPACE") then         -- usuń znak poprzedzający, czyli 1 na lewo
             if (CH_BuforCursor > 0) then
                tremove(CH_BuforEditBox, CH_BuforCursor);
                CH_BuforCursor = CH_BuforCursor - 1;
                CH_BuforLength = CH_BuforLength - 1;
             end
+            -- NOTE: Rebuild happens in OnKeyUp AFTER WoW's native handler finishes
+            return;
          end
       end
       if ((key == "ENTER") and (CH_ED_mode == 1)) then                    -- wciśnięto klawisz ENTER
@@ -729,7 +755,8 @@ local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź cz
                newtext = newtext .. CH_BuforEditBox[i];
             end
          end
-         newtext = AS_UTF8reverseRS(newtext);       -- odwróć kolejność liter + ReShaping
+         -- NOTE: Send-text rebuild uses the same editbox pipeline; disable digit-run fix to keep numbers correct.
+         newtext = AS_UTF8reverseRS(newtext);       -- odwróć kolejność liter + ReShaping (with digit-run fix)
          self:SetText(newtext);
       end
    end
@@ -793,6 +820,15 @@ local function CH_OnKeyUp(self, key)      -- puszczono klawisz key: sprawdź czy
       end
       if ((key == "RIGHT") and (CH_BuforCursor-CH_ED_mode < CH_BuforLength)) then    -- wciśnięto klawisz "strzałka w prawo" alt+RIGHT
          CH_BuforCursor = CH_BuforCursor + 1;      -- dopuszczamy: Cursor+1 od Length dla CH_ED_mode == 1
+      end
+
+      -- WoW EditBox still performs its own Delete/Backspace after our OnKeyDown handler.
+      -- This can desync the visible text from our buffer (deleted char reappears, or 2 chars deleted).
+      -- Re-apply our buffer->text rebuild on KeyUp to force the final state to match the buffer.
+      -- This runs for BOTH AR and EN modes to prevent double-deletion.
+      if (key == "DELETE") or (key == "BACKSPACE") then
+         CH_RebuildAndReshapeFromBuffer(self);
+         return;
       end
    end
    if (strlen(self:GetText()) == 0) then    -- profilaktycznie trzeba wyzerować bufor

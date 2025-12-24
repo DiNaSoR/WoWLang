@@ -275,7 +275,8 @@ function AS_ReshapeOnly(s)
    local ok, out = pcall(function()
       -- Double-reverse trick: reverse input, then use reverse+reshape.
       -- Net effect: order stays the same, Arabic gets contextual forms.
-      return AS_UTF8reverseRS(AS_UTF8reverse(s));
+      -- IMPORTANT: do NOT apply digit-run fix here (it would flip digits in LTR strings).
+      return AS_UTF8reverseRS(AS_UTF8reverse(s), false);
    end);
 
    AS_Reshaping_Rules2 = savedRules2;
@@ -610,9 +611,135 @@ local function AS_IsWordSeparator(char)
    if not char or char == '' or char == 'X' then return true end
    local spaces = '( )?؟!,.;:،؛٪\n\r\t';
    if AS_UTF8find(spaces, char) then return true end
+   -- ASCII digits should break Arabic joining and be treated as separators
+   if (#char == 1) and (char >= "0") and (char <= "9") then return true end
    if AS_ArabicPunctuation[char] then return true end
    if AS_ArabicIndicNumerals[char] then return true end
    return false;
+end
+
+-------------------------------------------------------------------------------------------------------
+-- Helpers: Digits and numeric separators (for mixed Arabic + numbers)
+-- We reverse whole strings for RTL display; digit runs must stay LTR.
+-------------------------------------------------------------------------------------------------------
+local function AS_IsAsciiDigit(char)
+   return char and (#char == 1) and (char >= "0") and (char <= "9");
+end
+
+local function AS_IsAnyDigit(char)
+   return AS_IsAsciiDigit(char) or (AS_ArabicIndicNumerals[char] == true);
+end
+
+local AS_NumberSeparators = {
+   ["."] = true,
+   [","] = true,
+   ["\217\171"] = true, -- ٫ Arabic Decimal Separator U+066B
+   ["\217\172"] = true, -- ٬ Arabic Thousands Separator U+066C
+};
+
+local function AS_IsNumberSeparator(char)
+   return AS_NumberSeparators[char] == true;
+end
+
+-- After full RTL reversal, digit sequences become reversed (e.g. 1000 -> 0001).
+-- This function flips digit runs back while preserving WoW escape sequences (|c... and hyperlinks).
+local function AS_FixDigitRunsForRTL(s)
+   if not s or #s == 0 then return "" end
+
+   local out = {};
+   local bytes = strlen(s);
+   local pos = 1;
+
+   while pos <= bytes do
+      -- Protect WoW escape sequences (color codes, hyperlinks, textures) from digit-run reversal
+      if strsub(s, pos, pos) == "|" then
+         local nextChar = (pos + 1 <= bytes) and strsub(s, pos + 1, pos + 1) or "";
+
+         -- Color code: |cAARRGGBB (10 bytes total)
+         if (nextChar == "c") and (pos + 9 <= bytes) then
+            out[#out + 1] = strsub(s, pos, pos + 9);
+            pos = pos + 10;
+         -- Color reset: |r
+         elseif (nextChar == "r") then
+            out[#out + 1] = "|r";
+            pos = pos + 2;
+         -- Hyperlink: |H...|h[Text]|h
+         elseif (nextChar == "H") then
+            local firstH = string.find(s, "|h", pos, true);
+            if not firstH then
+               out[#out + 1] = strsub(s, pos);
+               break;
+            end
+            local secondH = string.find(s, "|h", firstH + 2, true);
+            if not secondH then
+               out[#out + 1] = strsub(s, pos);
+               break;
+            end
+            out[#out + 1] = strsub(s, pos, secondH + 1);
+            pos = secondH + 2;
+         -- Texture tag: |T...|t
+         elseif (nextChar == "T") then
+            local endT = string.find(s, "|t", pos, true);
+            if not endT then
+               out[#out + 1] = strsub(s, pos);
+               break;
+            end
+            out[#out + 1] = strsub(s, pos, endT + 1);
+            pos = endT + 2;
+         else
+            out[#out + 1] = "|";
+            pos = pos + 1;
+         end
+      else
+         local charbytes = AS_UTF8charbytes(s, pos);
+         local ch = strsub(s, pos, pos + charbytes - 1);
+
+         if AS_IsAnyDigit(ch) then
+            local run = { ch };
+            pos = pos + charbytes;
+
+            while pos <= bytes do
+               -- Stop runs at WoW escape sequences
+               if strsub(s, pos, pos) == "|" then break end
+
+               local cb2 = AS_UTF8charbytes(s, pos);
+               local ch2 = strsub(s, pos, pos + cb2 - 1);
+
+               if AS_IsAnyDigit(ch2) then
+                  run[#run + 1] = ch2;
+                  pos = pos + cb2;
+               elseif AS_IsNumberSeparator(ch2) then
+                  -- Include separator only if followed by a digit
+                  local lookPos = pos + cb2;
+                  if (lookPos <= bytes) and (strsub(s, lookPos, lookPos) ~= "|") then
+                     local cb3 = AS_UTF8charbytes(s, lookPos);
+                     local ch3 = strsub(s, lookPos, lookPos + cb3 - 1);
+                     if AS_IsAnyDigit(ch3) then
+                        run[#run + 1] = ch2;
+                        pos = pos + cb2;
+                     else
+                        break;
+                     end
+                  else
+                     break;
+                  end
+               else
+                  break;
+               end
+            end
+
+            -- Reverse the run back to LTR
+            for i = #run, 1, -1 do
+               out[#out + 1] = run[i];
+            end
+         else
+            out[#out + 1] = ch;
+            pos = pos + charbytes;
+         end
+      end
+   end
+
+   return table.concat(out);
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -626,8 +753,9 @@ end
 --   - middle: connected from left, connects to right
 --   - final: connected from left, doesn't connect to right
 -------------------------------------------------------------------------------------------------------
-function AS_UTF8reverseRS(s)
+function AS_UTF8reverseRS(s, fixNumbers)
    if not s or #s == 0 then return "" end
+   if fixNumbers == nil then fixNumbers = true end
    
    local resultParts = {};
    local resultIndex = 1;
@@ -834,7 +962,11 @@ function AS_UTF8reverseRS(s)
       reversed[#reversed + 1] = resultParts[i];
    end
    
-   return table.concat(reversed);
+   local out = table.concat(reversed);
+   if fixNumbers then
+      out = AS_FixDigitRunsForRTL(out);
+   end
+   return out;
 end
 
 -------------------------------------------------------------------------------------------------------
