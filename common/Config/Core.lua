@@ -288,16 +288,17 @@ local function ApplyFontsRecursive(obj)
     if okText and type(textRegion) == "table" and textRegion.SetFont then setFontOnRegion(textRegion) end
     local okLabel, labelRegion = pcall(function() return rawget(w, "label") end)
     if okLabel and type(labelRegion) == "table" and labelRegion.SetFont then setFontOnRegion(labelRegion) end
-  end
 
-  if obj.SetNormalFontObject and WOWTR_AceNormalFO then
-    pcall(obj.SetNormalFontObject, obj, WOWTR_AceNormalFO)
-  end
-  if obj.SetHighlightFontObject and WOWTR_AceHighlightFO then
-    pcall(obj.SetHighlightFontObject, obj, WOWTR_AceHighlightFO)
-  end
-  if obj.SetDisabledFontObject and WOWTR_AceNormalFO then
-    pcall(obj.SetDisabledFontObject, obj, WOWTR_AceNormalFO)
+    -- Only apply these font objects to AceGUI-owned button frames (avoid changing Blizzard UI buttons)
+    if obj.SetNormalFontObject and WOWTR_AceNormalFO then
+      pcall(obj.SetNormalFontObject, obj, WOWTR_AceNormalFO)
+    end
+    if obj.SetHighlightFontObject and WOWTR_AceHighlightFO then
+      pcall(obj.SetHighlightFontObject, obj, WOWTR_AceHighlightFO)
+    end
+    if obj.SetDisabledFontObject and WOWTR_AceNormalFO then
+      pcall(obj.SetDisabledFontObject, obj, WOWTR_AceNormalFO)
+    end
   end
 
   if obj.GetRegions then
@@ -476,34 +477,88 @@ local function HookAceConfigDialogFonts()
   local function wrap(methodName)
     local orig = AceConfigDialog[methodName]
     if type(orig) ~= "function" then return end
-    AceConfigDialog[methodName] = function(self, appName, ...)
-      local ret = orig(self, appName, ...)
-      if WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2 and self.OpenFrames and self.OpenFrames[appName] and self.OpenFrames[appName].frame then
-        ApplyFontsRecursive(self.OpenFrames[appName].frame)
+    AceConfigDialog[methodName] = function(self, appName, container, ...)
+      local ret = orig(self, appName, container, ...)
+
+      -- In Blizzard Options (AddToBlizOptions), AceConfigDialog:Open feeds into a
+      -- provided AceGUI "BlizOptionsGroup" container and does NOT populate OpenFrames.
+      -- Use the container's frame when present, otherwise fall back to OpenFrames.
+      local frameRef
+      if type(container) == "table" and container.frame then
+        frameRef = container.frame
+      elseif self.OpenFrames and self.OpenFrames[appName] and self.OpenFrames[appName].frame then
+        frameRef = self.OpenFrames[appName].frame
       end
+
+      if frameRef and WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2 then
+        ApplyFontsRecursive(frameRef)
+      end
+
+      -- Only apply extra chrome changes to our standalone AceConfig frame (OpenFrames).
       if self.OpenFrames and self.OpenFrames[appName] and self.OpenFrames[appName].frame then
-        local frameRef = self.OpenFrames[appName].frame
-        AttachConfigBanner(frameRef)
-        FixTitleWidth(frameRef)
+        local openFrame = self.OpenFrames[appName].frame
+        AttachConfigBanner(openFrame)
+        FixTitleWidth(openFrame)
         -- push content down by banner height so tabs do not overlap the image
-        local banner = frameRef and frameRef.WOWTR_Banner
-        local content = frameRef and frameRef.content
+        local banner = openFrame and openFrame.WOWTR_Banner
+        local content = openFrame and openFrame.content
         local bh = banner and banner.GetHeight and tonumber(banner:GetHeight()) or 96
         local topPad = bh
         if content and content.ClearAllPoints then
           content:ClearAllPoints()
-          content:SetPoint("TOPLEFT", frameRef, "TOPLEFT", 12, -topPad)
-          content:SetPoint("BOTTOMRIGHT", frameRef, "BOTTOMRIGHT", -12, 12)
+          content:SetPoint("TOPLEFT", openFrame, "TOPLEFT", 12, -topPad)
+          content:SetPoint("BOTTOMRIGHT", openFrame, "BOTTOMRIGHT", -12, 12)
         end
-        NudgeTabGroupDown(frameRef, topPad)
-        EnsureTopRightClose(frameRef, appName)
+        NudgeTabGroupDown(openFrame, topPad)
+        EnsureTopRightClose(openFrame, appName)
         -- no periodic nudge; anchors are applied immediately in this wrapper
       end
+
       return ret
     end
   end
   wrap("Open")
+
+  -- Ensure fonts are re-applied when AceConfig rebuilds widgets (e.g. TabGroup / TreeGroup selection).
+  -- Group changes call :FeedGroup() directly and do NOT necessarily re-run :Open().
+  if type(AceConfigDialog.FeedGroup) == "function" then
+    local origFeedGroup = AceConfigDialog.FeedGroup
+    AceConfigDialog.FeedGroup = function(self, appName, options, container, rootframe, path, isRoot)
+      local ret = origFeedGroup(self, appName, options, container, rootframe, path, isRoot)
+
+      if appName == "WOWTR" and WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2 then
+        local frameRef = (rootframe and rootframe.frame) or (container and container.frame) or nil
+        if frameRef then
+          ApplyFontsRecursive(frameRef)
+        end
+      end
+
+      return ret
+    end
+  end
+
   FontsHooked = true
+end
+
+-- Fix Arabic glyph rendering in the Blizzard Options -> AddOns list (left-side addon titles)
+local AddOnsListFontsHooked = false
+local function HookInterfaceOptionsAddOnsFonts()
+  if AddOnsListFontsHooked then return end
+  AddOnsListFontsHooked = true
+
+  local function Apply()
+    if not (WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2) then return end
+    local f = _G.InterfaceOptionsFrameAddOns
+    if f then
+      ApplyFontsRecursive(f)
+    end
+  end
+
+  local f = _G.InterfaceOptionsFrameAddOns
+  if f and f.HookScript then
+    f:HookScript("OnShow", Apply)
+    if f.IsShown and f:IsShown() then Apply() end
+  end
 end
 
 -- Hook tooltip frames to use WOWTR_Font2 for Arabic
@@ -896,6 +951,7 @@ function C.Init()
   end
   RegisterLSMFonts()
   HookAceConfigDialogFonts()
+  HookInterfaceOptionsAddOnsFonts()
   HookTooltipFonts()
 end
 
