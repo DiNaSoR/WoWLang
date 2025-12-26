@@ -31,7 +31,9 @@ local function CH_bubblizeText()
    -- Iterate the children, as the actual bubble content 
    -- has been placed in a nameless subframe in 9.0.1.
       for j = 1, bubble:GetNumChildren() do
-         local child = select(j, select(j, bubble:GetChildren()));
+         -- NOTE: bubble:GetChildren() returns multiple values; select(j, ...) picks the j-th child.
+         -- The previous double-select form skipped children (e.g. 2 -> 3, 3 -> 5) and could miss bubble content.
+         local child = select(j, bubble:GetChildren());
          if (not child:IsForbidden()) then                           -- czy ramka nie jest zabroniona?
             if (child:GetObjectType() == "Frame") and (child.String) and (child.Center) then
             -- This is hopefully the frame with the content

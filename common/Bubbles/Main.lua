@@ -47,8 +47,24 @@ local function applyBubbleTranslation(region, sourceText, translatedText)
   if not region or not region.GetText or not region.SetText then return false end
   if normalizeBubbleText(region:GetText()) ~= normalizeBubbleText(sourceText) then return false end
   setRegionFont(region)
-  region:SetWidth(math.max(region:GetWidth(), 100))
-  if region.GetWidth and region:GetWidth() > 200 then
+  local minWidth = 100
+  local uiWidth = (UIParent and UIParent.GetWidth) and UIParent:GetWidth() or 0
+  local maxWidth = 420
+  if uiWidth and uiWidth > 0 then
+    -- keep bubbles readable but not absurdly wide on ultrawide screens
+    maxWidth = math.min(450, math.max(250, uiWidth * 0.25))
+  end
+
+  if Bubbles and Bubbles.ComputeIdealBubbleWidth then
+    local desiredWidth = Bubbles.ComputeIdealBubbleWidth(region, translatedText, minWidth, maxWidth)
+    if region.SetWidth then region:SetWidth(desiredWidth) end
+  else
+    -- Fallback to old behavior
+    region:SetWidth(math.max(region:GetWidth(), minWidth))
+  end
+
+  local widthNow = (region.GetWidth and region:GetWidth()) or 0
+  if widthNow > 200 then
     region:SetText(QTR_ExpandUnitInfo(translatedText, false, region, WOWTR_Font2, -50))
   else
     region:SetText(QTR_ReverseIfAR(translatedText))

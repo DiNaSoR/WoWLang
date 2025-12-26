@@ -71,6 +71,34 @@ function Text.RestoreWoWSpecialCodes(msg, specialCodes)
   return msg
 end
 
+-- Detect Arabic script in a UTF-8 string (base Arabic + Presentation Forms).
+-- Used to avoid reversing pure English strings when running in AR locale.
+function Text.ContainsArabic(txt)
+  if not txt or txt == "" then return false end
+
+  -- Fast path: Arabic Presentation Forms-A/B live in UTF-8 sequences starting with 0xEF 0xAD..0xBB
+  if (string.find(txt, "\239\173") ~= nil)
+      or (string.find(txt, "\239\174") ~= nil)
+      or (string.find(txt, "\239\175") ~= nil)
+      or (string.find(txt, "\239\185") ~= nil)
+      or (string.find(txt, "\239\186") ~= nil)
+      or (string.find(txt, "\239\187") ~= nil) then
+    return true
+  end
+
+  -- Fast path: most Arabic base letters live in 2-byte UTF-8 sequences starting with 0xD8..0xDB.
+  if string.find(txt, "[\216\217\218\219]") ~= nil then
+    return true
+  end
+
+  -- Fallback: use reshaper helper if available (base Arabic letters only).
+  if type(_G.AS_ContainsArabic) == "function" then
+    return AS_ContainsArabic(txt) == true
+  end
+
+  return false
+end
+
 -- Replace addon placeholders with game-friendly sequences and player data.
 function Text.WOW_ZmienKody(message, target)
   local msg = message
@@ -104,14 +132,6 @@ function Text.WOW_ZmienKody(message, target)
   end
 
   msg = string.gsub(msg, "NEW_LINE", "\n")
-  if (target) then
-    msg = string.gsub(msg, "$target", WOWTR_AnsiReverse(target))
-    msg = string.gsub(msg, "YOUR_NAME$", WOWTR_AnsiReverse(string.upper(target)))
-    msg = string.gsub(msg, "YOUR_NAME", WOWTR_AnsiReverse(target))
-  else
-    msg = string.gsub(msg, "YOUR_NAME$", WOWTR_AnsiReverse(string.upper(WOWTR_player_name or "")))
-    msg = string.gsub(msg, "YOUR_NAME", WOWTR_AnsiReverse(WOWTR_player_name or ""))
-  end
 
   if (WoWTR_Localization and WoWTR_Localization.lang == 'AR') then
     if (WOWTR_player_sex == 3) then
@@ -135,6 +155,27 @@ function Text.WOW_ZmienKody(message, target)
     else
       msg = string.gsub(msg, "YOUR_RACE2", WOWTR_AnsiReverse(player_race_table.D1))
     end
+  end
+
+  -- Substitute player/target names.
+  -- In AR locale, many strings will be reversed later for RTL display. To keep LTR names readable,
+  -- we pre-reverse them ONLY when the surrounding string contains Arabic (and therefore will be RTL-processed).
+  local shouldAnsiReverse = (WoWTR_Localization and WoWTR_Localization.lang == 'AR') and Text.ContainsArabic(msg)
+  local function maybeAnsiReverse(s)
+    if not s then return "" end
+    if shouldAnsiReverse then
+      return WOWTR_AnsiReverse(s)
+    end
+    return s
+  end
+
+  if (target) then
+    msg = string.gsub(msg, "$target", maybeAnsiReverse(target))
+    msg = string.gsub(msg, "YOUR_NAME$", maybeAnsiReverse(string.upper(target)))
+    msg = string.gsub(msg, "YOUR_NAME", maybeAnsiReverse(target))
+  else
+    msg = string.gsub(msg, "YOUR_NAME$", maybeAnsiReverse(string.upper(WOWTR_player_name or "")))
+    msg = string.gsub(msg, "YOUR_NAME", maybeAnsiReverse(WOWTR_player_name or ""))
   end
 
   if (string.find(msg, "NPC_GENDER")) then
@@ -206,7 +247,7 @@ function Text.ExpandUnitInfo(msg, OnObjectives, AR_obj, AR_font, AR_corr, AR_RIG
   if (msg == nil) then msg = "" end
   msg = Text.WOW_ZmienKody(msg)
 
-  if ((WoWTR_Localization and WoWTR_Localization.lang == 'AR') and (AR_obj)) then
+  if ((WoWTR_Localization and WoWTR_Localization.lang == 'AR') and (AR_obj) and Text.ContainsArabic(msg)) then
     local _font = WOWTR_Font2
     local AR_size = 13
     if AR_obj.GetFont then
@@ -274,6 +315,9 @@ end
 function Text.ReverseIfAR(txt)
   if (txt and WoWTR_Localization and WoWTR_Localization.lang == 'AR') then
     local msg = Text.WOW_ZmienKody(txt)
+    if not Text.ContainsArabic(msg) then
+      return msg
+    end
     local specialCodes, prefix
     msg, specialCodes, prefix = Text.HandleWoWSpecialCodes(msg)
 
