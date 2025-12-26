@@ -364,26 +364,39 @@ function M.FriendsFrame()
     local Friendsobj01 = FriendsFrameTitleText
     ST_CheckAndReplaceTranslationTextUI(Friendsobj01, true, "ui")
 
-    local Friendsobj02 = FriendsTabHeaderTab1.Text
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj02, true, "ui")
+    -- Some client versions expose friends tabs as FriendsTabHeaderTab* (newer UI),
+    -- others as FriendsFrameTab* (older UI). Guard globals to avoid nil errors.
+    local friendsHeaderTab1 = _G["FriendsTabHeaderTab1"]
+    local friendsHeaderTab2 = _G["FriendsTabHeaderTab2"]
+    local friendsHeaderTab3 = _G["FriendsTabHeaderTab3"]
 
-    local Friendsobj03 = FriendsTabHeaderTab2.Text
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj03, true, "ui")
+    if friendsHeaderTab1 and friendsHeaderTab1.Text then
+      ST_CheckAndReplaceTranslationTextUI(friendsHeaderTab1.Text, true, "ui")
+    end
+    if friendsHeaderTab2 and friendsHeaderTab2.Text then
+      ST_CheckAndReplaceTranslationTextUI(friendsHeaderTab2.Text, true, "ui")
+    end
+    if friendsHeaderTab3 and friendsHeaderTab3.Text then
+      ST_CheckAndReplaceTranslationTextUI(friendsHeaderTab3.Text, true, "ui")
+    end
 
-    local Friendsobj04 = FriendsTabHeaderTab3.Text
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj04, true, "ui")
+    local friendsFrameTab1 = _G["FriendsFrameTab1"]
+    local friendsFrameTab2 = _G["FriendsFrameTab2"]
+    local friendsFrameTab3 = _G["FriendsFrameTab3"]
+    local friendsFrameTab4 = _G["FriendsFrameTab4"]
 
-    local Friendsobj05 = FriendsFrameTab1.Text
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj05, true, "ui")
-
-    local Friendsobj06 = FriendsFrameTab2.Text
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj06, true, "ui")
-
-    local Friendsobj07 = FriendsFrameTab3.Text
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj07, true, "ui")
-
-    local Friendsobj08 = FriendsFrameTab4.Text
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj08, true, "ui")
+    if friendsFrameTab1 and friendsFrameTab1.Text then
+      ST_CheckAndReplaceTranslationTextUI(friendsFrameTab1.Text, true, "ui")
+    end
+    if friendsFrameTab2 and friendsFrameTab2.Text then
+      ST_CheckAndReplaceTranslationTextUI(friendsFrameTab2.Text, true, "ui")
+    end
+    if friendsFrameTab3 and friendsFrameTab3.Text then
+      ST_CheckAndReplaceTranslationTextUI(friendsFrameTab3.Text, true, "ui")
+    end
+    if friendsFrameTab4 and friendsFrameTab4.Text then
+      ST_CheckAndReplaceTranslationTextUI(friendsFrameTab4.Text, true, "ui")
+    end
 
     local Friendsobj09 = FriendsFrameAddFriendButtonText
     ST_CheckAndReplaceTranslationTextUI(Friendsobj09, true, "ui")
