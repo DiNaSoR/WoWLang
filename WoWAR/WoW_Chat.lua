@@ -705,6 +705,10 @@ local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź cz
          if (key == "BACKSPACE") then  -- usuń znak poprzedzający, czyli 1 na prawo (visual right in RTL)
             -- Update the buffer ONLY - DO NOT SetText here!
             -- WoW's native backspace will fire after us, so we rebuild in OnKeyUp to overwrite it
+               -- IMPORTANT: Keep cursor inside buffer bounds; it can be Length+1 at the "end" position.
+               if (CH_BuforCursor > CH_BuforLength) then
+                  CH_BuforCursor = CH_BuforLength;
+               end
             if (CH_BuforLength == 1) then               -- first character in buffer
                tremove(CH_BuforEditBox, 1);
                CH_BuforCursor = 0;
@@ -716,6 +720,9 @@ local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź cz
                   tremove(CH_BuforEditBox, CH_BuforCursor);
                end
                CH_BuforLength = CH_BuforLength - 1;
+                  if (CH_BuforCursor > CH_BuforLength) then
+                     CH_BuforCursor = CH_BuforLength;
+                  end
             end
             -- NOTE: Rebuild happens in OnKeyUp AFTER WoW's native handler finishes
             return;

@@ -653,6 +653,9 @@ local function AS_IsWordSeparator(char)
    if not char or char == '' or char == 'X' then return true end
    local spaces = '( )?؟!,.;:،؛٪\n\r\t';
    if AS_UTF8find(spaces, char) then return true end
+   -- HAMZA (ء) is a non-joining letter (doesn't connect from previous or to next).
+   -- Treat it as a join-breaker so words like "شيء" shape correctly (ي should be FINAL, not MIDDLE).
+   if char == "\216\161" then return true end
    -- ASCII digits should break Arabic joining and be treated as separators
    if (#char == 1) and (char >= "0") and (char <= "9") then return true end
    if AS_ArabicPunctuation[char] then return true end
