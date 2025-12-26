@@ -19,6 +19,7 @@ local CH_key_ctrl = false;
 local CH_key_shift = false;
 local CH_key_alt = false;
 local CH_highlight_text = false;
+local CH_ActiveEditBox = nil;    -- tracks the editbox currently receiving input (for non-default chat UIs)
 local CH_BSize = 14;            -- default size of chat bubbles
 
 -- fonty z arabskimi znakami
@@ -319,37 +320,64 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
-local function CH_AR_ON_OFF()       -- funkcja włącz/wyłącza tryb arabski
-   local txt = DEFAULT_CHAT_FRAME.editBox:GetText();
+local function CH_IsEditBox(obj)
+   return obj and obj.GetText and obj.SetText and obj.SetFocus and obj.SetCursorPosition
+end
+
+local function CH_GetTargetEditBox(candidate)
+   local eb = CH_IsEditBox(candidate) and candidate or nil
+   if (not eb) then eb = CH_IsEditBox(CH_ActiveEditBox) and CH_ActiveEditBox or nil end
+   if (not eb) and DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.editBox and CH_IsEditBox(DEFAULT_CHAT_FRAME.editBox) then
+      eb = DEFAULT_CHAT_FRAME.editBox
+   end
+   return eb
+end
+
+local function CH_AR_ON_OFF(editBox)       -- funkcja włącz/wyłącza tryb arabski
+   local eb = CH_GetTargetEditBox(editBox)
+   if not eb then return end
+   local txt = eb:GetText() or "";
    if (CH_ED_mode == 0) then        -- mamy tryb EN - przełącz na tryb arabski
-      DEFAULT_CHAT_FRAME.editBox:SetJustifyH("LEFT");          -- Keep LEFT aligned (user preference)
-      DEFAULT_CHAT_FRAME.editBox:SetCursorPosition(0);         -- przesuń kursor na skrajne lewo
-      CH_ToggleButton:SetNormalFontObject("GameFontNormal");   -- litery AR żółte
-      CH_ToggleButton:SetText("AR");
-      CH_ToggleButton2:SetNormalFontObject("GameFontNormal");  -- litery AR żółte
-      CH_ToggleButton2:SetText("AR");
+      eb:SetJustifyH("LEFT");          -- Keep LEFT aligned (user preference)
+      eb:SetCursorPosition(0);         -- przesuń kursor na skrajne lewo
+      if CH_ToggleButton then
+         CH_ToggleButton:SetNormalFontObject("GameFontNormal");   -- litery AR żółte
+         CH_ToggleButton:SetText("AR");
+      end
+      if CH_ToggleButton2 then
+         CH_ToggleButton2:SetNormalFontObject("GameFontNormal");  -- litery AR żółte
+         CH_ToggleButton2:SetText("AR");
+      end
       CH_ED_mode = 1;
       CH_BuforCursor = 0;
       CH_ED_cursor_move = 1;
-      CH_InsertButton:SetText("←");
-      CH_InsertButton:Show();
+      if CH_InsertButton then
+         CH_InsertButton:SetText("←");
+         CH_InsertButton:Show();
+      end
    else                             -- mamy tryb arabski - przełącz na tryb angielski
-      DEFAULT_CHAT_FRAME.editBox:SetJustifyH("LEFT");
-      CH_ToggleButton:SetNormalFontObject("GameFontRed");      -- litery EN czerwone
-      CH_ToggleButton:SetText("EN");
-      CH_ToggleButton2:SetNormalFontObject("GameFontRed");     -- litery EN czerwone
-      CH_ToggleButton2:SetText("EN");
+      eb:SetJustifyH("LEFT");
+      if CH_ToggleButton then
+         CH_ToggleButton:SetNormalFontObject("GameFontRed");      -- litery EN czerwone
+         CH_ToggleButton:SetText("EN");
+      end
+      if CH_ToggleButton2 then
+         CH_ToggleButton2:SetNormalFontObject("GameFontRed");     -- litery EN czerwone
+         CH_ToggleButton2:SetText("EN");
+      end
       CH_ED_mode = 0;
       if ((CH_BuforLength > 0) and (CH_BuforEditBox[CH_BuforLength] >= "؀")) then   -- pierwszym znakiem z prawej strony jest litera arabska
-         DEFAULT_CHAT_FRAME.editBox:SetCursorPosition(0);      -- przesuń kursor na skrajne lewo
+         eb:SetCursorPosition(0);      -- przesuń kursor na skrajne lewo
          CH_BuforCursor = 0;
          CH_ED_cursor_move = 1;
       else
-         DEFAULT_CHAT_FRAME.editBox:SetCursorPosition(strlen(txt));      -- przesuń kursor na skrajne prawo
+         eb:SetCursorPosition(strlen(txt));      -- przesuń kursor na skrajne prawo
          CH_BuforCursor = CH_BuforLength;
          CH_ED_cursor_move = 0;
-         CH_InsertButton:SetText("→");
-         CH_InsertButton:Hide();
+         if CH_InsertButton then
+            CH_InsertButton:SetText("→");
+            CH_InsertButton:Hide();
+         end
       end
    end
    if (strlen(txt) == 0) then    -- przy komendzie /w Player trzeba wyzerować tę komendę
@@ -357,22 +385,26 @@ local function CH_AR_ON_OFF()       -- funkcja włącz/wyłącza tryb arabski
       CH_BuforLength = 0;
       CH_BuforCursor = 0;
    end
-   ChatEdit_ActivateChat(DEFAULT_CHAT_FRAME.editBox);
-   DEFAULT_CHAT_FRAME.editBox:SetFocus();
+   -- Don't forcibly activate the default chat editbox when toggling inside other UI editboxes (e.g. Communities).
+   if (DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.editBox) and (eb == DEFAULT_CHAT_FRAME.editBox) and ChatEdit_ActivateChat then
+      ChatEdit_ActivateChat(eb);
+   end
+   if eb.SetFocus then eb:SetFocus() end
 end
 
 -------------------------------------------------------------------------------------------------------
 
-local function CH_INS_ON_OFF()            -- funkcja przełącza przesuwanie kursora w zależności od wprowadzonej litery
+local function CH_INS_ON_OFF(editBox)            -- funkcja przełącza przesuwanie kursora w zależności od wprowadzonej litery
+   local eb = CH_GetTargetEditBox(editBox)
    if (CH_ED_cursor_move == 1) then       -- mamy tryb przesuwania kursowa na lewo
-      CH_InsertButton:SetText("→");
+      if CH_InsertButton then CH_InsertButton:SetText("→"); end
       CH_ED_cursor_move = 0;              -- włącz tryb przesuwania na prawo od wpisanego znaku
    else
-      CH_InsertButton:SetText("←");
+      if CH_InsertButton then CH_InsertButton:SetText("←"); end
       CH_ED_cursor_move = 1;              -- włącz tryb przesuwania w lewo od wpisanego znaku
    end
-   DEFAULT_CHAT_FRAME.editBox:SetFocus();
-   CH_InsertButton:Show();
+   if eb and eb.SetFocus then eb:SetFocus() end
+   if CH_InsertButton then CH_InsertButton:Show(); end
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -401,7 +433,8 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
-local function CH_OnShow()       -- otworzony został editBox
+local function CH_OnShow(self)       -- otworzony został editBox
+   CH_ActiveEditBox = self or CH_ActiveEditBox
    if (CH_PM["active"]=="1") then
       CH_ToggleButton2:Show();
    else
@@ -426,7 +459,8 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
-local function CH_OnHide()       -- został zamknięty editBox
+local function CH_OnHide(self)       -- został zamknięty editBox
+   CH_ActiveEditBox = self or CH_ActiveEditBox
    if (CH_PM["active"]=="0") then
       return;
    end
@@ -496,6 +530,7 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CH_OnChar(self, character)    -- wprowadzono znak litery z klawiatury
+   CH_ActiveEditBox = self
    if (CH_PM["active"]=="0") then
       return;
    end
@@ -553,11 +588,11 @@ local function CH_OnChar(self, character)    -- wprowadzono znak litery z klawia
          if (AS_UTF8find(neutralChars, character) == false) then       -- not a neutral character
             if (((character >= "؀") and (character <= "ݿ")) or ((string.sub(character,1,1) == "|") and (CH_ED_mode == 1))) then  -- mamy literę arabską
                if (CH_ED_cursor_move == 0) then    -- mamy tryb przesuwania w prawo - przełącz na tryb przesuwania w lewo od wpisanego znaku
-                  CH_INS_ON_OFF();                 -- zmień na przesuwanie w lewo
+                  CH_INS_ON_OFF(self);                 -- zmień na przesuwanie w lewo
                end
             else                                                 -- wprowadzono literę inną niż arabska (but not digits)
                if (CH_ED_cursor_move == 1) then    -- mamy tryb przesuwania w lewo - przełącz na tryb przesuwania w prawo od wpisanego znaku
-                  CH_INS_ON_OFF();
+                  CH_INS_ON_OFF(self);
                end
             end
          end
@@ -668,6 +703,7 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź czy wciśnięto BACKSPACE lub DELETE
+   CH_ActiveEditBox = self
    if (CH_PM["active"]=="0") then
       return;
    end
@@ -783,11 +819,12 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CH_OnKeyUp(self, key)      -- puszczono klawisz key: sprawdź czy wciśnięto HOME, END, LEFT i RIGHT
+   CH_ActiveEditBox = self
    if (CH_PM["active"]=="0") then
       return;
    end
    if ((CH_key_shift and ((key == "LALT") or (key == "RALT"))) or (CH_key_alt and ((key == "LSHIFT") or (key == "RSHIFT")))) then
-      CH_AR_ON_OFF();                                    -- wciśnięto jednocześnie klawisze SHIFT+ALT
+      CH_AR_ON_OFF(self);                                    -- wciśnięto jednocześnie klawisze SHIFT+ALT
    end
    if ((key == "LCTRL") or (key == "RCTRL")) then        -- puszczono klawisz CONTROL
       CH_key_ctrl = false;
@@ -1067,6 +1104,190 @@ function CHAT_START()
    -- CH_ToggleButton is always hidden now - only CH_ToggleButton2 shows when editbox opens
 --   CH_CheckVars();
 --   CH_BlizzardOptions();
+
+   -------------------------------------------------------------------------------------------------------
+   -- Communities (Guild & Communities) chat uses its own MessageFrame + EditBox.
+   -- Hook them for Arabic font enforcement + input/output reshaping.
+   -------------------------------------------------------------------------------------------------------
+
+   local function HasArabicPresentationForms(txt)
+      if not txt then return false end
+      -- Arabic Presentation Forms-A/B live in UTF-8 sequences starting with 0xEF 0xAD..0xBB
+      return (string.find(txt, "\239\173") ~= nil)
+         or (string.find(txt, "\239\174") ~= nil)
+         or (string.find(txt, "\239\175") ~= nil)
+         or (string.find(txt, "\239\185") ~= nil)
+         or (string.find(txt, "\239\186") ~= nil)
+         or (string.find(txt, "\239\187") ~= nil);
+   end
+
+   local function ReverseAndReshapeSafe(txt)
+      if (not txt) or (txt == "") then return txt end
+      if HandleWoWSpecialCodes and RestoreWoWSpecialCodes then
+         local msg, sc, prefix = HandleWoWSpecialCodes(txt)
+         msg = AS_UTF8reverseRS(msg)
+         msg = RestoreWoWSpecialCodes(msg, sc)
+         if prefix and prefix ~= "" then
+            msg = prefix .. msg
+         end
+         return msg
+      end
+      return AS_UTF8reverseRS(txt)
+   end
+   
+   local function CH_ResetInputBuffer()
+      CH_BuforEditBox = {};
+      CH_BuforLength = 0;
+      CH_BuforCursor = 0;
+      CH_last_letter = "";
+      CH_highlight_text = false;
+   end
+
+   local function WrapEditBoxForArabic(editBox)
+      if (not editBox) or editBox.WoWAR_ArabicChatWrapped then return end
+      editBox.WoWAR_ArabicChatWrapped = true
+
+      local origOnShow = editBox:GetScript("OnShow")
+      editBox:SetScript("OnShow", function(self, ...)
+         CH_ActiveEditBox = self
+         if origOnShow then origOnShow(self, ...) end
+         CH_OnShow(self)
+      end)
+
+      local origOnHide = editBox:GetScript("OnHide")
+      editBox:SetScript("OnHide", function(self, ...)
+         CH_ActiveEditBox = self
+         if origOnHide then origOnHide(self, ...) end
+         CH_OnHide(self)
+      end)
+
+      -- Communities chat editbox typically stays visible between sends.
+      -- When a line is sent, Blizzard clears the editbox text asynchronously; if we don't reset our buffer,
+      -- the next character typed will rebuild the previous message from CH_BuforEditBox.
+      local origOnEnterPressed = editBox:GetScript("OnEnterPressed")
+      editBox:SetScript("OnEnterPressed", function(self, ...)
+         CH_ActiveEditBox = self
+         if origOnEnterPressed then origOnEnterPressed(self, ...) end
+         -- Clear our internal buffer immediately (send already happened).
+         CH_ResetInputBuffer()
+         -- And also re-check after Blizzard finishes clearing the editbox.
+         if C_Timer and self and self.GetText then
+            C_Timer.After(0, function()
+               if self and self.GetText and strlen(self:GetText() or "") == 0 then
+                  CH_ResetInputBuffer()
+               end
+            end)
+         end
+      end)
+
+      local origOnTextChanged = editBox:GetScript("OnTextChanged")
+      editBox:SetScript("OnTextChanged", function(self, userInput, ...)
+         if origOnTextChanged then origOnTextChanged(self, userInput, ...) end
+         if self and self.GetText and strlen(self:GetText() or "") == 0 then
+            CH_ResetInputBuffer()
+         end
+      end)
+
+      local origOnChar = editBox:GetScript("OnChar")
+      editBox:SetScript("OnChar", function(self, character, ...)
+         CH_ActiveEditBox = self
+         if origOnChar then origOnChar(self, character, ...) end
+         CH_OnChar(self, character)
+      end)
+
+      local origOnKeyDown = editBox:GetScript("OnKeyDown")
+      editBox:SetScript("OnKeyDown", function(self, key, ...)
+         CH_ActiveEditBox = self
+         CH_OnKeyDown(self, key)
+         if origOnKeyDown then origOnKeyDown(self, key, ...) end
+      end)
+
+      local origOnKeyUp = editBox:GetScript("OnKeyUp")
+      editBox:SetScript("OnKeyUp", function(self, key, ...)
+         CH_ActiveEditBox = self
+         if origOnKeyUp then origOnKeyUp(self, key, ...) end
+         CH_OnKeyUp(self, key)
+      end)
+   end
+
+   local function HookMessageFrameAddMessage(frame)
+      if (not frame) or (type(frame.AddMessage) ~= "function") then return end
+      if frame.originalAddMessage_WoWinArabic then return end
+
+      frame.originalAddMessage_WoWinArabic = frame.AddMessage
+      frame.AddMessage = function(self, text, r, g, b, id, holdTime, ...)
+         if (CH_PM and CH_PM["active"] == "0") or (not text) then
+            return self.originalAddMessage_WoWinArabic(self, text, r, g, b, id, holdTime, ...)
+         end
+         if (not CH_Check_Arabic_Letters(text)) or HasArabicPresentationForms(text) then
+            return self.originalAddMessage_WoWinArabic(self, text, r, g, b, id, holdTime, ...)
+         end
+
+         -- Try to keep the player/link prefix intact and only reshape the message payload.
+         local prefix, msg = string.match(text, "^(|Hplayer.-|h%[.-%]|h:%s*)(.*)$")
+         if not prefix then
+            prefix, msg = string.match(text, "^(%b[]:%s*)(.*)$")
+         end
+         if not prefix then
+            prefix, msg = string.match(text, "^([^:]+:%s*)(.*)$")
+         end
+
+         if prefix and msg and CH_Check_Arabic_Letters(msg) and (not HasArabicPresentationForms(msg)) then
+            text = prefix .. ReverseAndReshapeSafe(msg)
+         else
+            text = ReverseAndReshapeSafe(text)
+         end
+
+         return self.originalAddMessage_WoWinArabic(self, text, r, g, b, id, holdTime, ...)
+      end
+   end
+
+   local function SetupCommunitiesChat()
+      local cf = _G["CommunitiesFrame"]
+      if not cf then return false end
+
+      local messageFrame = cf.Chat and cf.Chat.MessageFrame
+      local editBox = cf.ChatEditBox or (cf.Chat and cf.Chat.EditBox)
+
+      if messageFrame and messageFrame.GetFont and messageFrame.SetFont then
+         local _, size, flags = messageFrame:GetFont()
+         messageFrame:SetFont(CH_Font, size or frameSize, flags)
+         HookSetFontToForceArabic(messageFrame)
+         fontGuardian:Register(messageFrame, size or frameSize, flags)
+         HookSetFontObject(messageFrame)
+         HookMessageFrameAddMessage(messageFrame)
+      end
+
+      if editBox and editBox.GetFont and editBox.SetFont then
+         local _, size, flags = editBox:GetFont()
+         editBox:SetFont(CH_Font, size or editBoxSize, flags)
+         HookSetFontToForceArabic(editBox)
+         fontGuardian:Register(editBox, size or editBoxSize, flags)
+         HookSetFontObject(editBox)
+         WrapEditBoxForArabic(editBox)
+      end
+
+      return (messageFrame ~= nil) or (editBox ~= nil)
+   end
+
+   local function TrySetupCommunitiesChat(retries)
+      if SetupCommunitiesChat() then return end
+      if retries and retries > 0 and C_Timer then
+         C_Timer.After(0.25, function()
+            TrySetupCommunitiesChat(retries - 1)
+         end)
+      end
+   end
+
+   -- If Communities UI is already present, hook immediately. Otherwise hook when Blizzard_Communities loads.
+   TrySetupCommunitiesChat(5)
+   local communitiesHookFrame = CreateFrame("Frame")
+   communitiesHookFrame:RegisterEvent("ADDON_LOADED")
+   communitiesHookFrame:SetScript("OnEvent", function(_, _, addonName)
+      if addonName == "Blizzard_Communities" then
+         TrySetupCommunitiesChat(20)
+      end
+   end)
    
 end
 
