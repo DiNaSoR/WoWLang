@@ -49,7 +49,8 @@ function WOWTR.Config.Groups.Tooltips()
           spell = { type = "toggle", name = WOWTR.Config.Label("translateSpells", "Spells"), order = 21, width = "full" },
           talent = { type = "toggle", name = WOWTR.Config.Label("translateTalents", "Talents"), order = 22, width = "full" },
           transtitle = { type = "toggle", name = WOWTR.Config.Label("translateTooltipTitle", "Translate titles"), order = 23, width = "full" },
-          save = { type = "toggle", name = WOWTR.Config.Label("saveUntranslatedTooltips", "Save untranslated"), order = 24, width = "full" },
+          -- TT_PS["save"] controls tutorial capture (TT_TUTORIALS) in common/Tutorials/Main.lua
+          save = { type = "toggle", name = WOWTR.Config.Label("saveUntranslatedTutorials", "Save untranslated tutorials"), order = 24, width = "full" },
           showID = { type = "toggle", name = "Show ID", order = 25, width = "full" },
           showHS = { type = "toggle", name = "Show Hash", order = 26, width = "full" },
           sellprice = { type = "toggle", name = "Hide sell price", order = 27, width = "full" },

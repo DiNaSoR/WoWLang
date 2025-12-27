@@ -5,15 +5,78 @@ local LDB = LibStub("LibDataBroker-1.1", true)
 local LDBIcon = LibStub("LibDBIcon-1.0", true)
 
 if LDB and LDBIcon then
+  local dropdownFrame
+  local function EnsureDropdown()
+    if dropdownFrame then return dropdownFrame end
+    dropdownFrame = CreateFrame("Frame", "WOWTR_MinimapDropdown", UIParent, "UIDropDownMenuTemplate")
+    dropdownFrame.displayMode = "MENU"
+    return dropdownFrame
+  end
+
+  local function ToggleMinimapIcon(show)
+    if not (WOWTR and WOWTR.db and WOWTR.db.profile and WOWTR.db.profile.minimap) then return end
+    WOWTR.db.profile.minimap.hide = not show
+    if WOWTR.Config and WOWTR.Config.SyncGlobalsFromDB then
+      WOWTR.Config.SyncGlobalsFromDB()
+    end
+    local iconLib = LibStub("LibDBIcon-1.0", true)
+    if iconLib then
+      if WOWTR.db.profile.minimap.hide then iconLib:Hide("WOWTR_LDB") else iconLib:Show("WOWTR_LDB") end
+    end
+    if WOWTR.Config and WOWTR.Config.NotifyChange then
+      WOWTR.Config.NotifyChange()
+    end
+  end
+
+  local function OpenConfig()
+    if LibStub("AceConfigDialog-3.0", true) then
+      LibStub("AceConfigDialog-3.0"):Open("WOWTR")
+    elseif Settings and WOWTR and WOWTR.CategoryID then
+      Settings.OpenToCategory(WOWTR.CategoryID)
+    end
+  end
+
+  local function OpenMinimapMenu(ownerButton)
+    local menu = {
+      { text = QTR_ReverseIfAR((WoWTR_Localization and WoWTR_Localization.optionTitle) or "WoWLang"), isTitle = true, notCheckable = true },
+      { text = QTR_ReverseIfAR("Open"), notCheckable = true, func = OpenConfig },
+      {
+        text = WOWTR.Config and WOWTR.Config.Label and WOWTR.Config.Label("showMinimapIcon", "Show minimap icon") or QTR_ReverseIfAR("Show minimap icon"),
+        keepShownOnClick = true,
+        checked = function() return WOWTR and WOWTR.db and WOWTR.db.profile and WOWTR.db.profile.minimap and (not WOWTR.db.profile.minimap.hide) end,
+        func = function()
+          local shown = WOWTR and WOWTR.db and WOWTR.db.profile and WOWTR.db.profile.minimap and (not WOWTR.db.profile.minimap.hide)
+          ToggleMinimapIcon(not shown)
+        end,
+      },
+      { text = CLOSE or QTR_ReverseIfAR("Close"), notCheckable = true },
+    }
+
+    local dd = EnsureDropdown()
+    if WOWTR and WOWTR.Fonts and WOWTR.Fonts.HookDropdownLists then
+      WOWTR.Fonts.HookDropdownLists()
+    end
+    if EasyMenu then
+      EasyMenu(menu, dd, "cursor", 0, 0, "MENU", 2)
+    elseif ToggleDropDownMenu then
+      UIDropDownMenu_Initialize(dd, function(self, level)
+        for _, item in ipairs(menu) do
+          UIDropDownMenu_AddButton(item, level)
+        end
+      end, "MENU")
+      ToggleDropDownMenu(1, nil, dd, "cursor", 0, 0)
+    end
+  end
+
   WOWTR_minimapButton = LDB:NewDataObject("WOWTR_LDB", {
     type = "data source",
     text = "WOWTR_LDB",
     icon = WoWTR_Localization.mainFolder .. "\\Images\\icon.png",
-    OnClick = function()
-      if LibStub("AceConfigDialog-3.0", true) then
-        LibStub("AceConfigDialog-3.0"):Open("WOWTR")
-      elseif Settings and WOWTR and WOWTR.CategoryID then
-        Settings.OpenToCategory(WOWTR.CategoryID)
+    OnClick = function(btn, mouseButton)
+      if mouseButton == "RightButton" then
+        OpenMinimapMenu(btn)
+      else
+        OpenConfig()
       end
     end,
     OnTooltipShow = function(tooltip)
@@ -23,8 +86,9 @@ if LDB and LDBIcon then
         tooltip:SetText(QTR_ReverseIfAR(WoWTR_Localization.optionTitle) .. " |cff8080ff" .. WOWTR_version .. "|r");
       end
       tooltip:AddLine("|cffffffff" .. QTR_ReverseIfAR(WoWTR_Localization.addonIconDesc) .. "|r");
-      _G[tooltip:GetName() .. "TextLeft1"]:SetFont(WOWTR_Font2, 15);
-      _G[tooltip:GetName() .. "TextLeft2"]:SetFont(WOWTR_Font2, 13);
+      if WOWTR and WOWTR.Fonts and WOWTR.Fonts.Apply then
+        WOWTR.Fonts.Apply(tooltip)
+      end
       tooltip:Show();
     end,
   })

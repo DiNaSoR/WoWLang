@@ -379,7 +379,10 @@ function Core.OnEvent(self, event, name, ...)
       if (QTR_mapID) then
         local QTR_mapINFO = C_Map.GetMapInfo(QTR_mapID)
         if QTR_mapINFO then
-          QTR_SAVED[QTR_quest_ID .. " MAPID"] = QTR_mapID .. "@" .. QTR_mapINFO.name .. "@" .. QTR_mapINFO.mapType .. "@" .. QTR_mapINFO.parentMapID
+          -- Config: allow disabling quest saving completely
+          if (QTR_PS and QTR_PS["saveQS"] == "1") then
+            QTR_SAVED[QTR_quest_ID .. " MAPID"] = QTR_mapID .. "@" .. QTR_mapINFO.name .. "@" .. QTR_mapINFO.mapType .. "@" .. QTR_mapINFO.parentMapID
+          end
         end
       end
     end

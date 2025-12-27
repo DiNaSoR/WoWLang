@@ -707,13 +707,17 @@ function Quests.Details.QuestPrepare(event)
           QTR_quest_LG[QTR_quest_ID].itemreceive = QTR_Messages.itemreceiv0
         end
         if (QTR_quest_EN[QTR_quest_ID].details and QTR_quest_LG[QTR_quest_ID].details == "") then
-          QTR_MISSING[QTR_quest_ID.." DESCRIPTION"] = WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].details)
+          if (QTR_PS and QTR_PS["saveQS"] == "1") then
+            QTR_MISSING[QTR_quest_ID.." DESCRIPTION"] = WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].details)
+          end
         end
         if (QTR_quest_LG[QTR_quest_ID].details == "") then
           QTR_quest_LG[QTR_quest_ID].details = QTR_quest_EN[QTR_quest_ID].details
         end
         if (QTR_quest_EN[QTR_quest_ID].objectives and QTR_quest_LG[QTR_quest_ID].objectives == "") then
-          QTR_MISSING[QTR_quest_ID.." OBJECTIVE"] = WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].objectives)
+          if (QTR_PS and QTR_PS["saveQS"] == "1") then
+            QTR_MISSING[QTR_quest_ID.." OBJECTIVE"] = WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].objectives)
+          end
         end
         if (QTR_quest_LG[QTR_quest_ID].objectives == "") then
           QTR_quest_LG[QTR_quest_ID].objectives = QTR_quest_EN[QTR_quest_ID].objectives
@@ -760,7 +764,9 @@ function Quests.Details.QuestPrepare(event)
           QTR_quest_LG[QTR_quest_ID].progress = QTR_QuestData[str_ID]["Progress"]
         end
         if (QTR_quest_EN[QTR_quest_ID].progress and QTR_quest_LG[QTR_quest_ID].progress == "") then
-          QTR_MISSING[QTR_quest_ID.." PROGRESS"] = WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].progress)
+          if (QTR_PS and QTR_PS["saveQS"] == "1") then
+            QTR_MISSING[QTR_quest_ID.." PROGRESS"] = WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].progress)
+          end
         end
         if (QTR_quest_LG[QTR_quest_ID].progress == "") then
           QTR_quest_LG[QTR_quest_ID].progress = QTR_quest_EN[QTR_quest_ID].progress
@@ -787,7 +793,9 @@ function Quests.Details.QuestPrepare(event)
           QTR_quest_LG[QTR_quest_ID].itemreceive = QTR_Messages.itemreceiv2
         end
         if (QTR_quest_EN[QTR_quest_ID].completion and QTR_quest_LG[QTR_quest_ID].completion == "") then
-          QTR_MISSING[QTR_quest_ID.." COMPLETE"] = WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].completion)
+          if (QTR_PS and QTR_PS["saveQS"] == "1") then
+            QTR_MISSING[QTR_quest_ID.." COMPLETE"] = WOWTR_DetectAndReplacePlayerName(QTR_quest_EN[QTR_quest_ID].completion)
+          end
         end
         if (QTR_quest_LG[QTR_quest_ID].completion == "") then
           QTR_quest_LG[QTR_quest_ID].completion = QTR_quest_EN[QTR_quest_ID].completion

@@ -32,6 +32,10 @@ end
 
 -- Save quest original texts for translation
 function Quests.SaveQuest(event)
+   -- Config: allow disabling quest saving completely
+   if (not QTR_PS) or (QTR_PS["saveQS"] ~= "1") then
+      return
+   end
    if (event=="QUEST_DETAIL") then
       QTR_SAVED[QTR_quest_ID.." TITLE"]=C_QuestLog.GetTitleForQuestID(QTR_quest_ID)
       QTR_SAVED[QTR_quest_ID.." DESCRIPTION"]=WOWTR_DetectAndReplacePlayerName(QuestInfoDescriptionText:GetText())

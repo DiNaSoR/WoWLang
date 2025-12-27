@@ -102,6 +102,15 @@ end
 -- Replace addon placeholders with game-friendly sequences and player data.
 function Text.WOW_ZmienKody(message, target)
   local msg = message
+  -- Config: allow forcing player gender used for $G / YOUR_GENDER expansions (Male/Female/Character).
+  -- Stored under bubbles config as BB_PM["sex"]: "2"=Male, "3"=Female, "4"=Character (use UnitSex("player")).
+  local effectivePlayerSex = WOWTR_player_sex
+  do
+    local override = BB_PM and tonumber(BB_PM["sex"])
+    if override == 2 or override == 3 then
+      effectivePlayerSex = override
+    end
+  end
   if (WoWTR_Localization and WoWTR_Localization.lang == 'AR') then
     msg = string.gsub(msg, "{N}", "YOUR_NAME")
     msg = string.gsub(msg, "{B}", "NEW_LINE")
@@ -134,23 +143,23 @@ function Text.WOW_ZmienKody(message, target)
   msg = string.gsub(msg, "NEW_LINE", "\n")
 
   if (WoWTR_Localization and WoWTR_Localization.lang == 'AR') then
-    if (WOWTR_player_sex == 3) then
+    if (effectivePlayerSex == 3) then
       msg = string.gsub(msg, "YOUR_CLASS", player_class_table.F)
     else
       msg = string.gsub(msg, "YOUR_CLASS", player_class_table.M)
     end
-    if (WOWTR_player_sex == 3) then
+    if (effectivePlayerSex == 3) then
       msg = string.gsub(msg, "YOUR_RACE", player_race_table.F)
     else
       msg = string.gsub(msg, "YOUR_RACE", player_race_table.M)
     end
   else
-    if (WOWTR_player_sex == 3) then
+    if (effectivePlayerSex == 3) then
       msg = string.gsub(msg, "YOUR_RACE1", WOWTR_AnsiReverse(player_race_table.M2))
     else
       msg = string.gsub(msg, "YOUR_RACE1", WOWTR_AnsiReverse(player_race_table.M1))
     end
-    if (WOWTR_player_sex == 3) then
+    if (effectivePlayerSex == 3) then
       msg = string.gsub(msg, "YOUR_RACE2", WOWTR_AnsiReverse(player_race_table.D2))
     else
       msg = string.gsub(msg, "YOUR_RACE2", WOWTR_AnsiReverse(player_race_table.D1))
@@ -192,7 +201,7 @@ function Text.WOW_ZmienKody(message, target)
 
   if (string.find(msg, "YOUR_GENDER")) then
     if (WoWTR_Localization.lang == 'AR') then
-      if (WOWTR_player_sex == 3) then
+      if (effectivePlayerSex == 3) then
         msg = string.gsub(msg, "YOUR_GENDER", "F")
       else
         msg = string.gsub(msg, "YOUR_GENDER", "M")
