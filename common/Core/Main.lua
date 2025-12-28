@@ -106,23 +106,14 @@ function Core.CheckVars()
 
   QTR_GS = {}
 
-  if (not QTR_PS["icon"]) then QTR_PS["icon"] = "1" end
-  if (not QTR_PS["active"]) then QTR_PS["active"] = "1" end
-  if (not QTR_PS["transtitle"]) then QTR_PS["transtitle"] = "1" end
-  if (not QTR_PS["gossip"]) then QTR_PS["gossip"] = "1" end
-  if (not QTR_PS["fontsize"]) then QTR_PS["fontsize"] = "13" end
-  if (not QTR_PS["ownnames"]) then QTR_PS["ownnames"] = "0" end
-  if (not QTR_PS["tracker"]) then QTR_PS["tracker"] = "1" end
-  if (not QTR_PS["saveQS"]) then QTR_PS["saveQS"] = "1" end
-  if (not QTR_PS["saveGS"]) then QTR_PS["saveGS"] = "1" end
-  if (not QTR_PS["questlog"]) then QTR_PS["questlog"] = "1" end
-  if (not QTR_PS["immersion"]) then QTR_PS["immersion"] = "1" end
-  if (not QTR_PS["storyline"]) then QTR_PS["storyline"] = "1" end
-  if (not QTR_PS["dialogueui"]) then QTR_PS["dialogueui"] = "1" end
-  if (not QTR_PS["en_first"]) then QTR_PS["en_first"] = "0" end
-  if (not QTR_PS["FontFile"]) then QTR_PS["FontFile"] = WOWTR_Fonts and WOWTR_Fonts[1] or QTR_PS["FontFile"] end
+  -- Centralized legacy defaults/mapping (single source of truth).
+  if WOWTR and WOWTR.LegacyBridge and WOWTR.LegacyBridge.EnsureLegacyDefaults then
+    WOWTR.LegacyBridge.EnsureLegacyDefaults()
+  end
+
+  -- Font selection for legacy quest/gossip rendering (depends on QTR_PS["FontFile"]).
   if (WOWTR_Fonts and #WOWTR_Fonts > 1) then
-    WOWTR_Font2 = WoWTR_Localization.mainFolder .. "\\Fonts\\" .. QTR_PS["FontFile"]
+    WOWTR_Font2 = WoWTR_Localization.mainFolder .. "\\Fonts\\" .. (QTR_PS["FontFile"] or WOWTR_Fonts[1])
   end
 
   if (not QTR_PS.firstTimeLoaded) then
@@ -143,22 +134,8 @@ function Core.CheckVars()
     end
   end
 
-  if (not BB_PM["active"]) then BB_PM["active"] = "1" end
-  if (not BB_PM["chat-en"]) then BB_PM["chat-en"] = "0" end
-  if (not BB_PM["chat-tr"]) then BB_PM["chat-tr"] = "1" end
-  if (not BB_PM["saveNB"]) then BB_PM["saveNB"] = "1" end
   if (not BB_PM["TRonline"]) then BB_PM["TRonline"] = "0" end
-  if (not BB_PM["setsize"]) then BB_PM["setsize"] = "0" end
-  if (not BB_PM["fontsize"]) then BB_PM["fontsize"] = "13" end
-  if (not BB_PM["sex"]) then BB_PM["sex"] = "4" end
-  if (not BB_PM["dungeon"]) then BB_PM["dungeon"] = "0" end
   BB_PM["dungeonF"] = "0"
-  if (not BB_PM["dungeonF1"]) then BB_PM["dungeonF1"] = 270 end
-  if (not BB_PM["dungeonF2"]) then BB_PM["dungeonF2"] = 270 end
-  if (not BB_PM["dungeonF3"]) then BB_PM["dungeonF3"] = 270 end
-  if (not BB_PM["dungeonF4"]) then BB_PM["dungeonF4"] = 270 end
-  if (not BB_PM["dungeonF5"]) then BB_PM["dungeonF5"] = 270 end
-  if (not BB_PM["timeDisplay"]) then BB_PM["timeDisplay"] = "5" end
   if (WOWBB1) then
     WOWBB1.vertical = BB_PM["dungeonF1"]
     WOWBB2.vertical = BB_PM["dungeonF2"]
@@ -167,49 +144,15 @@ function Core.CheckVars()
     WOWBB5.vertical = BB_PM["dungeonF5"]
   end
 
-  if (not MF_PM["active"]) then MF_PM["active"] = "1" end
-  if (not MF_PM["intro"]) then MF_PM["intro"] = "1" end
-  if (not MF_PM["movie"]) then MF_PM["movie"] = "1" end
-  if (not MF_PM["cinematic"]) then MF_PM["cinematic"] = "1" end
-  if (not MF_PM["save"]) then MF_PM["save"] = "1" end
-
-  TT_PS = TT_PS or {}
-  if (not TT_PS["active"]) then TT_PS["active"] = "1" end
-  if (not TT_PS["save"]) then TT_PS["save"] = "1" end
-  if (not TT_PS["saveui"]) then TT_PS["saveui"] = "1" end
-  for i=1,8 do if (not TT_PS["ui"..i]) then TT_PS["ui"..i] = "1" end end
-  if (not TT_PS["ui_talents"]) then TT_PS["ui_talents"] = "1" end
+  -- TT_PS defaults are handled by LegacyBridge; tutorials table remains legacy-only.
   TT_TUTORIALS = TT_TUTORIALS or {}
 
-  BT_PM = BT_PM or {}
-  if (not BT_PM["active"]) then BT_PM["active"] = "1" end
-  if (not BT_PM["title"]) then BT_PM["title"] = "1" end
-  if (not BT_PM["showID"]) then BT_PM["showID"] = "1" end
-  if (not BT_PM["setsize"]) then BT_PM["setsize"] = "0" end
-  if (not BT_PM["fontsize"]) then BT_PM["fontsize"] = 15 end
-  if (not BT_PM["saveNW"]) then BT_PM["saveNW"] = "1" end
+  -- BT_PM defaults are handled by LegacyBridge; BT_SAVED remains legacy-only.
   BT_SAVED = BT_SAVED or {}
 
-  ST_PM = ST_PM or {}
+  -- ST_PM defaults are handled by LegacyBridge; ST_PS/ST_PH remain legacy-only.
   ST_PS = ST_PS or {}
   ST_PH = ST_PH or {}
-  if (not ST_PM["active"]) then ST_PM["active"] = "1" end
-  if (not ST_PM["item"]) then ST_PM["item"] = "1" end
-  if (not ST_PM["spell"]) then ST_PM["spell"] = "1" end
-  if (not ST_PM["talent"]) then ST_PM["talent"] = "1" end
-  if (not ST_PM["transtitle"]) then ST_PM["transtitle"] = "0" end
-  if (not ST_PM["showID"]) then ST_PM["showID"] = "0" end
-  if (not ST_PM["showHS"]) then ST_PM["showHS"] = "0" end
-  if (not ST_PM["saveNW"]) then ST_PM["saveNW"] = "1" end
-  if (not ST_PM["sellprice"]) then ST_PM["sellprice"] = "0" end
-  if (not ST_PM["constantly"]) then ST_PM["constantly"] = "1" end
-  if (not ST_PM["timer"]) then ST_PM["timer"] = "10" end
-
-  if (WoWTR_Localization and WoWTR_Localization.lang == 'AR') then
-    CH_PM = CH_PM or {}
-    if (not CH_PM["active"]) then CH_PM["active"] = "1" end
-    if (not CH_PM["fontsize"]) then CH_PM["fontsize"] = "13" end
-  end
 
   WoWTR_minimapDB = WoWTR_minimapDB or {}
 

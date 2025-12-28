@@ -35,6 +35,7 @@ WoW_Localization_AR.lua
 Changelog_AR.lua
 common/Core/State.lua
 common/Core/Debug.lua
+common/Core/LegacyBridge.lua
 common/Core/Main.lua
 common/UI/Fonts.lua
 common/Config/Helpers.lua
