@@ -163,11 +163,69 @@ function Quests.Details.TranslateOn(typ,event)
          local rtl = (Quests.Utils and Quests.Utils.IsRTL and Quests.Utils.IsRTL()) or false
          if rtl then WOW_width = 320 end
          if (QuestInfoRewardsFrame:IsVisible() and not rtl) then WOW_width = 280 end
+         -- Unified text column width (make Title/Desc/Obj/Prog/Comp match).
+         -- In RTL we previously used a wider title with a -50 correction; now we keep widths equal and place the icon outside.
+         local textW = rtl and (WOW_width - 50) or (WOW_width - 1)
+         -- Some Blizzard FontStrings are anchored LEFT+RIGHT, so `SetWidth()` alone doesn't change the actual width.
+         -- For "perfect same width", we also tighten the RIGHT anchor by the measured delta.
+         Quests.Details._OrigPoints = Quests.Details._OrigPoints or {}
+         Quests.Details._AppliedDelta = Quests.Details._AppliedDelta or {}
+         local function savePoints(fs)
+            if not (fs and fs.GetNumPoints and fs.GetPoint) then return end
+            if Quests.Details._OrigPoints[fs] then return end
+            local pts = {}
+            local n = fs:GetNumPoints() or 0
+            for i = 1, n do
+               pts[i] = { fs:GetPoint(i) }
+            end
+            Quests.Details._OrigPoints[fs] = pts
+         end
+
+         local function enforceWidth(fs, desiredW)
+            if not (fs and desiredW and fs.GetWidth) then return end
+            if fs.SetWidth then fs:SetWidth(desiredW) end
+            local w0 = fs:GetWidth() or 0
+            local delta = w0 - desiredW
+            if delta > 0.5 and fs.GetNumPoints and fs:GetNumPoints() >= 2 and fs.GetPoint and fs.ClearAllPoints and fs.SetPoint then
+               savePoints(fs)
+               local pts = {}
+               local n = fs:GetNumPoints() or 0
+               for i = 1, n do
+                  pts[i] = { fs:GetPoint(i) }
+               end
+
+               -- Find which point is the RIGHT anchor, then shift it left by delta.
+               local rightIndex = nil
+               for i = 1, n do
+                  local p, relTo, relP = pts[i][1], pts[i][2], pts[i][3]
+                  if type(p) == "string" and p:find("RIGHT") then
+                     rightIndex = i
+                     break
+                  end
+                  if type(relP) == "string" and relP:find("RIGHT") then
+                     rightIndex = i
+                     break
+                  end
+               end
+               if not rightIndex then rightIndex = n end
+               pts[rightIndex][4] = (pts[rightIndex][4] or 0) - delta
+
+               fs:ClearAllPoints()
+               for i = 1, n do
+                  fs:SetPoint(unpack(pts[i]))
+               end
+
+               -- Remember the margin we created so we can place the title icon consistently across post-layout refresh passes.
+               Quests.Details._AppliedDelta[fs] = delta
+            end
+         end
 
          if (QTR_PS["transtitle"] == "1") then
             local currentHeaderTitle = (QuestInfoTitleHeader and QuestInfoTitleHeader.GetText and QuestInfoTitleHeader:GetText()) or ""
-            QuestInfoTitleHeader:SetWidth(WOW_width)
-            QuestProgressTitleText:SetWidth(WOW_width)
+            QuestInfoTitleHeader:SetWidth(textW)
+            QuestProgressTitleText:SetWidth(textW)
+            enforceWidth(QuestInfoTitleHeader, textW)
+            enforceWidth(QuestProgressTitleText, textW)
             -- Cache the ORIGINAL quest title font so we can render any "icon glyph" that doesn't exist in Arabic fonts.
             -- (Some decorations use private glyphs that only render correctly with the original FontString font.)
             Quests.Details._TitleIconFontCache = Quests.Details._TitleIconFontCache or {}
@@ -276,6 +334,15 @@ function Quests.Details.TranslateOn(typ,event)
                titleENDecorated = currentHeaderTitle
             end
             local leadingTags, leadingGlyph = extractLeadingTitleDecorations(titleENDecorated)
+            -- Capture the leading hyperlink decoration (if present) so our overlay icon can reproduce its tooltip behavior.
+            local leadingLinkRef = titleENDecorated:match("^|H([^|]+)|h")
+            local leadingLinkText = titleENDecorated:match("^|H.-|h(.-)|h")
+            Quests.Details._TitleDecorLinks = Quests.Details._TitleDecorLinks or {}
+            if leadingLinkRef and leadingLinkRef ~= "" then
+               Quests.Details._TitleDecorLinks[QTR_quest_ID] = { ref = leadingLinkRef, text = leadingLinkText }
+            else
+               Quests.Details._TitleDecorLinks[QTR_quest_ID] = nil
+            end
 
             -- Inline tags are safe to keep inside the Arabic title (they render regardless of font).
             if leadingTags ~= "" and type(titleLG) == "string" and titleLG ~= "" and (not titleLG:find("|T", 1, true)) and (not titleLG:find("|A", 1, true)) then
@@ -289,11 +356,27 @@ function Quests.Details.TranslateOn(typ,event)
 
             -- Leading icon glyph: render in a separate FontString using the ORIGINAL quest font (Arabic fonts may not contain it).
             do
-               if not Quests.Details._TitleIconFS and QuestInfoTitleHeader and QuestInfoTitleHeader.GetParent and QuestInfoTitleHeader:GetParent() then
-                  Quests.Details._TitleIconFS = QuestInfoTitleHeader:GetParent():CreateFontString(nil, "OVERLAY")
+               local titleParent = (QuestInfoTitleHeader and QuestInfoTitleHeader.GetParent and QuestInfoTitleHeader:GetParent()) or nil
+               local progParent = (QuestProgressTitleText and QuestProgressTitleText.GetParent and QuestProgressTitleText:GetParent()) or nil
+               if not Quests.Details._TitleIconFS and titleParent then
+                  Quests.Details._TitleIconFS = titleParent:CreateFontString(nil, "OVERLAY")
                end
-               if not Quests.Details._ProgressTitleIconFS and QuestProgressTitleText and QuestProgressTitleText.GetParent and QuestProgressTitleText:GetParent() then
-                  Quests.Details._ProgressTitleIconFS = QuestProgressTitleText:GetParent():CreateFontString(nil, "OVERLAY")
+               if not Quests.Details._ProgressTitleIconFS and progParent then
+                  Quests.Details._ProgressTitleIconFS = progParent:CreateFontString(nil, "OVERLAY")
+               end
+
+               -- Mouse hit boxes so the overlay icon has the same tooltip hover behavior as the original title hyperlink.
+               if not Quests.Details._TitleIconHit and titleParent then
+                  local hit = CreateFrame("Frame", nil, titleParent)
+                  hit:EnableMouse(true)
+                  hit:SetFrameStrata("TOOLTIP")
+                  Quests.Details._TitleIconHit = hit
+               end
+               if not Quests.Details._ProgressTitleIconHit and progParent then
+                  local hit2 = CreateFrame("Frame", nil, progParent)
+                  hit2:EnableMouse(true)
+                  hit2:SetFrameStrata("TOOLTIP")
+                  Quests.Details._ProgressTitleIconHit = hit2
                end
 
                local iconFS = Quests.Details._TitleIconFS
@@ -305,11 +388,48 @@ function Quests.Details.TranslateOn(typ,event)
                   local iconFont = (cache and cache.font) or Original_Font1
                   local iconSize = (cache and cache.size) or titleSize
                   local iconFlags = (cache and cache.flags) or ""
+                  local function showHyperlinkTooltip(ownerFrame, linkRef, linkText)
+                     -- Try to reuse Blizzard's handler on the owning frame (if present), else fall back to GameTooltip.
+                     if ownerFrame and ownerFrame.GetScript then
+                        local hEnter = ownerFrame:GetScript("OnHyperlinkEnter")
+                        if type(hEnter) == "function" then
+                           pcall(hEnter, ownerFrame, linkRef, linkText)
+                           return
+                        end
+                     end
+                     if GameTooltip then
+                        GameTooltip:SetOwner(ownerFrame or UIParent, "ANCHOR_RIGHT")
+                        local full = "|H" .. tostring(linkRef) .. "|h" .. tostring(linkText or "") .. "|h"
+                        local ok = pcall(GameTooltip.SetHyperlink, GameTooltip, full)
+                        if not ok then
+                           GameTooltip:SetText(tostring(linkRef))
+                        end
+                        GameTooltip:Show()
+                     end
+                  end
+
+                  local function hideHyperlinkTooltip(ownerFrame, linkRef, linkText)
+                     if ownerFrame and ownerFrame.GetScript then
+                        local hLeave = ownerFrame:GetScript("OnHyperlinkLeave")
+                        if type(hLeave) == "function" then
+                           pcall(hLeave, ownerFrame, linkRef, linkText)
+                        end
+                     end
+                     if GameTooltip then GameTooltip:Hide() end
+                  end
+
                   if iconFS then
                      iconFS:ClearAllPoints()
                      if rtl then
-                        iconFS:SetPoint("RIGHT", QuestInfoTitleHeader, "RIGHT", -2, 0)
+                        -- Place the icon inside the right margin created by enforceWidth() (see lessons L-013).
+                        -- Also reserve a fixed region width so late-loading |A/|T icon payloads can't expand left into the title.
+                        local dx = (Quests.Details._AppliedDelta and Quests.Details._AppliedDelta[QuestInfoTitleHeader]) or 0
+                        if dx < 0 then dx = 0 end
+                        iconFS:SetWidth(22)
+                        iconFS:SetJustifyH("RIGHT")
+                        iconFS:SetPoint("RIGHT", QuestInfoTitleHeader, "RIGHT", dx - -8, 0)
                      else
+                        iconFS:SetWidth(0)
                         iconFS:SetPoint("LEFT", QuestInfoTitleHeader, "LEFT", 0, 0)
                      end
                      iconFS:SetFont(iconFont, iconSize or titleSize, iconFlags)
@@ -319,45 +439,94 @@ function Quests.Details.TranslateOn(typ,event)
                   if iconFS2 then
                      iconFS2:ClearAllPoints()
                      if rtl then
-                        iconFS2:SetPoint("RIGHT", QuestProgressTitleText, "RIGHT", -2, 0)
+                        local dx2 = (Quests.Details._AppliedDelta and Quests.Details._AppliedDelta[QuestProgressTitleText]) or 0
+                        if dx2 < 0 then dx2 = 0 end
+                        iconFS2:SetWidth(22)
+                        iconFS2:SetJustifyH("RIGHT")
+                        iconFS2:SetPoint("RIGHT", QuestProgressTitleText, "RIGHT", dx2 - -8, 0)
                      else
+                        iconFS2:SetWidth(0)
                         iconFS2:SetPoint("LEFT", QuestProgressTitleText, "LEFT", 0, 0)
                      end
                      iconFS2:SetFont(iconFont, iconSize or titleSize, iconFlags)
                      iconFS2:SetText(leadingGlyph)
                      iconFS2:Show()
                   end
+
+                  -- Position and wire hover tooltips for the icon hit boxes.
+                  local linkInfo = Quests.Details._TitleDecorLinks and Quests.Details._TitleDecorLinks[QTR_quest_ID]
+                  local linkRef = linkInfo and linkInfo.ref or nil
+                  local linkText = linkInfo and linkInfo.text or nil
+                  if Quests.Details._TitleIconHit and iconFS and iconFS.IsShown and iconFS:IsShown() and linkRef then
+                     local hit = Quests.Details._TitleIconHit
+                     hit:ClearAllPoints()
+                     hit:SetPoint("CENTER", iconFS, "CENTER", 0, 0)
+                     hit:SetSize(22, 22)
+                     hit:Show()
+                     hit:SetScript("OnEnter", function(self)
+                        showHyperlinkTooltip(titleParent or self, linkRef, linkText)
+                     end)
+                     hit:SetScript("OnLeave", function(self)
+                        hideHyperlinkTooltip(titleParent or self, linkRef, linkText)
+                     end)
+                  elseif Quests.Details._TitleIconHit then
+                     Quests.Details._TitleIconHit:Hide()
+                  end
+
+                  if Quests.Details._ProgressTitleIconHit and iconFS2 and iconFS2.IsShown and iconFS2:IsShown() and linkRef then
+                     local hit2 = Quests.Details._ProgressTitleIconHit
+                     hit2:ClearAllPoints()
+                     hit2:SetPoint("CENTER", iconFS2, "CENTER", 0, 0)
+                     hit2:SetSize(22, 22)
+                     hit2:Show()
+                     hit2:SetScript("OnEnter", function(self)
+                        showHyperlinkTooltip(progParent or self, linkRef, linkText)
+                     end)
+                     hit2:SetScript("OnLeave", function(self)
+                        hideHyperlinkTooltip(progParent or self, linkRef, linkText)
+                     end)
+                  elseif Quests.Details._ProgressTitleIconHit then
+                     Quests.Details._ProgressTitleIconHit:Hide()
+                  end
                else
                   if iconFS then iconFS:Hide() end
                   if iconFS2 then iconFS2:Hide() end
+                  if Quests.Details._TitleIconHit then Quests.Details._TitleIconHit:Hide() end
+                  if Quests.Details._ProgressTitleIconHit then Quests.Details._ProgressTitleIconHit:Hide() end
                end
             end
 
             if (WorldMapFrame:IsVisible()) then
                if rtl then
-                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestInfoTitleHeader, WOWTR_Font1, -50, "RIGHT"))
+                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestInfoTitleHeader, WOWTR_Font1, -5, "RIGHT"))
                else
-                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestInfoTitleHeader, WOWTR_Font1, -50))
+                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestInfoTitleHeader, WOWTR_Font1, -5))
                end
             else
                if rtl then
-                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestInfoTitleHeader, WOWTR_Font1, -50, "RIGHT"))
+                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestInfoTitleHeader, WOWTR_Font1, -5, "RIGHT"))
                else
-                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestInfoTitleHeader, WOWTR_Font1, -50))
+                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestInfoTitleHeader, WOWTR_Font1, -5))
                end
             end
             if rtl then
-               QuestProgressTitleText:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestProgressTitleText, WOWTR_Font1, -50, "RIGHT"))
+               QuestProgressTitleText:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestProgressTitleText, WOWTR_Font1, -5, "RIGHT"))
             else
-               QuestProgressTitleText:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestProgressTitleText, WOWTR_Font1, -50))
+               QuestProgressTitleText:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestProgressTitleText, WOWTR_Font1, -5))
             end
          end
 
          if rtl then
-            QuestInfoDescriptionText:SetWidth(WOW_width - 50)
-            QuestInfoObjectivesText:SetWidth(WOW_width - 50)
-            QuestProgressText:SetWidth(WOW_width - 50)
-            QuestInfoRewardText:SetWidth(WOW_width - 45)
+            QuestInfoDescriptionText:SetWidth(textW)
+            QuestInfoObjectivesText:SetWidth(textW)
+            QuestProgressText:SetWidth(textW)
+            QuestInfoRewardText:SetWidth(textW)
+            -- Also unify section header widths (e.g. "الوصف") to match the same text column width.
+            enforceWidth(QuestInfoDescriptionHeader, textW)
+            enforceWidth(QuestInfoObjectivesHeader, textW)
+            if QuestInfoRewardsFrame and QuestInfoRewardsFrame.Header then
+               enforceWidth(QuestInfoRewardsFrame.Header, textW)
+            end
          else
             QuestInfoDescriptionText:SetWidth(WOW_width - 1)
             QuestInfoObjectivesText:SetWidth(WOW_width - 1)
@@ -522,7 +691,7 @@ function Quests.Details.TranslateOn(typ,event)
             end
          end
          if QuestInfoObjectivesText and QTR_quest_LG[QTR_quest_ID] and QTR_quest_LG[QTR_quest_ID].objectives then
-            QuestInfoObjectivesText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].objectives,true,QuestInfoObjectivesText,WOWTR_Font2,-10))
+            QuestInfoObjectivesText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].objectives,true,QuestInfoObjectivesText,WOWTR_Font2,-5))
             if rtl then QuestInfoObjectivesText:SetJustifyH("RIGHT") else QuestInfoObjectivesText:SetJustifyH("LEFT") end
             if WOWTR and WOWTR.Debug then
               WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Objectives text set")
@@ -531,7 +700,7 @@ function Quests.Details.TranslateOn(typ,event)
             end
          end
          if QuestProgressText and QTR_quest_LG[QTR_quest_ID] and QTR_quest_LG[QTR_quest_ID].progress then
-            QuestProgressText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].progress,false,QuestProgressText,WOWTR_Font2))
+            QuestProgressText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].progress,false,QuestProgressText,WOWTR_Font2,-5))
             if rtl then QuestProgressText:SetJustifyH("RIGHT") else QuestProgressText:SetJustifyH("LEFT") end
             if WOWTR and WOWTR.Debug then
               WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Progress text set")
@@ -726,6 +895,31 @@ function Quests.Details.TranslateOff(typ,event)
    if Quests and Quests.Details then
      if Quests.Details._TitleIconFS then Quests.Details._TitleIconFS:Hide() end
      if Quests.Details._ProgressTitleIconFS then Quests.Details._ProgressTitleIconFS:Hide() end
+     if Quests.Details._TitleIconHit then Quests.Details._TitleIconHit:Hide() end
+     if Quests.Details._ProgressTitleIconHit then Quests.Details._ProgressTitleIconHit:Hide() end
+   end
+
+   -- Restore original anchor points for any FontStrings we tightened for RTL "perfect width".
+   do
+     local orig = Quests and Quests.Details and Quests.Details._OrigPoints
+     if orig then
+       local function restore(fs)
+         local pts = fs and orig[fs]
+         if pts and fs and fs.ClearAllPoints and fs.SetPoint then
+           fs:ClearAllPoints()
+           for i = 1, #pts do
+             fs:SetPoint(unpack(pts[i]))
+           end
+         end
+       end
+       restore(QuestInfoTitleHeader)
+       restore(QuestProgressTitleText)
+       restore(QuestInfoDescriptionHeader)
+       restore(QuestInfoObjectivesHeader)
+       if QuestInfoRewardsFrame and QuestInfoRewardsFrame.Header then
+         restore(QuestInfoRewardsFrame.Header)
+       end
+     end
    end
    if (typ==1) then
       local numer_ID = QTR_quest_ID

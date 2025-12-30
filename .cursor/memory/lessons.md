@@ -244,3 +244,20 @@
 
 ### Rule
 > For title decorations, handle `|H` display payloads that start with `|A`/`|T` tags, not just glyphs.
+
+---
+
+## L-013 — `SetWidth()` does not override LEFT+RIGHT anchors; to enforce exact width, adjust the RIGHT anchor offset
+
+### Symptom
+- `QuestInfoTitleHeader:GetWidth()` stays larger than expected even after `SetWidth()`.
+
+### Root cause
+- Many Blizzard quest FontStrings are anchored with **two points** (e.g. LEFT + RIGHT / TOPLEFT + TOPRIGHT).
+- In that case, the effective width is controlled by anchors, not `SetWidth()`.
+
+### Correct approach
+- Save original points once.
+- Compute `delta = currentWidth - desiredWidth`.
+- Shift the **RIGHT-side anchor**’s X offset left by `delta` to enforce the width.
+- Store `delta` so any overlay elements (like the quest icon) can use the created margin reliably across post-layout refreshes.

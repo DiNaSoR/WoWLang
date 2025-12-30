@@ -1,6 +1,9 @@
 ---
-description:
+description: "WoWLang/WoWAR global rules + project memory protocol"
 globs:
+  - "**/*.lua"
+  - "**/*.toc"
+  - "**/*.xml"
 alwaysApply: true
 ---
 

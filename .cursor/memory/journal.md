@@ -87,3 +87,15 @@
 
 - [Quests][RTL] Moved quest title icon overlay to the RTL side (right) for Arabic.
   - Fix: `common/Quests/Details.lua` anchors the overlay FontString to `RIGHT` when `rtl` is true (keeps `LEFT` for LTR).
+
+- [Quests][RTL] Unified quest text column widths for consistent wrapping.
+  - `common/Quests/Details.lua`: in RTL mode, Title/Description/Objectives/Progress/Completion now all use the same `textW` width.
+  - The quest title icon overlay is positioned in the reserved RTL margin (outside the text column) so it doesn’t reduce the text width or overlap the title.
+  - Follow-up: Title FontString is anchored LEFT+RIGHT in Blizzard UI, so we also tighten the RIGHT anchor by the measured delta to make `GetWidth()` match exactly.
+  - Also unified section header widths (`QuestInfoDescriptionHeader`, etc.) to the same `textW`.
+  - Bugfix: The title icon overlay must stay anchored to `QuestInfoTitleHeader` (not the parent), using the stored delta margin; otherwise it drifts vertically (e.g. landing on the “الوصف” header).
+
+- [Quests][RTL] Restored hover tooltip + stable placement for the quest title icon overlay in Arabic.
+  - Root cause: the overlay icon is a separate FontString, so it didn’t participate in Blizzard’s hyperlink hover handling; additionally, `|A`/`|T` payload widths can “pop in” shortly after setting text and shift the icon into/outside the frame depending on anchoring.
+  - Fix: `common/Quests/Details.lua` now creates a small mouse hitbox over the overlay icon and forwards hover events to the original `OnHyperlinkEnter/Leave` handler (fallback: `GameTooltip:SetHyperlink`).
+  - Placement: in RTL, the icon is positioned using the `enforceWidth()` delta margin (L-013) and given a fixed width so late-loading icon payloads cannot expand into the title text or off the frame.
