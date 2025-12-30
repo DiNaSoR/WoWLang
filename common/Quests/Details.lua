@@ -382,6 +382,15 @@ function Quests.Details.TranslateOn(typ,event)
                local iconFS = Quests.Details._TitleIconFS
                local iconFS2 = Quests.Details._ProgressTitleIconFS
 
+               local inQuestMap = (QuestMapFrame and QuestMapFrame.IsVisible and QuestMapFrame:IsVisible()) or false
+               -- To avoid a visible "snap" (Blizzard/ElvUI can adjust anchors/fonts after our first pass),
+               -- defer showing the overlay icon until the post-layout reapply pass in QuestMapFrame.
+               local allowIconShow = not (rtl and inQuestMap and event ~= "__post__")
+
+               Quests.Details._IconPosLock = Quests.Details._IconPosLock or {}
+               local lockIdTitle = tostring(QTR_quest_ID or 0) .. ":title:" .. (inQuestMap and "map" or "other")
+               local lockIdProg = tostring(QTR_quest_ID or 0) .. ":prog:" .. (inQuestMap and "map" or "other")
+
                if leadingGlyph ~= "" and Original_Font1 then
                   local titleSize = C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtitle.size or 18
                   local cache = Quests.Details._TitleIconFontCache and Quests.Details._TitleIconFontCache[QTR_quest_ID]
@@ -419,45 +428,92 @@ function Quests.Details.TranslateOn(typ,event)
                   end
 
                   if iconFS then
-                     iconFS:ClearAllPoints()
-                     if rtl then
-                        -- Place the icon inside the right margin created by enforceWidth() (see lessons L-013).
-                        -- Also reserve a fixed region width so late-loading |A/|T icon payloads can't expand left into the title.
-                        local dx = (Quests.Details._AppliedDelta and Quests.Details._AppliedDelta[QuestInfoTitleHeader]) or 0
-                        if dx < 0 then dx = 0 end
-                        iconFS:SetWidth(22)
-                        iconFS:SetJustifyH("RIGHT")
-                        iconFS:SetPoint("RIGHT", QuestInfoTitleHeader, "RIGHT", dx - -8, 0)
-                     else
-                        iconFS:SetWidth(0)
-                        iconFS:SetPoint("LEFT", QuestInfoTitleHeader, "LEFT", 0, 0)
-                     end
                      iconFS:SetFont(iconFont, iconSize or titleSize, iconFlags)
                      iconFS:SetText(leadingGlyph)
-                     iconFS:Show()
+                     if allowIconShow then
+                        if not (rtl and inQuestMap and Quests.Details._IconPosLock[lockIdTitle]) then
+                           iconFS:ClearAllPoints()
+                           if rtl then
+                              -- Place the icon inside the right margin created by enforceWidth() (see lessons L-013).
+                              -- Use the measured icon width (fallback for |A/|T) so we don't push it outside the frame
+                              -- when the reserved margin (dx) is smaller than our previous fixed-width guess.
+                              local dx = (Quests.Details._AppliedDelta and Quests.Details._AppliedDelta[QuestInfoTitleHeader]) or 0
+                              if dx < 0 then dx = 0 end
+                              local gap, pad, extra = 2, 0, 15
+                              local w = 0
+                              if type(leadingGlyph) == "string" and (leadingGlyph:find("^|A") or leadingGlyph:find("^|T")) then
+                                 w = 22
+                              elseif iconFS.GetStringWidth then
+                                 w = iconFS:GetStringWidth() or 0
+                              end
+                              if w < 8 then w = 8 end
+                              local desired = dx - pad
+                              local minOffset = w + gap
+                              local maxOffset = dx + extra
+                              local xOffset = desired
+                              if xOffset < minOffset then xOffset = minOffset end
+                              if xOffset > maxOffset then xOffset = maxOffset end
+                              iconFS:SetWidth(0) -- let it size naturally; we only control positioning.
+                              iconFS:SetJustifyH("RIGHT")
+                              iconFS:SetPoint("RIGHT", QuestInfoTitleHeader, "RIGHT", xOffset, 0)
+                           else
+                              iconFS:SetWidth(0)
+                              iconFS:SetPoint("LEFT", QuestInfoTitleHeader, "LEFT", 0, 0)
+                           end
+                           if rtl and inQuestMap and event == "__post__" then
+                              Quests.Details._IconPosLock[lockIdTitle] = true
+                           end
+                        end
+                        iconFS:Show()
+                     else
+                        iconFS:Hide()
+                     end
                   end
                   if iconFS2 then
-                     iconFS2:ClearAllPoints()
-                     if rtl then
-                        local dx2 = (Quests.Details._AppliedDelta and Quests.Details._AppliedDelta[QuestProgressTitleText]) or 0
-                        if dx2 < 0 then dx2 = 0 end
-                        iconFS2:SetWidth(22)
-                        iconFS2:SetJustifyH("RIGHT")
-                        iconFS2:SetPoint("RIGHT", QuestProgressTitleText, "RIGHT", dx2 - -8, 0)
-                     else
-                        iconFS2:SetWidth(0)
-                        iconFS2:SetPoint("LEFT", QuestProgressTitleText, "LEFT", 0, 0)
-                     end
                      iconFS2:SetFont(iconFont, iconSize or titleSize, iconFlags)
                      iconFS2:SetText(leadingGlyph)
-                     iconFS2:Show()
+                     if allowIconShow then
+                        if not (rtl and inQuestMap and Quests.Details._IconPosLock[lockIdProg]) then
+                           iconFS2:ClearAllPoints()
+                           if rtl then
+                              local dx2 = (Quests.Details._AppliedDelta and Quests.Details._AppliedDelta[QuestProgressTitleText]) or 0
+                              if dx2 < 0 then dx2 = 0 end
+                              local gap2, pad2, extra2 = 2, 0, 15
+                              local w2 = 0
+                              if type(leadingGlyph) == "string" and (leadingGlyph:find("^|A") or leadingGlyph:find("^|T")) then
+                                 w2 = 22
+                              elseif iconFS2.GetStringWidth then
+                                 w2 = iconFS2:GetStringWidth() or 0
+                              end
+                              if w2 < 8 then w2 = 8 end
+                              local desired2 = dx2 - pad2
+                              local minOffset2 = w2 + gap2
+                              local maxOffset2 = dx2 + extra2
+                              local xOffset2 = desired2
+                              if xOffset2 < minOffset2 then xOffset2 = minOffset2 end
+                              if xOffset2 > maxOffset2 then xOffset2 = maxOffset2 end
+                              iconFS2:SetWidth(0)
+                              iconFS2:SetJustifyH("RIGHT")
+                              iconFS2:SetPoint("RIGHT", QuestProgressTitleText, "RIGHT", xOffset2, 0)
+                           else
+                              iconFS2:SetWidth(0)
+                              iconFS2:SetPoint("LEFT", QuestProgressTitleText, "LEFT", 0, 0)
+                           end
+                           if rtl and inQuestMap and event == "__post__" then
+                              Quests.Details._IconPosLock[lockIdProg] = true
+                           end
+                        end
+                        iconFS2:Show()
+                     else
+                        iconFS2:Hide()
+                     end
                   end
 
                   -- Position and wire hover tooltips for the icon hit boxes.
                   local linkInfo = Quests.Details._TitleDecorLinks and Quests.Details._TitleDecorLinks[QTR_quest_ID]
                   local linkRef = linkInfo and linkInfo.ref or nil
                   local linkText = linkInfo and linkInfo.text or nil
-                  if Quests.Details._TitleIconHit and iconFS and iconFS.IsShown and iconFS:IsShown() and linkRef then
+                  if Quests.Details._TitleIconHit and iconFS and iconFS.IsShown and iconFS:IsShown() and linkRef and allowIconShow then
                      local hit = Quests.Details._TitleIconHit
                      hit:ClearAllPoints()
                      hit:SetPoint("CENTER", iconFS, "CENTER", 0, 0)
@@ -473,7 +529,7 @@ function Quests.Details.TranslateOn(typ,event)
                      Quests.Details._TitleIconHit:Hide()
                   end
 
-                  if Quests.Details._ProgressTitleIconHit and iconFS2 and iconFS2.IsShown and iconFS2:IsShown() and linkRef then
+                  if Quests.Details._ProgressTitleIconHit and iconFS2 and iconFS2.IsShown and iconFS2:IsShown() and linkRef and allowIconShow then
                      local hit2 = Quests.Details._ProgressTitleIconHit
                      hit2:ClearAllPoints()
                      hit2:SetPoint("CENTER", iconFS2, "CENTER", 0, 0)
