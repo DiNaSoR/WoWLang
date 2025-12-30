@@ -337,6 +337,3 @@ flowchart TD
 - [`WoWAR/WoWAR.toc`](WoWAR/WoWAR.toc)
 - New panel:
 - [`common/Config/ControlCenter/Templates.xml`](common/Config/ControlCenter/Templates.xml)
-- [`common/Config/ControlCenter/SettingsPanel.lua`](common/Config/ControlCenter/SettingsPanel.lua)
-- [`common/Config/ControlCenter/SettingsPanelRegistry.lua`](common/Config/ControlCenter/SettingsPanelRegistry.lua)
-- [`common/Config/ControlCenter/Registry.lua`](common/Config/ControlCenter/Registry.lua)
