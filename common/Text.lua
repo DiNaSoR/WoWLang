@@ -55,6 +55,14 @@ function Text.HandleWoWSpecialCodes(msg)
     return "\001" .. (index-1) .. "\002"
   end)
 
+  -- Generic hyperlinks (quest/title tags sometimes use `|H...|h...|h` without `[...]`).
+  -- Must be protected before RTL reversal, otherwise they break and any embedded icon text disappears.
+  msg = msg:gsub("(|H.-|h.-|h)", function(code)
+    specialCodes[index] = code
+    index = index + 1
+    return "\001" .. (index-1) .. "\002"
+  end)
+
   return msg, specialCodes, prefix
 end
 
@@ -66,7 +74,9 @@ function Text.RestoreWoWSpecialCodes(msg, specialCodes)
     return specialCodes[tonumber(i)]
   end)
   msg = msg:gsub("\002(%d+)\001", function(i)
-    return specialCodes[tonumber(i)]
+    -- If the text was reversed, the digit run inside the placeholder is reversed too (e.g. "\00112\002" -> "\00221\001").
+    -- Reverse the digits back so multi-digit placeholder indices restore correctly.
+    return specialCodes[tonumber(string.reverse(i))]
   end)
   return msg
 end

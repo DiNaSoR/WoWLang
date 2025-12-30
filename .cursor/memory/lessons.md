@@ -142,3 +142,105 @@
 
 ### Rule
 > For RTL UI labels, always include safe right padding when sizing RIGHT-justified FontStrings.
+
+---
+
+## L-008 — Special-code placeholders must restore correctly after reversal (multi-digit indices)
+
+### Symptom
+- Inline icons/textures (e.g. quest type `|T...|t` / atlas `|A...|a`) or other WoW formatting codes disappear in Arabic (RTL) views.
+
+### Root cause
+- Our `Text.HandleWoWSpecialCodes()` uses numeric placeholders like `\00112\002`.
+- When the Arabic pipeline reverses the text, multi-digit placeholders reverse internally (`\00112\002` → `\00221\001`).
+- If restoration doesn’t reverse the digits back, indices ≥ 10 restore to the wrong entry (or nil), effectively dropping the code.
+
+### Wrong approach
+- Restoring reversed placeholders using the digit run as-is.
+
+### Correct approach
+- When restoring the reversed placeholder pattern (`\002(%d+)\001`), reverse the digits back before lookup.
+
+### Rule
+> Any placeholder scheme that includes digits must handle digit-order reversal, otherwise icons/codes will vanish in RTL.
+
+---
+
+## L-009 — Some “icons” in quest titles are font glyphs (not `|T`/`|A`) and vanish when switching fonts
+
+### Symptom
+- The small quest-type “!” icon shown before some quest titles disappears only in Arabic translation mode.
+
+### Root cause
+- The icon is a **leading font glyph character** present in Blizzard’s quest-title font.
+- When we switch the title FontString to an Arabic font (`WOWTR_Font1`), that glyph is missing, so it renders as nothing.
+
+### Wrong approach
+- Assuming all title icons are inline textures (`|T` / `|A`) or part of the translation text.
+
+### Correct approach
+- Detect the leading glyph from the original (EN) title.
+- Render it with a separate overlay FontString using the original quest-title font (`Original_Font1`).
+- Keep the Arabic title itself rendered with the Arabic font.
+
+### Rule
+> Treat title “icons” as either inline texture tags or font glyphs; glyphs must be rendered with the original font in a separate overlay when using Arabic fonts.
+
+---
+
+## L-010 — Quest title decorations can be generic hyperlinks (`|H...|h...|h`), not just `|T`/`|A` or `[...]` links
+
+### Symptom
+- Quest title icon/tag (e.g. repeatable “!”) disappears or the title string becomes padded spaces in Arabic mode.
+
+### Root cause
+- Some title decorations start with `|HRepeat...|h<icon>|h` (no bracketed `[...]`).
+- If the RTL pipeline reverses the string without protecting that hyperlink, the link breaks and the embedded icon text is lost.
+
+### Wrong approach
+- Only protecting `|H...|h[...|h` links and assuming all title icons are `|T`/`|A`.
+
+### Correct approach
+- Protect generic `|H...|h...|h` hyperlinks in `Text.HandleWoWSpecialCodes()` before RTL shaping.
+- When extracting title decorations, treat leading `|H...|h...|h` segments as "tags" and extract the display glyph from inside them if needed.
+
+### Rule
+> Always preserve generic `|H...|h...|h` hyperlinks through RTL processing; quest title icons may depend on them.
+
+---
+
+## L-011 — Avoid injecting `|H...|h...|h` title decorations into RTL-shaped FontStrings (placeholder leak)
+
+### Symptom
+- Arabic quest titles show visible placeholder garbage like `□1□` at the start of the title.
+
+### Root cause
+- RTL shaping uses special-code placeholders (`\0011\002`) while reversing/wrapping.
+- Some title decorations (repeatable icon links) are `|H...|h...|h` and can cause those placeholders to leak into visible FontStrings in certain wrapping/padding paths.
+
+### Wrong approach
+- Appending `|H...|h...|h` decorations into the Arabic title string and sending it through the shaping pipeline.
+
+### Correct approach
+- Keep the Arabic title clean (no `|H...|h...|h` injected).
+- Extract the icon glyph from the EN title and render it with a separate overlay FontString using `Original_Font1`.
+
+### Rule
+> For quest titles in RTL, render `|H`-based decorations as separate overlays instead of embedding them in the shaped title string.
+
+---
+
+## L-012 — `|H...|h...|h` title decorations may display an inline atlas/texture (`|A`/`|T`), not a glyph
+
+### Symptom
+- Repeatable/quest-type “!” icon still missing in Arabic even after preserving `|H` links.
+
+### Root cause
+- The hyperlink display text can be `|A:...|a` or `|T...|t` (inline atlas/texture), not a Unicode glyph.
+- Glyph-only extraction logic won’t capture it, so the overlay stays empty.
+
+### Correct approach
+- When parsing a leading `|H...|h...|h`, inspect the display part (`|h...|h`) for an initial `|A...|a` or `|T...|t` and treat that as the icon to render.
+
+### Rule
+> For title decorations, handle `|H` display payloads that start with `|A`/`|T` tags, not just glyphs.

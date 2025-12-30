@@ -165,27 +165,183 @@ function Quests.Details.TranslateOn(typ,event)
          if (QuestInfoRewardsFrame:IsVisible() and not rtl) then WOW_width = 280 end
 
          if (QTR_PS["transtitle"] == "1") then
+            local currentHeaderTitle = (QuestInfoTitleHeader and QuestInfoTitleHeader.GetText and QuestInfoTitleHeader:GetText()) or ""
             QuestInfoTitleHeader:SetWidth(WOW_width)
             QuestProgressTitleText:SetWidth(WOW_width)
+            -- Cache the ORIGINAL quest title font so we can render any "icon glyph" that doesn't exist in Arabic fonts.
+            -- (Some decorations use private glyphs that only render correctly with the original FontString font.)
+            Quests.Details._TitleIconFontCache = Quests.Details._TitleIconFontCache or {}
+            do
+               local f, s, flags
+               if QuestInfoTitleHeader and QuestInfoTitleHeader.GetFont then
+                  f, s, flags = QuestInfoTitleHeader:GetFont()
+               end
+               if f and f ~= "" then
+                  Quests.Details._TitleIconFontCache[QTR_quest_ID] = { font = f, size = s, flags = flags }
+               end
+            end
+
             QuestInfoTitleHeader:SetFont(WOWTR_Font1, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtitle.size or 18)
             QuestProgressTitleText:SetFont(WOWTR_Font1, C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtitle.size or 18)
+
+            -- Preserve quest title "decorations" that Blizzard sometimes injects:
+            -- - Inline textures / atlases (`|T...|t`, `|A...|a`)
+            -- - A leading "icon glyph" (non-ASCII, or "!" / "?") that is NOT represented as a `|T` tag.
+            --   These glyphs are often missing from Arabic fonts, so we render them in a separate FontString
+            --   using the original quest title font.
+            local function utf8first(s)
+               if type(s) ~= "string" or s == "" then return nil end
+               return s:match("^[%z\1-\127\194-\244][\128-\191]*")
+            end
+
+            local function extractLeadingTitleDecorations(txt)
+               if type(txt) ~= "string" or txt == "" then return "", "" end
+               local rest = txt:gsub("^%s+", "")
+               local out = {}
+               local safety = 0
+
+               -- Leading hyperlink tags (e.g. `|HRepeatable...|h<icon>|h`).
+               -- These are not `|T`/`|A`, but they still act like "decorations" and must be preserved in RTL.
+               local linkGlyph = ""
+               while safety < 10 do
+                  safety = safety + 1
+                  local link = rest:match("^(|H.-|h.-|h)")
+                  if not link then break end
+                  if linkGlyph == "" then
+                     local display = link:match("^|H.-|h(.-)|h") or ""
+                     display = tostring(display)
+                     -- Strip leading color/name codes to get at the actual glyph.
+                     -- e.g. `|cFFFFD200!|r` or `|cnXYZ:!|r`
+                     for _ = 1, 5 do
+                        local before = display
+                        display = display:gsub("^|c%x%x%x%x%x%x%x%x", "")
+                        display = display:gsub("^|cn[%w_]+:", "")
+                        display = display:gsub("^|r", "")
+                        display = display:gsub("^%s+", "")
+                        if display == before then break end
+                     end
+                     -- The repeatable/title decoration often uses an inline atlas/texture inside the link display.
+                     -- Capture the first inline tag so we can render it in our overlay.
+                     local inlineTag = display:match("^(|A.-|a)") or display:match("^(|T.-|t)")
+                     if inlineTag and inlineTag ~= "" then
+                        linkGlyph = inlineTag
+                     end
+                     local ch = utf8first(display)
+                     if ch and ch ~= "" then
+                        local isNonASCII = (#ch > 1)
+                        local isBang = (ch == "!" or ch == "?")
+                        if isNonASCII or isBang then
+                           linkGlyph = ch
+                        end
+                     end
+                  end
+                  rest = rest:sub(#link + 1)
+                  rest = rest:gsub("^%s+", "")
+               end
+
+               -- Leading inline texture/atlas tags.
+               -- (Reset safety counter so we don't prematurely stop if there was a hyperlink tag first.)
+               safety = 0
+               while safety < 10 do
+                  safety = safety + 1
+                  local tag = rest:match("^(|T.-|t)")
+                  if not tag then tag = rest:match("^(|A.-|a)") end
+                  if not tag then break end
+                  out[#out + 1] = tag
+                  rest = rest:sub(#tag + 1)
+                  rest = rest:gsub("^%s+", "")
+               end
+
+               local glyph = ""
+               do
+                  local ch = utf8first(rest)
+                  if ch and ch ~= "" then
+                     local isNonASCII = (#ch > 1)
+                     local isBang = (ch == "!" or ch == "?")
+                     if isNonASCII or isBang then
+                        glyph = ch
+                     end
+                  end
+               end
+
+               if glyph == "" and linkGlyph ~= "" then glyph = linkGlyph end
+               return table.concat(out, ""), glyph
+            end
+
+            local titleLG = QTR_quest_LG[QTR_quest_ID] and QTR_quest_LG[QTR_quest_ID].title or ""
+            local titleEN = QTR_quest_EN[QTR_quest_ID] and QTR_quest_EN[QTR_quest_ID].title or ""
+            -- Prefer the live header title (still English at this moment) to capture late-applied Blizzard decorations.
+            local titleENDecorated = titleEN
+            if currentHeaderTitle ~= "" and (not ContainsArabic(currentHeaderTitle)) then
+               titleENDecorated = currentHeaderTitle
+            end
+            local leadingTags, leadingGlyph = extractLeadingTitleDecorations(titleENDecorated)
+
+            -- Inline tags are safe to keep inside the Arabic title (they render regardless of font).
+            if leadingTags ~= "" and type(titleLG) == "string" and titleLG ~= "" and (not titleLG:find("|T", 1, true)) and (not titleLG:find("|A", 1, true)) then
+               if rtl then
+                  -- Append before reversal so the icon ends up on the LEFT visually after RTL shaping.
+                  titleLG = titleLG .. " " .. leadingTags
+               else
+                  titleLG = leadingTags .. " " .. titleLG
+               end
+            end
+
+            -- Leading icon glyph: render in a separate FontString using the ORIGINAL quest font (Arabic fonts may not contain it).
+            do
+               if not Quests.Details._TitleIconFS and QuestInfoTitleHeader and QuestInfoTitleHeader.GetParent and QuestInfoTitleHeader:GetParent() then
+                  Quests.Details._TitleIconFS = QuestInfoTitleHeader:GetParent():CreateFontString(nil, "OVERLAY")
+               end
+               if not Quests.Details._ProgressTitleIconFS and QuestProgressTitleText and QuestProgressTitleText.GetParent and QuestProgressTitleText:GetParent() then
+                  Quests.Details._ProgressTitleIconFS = QuestProgressTitleText:GetParent():CreateFontString(nil, "OVERLAY")
+               end
+
+               local iconFS = Quests.Details._TitleIconFS
+               local iconFS2 = Quests.Details._ProgressTitleIconFS
+
+               if leadingGlyph ~= "" and Original_Font1 then
+                  local titleSize = C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtitle.size or 18
+                  local cache = Quests.Details._TitleIconFontCache and Quests.Details._TitleIconFontCache[QTR_quest_ID]
+                  local iconFont = (cache and cache.font) or Original_Font1
+                  local iconSize = (cache and cache.size) or titleSize
+                  local iconFlags = (cache and cache.flags) or ""
+                  if iconFS then
+                     iconFS:ClearAllPoints()
+                     iconFS:SetPoint("LEFT", QuestInfoTitleHeader, "LEFT", 0, 0)
+                     iconFS:SetFont(iconFont, iconSize or titleSize, iconFlags)
+                     iconFS:SetText(leadingGlyph)
+                     iconFS:Show()
+                  end
+                  if iconFS2 then
+                     iconFS2:ClearAllPoints()
+                     iconFS2:SetPoint("LEFT", QuestProgressTitleText, "LEFT", 0, 0)
+                     iconFS2:SetFont(iconFont, iconSize or titleSize, iconFlags)
+                     iconFS2:SetText(leadingGlyph)
+                     iconFS2:Show()
+                  end
+               else
+                  if iconFS then iconFS:Hide() end
+                  if iconFS2 then iconFS2:Hide() end
+               end
+            end
+
             if (WorldMapFrame:IsVisible()) then
                if rtl then
-                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].title, false, QuestInfoTitleHeader, WOWTR_Font1, -50, "RIGHT"))
+                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestInfoTitleHeader, WOWTR_Font1, -50, "RIGHT"))
                else
-                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].title, false, QuestInfoTitleHeader, WOWTR_Font1, -50))
+                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestInfoTitleHeader, WOWTR_Font1, -50))
                end
             else
                if rtl then
-                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].title, false, QuestInfoTitleHeader, WOWTR_Font1, -50, "RIGHT"))
+                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestInfoTitleHeader, WOWTR_Font1, -50, "RIGHT"))
                else
-                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].title, false, QuestInfoTitleHeader, WOWTR_Font1, -50))
+                  QuestInfoTitleHeader:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestInfoTitleHeader, WOWTR_Font1, -50))
                end
             end
             if rtl then
-               QuestProgressTitleText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].title, false, QuestProgressTitleText, WOWTR_Font1, -50, "RIGHT"))
+               QuestProgressTitleText:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestProgressTitleText, WOWTR_Font1, -50, "RIGHT"))
             else
-               QuestProgressTitleText:SetText(QTR_ExpandUnitInfo(QTR_quest_LG[QTR_quest_ID].title, false, QuestProgressTitleText, WOWTR_Font1, -50))
+               QuestProgressTitleText:SetText(QTR_ExpandUnitInfo(titleLG, false, QuestProgressTitleText, WOWTR_Font1, -50))
             end
          end
 
@@ -556,6 +712,12 @@ function Quests.Details.TranslateOff(typ,event)
       QuestNPCModelText:SetText(QTR_ModelText_EN)
       QuestNPCModelText:SetFont(Original_Font2, 13)
       if QuestNPCModelText.SetJustifyH then QuestNPCModelText:SetJustifyH("LEFT") end
+   end
+
+   -- Hide any Arabic-only quest title icon overlay we add in TranslateOn().
+   if Quests and Quests.Details then
+     if Quests.Details._TitleIconFS then Quests.Details._TitleIconFS:Hide() end
+     if Quests.Details._ProgressTitleIconFS then Quests.Details._ProgressTitleIconFS:Hide() end
    end
    if (typ==1) then
       local numer_ID = QTR_quest_ID
@@ -935,9 +1097,35 @@ function Quests.Details.QuestPrepare(event)
         end
       end
 
-      if (not QTR_quest_EN[QTR_quest_ID].title) then
-        QTR_quest_LG[QTR_quest_ID].title = QTR_QuestData[str_ID]["Title"]
-        QTR_quest_EN[QTR_quest_ID].title = GetTitleText() ~= "" and GetTitleText() or (QuestInfoTitleHeader and QuestInfoTitleHeader:GetText())
+      do
+        -- Always set LG title from DB (used for display).
+        if (not QTR_quest_LG[QTR_quest_ID].title) then
+          QTR_quest_LG[QTR_quest_ID].title = QTR_QuestData[str_ID]["Title"]
+        end
+
+        -- Prefer the visible header text when it contains Blizzard "decorations" (repeatable icon links, textures, etc.).
+        -- `GetTitleText()` often returns the plain title without those prefixes.
+        local apiTitle = (GetTitleText and GetTitleText()) or ""
+        local headerTitle = (QuestInfoTitleHeader and QuestInfoTitleHeader.GetText and QuestInfoTitleHeader:GetText()) or ""
+        local chosen = apiTitle
+        if headerTitle ~= "" and (not ContainsArabic(headerTitle)) then
+          if headerTitle ~= apiTitle then
+            chosen = headerTitle
+          end
+        end
+        if chosen == "" then chosen = headerTitle end
+
+        local cur = QTR_quest_EN[QTR_quest_ID].title
+        if not cur or cur == "" then
+          QTR_quest_EN[QTR_quest_ID].title = chosen
+        else
+          -- Upgrade existing cached title to the decorated version if we previously captured the plain title.
+          local curHasDeco = (type(cur) == "string") and (cur:find("|H", 1, true) or cur:find("|T", 1, true) or cur:find("|A", 1, true))
+          local newHasDeco = (type(chosen) == "string") and (chosen:find("|H", 1, true) or chosen:find("|T", 1, true) or chosen:find("|A", 1, true))
+          if (not curHasDeco) and newHasDeco then
+            QTR_quest_EN[QTR_quest_ID].title = chosen
+          end
+        end
       end
       if (not QTR_quest_LG[QTR_quest_ID].details) then
         QTR_quest_LG[QTR_quest_ID].details = QTR_QuestData[str_ID]["Description"]
@@ -1172,7 +1360,16 @@ function Quests.Details.QuestPrepare(event)
     -- Capture quest text data even when active is off (needed for display)
     WOWTR.DebugPrint("QuestPrepare: Capturing quest text...")
     if (not QTR_quest_EN[QTR_quest_ID].title) then
-      QTR_quest_EN[QTR_quest_ID].title = GetTitleText() ~= "" and GetTitleText() or (QuestInfoTitleHeader and QuestInfoTitleHeader:GetText()) or ""
+      local apiTitle = (GetTitleText and GetTitleText()) or ""
+      local headerTitle = (QuestInfoTitleHeader and QuestInfoTitleHeader.GetText and QuestInfoTitleHeader:GetText()) or ""
+      local chosen = apiTitle
+      if headerTitle ~= "" and (not ContainsArabic(headerTitle)) then
+        if headerTitle ~= apiTitle then
+          chosen = headerTitle
+        end
+      end
+      if chosen == "" then chosen = headerTitle end
+      QTR_quest_EN[QTR_quest_ID].title = chosen
       WOWTR.DebugPrint("QuestPrepare: Captured title:", QTR_quest_EN[QTR_quest_ID].title and string.len(QTR_quest_EN[QTR_quest_ID].title) or 0, "chars")
     end
     

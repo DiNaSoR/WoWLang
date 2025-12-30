@@ -62,3 +62,25 @@
 - [Quests][QuestMapFrame Rewards][RTL] Fixed AR reward/questline labels clipping on the right edge.
   - Root cause: RIGHT-justified FontStrings were given near-full container width with no right padding, so the first Arabic glyph could render outside/clipped.
   - Fix: In `common/Quests/Details.lua`, when applying `QTR_Messages.*` to `MapQuestInfoRewardsFrame`, set label widths to `mapRewards:GetWidth() - leftInset - rightPad` (no anchor mirroring).
+
+- [Text][RTL] Fixed missing inline quest icons (e.g. “!” / texture tags) in Arabic view.
+  - Root cause: special-code placeholders like `\00112\002` were reversed to `\00221\001` and indices ≥ 10 restored incorrectly.
+  - Fix: In `common/Text.lua`, reverse digits when restoring the reversed placeholder pattern.
+  - Extra safety: In `common/Quests/Details.lua`, preserve Blizzard-injected leading `|T...|t` / `|A...|a` icons from the EN title and append them before reversing so the icon remains visible in RTL.
+
+- [Quests][RTL] Fixed missing quest title “!” icon when switching to Arabic fonts.
+  - Root cause: this specific “!” is a **leading glyph character** (not `|T`/`|A`) that exists in Blizzard’s default quest-title font but not in Arabic fonts.
+  - Fix: In `common/Quests/Details.lua`, detect the leading glyph from the EN title and render it via a separate overlay FontString using `Original_Font1` while the Arabic title uses `WOWTR_Font1`.
+
+- [Text][RTL] Preserved generic `|H...|h...|h` hyperlinks through reversal.
+  - Root cause: some quest-title “decorations” begin with `|HRepeat...|h<icon>|h` (no `[...]`), which our special-code protector did not capture.
+  - Fix: `common/Text.lua` now also protects generic `|H...|h...|h` patterns, preventing quest title icon links from breaking in Arabic.
+
+- [Quests][RTL] Fixed “□1□” placeholders appearing in Arabic quest titles.
+  - Root cause: passing `|HRepeat...|h...|h` title decorations through the RTL shaping pipeline caused our special-code placeholders (`\0011\002`) to leak into the visible quest title.
+  - Fix: `common/Quests/Details.lua` no longer injects `|H...|h...|h` tags into the Arabic title string. Instead it extracts the icon glyph from the EN title and renders it via a separate overlay FontString using `Original_Font1`.
+  - Also improved EN title capture to prefer `QuestInfoTitleHeader:GetText()` when it contains decorations so the icon can be extracted reliably.
+
+- [Quests][RTL] Quest title repeatable icon extraction now supports inline atlas/texture tags inside `|H...|h...|h` display text.
+  - Some titles use `|HRepeat...|h|A:...|a|h` (or `|T...|t`) rather than a single glyph.
+  - Fix: `common/Quests/Details.lua` extracts the first `|A`/`|T` tag from the hyperlink display and renders it via the overlay FontString.

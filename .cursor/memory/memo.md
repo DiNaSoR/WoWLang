@@ -16,6 +16,8 @@ Last updated: 2025-12-29
 - Hook/ticker wiring uses shared helpers from `common/Core/HookUtils.lua`.
 - Config tabs use `WOWTR.Config.MakeTab()` unless custom side-effects are required.
 - AceDB is the source of truth for config persistence; legacy migration runs **once only** on first install.
+- RTL text shaping preserves WoW special codes (`|T` / `|A` / links / colors); multi-digit placeholder restore was fixed to prevent inline quest icons disappearing in Arabic.
+- Quest title “icons” may come from `|HRepeat...|h...|h` decorations or font glyphs; in RTL we render the icon as a separate overlay FontString using `Original_Font1` (avoid leaking control-char placeholders into the shaped Arabic title).
 
 ## Load order requirements
 
