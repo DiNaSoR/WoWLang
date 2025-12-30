@@ -61,3 +61,35 @@ function WOWTR.Config.Label(key, fallback)
   end
   return fallback
 end
+
+-- Factory for Ace3 config tabs that bind directly to WOWTR.db.profile.<profileSection>.
+-- Reduces duplicated get/set + SyncGlobalsFromDB/NotifyChange boilerplate across tabs.
+function WOWTR.Config.MakeTab(profileSection, spec)
+  spec = spec or {}
+  local group = {
+    type = "group",
+    order = spec.order,
+    name = spec.name,
+    args = spec.args or {},
+  }
+
+  if spec.hidden ~= nil then group.hidden = spec.hidden end
+  if spec.disabled ~= nil then group.disabled = spec.disabled end
+
+  group.get = spec.get or function(info)
+    local key = info[#info]
+    return WOWTR.db.profile[profileSection][key]
+  end
+
+  group.set = spec.set or function(info, val)
+    local key = info[#info]
+    WOWTR.db.profile[profileSection][key] = val
+    WOWTR.Config.SyncGlobalsFromDB()
+    if spec.afterSet then
+      spec.afterSet(key, val, info)
+    end
+    WOWTR.Config.NotifyChange()
+  end
+
+  return group
+end

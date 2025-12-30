@@ -8,302 +8,147 @@ local M = ns.UI.GroupFinder
 -- Group Finder module (migrated from WoW_Tooltips.lua)
 
 function M.GroupFinder()
-  if (TT_PS and TT_PS["ui3"] == "1") then
-    local GFobj01 = PVEFrameTitleText
-    ST_CheckAndReplaceTranslationTextUI(GFobj01, true, "ui")
+  local T = (ns.UI and ns.UI.Translate) or nil
+  if not (T and T.Enabled("ui3")) then return end
 
-    local GFobj02 = PVEFrameTab1.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj02, true, "ui")
+  T.ApplyUI({
+    function() return _G.PVEFrameTitleText end,
+    function() return _G.PVEFrameTab1 and _G.PVEFrameTab1.Text end,
+    function() return _G.PVEFrameTab2 and _G.PVEFrameTab2.Text end,
+    function() return _G.PVEFrameTab3 and _G.PVEFrameTab3.Text end,
+    function() return _G.GroupFinderFrameGroupButton2Name end,
+    function() return _G.LFDQueueFrameTypeDropDownName end,
+    { obj = function() return _G.LFDQueueFrameRandomScrollFrameChildFrameTitle end, font = _G.WOWTR_Font1 },
+    { obj = function() return _G.LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel end, font = _G.WOWTR_Font1 },
+    function() return _G.LFDQueueFrameFindGroupButton and _G.LFDQueueFrameFindGroupButton.Text end,
+    function() return _G.RaidFinderQueueFrameScrollFrameChildFrameDescription end,
+    { obj = function() return _G.RaidFinderQueueFrameScrollFrameChildFrameRewardsLabel end, font = _G.WOWTR_Font1 },
+    function() return _G.RaidFinderQueueFrameScrollFrameChildFrameRewardsDescription end,
+    function() return _G.RaidFinderFrameFindRaidButton and _G.RaidFinderFrameFindRaidButton.Text end,
+    function()
+      local cs = _G.LFGListFrame and _G.LFGListFrame.CategorySelection
+      return cs and cs.StartGroupButton and cs.StartGroupButton.Text
+    end,
+    function()
+      local cs = _G.LFGListFrame and _G.LFGListFrame.CategorySelection
+      return cs and cs.FindGroupButton and cs.FindGroupButton.Text
+    end,
+    { obj = function() return _G.LFGListFrame and _G.LFGListFrame.CategorySelection and _G.LFGListFrame.CategorySelection.Label end, font = _G.WOWTR_Font1 },
+    function() return _G.LFGListApplicationDialog and _G.LFGListApplicationDialog.Label end,
+    function() return _G.LFGListApplicationDialog and _G.LFGListApplicationDialog.SignUpButton and _G.LFGListApplicationDialog.SignUpButton.Text end,
+    function() return _G.LFGListApplicationDialog and _G.LFGListApplicationDialog.CancelButton and _G.LFGListApplicationDialog.CancelButton.Text end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.SearchPanel and _G.LFGListFrame.SearchPanel.SignUpButton and _G.LFGListFrame.SearchPanel.SignUpButton.Text end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.SearchPanel and _G.LFGListFrame.SearchPanel.BackButton and _G.LFGListFrame.SearchPanel.BackButton.Text end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.SearchPanel and _G.LFGListFrame.SearchPanel.CategoryName end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.NameLabel end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.DescriptionLabel end,
+    { obj = function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.Label end, font = _G.WOWTR_Font1 },
+    function() return _G.LFGListInviteDialog and _G.LFGListInviteDialog.Label end,
+    function() return _G.LFGListInviteDialog and _G.LFGListInviteDialog.RoleDescription end,
+    function() return _G.LFGListInviteDialog and _G.LFGListInviteDialog.AcceptButton and _G.LFGListInviteDialog.AcceptButton.Text end,
+    function() return _G.LFGListInviteDialog and _G.LFGListInviteDialog.DeclineButton and _G.LFGListInviteDialog.DeclineButton.Text end,
+    function() return _G.LFGListInviteDialog and _G.LFGListInviteDialog.AcknowledgeButton and _G.LFGListInviteDialog.AcknowledgeButton.Text end,
+    { obj = function() return _G.LFDQueueFrameFollowerTitle end, font = _G.WOWTR_Font1 },
+    function() return _G.LFDQueueFrameFollowerDescription end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.ListGroupButton and _G.LFGListFrame.EntryCreation.ListGroupButton.Text end,
+    function()
+      local sp = _G.LFGListFrame and _G.LFGListFrame.SearchPanel
+      local sb = sp and sp.ScrollBox
+      return sb and sb.StartGroupButton and sb.StartGroupButton.Text
+    end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.SearchPanel and _G.LFGListFrame.SearchPanel.SearchBox and _G.LFGListFrame.SearchPanel.SearchBox.Instructions end,
+    function()
+      local sp = _G.LFGListFrame and _G.LFGListFrame.SearchPanel
+      local sb = sp and sp.ScrollBox
+      return sb and sb.NoResultsFound
+    end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.PlayStyleLabel end,
+    function() return _G.LFGListCreationDescription and _G.LFGListCreationDescription.EditBox and _G.LFGListCreationDescription.EditBox.Instructions end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.MythicPlusRating and _G.LFGListFrame.EntryCreation.MythicPlusRating.Label end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.ItemLevel and _G.LFGListFrame.EntryCreation.ItemLevel.Label end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.VoiceChat and _G.LFGListFrame.EntryCreation.VoiceChat.Label end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.PrivateGroup and _G.LFGListFrame.EntryCreation.PrivateGroup.Label end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.CrossFactionGroup and _G.LFGListFrame.EntryCreation.CrossFactionGroup.Label end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.Name and _G.LFGListFrame.EntryCreation.Name.Instructions end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.ItemLevel and _G.LFGListFrame.EntryCreation.ItemLevel.EditBox and _G.LFGListFrame.EntryCreation.ItemLevel.EditBox.Instructions end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.VoiceChat and _G.LFGListFrame.EntryCreation.VoiceChat.EditBox and _G.LFGListFrame.EntryCreation.VoiceChat.EditBox.Instructions end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.EntryCreation and _G.LFGListFrame.EntryCreation.CancelButton and _G.LFGListFrame.EntryCreation.CancelButton.Text end,
+    function() return _G.LFGListApplicationDialogDescription and _G.LFGListApplicationDialogDescription.EditBox and _G.LFGListApplicationDialogDescription.EditBox.Instructions end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.ApplicationViewer and _G.LFGListFrame.ApplicationViewer.ScrollBox and _G.LFGListFrame.ApplicationViewer.ScrollBox.NoApplicants end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.ApplicationViewer and _G.LFGListFrame.ApplicationViewer.BrowseGroupsButton and _G.LFGListFrame.ApplicationViewer.BrowseGroupsButton.Text end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.ApplicationViewer and _G.LFGListFrame.ApplicationViewer.RemoveEntryButton and _G.LFGListFrame.ApplicationViewer.RemoveEntryButton.Text end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.ApplicationViewer and _G.LFGListFrame.ApplicationViewer.EditButton and _G.LFGListFrame.ApplicationViewer.EditButton.Text end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.SearchPanel and _G.LFGListFrame.SearchPanel.BackToGroupButton and _G.LFGListFrame.SearchPanel.BackToGroupButton.Text end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.ApplicationViewer and _G.LFGListFrame.ApplicationViewer.NameColumnHeader and _G.LFGListFrame.ApplicationViewer.NameColumnHeader.Label end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.ApplicationViewer and _G.LFGListFrame.ApplicationViewer.RoleColumnHeader and _G.LFGListFrame.ApplicationViewer.RoleColumnHeader.Label end,
+  }, { sav = true, prefix = "ui" })
 
-    local GFobj03 = PVEFrameTab2.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj03, true, "ui")
+  T.ApplyText({
+    { obj = function() return _G.GroupFinderFrameGroupButton1Name end, onlyReverse = true },
+    { obj = function() return _G.GroupFinderFrameGroupButton3Name end, onlyReverse = true },
+    function() return _G.LFDQueueFrameRandomScrollFrameChildFrameDescription end,
+    { obj = function() return _G.LFDQueueFrameRandomScrollFrameChildFrameRewardsDescription end, corr = -10 },
+  }, { sav = true, prefix = "ui" })
 
-    local GFobj04 = PVEFrameTab3.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj04, true, "ui")
-
-    local GFobj05 = GroupFinderFrameGroupButton1Name
-    ST_CheckAndReplaceTranslationText(GFobj05, true, "ui", false, true)
-
-    local GFobj06 = GroupFinderFrameGroupButton2Name
-    ST_CheckAndReplaceTranslationTextUI(GFobj06, true, "ui")
-
-    local GFobj07 = GroupFinderFrameGroupButton3Name
-    ST_CheckAndReplaceTranslationText(GFobj07, true, "ui", false, true)
-
-    local GFobj08 = LFDQueueFrameTypeDropDownName
-    ST_CheckAndReplaceTranslationTextUI(GFobj08, true, "ui")
-
-    local GFobj09 = LFDQueueFrameRandomScrollFrameChildFrameTitle
-    ST_CheckAndReplaceTranslationTextUI(GFobj09, true, "ui", WOWTR_Font1)
-
-    local GFobj10 = LFDQueueFrameRandomScrollFrameChildFrameDescription
-    ST_CheckAndReplaceTranslationText(GFobj10, true, "ui", false, false)
-
-    local GFobj11 = LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel
-    ST_CheckAndReplaceTranslationTextUI(GFobj11, true, "ui", WOWTR_Font1)
-
-    local GFobj12 = LFDQueueFrameRandomScrollFrameChildFrameRewardsDescription
-    ST_CheckAndReplaceTranslationText(GFobj12, true, "ui", false, false, -10)
-
-    local GFobj13 = LFDQueueFrameFindGroupButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj13, true, "ui")
-
-    local GFobj14 = RaidFinderQueueFrameScrollFrameChildFrameDescription
-    ST_CheckAndReplaceTranslationTextUI(GFobj14, true, "ui")
-
-    local GFobj15 = RaidFinderQueueFrameScrollFrameChildFrameRewardsLabel
-    ST_CheckAndReplaceTranslationTextUI(GFobj15, true, "ui", WOWTR_Font1)
-
-    local GFobj16 = RaidFinderQueueFrameScrollFrameChildFrameRewardsDescription
-    ST_CheckAndReplaceTranslationTextUI(GFobj16, true, "ui")
-
-    local GFobj17 = RaidFinderFrameFindRaidButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj17, true, "ui")
-
-    local GFobj18 = LFGListFrame.CategorySelection.StartGroupButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj18, true, "ui")
-
-    local GFobj19 = LFGListFrame.CategorySelection.FindGroupButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj19, true, "ui")
-
-    local GFobj20 = LFGListFrame.CategorySelection.Label
-    ST_CheckAndReplaceTranslationTextUI(GFobj20, true, "ui", WOWTR_Font1)
-
-    local GFobj21 = LFGListApplicationDialog.Label
-    ST_CheckAndReplaceTranslationTextUI(GFobj21, true, "ui")
-
-    local GFobj22 = LFGListApplicationDialog.SignUpButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj22, true, "ui")
-
-    local GFobj23 = LFGListApplicationDialog.CancelButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj23, true, "ui")
-
-    local GFobj24 = LFGListFrame.SearchPanel.SignUpButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj24, true, "ui")
-
-    local GFobj25 = LFGListFrame.SearchPanel.BackButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj25, true, "ui")
-
-    local GFobj26 = LFGListFrame.SearchPanel.CategoryName
-    ST_CheckAndReplaceTranslationTextUI(GFobj26, true, "ui")
-
-    local GFobj27 = LFGListFrame.EntryCreation.NameLabel
-    ST_CheckAndReplaceTranslationTextUI(GFobj27, true, "ui")
-
-    local GFobj28 = LFGListFrame.EntryCreation.DescriptionLabel
-    ST_CheckAndReplaceTranslationTextUI(GFobj28, true, "ui")
-
-    local GFobj29 = LFGListFrame.EntryCreation.Label
-    ST_CheckAndReplaceTranslationTextUI(GFobj29, true, "ui", WOWTR_Font1)
-
-    local GFobj30 = LFGListInviteDialog.Label
-    ST_CheckAndReplaceTranslationTextUI(GFobj30, true, "ui")
-
-    local GFobj31 = LFGListInviteDialog.RoleDescription
-    ST_CheckAndReplaceTranslationTextUI(GFobj31, true, "ui")
-
-    local GFobj32 = LFGListInviteDialog.AcceptButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj32, true, "ui")
-
-    local GFobj33 = LFGListInviteDialog.DeclineButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj33, true, "ui")
-
-    local GFobj34 = LFGListInviteDialog.AcknowledgeButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj34, true, "ui")
-
-    local GFobj35 = LFDQueueFrameFollowerTitle
-    ST_CheckAndReplaceTranslationTextUI(GFobj35, true, "ui", WOWTR_Font1)
-
-    local GFobj36 = LFDQueueFrameFollowerDescription
-    ST_CheckAndReplaceTranslationTextUI(GFobj36, true, "ui")
-
-    local GFobj37 = LFGListFrame.EntryCreation.ListGroupButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj37, true, "ui")
-
-    local GFobj38 = LFGListFrame.SearchPanel.ScrollBox.StartGroupButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj38, true, "ui")
-
-    local GFobj39 = LFGListFrame.SearchPanel.SearchBox.Instructions
-    ST_CheckAndReplaceTranslationTextUI(GFobj39, true, "ui")
-
-    local GFobj40 = LFGListFrame.SearchPanel.ScrollBox.NoResultsFound
-    ST_CheckAndReplaceTranslationTextUI(GFobj40, true, "ui")
-
-    local GFobj41 = LFGListFrame.EntryCreation.PlayStyleLabel
-    ST_CheckAndReplaceTranslationTextUI(GFobj41, true, "ui")
-
-    local GFobj42 = LFGListCreationDescription.EditBox.Instructions
-    ST_CheckAndReplaceTranslationTextUI(GFobj42, true, "ui")
-
-    local GFobj43 = LFGListFrame.EntryCreation.MythicPlusRating.Label
-    ST_CheckAndReplaceTranslationTextUI(GFobj43, true, "ui")
-
-    local GFobj44 = LFGListFrame.EntryCreation.ItemLevel.Label
-    ST_CheckAndReplaceTranslationTextUI(GFobj44, true, "ui")
-
-    local GFobj45 = LFGListFrame.EntryCreation.VoiceChat.Label
-    ST_CheckAndReplaceTranslationTextUI(GFobj45, true, "ui")
-
-    local GFobj46 = LFGListFrame.EntryCreation.PrivateGroup.Label
-    ST_CheckAndReplaceTranslationTextUI(GFobj46, true, "ui")
-
-    local GFobj47 = LFGListFrame.EntryCreation.CrossFactionGroup.Label
-    ST_CheckAndReplaceTranslationTextUI(GFobj47, true, "ui")
-
-    local GFobj48 = LFGListFrame.EntryCreation.Name.Instructions
-    ST_CheckAndReplaceTranslationTextUI(GFobj48, true, "ui")
-
-    local GFobj49 = LFGListFrame.EntryCreation.ItemLevel.EditBox.Instructions
-    ST_CheckAndReplaceTranslationTextUI(GFobj49, true, "ui")
-
-    local GFobj50 = LFGListFrame.EntryCreation.VoiceChat.EditBox.Instructions
-    ST_CheckAndReplaceTranslationTextUI(GFobj50, true, "ui")
-
-    local GFobj51 = LFGListFrame.EntryCreation.CancelButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj51, true, "ui")
-
-    local GFobj52 = LFGListApplicationDialogDescription.EditBox.Instructions
-    ST_CheckAndReplaceTranslationTextUI(GFobj52, true, "ui")
-
-    local GFobj53 = LFGListFrame.ApplicationViewer.ScrollBox.NoApplicants
-    ST_CheckAndReplaceTranslationTextUI(GFobj53, true, "ui")
-
-    local GFobj54 = LFGListFrame.ApplicationViewer.BrowseGroupsButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj54, true, "ui")
-
-    local GFobj55 = LFGListFrame.ApplicationViewer.RemoveEntryButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj55, true, "ui")
-
-    local GFobj56 = LFGListFrame.ApplicationViewer.EditButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj56, true, "ui")
-
-    local GFobj57 = LFGListFrame.SearchPanel.BackToGroupButton.Text
-    ST_CheckAndReplaceTranslationTextUI(GFobj57, true, "ui")
-
-    local GFobj58 = LFGListFrame.ApplicationViewer.NameColumnHeader.Label
-    ST_CheckAndReplaceTranslationTextUI(GFobj58, true, "ui")
-
-    local GFobj59 = LFGListFrame.ApplicationViewer.RoleColumnHeader.Label
-    ST_CheckAndReplaceTranslationTextUI(GFobj59, true, "ui")
-
-    local function ApplyTranslationToElement(element, alignment)
-      if element and element.GetText and element.SetText then
-        local originalText = element:GetText()
-        if originalText then
-          local hash = StringHash(ST_UsunZbedneZnaki(originalText))
-          if ST_TooltipsHS and ST_TooltipsHS[hash] then
-            local translatedText = QTR_ReverseIfAR(ST_TooltipsHS[hash])
-            element:SetText(translatedText)
-            if element.SetFont then
-              if WoWTR_Localization.lang == 'AR' then
-                element:SetFont(WOWTR_Font1, select(2, element:GetFont()))
-              else
-                element:SetFont(WOWTR_Font2, select(2, element:GetFont()))
-              end
-            end
-          end
-          if alignment and element.SetJustifyH then
-            element:SetJustifyH(alignment)
-          end
-        end
-      end
-    end
-
-    local categoryButtons = {
-      LFGListFrame.CategorySelection.CategoryButtons[1],
-      LFGListFrame.CategorySelection.CategoryButtons[2],
-      LFGListFrame.CategorySelection.CategoryButtons[3],
-      LFGListFrame.CategorySelection.CategoryButtons[4],
-      LFGListFrame.CategorySelection.CategoryButtons[5],
-      LFGListFrame.CategorySelection.CategoryButtons[6]
+  -- Category buttons: translation-only (no save), with RTL-aware font selection.
+  local categoryList = {}
+  for i = 1, 6 do
+    categoryList[#categoryList + 1] = {
+      obj = function()
+        local cs = _G.LFGListFrame and _G.LFGListFrame.CategorySelection
+        local btn = cs and cs.CategoryButtons and cs.CategoryButtons[i]
+        if btn then return btn.Label or btn end
+        return nil
+      end,
+      font = T.Font,
     }
-
-    for _, button in ipairs(categoryButtons) do
-      if button and button.Label then
-        ApplyTranslationToElement(button.Label)
-      elseif button then
-        ApplyTranslationToElement(button)
-      end
-    end
   end
+  T.ApplyUI(categoryList, { sav = false, prefix = "ui" })
 end
 
 function M.GroupPVPFinder()
-  if (TT_PS and TT_PS["ui3"] == "1") then
-    local gfpvpobj01 = PVPQueueFrameCategoryButton1.Name
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj01, true, "ui")
+  local T = (ns.UI and ns.UI.Translate) or nil
+  if not (T and T.Enabled("ui3")) then return end
 
-    local gfpvpobj02 = PVPQueueFrameCategoryButton2.Name
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj02, true, "ui")
-
-    local gfpvpobj03 = PVPQueueFrameCategoryButton3.Name
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj03, true, "ui")
-
-    local gfpvpobj04 = PVPQueueFrame.NewSeasonPopup.NewSeason
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj04, true, "ui")
-
-    local gfpvpobj05 = PVPQueueFrame.NewSeasonPopup.SeasonDescriptionHeader
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj05, true, "ui")
-
-    local gfpvpobj06 = PVPQueueFrame.NewSeasonPopup.SeasonDescription
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj06, true, "ui")
-
-    local gfpvpobj07 = PVPQueueFrame.NewSeasonPopup.SeasonRewardText
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj07, true, "ui")
-
-    local gfpvpobj08 = PVPQueueFrame.NewSeasonPopup.Leave.Text
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj08, true, "ui")
-
-    local gfpvpobj09 = PVPQueueFrame.HonorInset.CasualPanel.HKLabel
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj09, true, "ui")
-
-    local gfpvpobj10 = PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay.LevelLabel
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj10, true, "ui")
-
-    local gfpvpobj11 = HonorFrameQueueButton.Text
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj11, true, "ui")
-
-    local gfpvpobj12 = PVPQueueFrame.HonorInset.RatedPanel.Label
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj12, true, "ui")
-
-    local gfpvpobj13 = PVPQueueFrame.HonorInset.RatedPanel.Tier.Title
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj13, true, "ui")
-
-    local gfpvpobj14 = ConquestJoinButtonText
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj14, true, "ui")
-
-    local gfpvpobj15 = LFGListFrame.CategorySelection.Label
-    ST_CheckAndReplaceTranslationTextUI(gfpvpobj15, true, "ui")
-  end
+  T.ApplyUI({
+    function() return _G.PVPQueueFrameCategoryButton1 and _G.PVPQueueFrameCategoryButton1.Name end,
+    function() return _G.PVPQueueFrameCategoryButton2 and _G.PVPQueueFrameCategoryButton2.Name end,
+    function() return _G.PVPQueueFrameCategoryButton3 and _G.PVPQueueFrameCategoryButton3.Name end,
+    function() return _G.PVPQueueFrame and _G.PVPQueueFrame.NewSeasonPopup and _G.PVPQueueFrame.NewSeasonPopup.NewSeason end,
+    function() return _G.PVPQueueFrame and _G.PVPQueueFrame.NewSeasonPopup and _G.PVPQueueFrame.NewSeasonPopup.SeasonDescriptionHeader end,
+    function() return _G.PVPQueueFrame and _G.PVPQueueFrame.NewSeasonPopup and _G.PVPQueueFrame.NewSeasonPopup.SeasonDescription end,
+    function() return _G.PVPQueueFrame and _G.PVPQueueFrame.NewSeasonPopup and _G.PVPQueueFrame.NewSeasonPopup.SeasonRewardText end,
+    function() return _G.PVPQueueFrame and _G.PVPQueueFrame.NewSeasonPopup and _G.PVPQueueFrame.NewSeasonPopup.Leave and _G.PVPQueueFrame.NewSeasonPopup.Leave.Text end,
+    function() return _G.PVPQueueFrame and _G.PVPQueueFrame.HonorInset and _G.PVPQueueFrame.HonorInset.CasualPanel and _G.PVPQueueFrame.HonorInset.CasualPanel.HKLabel end,
+    function() return _G.PVPQueueFrame and _G.PVPQueueFrame.HonorInset and _G.PVPQueueFrame.HonorInset.CasualPanel and _G.PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay and _G.PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay.LevelLabel end,
+    function() return _G.HonorFrameQueueButton and _G.HonorFrameQueueButton.Text end,
+    function() return _G.PVPQueueFrame and _G.PVPQueueFrame.HonorInset and _G.PVPQueueFrame.HonorInset.RatedPanel and _G.PVPQueueFrame.HonorInset.RatedPanel.Label end,
+    function() return _G.PVPQueueFrame and _G.PVPQueueFrame.HonorInset and _G.PVPQueueFrame.HonorInset.RatedPanel and _G.PVPQueueFrame.HonorInset.RatedPanel.Tier and _G.PVPQueueFrame.HonorInset.RatedPanel.Tier.Title end,
+    function() return _G.ConquestJoinButtonText end,
+    function() return _G.LFGListFrame and _G.LFGListFrame.CategorySelection and _G.LFGListFrame.CategorySelection.Label end,
+  }, { sav = true, prefix = "ui" })
 end
 
 function M.GroupMplusFinder()
-  if TT_PS and TT_PS["ui3"] == "1" then
-    local elements = {
-      { ChallengesFrame.SeasonChangeNoticeFrame.NewSeason, "ui" },
-      { ChallengesFrame.SeasonChangeNoticeFrame.SeasonDescription, "ui" },
-      { ChallengesFrame.SeasonChangeNoticeFrame.SeasonDescription2, "ui" },
-      { ChallengesFrame.WeeklyInfo.Child.Description, "ui" },
-      { ChallengesFrame.WeeklyInfo.Child.SeasonBest, "ui" },
-      { ChallengesFrame.WeeklyInfo.Child.ThisWeekLabel, "ui" },
-      { ChallengesFrame.WeeklyInfo.Child.WeeklyChest.RunStatus, "ui" },
-      { ChallengesFrame.WeeklyInfo.Child.DungeonScoreInfo.Title, "ui" },
-    }
+  local T = (ns.UI and ns.UI.Translate) or nil
+  if not (T and T.Enabled("ui3")) then return end
 
-    for _, elementData in ipairs(elements) do
-      local element, prefix = unpack(elementData)
-      if WoWTR_Localization.lang == 'AR' then
-        ST_CheckAndReplaceTranslationText(element, true, prefix, false, false, -10)
-      else
-        ST_CheckAndReplaceTranslationTextUI(element, true, prefix)
-      end
-    end
+  local list = {
+    function() return _G.ChallengesFrame and _G.ChallengesFrame.SeasonChangeNoticeFrame and _G.ChallengesFrame.SeasonChangeNoticeFrame.NewSeason end,
+    function() return _G.ChallengesFrame and _G.ChallengesFrame.SeasonChangeNoticeFrame and _G.ChallengesFrame.SeasonChangeNoticeFrame.SeasonDescription end,
+    function() return _G.ChallengesFrame and _G.ChallengesFrame.SeasonChangeNoticeFrame and _G.ChallengesFrame.SeasonChangeNoticeFrame.SeasonDescription2 end,
+    function() return _G.ChallengesFrame and _G.ChallengesFrame.WeeklyInfo and _G.ChallengesFrame.WeeklyInfo.Child and _G.ChallengesFrame.WeeklyInfo.Child.Description end,
+    function() return _G.ChallengesFrame and _G.ChallengesFrame.WeeklyInfo and _G.ChallengesFrame.WeeklyInfo.Child and _G.ChallengesFrame.WeeklyInfo.Child.SeasonBest end,
+    function() return _G.ChallengesFrame and _G.ChallengesFrame.WeeklyInfo and _G.ChallengesFrame.WeeklyInfo.Child and _G.ChallengesFrame.WeeklyInfo.Child.ThisWeekLabel end,
+    function() return _G.ChallengesFrame and _G.ChallengesFrame.WeeklyInfo and _G.ChallengesFrame.WeeklyInfo.Child and _G.ChallengesFrame.WeeklyInfo.Child.WeeklyChest and _G.ChallengesFrame.WeeklyInfo.Child.WeeklyChest.RunStatus end,
+    function() return _G.ChallengesFrame and _G.ChallengesFrame.WeeklyInfo and _G.ChallengesFrame.WeeklyInfo.Child and _G.ChallengesFrame.WeeklyInfo.Child.DungeonScoreInfo and _G.ChallengesFrame.WeeklyInfo.Child.DungeonScoreInfo.Title end,
+  }
+
+  if ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL() then
+    T.ApplyText(list, { sav = true, prefix = "ui", corr = -10 })
+  else
+    T.ApplyUI(list, { sav = true, prefix = "ui" })
   end
 end
-
--- Global wrappers for back-compat
-_G.ST_GroupFinder = function() return M.GroupFinder() end
-_G.ST_GroupPVPFinder = function() return M.GroupPVPFinder() end
-_G.ST_GroupMplusFinder = function() return M.GroupMplusFinder() end
 
 return M

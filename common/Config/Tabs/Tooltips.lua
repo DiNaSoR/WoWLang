@@ -6,15 +6,9 @@ WOWTR.Config = WOWTR.Config or {}
 WOWTR.Config.Groups = WOWTR.Config.Groups or {}
 
 function WOWTR.Config.Groups.Tooltips()
-  return {
-    type = "group", order = 2,
+  return WOWTR.Config.MakeTab("tooltips", {
+    order = 2,
     name = function() return WOWTR.Config.Label("titleTab6", "Tooltips/UI") end,
-    get = function(info) return WOWTR.db.profile.tooltips[info[#info]] end,
-    set = function(info, val)
-      WOWTR.db.profile.tooltips[info[#info]] = val
-      WOWTR.Config.SyncGlobalsFromDB()
-      WOWTR.Config.NotifyChange()
-    end,
     args = {
       basics = {
         type = "group", inline = true, order = 1,
@@ -58,7 +52,7 @@ function WOWTR.Config.Groups.Tooltips()
         }
       },
     },
-  }
+  })
 end
 
 

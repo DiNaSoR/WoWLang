@@ -7,6 +7,8 @@ local M = ns.UI.Frames
 
 -- Misc UI frames module (migrated from WoW_Tooltips.lua)
 
+local T = (ns.UI and ns.UI.Translate) or nil
+
 local isMountButtonCreated = false
 local mountUpdateVisibility
 
@@ -65,37 +67,23 @@ end
 
 -- Static Popup
 function M.StaticPopup1()
-  if (TT_PS and TT_PS["ui1"] == "1") then
-    local SPobj01 = StaticPopup1Text
-    ST_CheckAndReplaceTranslationTextUI(SPobj01, true, "h@popuptext-ui")
+  if not (T and T.Enabled("ui1")) then return end
 
-    local SPobj02 = StaticPopup1Button1Text
-    ST_CheckAndReplaceTranslationTextUI(SPobj02, true, "h@popupbutton-ui")
+  T.ApplyUI({
+    function() return _G.StaticPopup1Text end,
+    function() return _G.StaticPopup2Text end,
+  }, { sav = true, prefix = "h@popuptext-ui" })
 
-    local SPobj03 = StaticPopup1Button2Text
-    ST_CheckAndReplaceTranslationTextUI(SPobj03, true, "h@popupbutton-ui")
-
-    local SPobj04 = StaticPopup1Button3Text
-    ST_CheckAndReplaceTranslationTextUI(SPobj04, true, "h@popupbutton-ui")
-
-    local SPobj05 = StaticPopup1Button4Text
-    ST_CheckAndReplaceTranslationTextUI(SPobj05, true, "h@popupbutton-ui")
-
-    local SPobj06 = StaticPopup2Text
-    ST_CheckAndReplaceTranslationTextUI(SPobj06, true, "h@popuptext-ui")
-
-    local SPobj07 = StaticPopup2Button1Text
-    ST_CheckAndReplaceTranslationTextUI(SPobj07, true, "h@popupbutton-ui")
-
-    local SPobj08 = StaticPopup2Button2Text
-    ST_CheckAndReplaceTranslationTextUI(SPobj08, true, "h@popupbutton-ui")
-
-    local SPobj09 = StaticPopup2Button3Text
-    ST_CheckAndReplaceTranslationTextUI(SPobj09, true, "h@popupbutton-ui")
-
-    local SPobj10 = StaticPopup2Button4Text
-    ST_CheckAndReplaceTranslationTextUI(SPobj10, true, "h@popupbutton-ui")
-  end
+  T.ApplyUI({
+    function() return _G.StaticPopup1Button1Text end,
+    function() return _G.StaticPopup1Button2Text end,
+    function() return _G.StaticPopup1Button3Text end,
+    function() return _G.StaticPopup1Button4Text end,
+    function() return _G.StaticPopup2Button1Text end,
+    function() return _G.StaticPopup2Button2Text end,
+    function() return _G.StaticPopup2Button3Text end,
+    function() return _G.StaticPopup2Button4Text end,
+  }, { sav = true, prefix = "h@popupbutton-ui" })
 end
 
 -- World Map
@@ -109,13 +97,11 @@ end
 
 -- Merchant
 function M.MerchantFrame()
-  if (TT_PS and TT_PS["ui1"] == "1") then
-    local MercTab1 = MerchantFrameTab1.Text
-    ST_CheckAndReplaceTranslationTextUI(MercTab1, true, "ui")
-
-    local MercTab2 = MerchantFrameTab2.Text
-    ST_CheckAndReplaceTranslationTextUI(MercTab2, true, "ui")
-  end
+  if not (T and T.Enabled("ui1")) then return end
+  T.ApplyUI({
+    function() return _G.MerchantFrameTab1 and _G.MerchantFrameTab1.Text end,
+    function() return _G.MerchantFrameTab2 and _G.MerchantFrameTab2.Text end,
+  }, { sav = true, prefix = "ui" })
 end
 
 -- Game Menu
@@ -178,7 +164,7 @@ function M.MountJournal()
   if (TT_PS and TT_PS["ui4"] == "1") then
     local CJobj01 = MountJournalLore
     local ST_MountName = MountJournalName:GetText()
-    if (WoWTR_Localization.lang == 'AR') then
+    if (ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL()) then
       ST_CheckAndReplaceTranslationText(CJobj01, true, "Collections:Mount:" .. (ST_MountName or ''), false, false, -10)
     else
       ST_CheckAndReplaceTranslationTextUI(CJobj01, true, "Collections:Mount:" .. (ST_MountName or ''))
@@ -224,14 +210,14 @@ function M.MountJournal()
     ST_CheckAndReplaceTranslationTextUI(CJobj19, false, "ui")
 
     local CJobj20 = PetJournalSummonRandomFavoritePetButtonSpellName
-    if (WoWTR_Localization.lang == 'AR') then
+    if (ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL()) then
       ST_CheckAndReplaceTranslationText(CJobj20, false, "ui", false, false)
     else
       ST_CheckAndReplaceTranslationTextUI(CJobj20, false, "ui")
     end
 
     local CJobj21 = PetJournalHealPetButtonSpellName
-    if (WoWTR_Localization.lang == 'AR') then
+    if (ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL()) then
       ST_CheckAndReplaceTranslationText(CJobj21, false, "ui", false, false)
     else
       ST_CheckAndReplaceTranslationTextUI(CJobj21, false, "ui")
@@ -320,268 +306,182 @@ end
 
 -- Character Frame
 function M.CharacterFrame()
-  if (TT_PS and TT_PS["ui2"] == "1") then
-    local ChFrame1 = CharacterStatsPane.ItemLevelCategory.Title
-    ST_CheckAndReplaceTranslationTextUI(ChFrame1, true, "ui")
+  if not (T and T.Enabled("ui2")) then return end
 
-    local ChFrame2 = CharacterStatsPane.AttributesCategory.Title
-    ST_CheckAndReplaceTranslationTextUI(ChFrame2, true, "ui")
+  T.ApplyUI({
+    function() return _G.CharacterStatsPane and _G.CharacterStatsPane.ItemLevelCategory and _G.CharacterStatsPane.ItemLevelCategory.Title end,
+    function() return _G.CharacterStatsPane and _G.CharacterStatsPane.AttributesCategory and _G.CharacterStatsPane.AttributesCategory.Title end,
+    function() return _G.CharacterStatsPane and _G.CharacterStatsPane.EnhancementsCategory and _G.CharacterStatsPane.EnhancementsCategory.Title end,
+    function() return _G.CharacterFrameTab1 and _G.CharacterFrameTab1.Text end,
+    function() return _G.CharacterFrameTab2 and _G.CharacterFrameTab2.Text end,
+    function() return _G.CharacterFrameTab3 and _G.CharacterFrameTab3.Text end,
+    function() return _G.ReputationDetailAtWarCheckBoxText end,
+    function() return _G.ReputationDetailInactiveCheckBoxText end,
+    function() return _G.ReputationDetailMainScreenCheckBoxText end,
+  }, { sav = true, prefix = "ui" })
 
-    local ChFrame3 = CharacterStatsPane.EnhancementsCategory.Title
-    ST_CheckAndReplaceTranslationTextUI(ChFrame3, true, "ui")
-
-    local ChFrame4 = CharacterFrameTab1.Text
-    ST_CheckAndReplaceTranslationTextUI(ChFrame4, true, "ui")
-
-    local ChFrame5 = CharacterFrameTab2.Text
-    ST_CheckAndReplaceTranslationTextUI(ChFrame5, true, "ui")
-
-    local ChFrame6 = CharacterFrameTab3.Text
-    ST_CheckAndReplaceTranslationTextUI(ChFrame6, true, "ui")
-
-    local ChFrame7 = ReputationFrame.ReputationDetailFrame.ScrollingDescription.ScrollBox.ScrollTarget
-    local childFrame = select(1, ChFrame7:GetChildren())
+  -- Reputation detail description: keep existing child FontString resolution + dynamic prefix.
+  local scrollTarget = _G.ReputationFrame
+    and _G.ReputationFrame.ReputationDetailFrame
+    and _G.ReputationFrame.ReputationDetailFrame.ScrollingDescription
+    and _G.ReputationFrame.ReputationDetailFrame.ScrollingDescription.ScrollBox
+    and _G.ReputationFrame.ReputationDetailFrame.ScrollingDescription.ScrollBox.ScrollTarget
+  if scrollTarget and scrollTarget.GetChildren then
+    local childFrame = select(1, scrollTarget:GetChildren())
     if childFrame and childFrame.FontString and childFrame.FontString.GetText then
-      local text = childFrame.FontString:GetText()
-      local RDFactionName = ReputationFrame.ReputationDetailFrame.Title:GetText()
-      ST_CheckAndReplaceTranslationTextUI(childFrame.FontString, true, "Factions:" .. ST_RenkKoduSil(RDFactionName))
+      local RDFactionName = _G.ReputationFrame.ReputationDetailFrame.Title and _G.ReputationFrame.ReputationDetailFrame.Title:GetText()
+      if RDFactionName then
+        ST_CheckAndReplaceTranslationTextUI(childFrame.FontString, true, "Factions:" .. ST_RenkKoduSil(RDFactionName))
+      end
     end
-
-    local ChFrame8 = ReputationDetailAtWarCheckBoxText
-    ST_CheckAndReplaceTranslationTextUI(ChFrame8, true, "ui")
-
-    local ChFrame9 = ReputationDetailInactiveCheckBoxText
-    ST_CheckAndReplaceTranslationTextUI(ChFrame9, true, "ui")
-
-    local ChFrame10 = ReputationDetailMainScreenCheckBoxText
-    ST_CheckAndReplaceTranslationTextUI(ChFrame10, true, "ui")
   end
 end
 
 -- Friends Frame
 function M.FriendsFrame()
-  if (TT_PS and TT_PS["ui6"] == "1") then
-    local Friendsobj01 = FriendsFrameTitleText
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj01, true, "ui")
+  if not (T and T.Enabled("ui6")) then return end
+
+  T.ApplyUI({
+    function() return _G.FriendsFrameTitleText end,
 
     -- Some client versions expose friends tabs as FriendsTabHeaderTab* (newer UI),
     -- others as FriendsFrameTab* (older UI). Guard globals to avoid nil errors.
-    local friendsHeaderTab1 = _G["FriendsTabHeaderTab1"]
-    local friendsHeaderTab2 = _G["FriendsTabHeaderTab2"]
-    local friendsHeaderTab3 = _G["FriendsTabHeaderTab3"]
+    function() return _G.FriendsTabHeaderTab1 and _G.FriendsTabHeaderTab1.Text end,
+    function() return _G.FriendsTabHeaderTab2 and _G.FriendsTabHeaderTab2.Text end,
+    function() return _G.FriendsTabHeaderTab3 and _G.FriendsTabHeaderTab3.Text end,
 
-    if friendsHeaderTab1 and friendsHeaderTab1.Text then
-      ST_CheckAndReplaceTranslationTextUI(friendsHeaderTab1.Text, true, "ui")
-    end
-    if friendsHeaderTab2 and friendsHeaderTab2.Text then
-      ST_CheckAndReplaceTranslationTextUI(friendsHeaderTab2.Text, true, "ui")
-    end
-    if friendsHeaderTab3 and friendsHeaderTab3.Text then
-      ST_CheckAndReplaceTranslationTextUI(friendsHeaderTab3.Text, true, "ui")
-    end
+    function() return _G.FriendsFrameTab1 and _G.FriendsFrameTab1.Text end,
+    function() return _G.FriendsFrameTab2 and _G.FriendsFrameTab2.Text end,
+    function() return _G.FriendsFrameTab3 and _G.FriendsFrameTab3.Text end,
+    function() return _G.FriendsFrameTab4 and _G.FriendsFrameTab4.Text end,
 
-    local friendsFrameTab1 = _G["FriendsFrameTab1"]
-    local friendsFrameTab2 = _G["FriendsFrameTab2"]
-    local friendsFrameTab3 = _G["FriendsFrameTab3"]
-    local friendsFrameTab4 = _G["FriendsFrameTab4"]
+    function() return _G.FriendsFrameAddFriendButtonText end,
+    function() return _G.FriendsFrameSendMessageButtonText end,
+    function() return _G.FriendsFrameIgnorePlayerButtonText end,
+    function() return _G.FriendsFrameUnsquelchButtonText end,
+    function() return _G.WhoFrameWhoButtonText end,
+    function() return _G.WhoFrameAddFriendButtonText end,
+    function() return _G.WhoFrameGroupInviteButtonText end,
+    function() return _G.WhoFrameTotals end,
+    function() return _G.RaidFrameConvertToRaidButtonText end,
+    function() return _G.RaidFrameRaidInfoButtonText end,
+    function() return _G.RaidFrameRaidDescription end,
 
-    if friendsFrameTab1 and friendsFrameTab1.Text then
-      ST_CheckAndReplaceTranslationTextUI(friendsFrameTab1.Text, true, "ui")
-    end
-    if friendsFrameTab2 and friendsFrameTab2.Text then
-      ST_CheckAndReplaceTranslationTextUI(friendsFrameTab2.Text, true, "ui")
-    end
-    if friendsFrameTab3 and friendsFrameTab3.Text then
-      ST_CheckAndReplaceTranslationTextUI(friendsFrameTab3.Text, true, "ui")
-    end
-    if friendsFrameTab4 and friendsFrameTab4.Text then
-      ST_CheckAndReplaceTranslationTextUI(friendsFrameTab4.Text, true, "ui")
-    end
-
-    local Friendsobj09 = FriendsFrameAddFriendButtonText
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj09, true, "ui")
-
-    local Friendsobj10 = FriendsFrameSendMessageButtonText
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj10, true, "ui")
-
-    local Friendsobj11 = FriendsFrameIgnorePlayerButtonText
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj11, true, "ui")
-
-    local Friendsobj12 = FriendsFrameUnsquelchButtonText
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj12, true, "ui")
-
-    local Friendsobj13 = WhoFrameWhoButtonText
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj13, true, "ui")
-
-    local Friendsobj14 = WhoFrameAddFriendButtonText
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj14, true, "ui")
-
-    local Friendsobj15 = WhoFrameGroupInviteButtonText
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj15, true, "ui")
-
-    local Friendsobj16 = WhoFrameTotals
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj16, true, "ui")
-
-    local Friendsobj17 = RaidFrameConvertToRaidButtonText
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj17, true, "ui")
-
-    local Friendsobj18 = RaidFrameRaidInfoButtonText
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj18, true, "ui")
-
-    local Friendsobj19 = RaidFrameRaidDescription
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj19, true, "ui")
-
-    local Friendsobj20 = RecruitAFriendRecruitmentFrame.Title
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj20, true, "ui")
-
-    local Friendsobj21 = RecruitAFriendRecruitmentFrame.Description
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj21, true, "ui")
-
-    local Friendsobj22 = RecruitAFriendRecruitmentFrame.FactionAndRealm
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj22, true, "ui")
-
-    local Friendsobj23 = RecruitAFriendFrame.RecruitList.Header.RecruitedFriends
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj23, true, "ui")
-
-    local Friendsobj24 = RecruitAFriendFrame.RecruitmentButton.Text
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj24, true, "ui")
-
-    local Friendsobj26 = RecruitAFriendFrame.RewardClaiming.MonthCount.Text
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj26, true, "ui")
-
-    local Friendsobj27 = RecruitAFriendFrameText
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj27, true, "ui")
-
-    local Friendsobj28 = RecruitAFriendRecruitmentFrame.EditBox.Instructions
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj28, true, "ui")
-
-    local Friendsobj29 = RecruitAFriendRecruitmentFrameText
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj29, true, "ui")
-
-    local Friendsobj30 = RecruitAFriendRecruitmentFrame.InfoText1
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj30, true, "ui")
-
-    local Friendsobj31 = RecruitAFriendRecruitmentFrame.InfoText2
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj31, true, "ui")
-
-    local Friendsobj32 = RecruitAFriendFrame.RewardClaiming.EarnInfo
-    ST_CheckAndReplaceTranslationTextUI(Friendsobj32, true, "ui")
-  end
+    function() return _G.RecruitAFriendRecruitmentFrame and _G.RecruitAFriendRecruitmentFrame.Title end,
+    function() return _G.RecruitAFriendRecruitmentFrame and _G.RecruitAFriendRecruitmentFrame.Description end,
+    function() return _G.RecruitAFriendRecruitmentFrame and _G.RecruitAFriendRecruitmentFrame.FactionAndRealm end,
+    function() return _G.RecruitAFriendFrame and _G.RecruitAFriendFrame.RecruitList and _G.RecruitAFriendFrame.RecruitList.Header and _G.RecruitAFriendFrame.RecruitList.Header.RecruitedFriends end,
+    function() return _G.RecruitAFriendFrame and _G.RecruitAFriendFrame.RecruitmentButton and _G.RecruitAFriendFrame.RecruitmentButton.Text end,
+    function() return _G.RecruitAFriendFrame and _G.RecruitAFriendFrame.RewardClaiming and _G.RecruitAFriendFrame.RewardClaiming.MonthCount and _G.RecruitAFriendFrame.RewardClaiming.MonthCount.Text end,
+    function() return _G.RecruitAFriendFrameText end,
+    function() return _G.RecruitAFriendRecruitmentFrame and _G.RecruitAFriendRecruitmentFrame.EditBox and _G.RecruitAFriendRecruitmentFrame.EditBox.Instructions end,
+    function() return _G.RecruitAFriendRecruitmentFrameText end,
+    function() return _G.RecruitAFriendRecruitmentFrame and _G.RecruitAFriendRecruitmentFrame.InfoText1 end,
+    function() return _G.RecruitAFriendRecruitmentFrame and _G.RecruitAFriendRecruitmentFrame.InfoText2 end,
+    function() return _G.RecruitAFriendFrame and _G.RecruitAFriendFrame.RewardClaiming and _G.RecruitAFriendFrame.RewardClaiming.EarnInfo end,
+  }, { sav = true, prefix = "ui" })
 end
 
 -- Help Plate Tooltip
 function M.HelpPlateTooltip()
-  if (TT_PS and TT_PS["active"] == "1") then
-    local HPT01 = HelpPlateTooltip.Text
-    ST_CheckAndReplaceTranslationTextUI(HPT01, true, "ui")
-  end
+  if not (T and T.Enabled("active")) then return end
+  T.ApplyUI({
+    function() return _G.HelpPlateTooltip and _G.HelpPlateTooltip.Text end,
+  }, { sav = true, prefix = "ui" })
 end
 
 -- Splash Frame
 function M.SplashFrame()
-  if (TT_PS and TT_PS["active"] == "1") then
-    local SplashF01 = SplashFrame.Header
-    ST_CheckAndReplaceTranslationTextUI(SplashF01, true, "ui")
+  if not (T and T.Enabled("active")) then return end
 
-    local SplashF02 = SplashFrame.Label
-    ST_CheckAndReplaceTranslationTextUI(SplashF02, true, "ui")
+  T.ApplyUI({
+    function() return _G.SplashFrame and _G.SplashFrame.Header end,
+    function() return _G.SplashFrame and _G.SplashFrame.Label end,
+    function() return _G.SplashFrame and _G.SplashFrame.BottomCloseButton and _G.SplashFrame.BottomCloseButton.Text end,
+    function() return _G.SplashFrame and _G.SplashFrame.TopLeftFeature and _G.SplashFrame.TopLeftFeature.Title end,
+    function() return _G.SplashFrame and _G.SplashFrame.BottomLeftFeature and _G.SplashFrame.BottomLeftFeature.Title end,
+    function() return _G.SplashFrame and _G.SplashFrame.RightFeature and _G.SplashFrame.RightFeature.Title end,
+  }, { sav = true, prefix = "ui" })
 
-    local SplashF03 = SplashFrame.TopLeftFeature.Description
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationText(SplashF03, true, "ui", false, false, -10)
-      SplashF03:SetJustifyH("RIGHT")
-    else
-      ST_CheckAndReplaceTranslationTextUI(SplashF03, true, "ui")
-    end
+  local rtl = ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL()
+  if rtl then
+    local d1 = _G.SplashFrame and _G.SplashFrame.TopLeftFeature and _G.SplashFrame.TopLeftFeature.Description
+    local d2 = _G.SplashFrame and _G.SplashFrame.BottomLeftFeature and _G.SplashFrame.BottomLeftFeature.Description
+    local d3 = _G.SplashFrame and _G.SplashFrame.RightFeature and _G.SplashFrame.RightFeature.Description
 
-    local SplashF04 = SplashFrame.BottomLeftFeature.Description
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationText(SplashF04, true, "ui", false, false, -15)
-      SplashF04:SetJustifyH("RIGHT")
-    else
-      ST_CheckAndReplaceTranslationTextUI(SplashF04, true, "ui")
-    end
+    T.ApplyText({
+      { obj = d1, corr = -10 },
+      { obj = d2, corr = -15 },
+      { obj = d3, corr = -10 },
+    }, { sav = true, prefix = "ui" })
 
-    local SplashF05 = SplashFrame.RightFeature.Description
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationText(SplashF05, true, "ui", false, false, -10)
-    else
-      ST_CheckAndReplaceTranslationTextUI(SplashF05, true, "ui")
-    end
-
-    local SplashF06 = SplashFrame.BottomCloseButton.Text
-    ST_CheckAndReplaceTranslationTextUI(SplashF06, true, "ui")
-
-    local SplashF07 = SplashFrame.TopLeftFeature.Title
-    ST_CheckAndReplaceTranslationTextUI(SplashF07, true, "ui")
-
-    local SplashF08 = SplashFrame.BottomLeftFeature.Title
-    ST_CheckAndReplaceTranslationTextUI(SplashF08, true, "ui")
-
-    local SplashF09 = SplashFrame.RightFeature.Title
-    ST_CheckAndReplaceTranslationTextUI(SplashF09, true, "ui")
+    -- Preserve explicit justification from original implementation.
+    if d1 and d1.SetJustifyH then d1:SetJustifyH("RIGHT") end
+    if d2 and d2.SetJustifyH then d2:SetJustifyH("RIGHT") end
+  else
+    T.ApplyUI({
+      function() return _G.SplashFrame and _G.SplashFrame.TopLeftFeature and _G.SplashFrame.TopLeftFeature.Description end,
+      function() return _G.SplashFrame and _G.SplashFrame.BottomLeftFeature and _G.SplashFrame.BottomLeftFeature.Description end,
+      function() return _G.SplashFrame and _G.SplashFrame.RightFeature and _G.SplashFrame.RightFeature.Description end,
+    }, { sav = true, prefix = "ui" })
   end
 end
 
 -- Ping System Tutorial
 function M.PingSystemTutorial()
-  if (TT_PS and TT_PS["active"] == "1") then
-    local PST01 = PingSystemTutorialTitleText
-    ST_CheckAndReplaceTranslationTextUI(PST01, true, "ui")
-
-    local PST02 = PingSystemTutorial.Tutorial1.TutorialHeader
-    ST_CheckAndReplaceTranslationTextUI(PST02, true, "ui")
-
-    local PST03 = PingSystemTutorial.Tutorial2.TutorialHeader
-    ST_CheckAndReplaceTranslationTextUI(PST03, true, "ui")
-
-    local PST04 = PingSystemTutorial.Tutorial3.TutorialHeader
-    ST_CheckAndReplaceTranslationTextUI(PST04, true, "ui")
-
-    local PST05 = PingSystemTutorial.Tutorial4.TutorialHeader
-    ST_CheckAndReplaceTranslationTextUI(PST05, true, "ui")
-
-    local PST06 = PingSystemTutorial.Tutorial4.ImageBounds.TutorialBody1
-    ST_CheckAndReplaceTranslationTextUI(PST06, true, "ui")
-
-    local PST07 = PingSystemTutorial.Tutorial4.ImageBounds.TutorialBody2
-    ST_CheckAndReplaceTranslationTextUI(PST07, true, "ui")
-
-    local PST08 = PingSystemTutorial.Tutorial4.ImageBounds.TutorialBody3
-    ST_CheckAndReplaceTranslationTextUI(PST08, true, "ui")
-  end
+  if not (T and T.Enabled("active")) then return end
+  T.ApplyUI({
+    function() return _G.PingSystemTutorialTitleText end,
+    function() return _G.PingSystemTutorial and _G.PingSystemTutorial.Tutorial1 and _G.PingSystemTutorial.Tutorial1.TutorialHeader end,
+    function() return _G.PingSystemTutorial and _G.PingSystemTutorial.Tutorial2 and _G.PingSystemTutorial.Tutorial2.TutorialHeader end,
+    function() return _G.PingSystemTutorial and _G.PingSystemTutorial.Tutorial3 and _G.PingSystemTutorial.Tutorial3.TutorialHeader end,
+    function() return _G.PingSystemTutorial and _G.PingSystemTutorial.Tutorial4 and _G.PingSystemTutorial.Tutorial4.TutorialHeader end,
+    function()
+      return _G.PingSystemTutorial
+        and _G.PingSystemTutorial.Tutorial4
+        and _G.PingSystemTutorial.Tutorial4.ImageBounds
+        and _G.PingSystemTutorial.Tutorial4.ImageBounds.TutorialBody1
+    end,
+    function()
+      return _G.PingSystemTutorial
+        and _G.PingSystemTutorial.Tutorial4
+        and _G.PingSystemTutorial.Tutorial4.ImageBounds
+        and _G.PingSystemTutorial.Tutorial4.ImageBounds.TutorialBody2
+    end,
+    function()
+      return _G.PingSystemTutorial
+        and _G.PingSystemTutorial.Tutorial4
+        and _G.PingSystemTutorial.Tutorial4.ImageBounds
+        and _G.PingSystemTutorial.Tutorial4.ImageBounds.TutorialBody3
+    end,
+  }, { sav = true, prefix = "ui" })
 end
 
 -- Warband Bank
 function M.WarbandBankFrame()
-  if (TT_PS and TT_PS["active"] == "1") then
-    local BANKFrame01 = AccountBankPanel.PurchasePrompt.Title
-    ST_CheckAndReplaceTranslationTextUI(BANKFrame01, false, "ui")
-
-    local BANKFrame02 = AccountBankPanel.PurchasePrompt.PromptText
-    ST_CheckAndReplaceTranslationTextUI(BANKFrame02, false, "ui")
-
-    local BANKFrame03 = AccountBankPanel.PurchasePrompt.TabCostFrame.PurchaseButton.Text
-    ST_CheckAndReplaceTranslationTextUI(BANKFrame03, false, "ui")
-
-    local BANKFrame04 = AccountBankPanel.PurchasePrompt.TabCostFrame.TabCost
-    ST_CheckAndReplaceTranslationTextUI(BANKFrame04, false, "ui")
-
-    local BANKFrame05 = AccountBankPanel.MoneyFrame.WithdrawButton.Text
-    ST_CheckAndReplaceTranslationTextUI(BANKFrame05, false, "ui")
-
-    local BANKFrame06 = AccountBankPanel.MoneyFrame.DepositButton.Text
-    ST_CheckAndReplaceTranslationTextUI(BANKFrame06, false, "ui")
-
-    local BANKFrame07 = AccountBankPanel.ItemDepositFrame.DepositButton.Text
-    ST_CheckAndReplaceTranslationTextUI(BANKFrame07, false, "ui")
-
-    local BANKFrame08 = AccountBankPanel.ItemDepositFrame.IncludeReagentsCheckbox.Text
-    ST_CheckAndReplaceTranslationTextUI(BANKFrame08, false, "ui")
-
-    local BANKFrame09 = BankItemSearchBox.Instructions
-    ST_CheckAndReplaceTranslationTextUI(BANKFrame09, false, "ui")
-  end
+  if not (T and T.Enabled("active")) then return end
+  T.ApplyUI({
+    function() return _G.AccountBankPanel and _G.AccountBankPanel.PurchasePrompt and _G.AccountBankPanel.PurchasePrompt.Title end,
+    function() return _G.AccountBankPanel and _G.AccountBankPanel.PurchasePrompt and _G.AccountBankPanel.PurchasePrompt.PromptText end,
+    function()
+      return _G.AccountBankPanel
+        and _G.AccountBankPanel.PurchasePrompt
+        and _G.AccountBankPanel.PurchasePrompt.TabCostFrame
+        and _G.AccountBankPanel.PurchasePrompt.TabCostFrame.PurchaseButton
+        and _G.AccountBankPanel.PurchasePrompt.TabCostFrame.PurchaseButton.Text
+    end,
+    function()
+      return _G.AccountBankPanel
+        and _G.AccountBankPanel.PurchasePrompt
+        and _G.AccountBankPanel.PurchasePrompt.TabCostFrame
+        and _G.AccountBankPanel.PurchasePrompt.TabCostFrame.TabCost
+    end,
+    function() return _G.AccountBankPanel and _G.AccountBankPanel.MoneyFrame and _G.AccountBankPanel.MoneyFrame.WithdrawButton and _G.AccountBankPanel.MoneyFrame.WithdrawButton.Text end,
+    function() return _G.AccountBankPanel and _G.AccountBankPanel.MoneyFrame and _G.AccountBankPanel.MoneyFrame.DepositButton and _G.AccountBankPanel.MoneyFrame.DepositButton.Text end,
+    function() return _G.AccountBankPanel and _G.AccountBankPanel.ItemDepositFrame and _G.AccountBankPanel.ItemDepositFrame.DepositButton and _G.AccountBankPanel.ItemDepositFrame.DepositButton.Text end,
+    function() return _G.AccountBankPanel and _G.AccountBankPanel.ItemDepositFrame and _G.AccountBankPanel.ItemDepositFrame.IncludeReagentsCheckbox and _G.AccountBankPanel.ItemDepositFrame.IncludeReagentsCheckbox.Text end,
+    function() return _G.BankItemSearchBox and _G.BankItemSearchBox.Instructions end,
+  }, { sav = false, prefix = "ui" })
 end
 
 -- ItemRef Tooltip
@@ -623,136 +523,88 @@ end
 
 -- Item Upgrade Frame
 function M.ItemUpgradeFrame()
-  if (TT_PS and TT_PS["ui1"] == "1") then
-    local ItemUpFrm01 = ItemUpgradeFrameTitleText
-    ST_CheckAndReplaceTranslationTextUI(ItemUpFrm01, false, "ui")
-    local ItemUpFrm02 = ItemUpgradeFrame.ItemInfo.MissingItemText
-    ST_CheckAndReplaceTranslationTextUI(ItemUpFrm02, false, "ui")
-    local ItemUpFrm03 = ItemUpgradeFrame.MissingDescription
-    ST_CheckAndReplaceTranslationTextUI(ItemUpFrm03, false, "ui")
-    local ItemUpFrm04 = ItemUpgradeFrame.UpgradeButton.Text
-    ST_CheckAndReplaceTranslationTextUI(ItemUpFrm04, false, "ui")
-    local ItemUpFrm05 = ItemUpgradeFrame.UpgradeCostFrame.Label
-    ST_CheckAndReplaceTranslationTextUI(ItemUpFrm05, false, "ui")
-    local ItemUpFrm06 = ItemUpgradeFrame.ItemInfo.UpgradeTo
-    ST_CheckAndReplaceTranslationTextUI(ItemUpFrm06, false, "ui")
-    local ItemUpFrm07 = ItemUpgradeFrameLeftItemPreviewFrameTextLeft1
-    ST_CheckAndReplaceTranslationTextUI(ItemUpFrm07, false, "ui")
-    local ItemUpFrm08 = ItemUpgradeFrameRightItemPreviewFrameTextLeft1
-    ST_CheckAndReplaceTranslationTextUI(ItemUpFrm08, false, "ui")
-  end
+  if not (T and T.Enabled("ui1")) then return end
+  T.ApplyUI({
+    function() return _G.ItemUpgradeFrameTitleText end,
+    function() return _G.ItemUpgradeFrame and _G.ItemUpgradeFrame.ItemInfo and _G.ItemUpgradeFrame.ItemInfo.MissingItemText end,
+    function() return _G.ItemUpgradeFrame and _G.ItemUpgradeFrame.MissingDescription end,
+    function() return _G.ItemUpgradeFrame and _G.ItemUpgradeFrame.UpgradeButton and _G.ItemUpgradeFrame.UpgradeButton.Text end,
+    function() return _G.ItemUpgradeFrame and _G.ItemUpgradeFrame.UpgradeCostFrame and _G.ItemUpgradeFrame.UpgradeCostFrame.Label end,
+    function() return _G.ItemUpgradeFrame and _G.ItemUpgradeFrame.ItemInfo and _G.ItemUpgradeFrame.ItemInfo.UpgradeTo end,
+    function() return _G.ItemUpgradeFrameLeftItemPreviewFrameTextLeft1 end,
+    function() return _G.ItemUpgradeFrameRightItemPreviewFrameTextLeft1 end,
+  }, { sav = false, prefix = "ui" })
 end
 
 -- Weekly Rewards Frame
 function M.WeeklyRewardsFrame()
-  if (TT_PS and TT_PS["ui1"] == "1") then
-    local WeeklyRFrm01 = WeeklyRewardsFrame.HeaderFrame.Text
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationText(WeeklyRFrm01, false, "ui", WOWTR_Font1, false, 5)
-    else
-      ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm01, false, "ui")
-    end
-    local WeeklyRFrm02 = WeeklyRewardsFrame.RaidFrame.Name
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm02, false, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm02, false, "ui")
-    end
-    local WeeklyRFrm03 = WeeklyRewardsFrame.MythicFrame.Name
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm03, false, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm03, false, "ui")
-    end
-    local WeeklyRFrm04 = WeeklyRewardsFrame.WorldFrame.Name
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm04, false, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm04, false, "ui")
-    end
-    if WeeklyRewardsFrame.Overlay and WeeklyRewardsFrame.Overlay.Title then
-      local WeeklyRFrm05 = WeeklyRewardsFrame.Overlay.Title
-      if (WoWTR_Localization.lang == 'AR') then
-        ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm05, true, "ui", WOWTR_Font1)
-      else
-        ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm05, true, "ui")
-      end
-    end
-    if WeeklyRewardsFrame.Overlay and WeeklyRewardsFrame.Overlay.Text then
-      local WeeklyRFrm06 = WeeklyRewardsFrame.Overlay.Text
-      if (WoWTR_Localization.lang == 'AR') then
-        ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm06, true, "ui", WOWTR_Font1)
-      else
-        ST_CheckAndReplaceTranslationTextUI(WeeklyRFrm06, true, "ui")
-      end
-    end
+  if not (T and T.Enabled("ui1")) then return end
+
+  local rtl = ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL()
+  local rtlFont = rtl and _G.WOWTR_Font1 or nil
+
+  local headerText = _G.WeeklyRewardsFrame and _G.WeeklyRewardsFrame.HeaderFrame and _G.WeeklyRewardsFrame.HeaderFrame.Text
+  if rtl then
+    T.ApplyText({
+      { obj = headerText, font = _G.WOWTR_Font1, corr = 5 },
+    }, { sav = false, prefix = "ui" })
+  else
+    T.ApplyUI({ headerText }, { sav = false, prefix = "ui" })
+  end
+
+  T.ApplyUI({
+    { obj = function() return _G.WeeklyRewardsFrame and _G.WeeklyRewardsFrame.RaidFrame and _G.WeeklyRewardsFrame.RaidFrame.Name end, font = rtlFont },
+    { obj = function() return _G.WeeklyRewardsFrame and _G.WeeklyRewardsFrame.MythicFrame and _G.WeeklyRewardsFrame.MythicFrame.Name end, font = rtlFont },
+    { obj = function() return _G.WeeklyRewardsFrame and _G.WeeklyRewardsFrame.WorldFrame and _G.WeeklyRewardsFrame.WorldFrame.Name end, font = rtlFont },
+  }, { sav = false, prefix = "ui" })
+
+  local overlay = _G.WeeklyRewardsFrame and _G.WeeklyRewardsFrame.Overlay
+  if overlay then
+    T.ApplyUI({
+      { obj = overlay.Title, font = rtlFont },
+      { obj = overlay.Text, font = rtlFont },
+    }, { sav = true, prefix = "ui" })
   end
 end
 
 -- Event Toast Manager Frame
 function M.EventToastManagerFrame()
-  if (TT_PS and TT_PS["ui1"] == "1") then
-    local toast = EventToastManagerFrame.currentDisplayingToast
-    if toast then
-      local EventTextScreen01 = toast.Title
-      ST_CheckAndReplaceTranslationTextUI(EventTextScreen01, true, "Collections:TextEvent", WOWTR_Font1)
+  if not (T and T.Enabled("ui1")) then return end
+  local toast = _G.EventToastManagerFrame and _G.EventToastManagerFrame.currentDisplayingToast
+  if not toast then return end
 
-      local EventTextScreen02 = toast.SubTitle
-      ST_CheckAndReplaceTranslationTextUI(EventTextScreen02, true, "Collections:TextEvent")
+  T.ApplyUI({
+    { obj = toast.Title, font = _G.WOWTR_Font1 },
+    toast.SubTitle,
+    toast.Description,
+  }, { sav = true, prefix = "Collections:TextEvent" })
 
-      local EventTextScreen03 = toast.Description
-      ST_CheckAndReplaceTranslationTextUI(EventTextScreen03, true, "Collections:TextEvent")
-
-      if toast.Contents then
-        local EventTextScreen04 = toast.Contents.Title
-        ST_CheckAndReplaceTranslationTextUI(EventTextScreen04, true, "Collections:TextEvent", WOWTR_Font1)
-
-        local EventTextScreen05 = toast.Contents.SubTitle
-        ST_CheckAndReplaceTranslationTextUI(EventTextScreen05, true, "Collections:TextEvent")
-
-        local EventTextScreen06 = toast.Contents.Description
-        ST_CheckAndReplaceTranslationTextUI(EventTextScreen06, true, "Collections:TextEvent")
-      end
-    end
+  if toast.Contents then
+    T.ApplyUI({
+      { obj = toast.Contents.Title, font = _G.WOWTR_Font1 },
+      toast.Contents.SubTitle,
+      toast.Contents.Description,
+    }, { sav = true, prefix = "Collections:TextEvent" })
   end
 end
 
 -- Raid Boss Emote Frame
 function M.RaidBossEmoteFrame()
-  if (TT_PS and TT_PS["ui1"] == "1") then
-    local RBossEmoteFrm04 = RaidBossEmoteFrame.slot1Text
-    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm04, false, "Collections:Emote")
-    local RBossEmoteFrm05 = RaidBossEmoteFrame.slot2Text
-    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm05, false, "Collections:Emote")
-    local RBossEmoteFrm06 = RaidBossEmoteFrame.slot3Text
-    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm06, false, "Collections:Emote")
-    local RBossEmoteFrm01 = RaidBossEmoteFrame.slot1
-    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm01, true, "Collections:Emote")
-    local RBossEmoteFrm02 = RaidBossEmoteFrame.slot2
-    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm02, true, "Collections:Emote")
-    local RBossEmoteFrm03 = RaidBossEmoteFrame.slot3
-    ST_CheckAndReplaceTranslationTextUI(RBossEmoteFrm03, true, "Collections:Emote")
-  end
-end
+  if not (T and T.Enabled("ui1")) then return end
+  local emote = _G.RaidBossEmoteFrame
+  if not emote then return end
 
--- Global wrappers for back-compat
-_G.ST_updateSpellBookFrame = function() return M.UpdateSpellBookFrame() end
-_G.ST_StaticPopup1 = function() return M.StaticPopup1() end
-_G.ST_WorldMapFunc = function() return M.WorldMapFunc() end
-_G.ST_MerchantFrame = function() return M.MerchantFrame() end
-_G.ST_GameMenuTranslate = function() return M.GameMenuTranslate() end
-_G.ST_MountJournal = function() return M.MountJournal() end
-_G.ST_MountJournalbutton = function() return M.MountJournalButton() end
-_G.ST_CharacterFrame = function() return M.CharacterFrame() end
-_G.ST_FriendsFrame = function() return M.FriendsFrame() end
-_G.ST_HelpPlateTooltip = function() return M.HelpPlateTooltip() end
-_G.ST_SplashFrame = function() return M.SplashFrame() end
-_G.ST_PingSystemTutorial = function() return M.PingSystemTutorial() end
-_G.ST_WarbandBankFrm = function() return M.WarbandBankFrame() end
-_G.ST_ItemRefTooltip = function() return M.ItemRefTooltip() end
-_G.ST_ItemUpgradeFrm = function() return M.ItemUpgradeFrame() end
-_G.ST_WeeklyRewardsFrame = function() return M.WeeklyRewardsFrame() end
-_G.ST_EventToastManagerFrame = function() return M.EventToastManagerFrame() end
-_G.ST_RaidBossEmoteFrame = function() return M.RaidBossEmoteFrame() end
+  T.ApplyUI({
+    emote.slot1Text,
+    emote.slot2Text,
+    emote.slot3Text,
+  }, { sav = false, prefix = "Collections:Emote" })
+
+  T.ApplyUI({
+    emote.slot1,
+    emote.slot2,
+    emote.slot3,
+  }, { sav = true, prefix = "Collections:Emote" })
+end
 
 return M

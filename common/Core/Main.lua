@@ -261,22 +261,22 @@ function Core.OnEvent(self, event, name, ...)
 
     if StaticPopup1 and ST_StaticPopup1 then StaticPopup1:HookScript("OnShow", ST_StaticPopup1) end
     if StaticPopup2 and ST_StaticPopup1 then StaticPopup2:HookScript("OnShow", ST_StaticPopup1) end
-    if GameMenuFrame and ST_GameMenuTranslate then GameMenuFrame:HookScript("OnShow", function() Core.StartTicker(GameMenuFrame, ST_GameMenuTranslate, 0.05) end) end
+    if GameMenuFrame and ST_GameMenuTranslate then Core.HookOnShowTicker(GameMenuFrame, ST_GameMenuTranslate, 0.05) end
     if MerchantFrame and ST_MerchantFrame then MerchantFrame:HookScript("OnShow", ST_MerchantFrame) end
-    if PVEFrame and ST_GroupFinder then PVEFrame:HookScript("OnShow", function() Core.StartTicker(PVEFrame, ST_GroupFinder, 0) end) end
-    if WorldMapFrame and ST_WorldMapFunc then WorldMapFrame:HookScript("OnShow", function() Core.StartTicker(WorldMapFrame, ST_WorldMapFunc, 0.1) end) end
-    if QuestScrollFrame and QTR_Quest_Next then QuestScrollFrame:HookScript("OnShow", function() Core.StartTicker(QuestScrollFrame, QTR_Quest_Next, 0.02) end) end
+    if PVEFrame and ST_GroupFinder then Core.HookOnShowTicker(PVEFrame, ST_GroupFinder, 0) end
+    if WorldMapFrame and ST_WorldMapFunc then Core.HookOnShowTicker(WorldMapFrame, ST_WorldMapFunc, 0.1) end
+    if QuestScrollFrame and QTR_Quest_Next then Core.HookOnShowTicker(QuestScrollFrame, QTR_Quest_Next, 0.02) end
     if CharacterFrame and ST_CharacterFrame then CharacterFrame:HookScript("OnShow", ST_CharacterFrame) end
-    if FriendsFrame and ST_FriendsFrame then FriendsFrame:HookScript("OnShow", function() Core.StartTicker(FriendsFrame, ST_FriendsFrame, 0.1) end) end
-    if HelpPlateTooltip and ST_HelpPlateTooltip then HelpPlateTooltip:HookScript("OnShow", function() Core.StartTicker(HelpPlateTooltip, ST_HelpPlateTooltip, 0.1) end) end
-    if SplashFrame and ST_SplashFrame then SplashFrame:HookScript("OnShow", function() Core.StartTicker(SplashFrame, ST_SplashFrame, 0.1) end) end
-    if PingSystemTutorialTitleText and ST_PingSystemTutorial then PingSystemTutorialTitleText:HookScript("OnShow", function() Core.StartTicker(PingSystemTutorialTitleText, ST_PingSystemTutorial, 0.1) end) end
-    if BankFrame and ST_WarbandBankFrm then BankFrame:HookScript("OnShow", function() Core.StartTicker(BankFrame, ST_WarbandBankFrm, 0.1) end) end
-    if ItemRefTooltip and ST_ItemRefTooltip then ItemRefTooltip:HookScript("OnShow", function() Core.StartTicker(ItemRefTooltip, ST_ItemRefTooltip, 0.02) end) end
-    if EventToastManagerFrame and ST_EventToastManagerFrame then EventToastManagerFrame:HookScript("OnShow", function() Core.StartTicker(EventToastManagerFrame, ST_EventToastManagerFrame, 0.1) end) end
-    if RaidBossEmoteFrame and ST_RaidBossEmoteFrame then RaidBossEmoteFrame:HookScript("OnShow", function() Core.StartTicker(RaidBossEmoteFrame, ST_RaidBossEmoteFrame, 0.1) end) end
-    if ReputationFrame and ReputationFrame.ReputationDetailFrame and ST_CharacterFrame then ReputationFrame.ReputationDetailFrame:HookScript("OnShow", function() Core.StartTicker(ReputationFrame.ReputationDetailFrame, ST_CharacterFrame, 0.1) end) end
-    if PlayerChoiceFrame and TT_onChoiceShow then PlayerChoiceFrame:HookScript("OnShow", function() Core.StartTicker(PlayerChoiceFrame, TT_onChoiceShow, 0.1) end) end
+    if FriendsFrame and ST_FriendsFrame then Core.HookOnShowTicker(FriendsFrame, ST_FriendsFrame, 0.1) end
+    if HelpPlateTooltip and ST_HelpPlateTooltip then Core.HookOnShowTicker(HelpPlateTooltip, ST_HelpPlateTooltip, 0.1) end
+    if SplashFrame and ST_SplashFrame then Core.HookOnShowTicker(SplashFrame, ST_SplashFrame, 0.1) end
+    if PingSystemTutorialTitleText and ST_PingSystemTutorial then Core.HookOnShowTicker(PingSystemTutorialTitleText, ST_PingSystemTutorial, 0.1) end
+    if BankFrame and ST_WarbandBankFrm then Core.HookOnShowTicker(BankFrame, ST_WarbandBankFrm, 0.1) end
+    if ItemRefTooltip and ST_ItemRefTooltip then Core.HookOnShowTicker(ItemRefTooltip, ST_ItemRefTooltip, 0.02) end
+    if EventToastManagerFrame and ST_EventToastManagerFrame then Core.HookOnShowTicker(EventToastManagerFrame, ST_EventToastManagerFrame, 0.1) end
+    if RaidBossEmoteFrame and ST_RaidBossEmoteFrame then Core.HookOnShowTicker(RaidBossEmoteFrame, ST_RaidBossEmoteFrame, 0.1) end
+    if ReputationFrame and ReputationFrame.ReputationDetailFrame and ST_CharacterFrame then Core.HookOnShowTicker(ReputationFrame.ReputationDetailFrame, ST_CharacterFrame, 0.1) end
+    if PlayerChoiceFrame and TT_onChoiceShow then Core.HookOnShowTicker(PlayerChoiceFrame, TT_onChoiceShow, 0.1) end
 
     if BB_OknoTRonline then BB_OknoTRonline() end
 

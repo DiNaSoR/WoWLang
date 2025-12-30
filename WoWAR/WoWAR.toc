@@ -37,6 +37,8 @@ common/Core/State.lua
 common/Core/Debug.lua
 common/Core/LegacyBridge.lua
 common/Core/Main.lua
+common/Core/Compat.lua
+common/Core/HookUtils.lua
 common/UI/Fonts.lua
 common/Config/Helpers.lua
 common/Config/Core.lua
@@ -52,6 +54,7 @@ common/Tooltips/Utils.lua
 common/Tooltips/Main.lua
 common/Tooltips/Hooks.lua
 common/Tooltips/GameTooltip.lua
+common/UI/Translate.lua
 common/UI/AdventureGuide.lua
 common/UI/GroupFinder.lua
 common/UI/Frames.lua

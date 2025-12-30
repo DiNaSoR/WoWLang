@@ -48,8 +48,10 @@ function WOWTR.Config.Groups.General()
           QTR_QuestPrepare("__force__")
         elseif QuestLogPopupDetailFrame and QuestLogPopupDetailFrame:IsVisible() and QTR_QuestPrepare then
           QTR_QuestPrepare("QUEST_DETAIL")
-        elseif QuestMapFrame and QuestMapFrame:IsVisible() and QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.questID then
-          local questID = QuestMapFrame.DetailsFrame.questID
+        elseif QuestMapFrame and QuestMapFrame:IsVisible() then
+          local questID =
+            (QuestMapFrame.QuestsFrame and QuestMapFrame.QuestsFrame.DetailsFrame and QuestMapFrame.QuestsFrame.DetailsFrame.questID)
+            or (QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.questID)
           if questID and QuestMapFrame_ShowQuestDetails then
             QuestMapFrame_ShowQuestDetails(questID)
           elseif QTR_PrepareReload then

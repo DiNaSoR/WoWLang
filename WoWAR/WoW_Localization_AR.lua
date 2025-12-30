@@ -77,6 +77,10 @@ QTR_Messages = {
    completion        = "ﺇﻛﻤﺎﻝ", -- Completion
    translator        = "ﻣﺘﺮﺟﻢ", -- Translator
    rewards           = "اﻟﻤﻜﺎﻓﺌﺎت", -- Rewards
+   -- Questline reward headers (QuestMapFrame rewards pane)
+   -- NOTE: Kept as normal Arabic text; we shape/reverse using AS_UTF8reverseRS in code.
+   questline_unlocking    = "سلسلة هذه المهمة جزء من فتح:", -- This quest line is part of unlocking:
+   questline_rewards_end  = "نهاية سلسلة هذه المهمة تكافئ:", -- The end of this quest line rewards:
    experience        = "ﺍﻟﺨﺒﺮﺓ:", -- Experience
    reqmoney          = "ﺍﻟﻤﺎﻝ ﺍﻟﻤﻄﻠﻮﺏ", -- Required money
    reqitems          = "اﻟﻌﻨﺎﺻﺮ اﻟﻤﻄﻠﻮﺑﺔ", -- Required items

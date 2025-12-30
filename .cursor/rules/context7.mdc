@@ -3,8 +3,76 @@ description:
 globs:
 alwaysApply: true
 ---
-Follow the following guidelines for all code:
-- Always use context7 mcp for latest code and updates for World of Warcraft, consider the latest code and updates for World of Warcraft, WOWAPI.
-- Always think about the codebase before writing code, consider the codebase before writing code.
-- Always use modular architecture for the codebase, consider breaking up the codebase into smaller modules.
-- Always use the existing helpers and libraries to reduce code size.
+
+## Global Coding Rules (mandatory)
+
+- Always use **context7 MCP** to verify the latest World of Warcraft API and UI behavior.
+- Always reason about the **existing codebase first** before writing or modifying any code.
+- Preserve the **modular architecture**; never introduce monolithic logic when helpers or modules exist.
+- Always reuse **existing helpers, utilities, and shared modules** instead of duplicating logic.
+- Never introduce new hooks, globals, or state without checking for an existing pattern first.
+
+---
+
+## Project Memory System (CRITICAL)
+
+This project uses a **multi-layer memory system**.  
+All layers must be respected to avoid regressions and repeated mistakes.
+
+### Memory files
+
+- `.cursor/memory/memo.md`  
+  **Purpose:** Current project truth and high-signal state  
+  **Rule:**  
+  - MUST be read before implementing or modifying any feature.
+  - Contains facts that are currently true about the system.
+
+- `.cursor/memory/journal.md`  
+  **Purpose:** Append-only change history  
+  **Rule:**  
+  - After any change, append what changed, why, and key files involved.
+  - Never rewrite or remove old entries.
+
+- `.cursor/memory/lessons.md`  
+  **Purpose:** Recorded mistakes, root causes, and permanent rules  
+  **Rule:**  
+  - MUST be read before coding.
+  - MUST NOT be violated.
+  - If a bug or issue is discovered that was non-obvious, a new lesson entry MUST be added.
+
+---
+
+## Mandatory Workflow (non-optional)
+
+Before writing code:
+1. Read `memo.md` to understand the current system state.
+2. Read `lessons.md` and ensure no existing rule is violated.
+3. Check whether similar logic already exists in the codebase.
+
+While writing code:
+- Do not “force refresh” Blizzard UI systems unless explicitly documented as safe.
+- Do not apply RTL, Arabic fonts, or layout changes unless real translated data exists.
+- Do not add duplicate hooks or parallel implementations of existing systems.
+
+After fixing a bug or implementing a feature:
+1. Update `journal.md` with:
+   - What changed
+   - Why it changed
+   - Key files touched
+2. If the change fixed a mistake or unexpected behavior:
+   - Add a new entry to `lessons.md` describing:
+     - The symptom
+     - The root cause
+     - The incorrect approach
+     - The correct rule going forward
+
+---
+
+## Authority Order (highest → lowest)
+
+1. `lessons.md` (hard rules, never break)
+2. `memo.md` (current truth)
+3. Existing codebase
+4. New code or refactors
+
+If there is a conflict, higher authority always wins.

@@ -6,12 +6,24 @@ WOWTR.Config = WOWTR.Config or {}
 WOWTR.Config.Groups = WOWTR.Config.Groups or {}
 
 function WOWTR.Config.Groups.Bubbles()
-  return {
-    type = "group", order = 3,
+  return WOWTR.Config.MakeTab("bubbles", {
+    order = 3,
     name = function() return WOWTR.Config.Label("titleTab2", "Bubbles") end,
-    get = function(info) return WOWTR.db.profile.bubbles[info[#info]] end,
     set = function(info, val)
-      WOWTR.db.profile.bubbles[info[#info]] = val
+      local key = info[#info]
+      local b = WOWTR.db.profile.bubbles
+
+      b[key] = val
+
+      -- Prevent “double language” output in chat:
+      -- - If enabling Chat TR, disable Chat EN
+      -- - If enabling Chat EN, disable Chat TR
+      if key == "chat_tr" and val == true then
+        b.chat_en = false
+      elseif key == "chat_en" and val == true then
+        b.chat_tr = false
+      end
+
       WOWTR.Config.SyncGlobalsFromDB()
       WOWTR.Config.NotifyChange()
     end,
@@ -44,7 +56,7 @@ function WOWTR.Config.Groups.Bubbles()
         }
       },
     },
-  }
+  })
 end
 
 

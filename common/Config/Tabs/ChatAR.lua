@@ -6,16 +6,10 @@ WOWTR.Config = WOWTR.Config or {}
 WOWTR.Config.Groups = WOWTR.Config.Groups or {}
 
 function WOWTR.Config.Groups.ChatAR()
-  return {
-    type = "group", order = 6,
+  return WOWTR.Config.MakeTab("chatAR", {
+    order = 6,
     name = function() return WOWTR.Config.Label("chatService", "Arabic Chat") end,
     hidden = function() return not (WoWTR_Localization and WoWTR_Localization.lang == 'AR') end,
-    get = function(info) return WOWTR.db.profile.chatAR[info[#info]] end,
-    set = function(info, val)
-      WOWTR.db.profile.chatAR[info[#info]] = val
-      WOWTR.Config.SyncGlobalsFromDB()
-      WOWTR.Config.NotifyChange()
-    end,
     args = {
       basics = {
         type = "group", inline = true, order = 1,
@@ -33,6 +27,6 @@ function WOWTR.Config.Groups.ChatAR()
         }
       },
     },
-  }
+  })
 end
 

@@ -12,6 +12,34 @@ local _lastPrepareQuestID = 0
 local _lastPrepareAt = 0
 local _postLayoutTicker
 
+-- Detect Arabic script in a UTF-8 string (base Arabic + Presentation Forms).
+-- Kept local to this file because `common/Text.lua` is loaded later in the TOC.
+local function ContainsArabic(txt)
+  if not txt or txt == "" then return false end
+
+  -- Arabic Presentation Forms-A/B live in UTF-8 sequences starting with 0xEF 0xAD..0xBB
+  if (string.find(txt, "\239\173") ~= nil)
+      or (string.find(txt, "\239\174") ~= nil)
+      or (string.find(txt, "\239\175") ~= nil)
+      or (string.find(txt, "\239\185") ~= nil)
+      or (string.find(txt, "\239\186") ~= nil)
+      or (string.find(txt, "\239\187") ~= nil) then
+    return true
+  end
+
+  -- Most Arabic base letters live in 2-byte UTF-8 sequences starting with 0xD8..0xDB.
+  if string.find(txt, "[\216\217\218\219]") ~= nil then
+    return true
+  end
+
+  -- Fallback: use reshaper helper if available.
+  if type(_G.AS_ContainsArabic) == "function" then
+    return _G.AS_ContainsArabic(txt) == true
+  end
+
+  return false
+end
+
 local function CancelPostLayoutTicker()
   if _postLayoutTicker then
     _postLayoutTicker:Cancel()
@@ -22,16 +50,9 @@ end
 function Quests.Details.SchedulePostLayoutRefresh()
   CancelPostLayoutTicker()
   if not (QuestMapFrame and QuestMapFrame:IsVisible()) then return end
-  -- Don't schedule if we just processed this quest (avoid redundant refreshes)
-  if QTR_quest_ID > 0 then
-    local now = GetTime()
-    if _lastProcessedQuestID == QTR_quest_ID and (now - _lastProcessedQuestTime) < 0.2 then
-      if WOWTR and WOWTR.Debug then
-        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "SchedulePostLayoutRefresh: Just processed quest", QTR_quest_ID, ", skipping post-layout refresh")
-      end
-      return
-    end
-  end
+  -- Intentionally always schedule while QuestMapFrame is visible.
+  -- Blizzard can overwrite quest strings after our initial translation pass; this ticker
+  -- re-applies the chosen view (translated) a few times right after layout changes.
   local runs = 0
   _postLayoutTicker = C_Timer.NewTicker(0.08, function()
     runs = runs + 1
@@ -52,26 +73,56 @@ end
 
 -- Display translation
 function Quests.Details.TranslateOn(typ,event)
-   -- Skip if we just processed this quest recently (avoid duplicate processing)
-   if event == "__post__" and QTR_quest_ID > 0 then
-      local now = GetTime()
-      if _lastProcessedQuestID == QTR_quest_ID and (now - _lastProcessedQuestTime) < 0.3 then
-         if WOWTR and WOWTR.Debug then
-           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: Already processed quest", QTR_quest_ID, "recently (__post__), skipping to avoid duplicate")
-         end
-         return
-      end
-   end
+   -- NOTE: "__post__" is intentionally allowed to run even right after QuestPrepare.
+   -- Blizzard frequently re-applies quest UI strings after QuestMapFrame_ShowQuestDetails,
+   -- which can overwrite our translated Arabic text. The post-layout ticker exists to
+   -- re-apply the translation after those late UI updates.
    
    if WOWTR and WOWTR.Debug then
      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn called with typ:", typ, "event:", event or "nil")
      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "TranslateOn: QTR_quest_ID:", QTR_quest_ID)
    end
-   QTR_display_constants(1)
+
+   -- Always keep the user's preference as "translated ON" when this is called.
    QTR_curr_trans = "1"
+
+   -- Guard: do NOT apply Arabic headers/RTL unless the current quest actually has real Arabic QuestData.
+   -- Otherwise we end up with mixed UI (Arabic headers like "الوصف" on an English quest body).
+   if typ == 1 then
+      local numer_ID = QTR_quest_ID or 0
+      local str_ID = tostring(numer_ID)
+      local qd = (QTR_QuestData and QTR_QuestData[str_ID]) or nil
+      local hasRealTrans = false
+      if qd then
+         local fields = { "Title", "Description", "Objectives", "Progress", "Completion" }
+         for i = 1, #fields do
+            local v = qd[fields[i]]
+            if type(v) == "string" and v ~= "" and ContainsArabic(v) then
+               hasRealTrans = true
+               break
+            end
+         end
+      end
+      if not hasRealTrans then
+         -- Keep preference ON, but ensure the UI stays in the original (LTR/English) layout.
+         if Quests and Quests.Details and Quests.Details.TranslateOff then
+            Quests.Details.TranslateOff(typ, "__keep_state__")
+         end
+         return
+      end
+   end
+
+   QTR_display_constants(1)
    if (QuestNPCModelText:IsVisible() and (QTR_ModelTextHash>0)) then
-      QuestNPCModelText:SetText(QTR_ExpandUnitInfo(QTR_ModelText_PL..NONBREAKINGSPACE,false,QuestNPCModelText,WOWTR_Font2,-15))
       QuestNPCModelText:SetFont(WOWTR_Font2, 13)
+      QuestNPCModelText:SetText(QTR_ExpandUnitInfo(QTR_ModelText_PL..NONBREAKINGSPACE,false,QuestNPCModelText,WOWTR_Font2,-15))
+      if QuestNPCModelText.SetJustifyH then
+        if ns and ns.RTL and ns.RTL.JustifyFontString then
+          ns.RTL.JustifyFontString(QuestNPCModelText, "LEFT")
+        else
+          QuestNPCModelText:SetJustifyH("RIGHT")
+        end
+      end
    end
 
    if (typ==1) then
@@ -369,14 +420,196 @@ end
 function Quests.Details.TranslateOff(typ,event)
    Quests.Details.CancelPostLayoutRefresh()
    QTR_display_constants(0)
-   QTR_curr_trans = "0"
+   -- When used as a "fallback to English" (no translation available / feature disabled),
+   -- we don't want to flip the user's global preference toggle.
+   local keepState = (event == "__keep_state__")
+   if not keepState then
+     QTR_curr_trans = "0"
+   end
+
+   -- Always hide Arabic-only overlay labels created for RTL reward layout.
+   if QTR_QuestDetail_ItemReceiveText then QTR_QuestDetail_ItemReceiveText:Hide() end
+   if QTR_QuestReward_ItemReceiveText then QTR_QuestReward_ItemReceiveText:Hide() end
+   if QTR_QuestDetail_InfoXP then QTR_QuestDetail_InfoXP:Hide() end
+   if QTR_QuestReward_InfoXP then QTR_QuestReward_InfoXP:Hide() end
+
+   -- Restore QuestMapFrame rewards labels to original English/LTR.
+   -- QuestMapFrame uses pooled MapQuestInfoRewardsFrame instances which keep our previous Arabic text unless we revert it.
+   local function norm(s)
+     if not s then return "" end
+     s = tostring(s)
+     s = s:gsub("\194\160", " ") -- NBSP -> space
+     s = s:gsub("%s+", " ")
+     s = s:gsub("^%s+", ""):gsub("%s+$", "")
+     return s
+   end
+
+   local function setEN(fs, msg, size)
+     if not (fs and fs.SetText and fs.SetFont) then return end
+     fs:SetText(msg)
+     local _, curSize, flags = fs:GetFont()
+     fs:SetFont(Original_Font2, size or curSize or 13, flags)
+     if fs.SetJustifyH then fs:SetJustifyH("LEFT") end
+   end
+
+   local function restoreMapRewards()
+     if not (QuestMapFrame and QuestMapFrame.IsVisible and QuestMapFrame:IsVisible()) then return end
+     local df = (QuestMapFrame.QuestsFrame and QuestMapFrame.QuestsFrame.DetailsFrame) or QuestMapFrame.DetailsFrame
+     local mapRewards = (df and df.RewardsFrameContainer and df.RewardsFrameContainer.RewardsFrame) or _G.MapQuestInfoRewardsFrame
+     if not mapRewards then return end
+
+     local inv = {}
+     local function addPair(en, ar)
+       if not (en and ar) then return end
+       inv[norm(AS_UTF8reverse(ar))] = en
+     end
+
+     -- Core reward labels
+     addPair(QTR_MessOrig.itemchoose0, QTR_Messages.itemchoose0)
+     addPair(QTR_MessOrig.itemchoose1, QTR_Messages.itemchoose1)
+     addPair(QTR_MessOrig.itemchoose2, QTR_Messages.itemchoose2)
+     addPair(QTR_MessOrig.itemchoose3, QTR_Messages.itemchoose3)
+     addPair(QTR_MessOrig.itemreceiv0, QTR_Messages.itemreceiv0)
+     addPair(QTR_MessOrig.itemreceiv1, QTR_Messages.itemreceiv1)
+     addPair(QTR_MessOrig.itemreceiv2, QTR_Messages.itemreceiv2)
+     addPair(QTR_MessOrig.itemreceiv3, QTR_Messages.itemreceiv3)
+     addPair(QTR_MessOrig.experience, QTR_Messages.experience)
+     -- Rewards header (prevents Arabic text being left behind with English font -> square glyphs)
+     if QUEST_REWARDS and QTR_Messages and QTR_Messages.rewards then
+       addPair(QUEST_REWARDS, QTR_Messages.rewards)
+     end
+
+     -- Reward subheaders
+     addPair(QTR_MessOrig.reward_aura, QTR_Messages.reward_aura)
+     addPair(QTR_MessOrig.reward_spell, QTR_Messages.reward_spell)
+     addPair(QTR_MessOrig.reward_companion, QTR_Messages.reward_companion)
+     addPair(QTR_MessOrig.reward_follower, QTR_Messages.reward_follower)
+     addPair(QTR_MessOrig.reward_reputation, QTR_Messages.reward_reputation)
+     addPair(QTR_MessOrig.reward_title, QTR_Messages.reward_title)
+     addPair(QTR_MessOrig.reward_tradeskill, QTR_Messages.reward_tradeskill)
+     addPair(QTR_MessOrig.reward_unlock, QTR_Messages.reward_unlock)
+     addPair(QTR_MessOrig.reward_bonus, QTR_Messages.reward_bonus)
+
+     -- Questline reward headers (localized strings live in WoW_Localization_*.lua via QTR_Messages.*)
+     do
+       local unlockAR = QTR_Messages and QTR_Messages.questline_unlocking or nil
+       local endAR = QTR_Messages and QTR_Messages.questline_rewards_end or nil
+       if unlockAR then
+         if type(AS_UTF8reverseRS) == "function" then
+           inv[norm(AS_UTF8reverseRS(unlockAR, true))] = "This quest line is part of unlocking:"
+         else
+           inv[norm(AS_UTF8reverse(unlockAR))] = "This quest line is part of unlocking:"
+         end
+       end
+       if endAR then
+         if type(AS_UTF8reverseRS) == "function" then
+           inv[norm(AS_UTF8reverseRS(endAR, true))] = "The end of this quest line rewards:"
+         else
+           inv[norm(AS_UTF8reverse(endAR))] = "The end of this quest line rewards:"
+         end
+       end
+     end
+
+     local function walk(node)
+       if not node then return end
+       local ot = node.GetObjectType and node:GetObjectType() or nil
+       if ot == "FontString" and node.GetText and node.SetFont then
+         local t = node:GetText()
+         if t and t ~= "" then
+           local nt = norm(t)
+           local en = inv[nt]
+           if en then
+             setEN(node, en)
+           elseif ContainsArabic(t) then
+             -- Best effort: if we couldn't map the Arabic string back to EN, do NOT force the Latin font
+             -- (that produces square glyphs). Keep an Arabic-capable font instead.
+             local _, curSize, flags = node:GetFont()
+             node:SetFont(WOWTR_Font2 or Original_Font2, curSize or 13, flags)
+             if node.SetJustifyH then node:SetJustifyH("LEFT") end
+           end
+         end
+       end
+       if node.GetRegions then
+         local regions = { node:GetRegions() }
+         for i = 1, #regions do walk(regions[i]) end
+       end
+       if node.GetChildren then
+         local children = { node:GetChildren() }
+         for i = 1, #children do walk(children[i]) end
+       end
+     end
+
+     walk(mapRewards)
+
+     -- Restore the main Rewards header if it was translated.
+     if mapRewards.Header and mapRewards.Header.GetText then
+       local ht = mapRewards.Header:GetText()
+       if ht and ContainsArabic(ht) and QUEST_REWARDS then
+         setEN(mapRewards.Header, QUEST_REWARDS, 18)
+       end
+     end
+   end
+
+   restoreMapRewards()
+
    if (QuestNPCModelText:IsVisible() and (QTR_ModelTextHash>0)) then
       QuestNPCModelText:SetText(QTR_ModelText_EN)
       QuestNPCModelText:SetFont(Original_Font2, 13)
+      if QuestNPCModelText.SetJustifyH then QuestNPCModelText:SetJustifyH("LEFT") end
    end
    if (typ==1) then
       local numer_ID = QTR_quest_ID
       str_ID = tostring(numer_ID)
+
+      -- Always restore LTR layout + original header labels, even if the quest has no translation data.
+      -- This prevents mixed UI states like Arabic "الوصف" and RTL alignment on English-only quests.
+      do
+         local WOW_width = 280
+         if QuestInfoRewardsFrame and QuestInfoRewardsFrame.IsVisible and QuestInfoRewardsFrame:IsVisible() then
+            WOW_width = 280
+         end
+         local titleSize = C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtitle.size or 18
+         local bodySize = C_AddOns.IsAddOnLoaded("ElvUI") and ElvUI[1].db.general.fonts.questtext.enable and ElvUI[1].db.general.fonts.questtext.size or tonumber(QTR_PS["fontsize"])
+
+         if QuestInfoDescriptionHeader then
+           QuestInfoDescriptionHeader:SetWidth(WOW_width + 40)
+           QuestInfoDescriptionHeader:SetFont(Original_Font1, titleSize)
+           QuestInfoDescriptionHeader:SetText(QTR_MessOrig.details)
+           QuestInfoDescriptionHeader:SetJustifyH("LEFT")
+         end
+         if QuestInfoObjectivesHeader then
+           QuestInfoObjectivesHeader:SetWidth(WOW_width + 10)
+           QuestInfoObjectivesHeader:SetFont(Original_Font1, titleSize)
+           QuestInfoObjectivesHeader:SetText(QTR_MessOrig.objectives)
+           QuestInfoObjectivesHeader:SetJustifyH("LEFT")
+         end
+         if QuestInfoRewardsFrame and QuestInfoRewardsFrame.Header then
+           QuestInfoRewardsFrame.Header:SetWidth(WOW_width + 10)
+           QuestInfoRewardsFrame.Header:SetFont(Original_Font1, titleSize)
+           QuestInfoRewardsFrame.Header:SetText(QTR_MessOrig.rewards)
+           QuestInfoRewardsFrame.Header:SetJustifyH("LEFT")
+         end
+
+         if QuestInfoDescriptionText then
+           QuestInfoDescriptionText:SetJustifyH("LEFT")
+           if QuestInfoDescriptionText.SetFont then QuestInfoDescriptionText:SetFont(Original_Font2, bodySize) end
+         end
+         if QuestInfoObjectivesText then
+           QuestInfoObjectivesText:SetJustifyH("LEFT")
+           if QuestInfoObjectivesText.SetFont then QuestInfoObjectivesText:SetFont(Original_Font2, bodySize) end
+         end
+         if QuestProgressText then
+           QuestProgressText:SetJustifyH("LEFT")
+           if QuestProgressText.SetFont then QuestProgressText:SetFont(Original_Font2, bodySize) end
+         end
+         if QuestInfoRewardText then
+           QuestInfoRewardText:SetJustifyH("LEFT")
+           if QuestInfoRewardText.SetFont then QuestInfoRewardText:SetFont(Original_Font2, bodySize) end
+         end
+         if QuestInfoTitleHeader then QuestInfoTitleHeader:SetJustifyH("LEFT") end
+         if QuestProgressTitleText then QuestProgressTitleText:SetJustifyH("LEFT") end
+      end
+
       if (numer_ID>0 and QTR_QuestData[str_ID]) then
          QTR_ToggleButton0:SetText("QID="..QTR_quest_ID.." (EN)")
          QTR_ToggleButton1:SetText("QID="..QTR_quest_ID.." (EN)")
@@ -583,8 +816,15 @@ function Quests.Details.QuestPrepare(event)
   
   if (q_ID == 0) then 
     if WOWTR and WOWTR.Debug then
-      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "SKIP | Quest ID is 0 (invalid)")
+      WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Quest ID is 0 (invalid) | Resetting quest UI to original layout")
     end
+    -- Avoid leaving Arabic headers/RTL from the previous quest when the current details view has no questID (e.g. recap panels).
+    local prevID = QTR_quest_ID
+    QTR_quest_ID = 0
+    if Quests and Quests.Details and Quests.Details.TranslateOff then
+      Quests.Details.TranslateOff(1, "__keep_state__")
+    end
+    QTR_quest_ID = prevID
     return 
   end
   
@@ -677,6 +917,24 @@ function Quests.Details.QuestPrepare(event)
       if WOWTR and WOWTR.Debug then
         WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "[OK] Translation data FOUND for quest", str_ID, "| Loading translation...")
       end
+      -- Determine whether the quest has REAL localized (Arabic) strings.
+      -- Some quest IDs exist in the DB but are empty/English-only; those should be treated as "no translation"
+      -- to avoid mixing Arabic headers (e.g. "الوصف") with an English quest body.
+      local hasRealTrans = false
+      do
+        local qd = QTR_QuestData[str_ID]
+        if qd then
+          local fields = { "Title", "Description", "Objectives", "Progress", "Completion" }
+          for i = 1, #fields do
+            local v = qd[fields[i]]
+            if type(v) == "string" and v ~= "" and ContainsArabic(v) then
+              hasRealTrans = true
+              break
+            end
+          end
+        end
+      end
+
       if (not QTR_quest_EN[QTR_quest_ID].title) then
         QTR_quest_LG[QTR_quest_ID].title = QTR_QuestData[str_ID]["Title"]
         QTR_quest_EN[QTR_quest_ID].title = GetTitleText() ~= "" and GetTitleText() or (QuestInfoTitleHeader and QuestInfoTitleHeader:GetText())
@@ -811,17 +1069,11 @@ function Quests.Details.QuestPrepare(event)
         if (isStoryline and isStoryline() and storylineFrame and storylineFrame:IsVisible() and QTR_ToggleButton5) then QTR_ToggleButton5:SetText("QID="..QTR_quest_ID.." ("..QTR_lang..")") end
       end
 
-      -- Determine if we actually have localized text; if not, keep EN view
-      local hasTrans = false
-      do
-        local lg = QTR_quest_LG and QTR_quest_LG[QTR_quest_ID]
-        if lg then
-          local d = lg.details; local o = lg.objectives; local p = lg.progress; local c = lg.completion
-          hasTrans = ((d and d ~= "") or (o and o ~= "") or (p and p ~= "") or (c and c ~= "")) and true or false
-        end
-      end
+      -- Determine if we actually have localized (Arabic) quest text; if not, keep EN view.
+      local hasTrans = hasRealTrans
       if WOWTR and WOWTR.Debug then
-        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Translation check | hasTrans:", hasTrans, "| QTR_curr_trans:", QTR_curr_trans, 
+        WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Translation check | hasTrans:", hasTrans, "| QTR_curr_trans:", QTR_curr_trans,
+          "| HasArabic:", hasRealTrans and "YES" or "NO",
           "| Details:", (QTR_quest_LG[q_ID] and QTR_quest_LG[q_ID].details and string.len(QTR_quest_LG[q_ID].details) or 0) .. " chars",
           "| Objectives:", (QTR_quest_LG[q_ID] and QTR_quest_LG[q_ID].objectives and string.len(QTR_quest_LG[q_ID].objectives) or 0) .. " chars")
       end
@@ -854,31 +1106,25 @@ function Quests.Details.QuestPrepare(event)
         if WOWTR and WOWTR.Debug then
           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Calling QTR_Translate_Off (no translation)...")
         end
-        QTR_Translate_Off(1, event)
+        QTR_Translate_Off(1, "__keep_state__")
         if WOWTR and WOWTR.Debug then
           WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "[OK] QTR_Translate_Off completed")
         end
       else
-        if WOWTR and WOWTR.Debug then
-          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "[OK] Has translation | Setting QTR_curr_trans=1 | Calling QTR_Translate_On...")
+        -- Respect the user's current toggle state.
+        -- Default is translated ("1") via `common/Quests/State.lua`, so quests will show translated
+        -- immediately when translation data exists.
+        if QTR_curr_trans == "1" then
+          if WOWTR and WOWTR.Debug then
+            WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "[OK] Has translation | Showing translated view (TranslateOn)")
+          end
+          QTR_Translate_On(1, event)
+        else
+          if WOWTR and WOWTR.Debug then
+            WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "[OK] Has translation | Showing English view (TranslateOff)")
+          end
+          QTR_Translate_Off(1, event)
         end
-        -- Reset QTR_curr_trans to "1" if we have translation (so it always shows translated)
-        -- This ensures that if a previous quest without translation set it to "0", we restore it
-        QTR_curr_trans = "1"
-        QTR_Translate_On(1, event)
-        if WOWTR and WOWTR.Debug then
-          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "[OK] QTR_Translate_On completed")
-        end
-      end
-      if (QTR_PS["en_first"] == "1" and QTR_curr_trans == "1") then 
-        if WOWTR and WOWTR.Debug then
-          WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "en_first enabled | Scheduling QTR_ON_OFF toggle in 0.1s...")
-        end
-        -- Use a small delay to ensure translation is fully applied before toggling
-        -- This prevents the toggle from interfering with the current processing
-        C_Timer.After(0.1, function()
-          if QTR_ON_OFF then QTR_ON_OFF() end
-        end)
       end
     else
       -- No translation data available; leave view as EN but disable toggles
@@ -896,7 +1142,7 @@ function Quests.Details.QuestPrepare(event)
       if WOWTR and WOWTR.Debug then
         WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestPrepare: Calling QTR_Translate_Off (no data)...")
       end
-      QTR_Translate_Off(1, event)
+      QTR_Translate_Off(1, "__keep_state__")
       if WOWTR and WOWTR.Debug then
         WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "QuestPrepare: Saving quest data...")
       end
@@ -960,7 +1206,7 @@ function Quests.Details.QuestPrepare(event)
     -- Ensure quest is displayed in English (not translated)
     WOWTR.DebugPrint("QuestPrepare: Calling QTR_Translate_Off...")
     if QTR_Translate_Off then
-      QTR_Translate_Off(1, event)
+      QTR_Translate_Off(1, "__keep_state__")
       WOWTR.DebugPrint("QuestPrepare: QTR_Translate_Off completed")
     else
       WOWTR.DebugPrint("QuestPrepare: ERROR - QTR_Translate_Off is nil!")
@@ -994,6 +1240,28 @@ function Quests.Details.DisplayConstants(lg)
    local str_ID = QTR_quest_ID and tostring(QTR_quest_ID) or nil
    local questDataExists = str_ID and QTR_QuestData and QTR_QuestData[str_ID]
    local questLGData = questDataExists and QTR_quest_LG and QTR_quest_LG[QTR_quest_ID]
+
+   -- If the current quest has NO real Arabic translation, do NOT apply Arabic headers/RTL layout.
+   -- This prevents mixed UI like Arabic "الوصف" with an English quest body.
+   if lg == 1 then
+      local hasRealTrans = false
+      do
+         local qd = questDataExists and QTR_QuestData[str_ID] or nil
+         if qd then
+            local fields = { "Title", "Description", "Objectives", "Progress", "Completion" }
+            for i = 1, #fields do
+               local v = qd[fields[i]]
+               if type(v) == "string" and v ~= "" and ContainsArabic(v) then
+                  hasRealTrans = true
+                  break
+               end
+            end
+         end
+      end
+      if not hasRealTrans then
+         lg = 0
+      end
+   end
 
   -- Reposition the destination map button for RTL when translation is ON
   do
@@ -1047,6 +1315,28 @@ function Quests.Details.DisplayConstants(lg)
         AvailableQuestsText:SetWidth(WOW_width)
         if isArabic then AvailableQuestsText:SetJustifyH("RIGHT") else AvailableQuestsText:SetJustifyH("LEFT") end
 
+        -- Translate QuestMapFrame action buttons (Abandon / Share / Track/Untrack)
+        -- These are UI strings (not quest content) and should be localized even when a quest has no translation data.
+        do
+          local df = (QuestMapFrame and QuestMapFrame.DetailsFrame)
+            or (QuestMapFrame and QuestMapFrame.QuestsFrame and QuestMapFrame.QuestsFrame.DetailsFrame)
+          if df and isArabic and _G.ST_CheckAndReplaceTranslationTextUI then
+            local btns = {
+              df.AbandonButton,
+              df.ShareButton,
+              df.TrackButton,
+              df.TrackQuestButton,
+            }
+            for i = 1, #btns do
+              local b = btns[i]
+              local fs = b and (b.Text or (b.GetFontString and b:GetFontString()))
+              if fs then
+                ST_CheckAndReplaceTranslationTextUI(fs, false, "QuestMapFrame")
+              end
+            end
+          end
+        end
+
         local rewardsFrame = QuestMapFrame.DetailsFrame.RewardsFrameContainer and QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame
         if rewardsFrame then
             local regions = { rewardsFrame:GetRegions() }
@@ -1060,9 +1350,12 @@ function Quests.Details.DisplayConstants(lg)
             end
         end
 
-        if questDataExists and questLGData then
-            local itemChooseText = questLGData.itemchoose or QTR_Messages.itemchoose0
-            local itemReceiveText = questLGData.itemreceive or QTR_Messages.itemreceiv0
+        do
+            -- Always translate reward labels when Arabic is active, even if the quest itself has no translation data.
+            -- This fixes missing "You will receive:" / XP labels in QuestMapFrame.
+            local lgData = questLGData or (QTR_quest_LG and QTR_quest_LG[QTR_quest_ID]) or nil
+            local itemChooseText = (lgData and lgData.itemchoose) or QTR_Messages.itemchoose0
+            local itemReceiveText = (lgData and lgData.itemreceive) or QTR_Messages.itemreceiv0
 
             if isArabic then
                QuestInfoRewardsFrame.ItemChooseText:SetFont(WOWTR_Font2, 14)
@@ -1199,6 +1492,165 @@ function Quests.Details.DisplayConstants(lg)
                if QTR_QuestReward_ItemReceiveText then QTR_QuestReward_ItemReceiveText:Hide() end
                if QTR_QuestDetail_InfoXP then QTR_QuestDetail_InfoXP:Hide() end
                if QTR_QuestReward_InfoXP then QTR_QuestReward_InfoXP:Hide() end
+            end
+
+            -- QuestMapFrame uses MapQuestInfoRewardsFrame (different widget set than QuestInfoRewardsFrame).
+            -- Apply the same label translations there so "You will receive" / "You will also receive" localize.
+            do
+              -- Prefer the active QuestMapFrame rewards frame instance (modern UI), fall back to the global if present.
+              local df = (QuestMapFrame and QuestMapFrame.QuestsFrame and QuestMapFrame.QuestsFrame.DetailsFrame)
+                or (QuestMapFrame and QuestMapFrame.DetailsFrame)
+              local mapRewards =
+                (df and df.RewardsFrameContainer and df.RewardsFrameContainer.RewardsFrame)
+                or _G.MapQuestInfoRewardsFrame
+              if mapRewards and mapRewards.GetRegions then
+                local function norm(s)
+                  if not s then return "" end
+                  -- Normalize whitespace and NBSP for robust matching.
+                  s = tostring(s)
+                  s = s:gsub("\194\160", " ")
+                  s = s:gsub("%s+", " ")
+                  s = s:gsub("^%s+", ""):gsub("%s+$", "")
+                  return s
+                end
+
+                local function setLabel(fs, msg, size)
+                  if not (fs and fs.SetText and fs.SetFont) then return end
+                  fs:SetText(AS_UTF8reverse(msg))
+                  local _, curSize, flags = fs:GetFont()
+                  fs:SetFont(WOWTR_Font2, size or curSize or 13, flags)
+                  if fs.SetJustifyH then fs:SetJustifyH("RIGHT") end
+                  -- Ensure the FontString has enough width so RIGHT-justify is visually effective in AR.
+                  if fs.SetWidth and mapRewards and mapRewards.GetWidth then
+                    local w = tonumber(mapRewards:GetWidth()) or 0
+                    if w > 0 then
+                      -- Add safe right padding so the first Arabic glyph doesn't clip outside the rewards pane.
+                      local leftPad = 0
+                      if fs.GetLeft and mapRewards.GetLeft then
+                        local fl = fs:GetLeft()
+                        local cl = mapRewards:GetLeft()
+                        if fl and cl then leftPad = math.max(0, fl - cl) end
+                      end
+                      local rightPad = 24
+                      local target = math.floor(w - leftPad - rightPad)
+                      if target > 0 then fs:SetWidth(target) end
+                    else
+                      fs:SetWidth(math.max(tonumber(fs:GetWidth()) or 0, 240))
+                    end
+                  end
+                end
+
+                local function setLabelRS(fs, msg, size)
+                  -- Use RS reshaper for phrases that are not in pre-shaped (presentation-form) tables.
+                  if not (fs and fs.SetText and fs.SetFont) then return end
+                  if type(AS_UTF8reverseRS) == "function" then
+                    fs:SetText(AS_UTF8reverseRS(msg, true))
+                  else
+                    fs:SetText(AS_UTF8reverse(msg))
+                  end
+                  local _, curSize, flags = fs:GetFont()
+                  fs:SetFont(WOWTR_Font2, size or curSize or 13, flags)
+                  if fs.SetJustifyH then fs:SetJustifyH("RIGHT") end
+                  -- Ensure the FontString has enough width so RIGHT-justify is visually effective in AR.
+                  if fs.SetWidth and mapRewards and mapRewards.GetWidth then
+                    local w = tonumber(mapRewards:GetWidth()) or 0
+                    if w > 0 then
+                      -- Add safe right padding so the first Arabic glyph doesn't clip outside the rewards pane.
+                      local leftPad = 0
+                      if fs.GetLeft and mapRewards.GetLeft then
+                        local fl = fs:GetLeft()
+                        local cl = mapRewards:GetLeft()
+                        if fl and cl then leftPad = math.max(0, fl - cl) end
+                      end
+                      local rightPad = 24
+                      local target = math.floor(w - leftPad - rightPad)
+                      if target > 0 then fs:SetWidth(target) end
+                    else
+                      fs:SetWidth(math.max(tonumber(fs:GetWidth()) or 0, 240))
+                    end
+                  end
+                end
+
+                if isArabic then
+                  -- Prefer computed per-quest variants (itemchoose/itemreceive) when available
+                  setLabel(mapRewards.ItemChooseText, itemChooseText, 14)
+                  setLabel(mapRewards.ItemReceiveText, itemReceiveText, 13)
+                  if mapRewards.XPFrame and mapRewards.XPFrame.ReceiveText then
+                    setLabel(mapRewards.XPFrame.ReceiveText, QTR_Messages.experience, 13)
+                  end
+                end
+
+                -- Walk the full rewards frame tree to:
+                -- - Translate any remaining labels that use the English constants
+                -- - Force WOWTR_Font2 + RTL on any Arabic strings (fixes "square glyphs")
+                local function walk(node)
+                  if not node then return end
+                  local ot = node.GetObjectType and node:GetObjectType() or nil
+                  if ot == "FontString" and node.GetText and node.SetFont then
+                    local t = node:GetText()
+                    if t and t ~= "" then
+                      local nt = norm(t)
+                      if nt == norm(QTR_MessOrig.itemchoose0) then setLabel(node, QTR_Messages.itemchoose0, 13)
+                      elseif nt == norm(QTR_MessOrig.itemchoose1) then setLabel(node, QTR_Messages.itemchoose1, 13)
+                      elseif nt == norm(QTR_MessOrig.itemchoose2) then setLabel(node, QTR_Messages.itemchoose2, 13)
+                      elseif nt == norm(QTR_MessOrig.itemchoose3) then setLabel(node, QTR_Messages.itemchoose3, 13)
+                      elseif nt == norm(QTR_MessOrig.itemreceiv0) then setLabel(node, QTR_Messages.itemreceiv0, 13)
+                      elseif nt == norm(QTR_MessOrig.itemreceiv1) then setLabel(node, QTR_Messages.itemreceiv1, 13)
+                      elseif nt == norm(QTR_MessOrig.itemreceiv2) then setLabel(node, QTR_Messages.itemreceiv2, 13)
+                      elseif nt == norm(QTR_MessOrig.itemreceiv3) then setLabel(node, QTR_Messages.itemreceiv3, 13)
+                      elseif nt == norm(QTR_MessOrig.experience) then setLabel(node, QTR_Messages.experience, 13)
+                      elseif nt == norm(QTR_MessOrig.reward_aura) then setLabel(node, QTR_Messages.reward_aura, 13)
+                      elseif nt == norm(QTR_MessOrig.reward_spell) then setLabel(node, QTR_Messages.reward_spell, 13)
+                      elseif nt == norm(QTR_MessOrig.reward_companion) then setLabel(node, QTR_Messages.reward_companion, 13)
+                      elseif nt == norm(QTR_MessOrig.reward_follower) then setLabel(node, QTR_Messages.reward_follower, 13)
+                      elseif nt == norm(QTR_MessOrig.reward_reputation) then setLabel(node, QTR_Messages.reward_reputation, 13)
+                      elseif nt == norm(QTR_MessOrig.reward_title) then setLabel(node, QTR_Messages.reward_title, 13)
+                      elseif nt == norm(QTR_MessOrig.reward_tradeskill) then setLabel(node, QTR_Messages.reward_tradeskill, 13)
+                      elseif nt == norm(QTR_MessOrig.reward_unlock) then setLabel(node, QTR_Messages.reward_unlock, 13)
+                      elseif nt == norm(QTR_MessOrig.reward_bonus) then setLabel(node, QTR_Messages.reward_bonus, 13)
+                      elseif nt == norm("This quest line is part of unlocking:") then
+                        local ar = QTR_Messages and QTR_Messages.questline_unlocking or nil
+                        if ar then setLabelRS(node, ar, 13) end
+                      elseif nt == norm("The end of this quest line rewards:") then
+                        local ar = QTR_Messages and QTR_Messages.questline_rewards_end or nil
+                        if ar then setLabelRS(node, ar, 13) end
+                      elseif QUEST_REWARDS and nt == norm(QUEST_REWARDS) then
+                        -- Rewards header in QuestMapFrame
+                        if node == mapRewards.Header then
+                          setLabel(node, QTR_Messages.rewards, 18)
+                          if node.SetJustifyH then node:SetJustifyH("CENTER") end
+                        else
+                          setLabel(node, QTR_Messages.rewards, 18)
+                        end
+                      elseif ContainsArabic(t) then
+                        local _, curSize, flags = node:GetFont()
+                        node:SetFont(WOWTR_Font2, curSize or 13, flags)
+                        if node.SetJustifyH then node:SetJustifyH("RIGHT") end
+                      elseif _G.ST_CheckAndReplaceTranslationTextUI then
+                        -- Best-effort translation for other UI strings (e.g., questline reward label)
+                        ST_CheckAndReplaceTranslationTextUI(node, false, "QuestMapRewards")
+                      end
+                    end
+                  end
+                  if node.GetRegions then
+                    local regions = { node:GetRegions() }
+                    for i = 1, #regions do walk(regions[i]) end
+                  end
+                  if node.GetChildren then
+                    local children = { node:GetChildren() }
+                    for i = 1, #children do walk(children[i]) end
+                  end
+                end
+                if isArabic then
+                  walk(mapRewards)
+                end
+
+                -- Ensure Arabic font is applied to ALL reward frame strings (fixes "square glyphs")
+                -- and ensure RTL justification is consistent.
+                if isArabic and WOWTR and WOWTR.Fonts and WOWTR.Fonts.Apply then
+                  WOWTR.Fonts.Apply(mapRewards)
+                end
+              end
             end
         end
 

@@ -7,6 +7,15 @@
 --   WoWTR_Localization, QTR_ReverseIfAR, NONBREAKINGSPACE, TT_PS
 -------------------------------------------------------------------------------------------------------
 
+local addonName, ns = ...
+ns = ns or {}
+local UI = ns.UI and ns.UI.Translate
+local RTL = ns.RTL
+
+local function isRTL()
+    return (RTL and RTL.IsRTL and RTL.IsRTL()) or false
+end
+
 -------------------------------------------------------------------------------------------------------
 -- ProfessionsFrame Logic (Main Profession Window)
 -------------------------------------------------------------------------------------------------------
@@ -74,30 +83,60 @@ function ST_showProfessionDescription()
         local prof_title = ProfessionsFrame.CraftingPage.SchematicForm.OutputText:GetText() or "?";
         local prof_name = ProfessionsFrameTitleText:GetText() or "?";
         local prof_prefix = "Profession:"..ST_RenkKoduSil(prof_name)..":"
+        local rtl = isRTL()
+        local rtlFont = rtl and WOWTR_Font2 or nil
+        local rtlCorr = rtl and -5 or nil
+        local rtlJustify = rtl and "RIGHT" or nil
 
         ST_CheckAndReplaceTranslationText(ProfessionsFrame.CraftingPage.SchematicForm.Description, true, prof_prefix..ST_RenkKoduSil(prof_title));
-        ST_CheckAndReplaceTranslationText(ProfessionsFrame.SpecPage.TreeView.TreeDescription, false, "", (WoWTR_Localization.lang == 'AR') and WOWTR_Font2 or nil, false, (WoWTR_Localization.lang == 'AR') and -5 or nil, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil);
-        ST_CheckAndReplaceTranslationText(ProfessionsFrame.SpecPage.TreePreview.Description, false, "", (WoWTR_Localization.lang == 'AR') and WOWTR_Font2 or nil, false, (WoWTR_Localization.lang == 'AR') and -5 or nil, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil);
-        ST_CheckAndReplaceTranslationText(ProfessionsFrame.SpecPage.TreePreview.Highlight1.Description, true, prof_prefix.."Other", (WoWTR_Localization.lang == 'AR') and WOWTR_Font2 or nil, false, (WoWTR_Localization.lang == 'AR') and -5 or nil, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil);
-        ST_CheckAndReplaceTranslationText(ProfessionsFrame.SpecPage.TreePreview.Highlight2.Description, true, prof_prefix.."Other", (WoWTR_Localization.lang == 'AR') and WOWTR_Font2 or nil, false, (WoWTR_Localization.lang == 'AR') and -5 or nil, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil);
-        ST_CheckAndReplaceTranslationText(ProfessionsFrame.SpecPage.TreePreview.Highlight3.Description, true, prof_prefix.."Other", (WoWTR_Localization.lang == 'AR') and WOWTR_Font2 or nil, false, (WoWTR_Localization.lang == 'AR') and -5 or nil, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil);
-        ST_CheckAndReplaceTranslationText(ProfessionsFrame.SpecPage.TreePreview.Highlight4.Description, true, prof_prefix.."Other", (WoWTR_Localization.lang == 'AR') and WOWTR_Font2 or nil, false, (WoWTR_Localization.lang == 'AR') and -5 or nil, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil);
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.Details.Label, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.TreePreview.HighlightsHeader, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.ViewPreviewButton.Text, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.BackToFullTreeButton.Text, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.DetailedView.SpendPointsButton.Text, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.DetailedView.UnlockPathButton.Text, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.ApplyButton.Text, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.ViewTreeButton.Text, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.FinishingReagentSlotContainer.Label, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.FirstCraftBonus.Text, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.RecipeSourceButton.Text, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.Reagents.Label, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents.Label, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.RecraftingDescription, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.UnlockTabButton.Text, true, "Profession:Other");
-        ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.RecipeList.FilterDropdown.Text, true, "ui");
+        ST_CheckAndReplaceTranslationText(ProfessionsFrame.SpecPage.TreeView.TreeDescription, false, "", rtlFont, false, rtlCorr, rtlJustify);
+        ST_CheckAndReplaceTranslationText(ProfessionsFrame.SpecPage.TreePreview.Description, false, "", rtlFont, false, rtlCorr, rtlJustify);
+        ST_CheckAndReplaceTranslationText(ProfessionsFrame.SpecPage.TreePreview.Highlight1.Description, true, prof_prefix.."Other", rtlFont, false, rtlCorr, rtlJustify);
+        ST_CheckAndReplaceTranslationText(ProfessionsFrame.SpecPage.TreePreview.Highlight2.Description, true, prof_prefix.."Other", rtlFont, false, rtlCorr, rtlJustify);
+        ST_CheckAndReplaceTranslationText(ProfessionsFrame.SpecPage.TreePreview.Highlight3.Description, true, prof_prefix.."Other", rtlFont, false, rtlCorr, rtlJustify);
+        ST_CheckAndReplaceTranslationText(ProfessionsFrame.SpecPage.TreePreview.Highlight4.Description, true, prof_prefix.."Other", rtlFont, false, rtlCorr, rtlJustify);
+
+        if UI and UI.ApplyUI then
+            UI.ApplyUI({
+                ProfessionsFrame.CraftingPage.SchematicForm.Details.Label,
+                ProfessionsFrame.SpecPage.TreePreview.HighlightsHeader,
+                ProfessionsFrame.SpecPage.ViewPreviewButton.Text,
+                ProfessionsFrame.SpecPage.BackToFullTreeButton.Text,
+                ProfessionsFrame.SpecPage.DetailedView.SpendPointsButton.Text,
+                ProfessionsFrame.SpecPage.DetailedView.UnlockPathButton.Text,
+                ProfessionsFrame.SpecPage.ApplyButton.Text,
+                ProfessionsFrame.SpecPage.ViewTreeButton.Text,
+                ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.FinishingReagentSlotContainer.Label,
+                ProfessionsFrame.CraftingPage.SchematicForm.FirstCraftBonus.Text,
+                ProfessionsFrame.CraftingPage.SchematicForm.RecipeSourceButton.Text,
+                ProfessionsFrame.CraftingPage.SchematicForm.Reagents.Label,
+                ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents.Label,
+                ProfessionsFrame.CraftingPage.SchematicForm.RecraftingDescription,
+                ProfessionsFrame.SpecPage.UnlockTabButton.Text,
+            }, { sav = true, prefix = "Profession:Other" })
+
+            UI.ApplyUI({
+                ProfessionsFrame.CraftingPage.RecipeList.FilterDropdown.Text,
+            }, { sav = true, prefix = "ui" })
+        else
+            -- Fallback to legacy direct calls
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.Details.Label, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.TreePreview.HighlightsHeader, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.ViewPreviewButton.Text, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.BackToFullTreeButton.Text, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.DetailedView.SpendPointsButton.Text, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.DetailedView.UnlockPathButton.Text, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.ApplyButton.Text, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.ViewTreeButton.Text, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.FinishingReagentSlotContainer.Label, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.FirstCraftBonus.Text, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.RecipeSourceButton.Text, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.Reagents.Label, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents.Label, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.SchematicForm.RecraftingDescription, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.SpecPage.UnlockTabButton.Text, true, "Profession:Other");
+            ST_CheckAndReplaceTranslationTextUI(ProfessionsFrame.CraftingPage.RecipeList.FilterDropdown.Text, true, "ui");
+        end
     else
         -- Revert translations if toggle is off
         ST_revertProfessionDescription()
@@ -168,7 +207,7 @@ function ST_ProfessionEmptyText()
            if frame and frame.missingText then
                local element = frame.missingText
                ST_CheckAndReplaceTranslationText(element, true, "Profession:Other", false, false, -15);
-               if (WoWTR_Localization.lang == 'AR') then
+               if isRTL() then
                    pcall(function() element:SetFont(WOWTR_Font2, (frameName:find("Secondary") and 10 or 11)) end)
                    pcall(function() element:SetJustifyH("RIGHT") end)
                end

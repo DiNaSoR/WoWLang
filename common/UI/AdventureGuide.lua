@@ -7,190 +7,136 @@ local M = ns.UI.AdventureGuide
 
 -- Adventure Guide / Encounter Journal module (migrated from WoW_Tooltips.lua)
 
+local T = (ns.UI and ns.UI.Translate) or nil
+
 local isEJournalButtonCreated = false
 local EncounterJournalupdateVisibility
 
 function M.SuggestTabClick()
-  if (TT_PS and TT_PS["ui5"] == "1") then
-    local obj0 = EncounterJournalInstanceSelect.Title
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj0, true, "Dungeon&Raid:Suggest:SuggestTittle", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj0, true, "Dungeon&Raid:Suggest:SuggestTittle", false)
-    end
+  if not (T and T.Enabled("ui5")) then return end
 
-    local obj1 = EncounterJournalSuggestFrame.Suggestion1.centerDisplay.description.text
-    local title1 = EncounterJournalSuggestFrame.Suggestion1.centerDisplay.title.text:GetText() or "?"
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj1, true, "Dungeon&Raid:Suggest:" .. title1, WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj1, true, "Dungeon&Raid:Suggest:" .. title1, false)
-    end
+  local rtl = ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL()
+  local font = rtl and _G.WOWTR_Font1 or nil
 
-    local obj2 = EncounterJournalSuggestFrame.Suggestion2.centerDisplay.description.text
-    local title2 = EncounterJournalSuggestFrame.Suggestion2.centerDisplay.title.text:GetText() or "?"
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj2, true, "Dungeon&Raid:Suggest:" .. title2, WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj2, true, "Dungeon&Raid:Suggest:" .. title2, false)
-    end
+  -- EJ suggest title
+  T.ApplyUI({
+    function() return _G.EncounterJournalInstanceSelect and _G.EncounterJournalInstanceSelect.Title end,
+  }, { sav = true, prefix = "Dungeon&Raid:Suggest:SuggestTittle", font = font })
 
-    local obj3 = EncounterJournalSuggestFrame.Suggestion3.centerDisplay.description.text
-    local title3 = EncounterJournalSuggestFrame.Suggestion3.centerDisplay.title.text:GetText() or "?"
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj3, true, "Dungeon&Raid:Suggest:" .. title3, WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj3, true, "Dungeon&Raid:Suggest:" .. title3, false)
-    end
-
-    local obj4 = EncounterJournalMonthlyActivitiesFrame.BarComplete.AllRewardsCollectedText
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj4, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj4, true, "ui", false)
-    end
-
-    local obj5 = EncounterJournalTitleText
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj5, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj5, true, "ui", false)
-    end
-
-    local obj6 = EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Month
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj6, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj6, true, "ui", false)
-    end
-
-    local obj7 = EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj7, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj7, true, "ui", false)
-    end
-
-    local obj8 = EncounterJournalMonthlyActivitiesFrame.HeaderContainer.TimeLeft
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj8, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj8, true, "ui", false)
-    end
-
-    local obj9 = EncounterJournalSuggestFrame.Suggestion1.button.Text
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj9, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj9, true, "ui", false)
-    end
-
-    local obj10 = EncounterJournalSuggestFrame.Suggestion2.centerDisplay.button.Text
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj10, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj10, true, "ui", false)
-    end
-
-    local obj11 = EncounterJournalSuggestFrame.Suggestion3.centerDisplay.button.Text
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj11, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj11, true, "ui", false)
-    end
-
-    local obj12 = EncounterJournalSuggestFrame.Suggestion1.reward.text
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj12, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj12, true, "ui", false)
-    end
-
-    local obj13 = EncounterJournalMonthlyActivitiesFrame.BarComplete.PendingRewardsText
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj13, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj13, true, "ui", false)
-    end
-
-    local obj14 = EncounterJournalMonthlyActivitiesTab.Text
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj14, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj14, true, "ui", false)
-    end
-
-    local obj15 = EncounterJournalSuggestTab.Text
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj15, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj15, true, "ui", false)
-    end
-
-    local obj16 = EncounterJournalDungeonTab.Text
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj16, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj16, true, "ui", false)
-    end
-
-    local obj17 = EncounterJournalRaidTab.Text
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj17, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj17, true, "ui", false)
-    end
-
-    local obj18 = EncounterJournalLootJournalTab.Text
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationTextUI(obj18, true, "ui", WOWTR_Font1)
-    else
-      ST_CheckAndReplaceTranslationTextUI(obj18, true, "ui", false)
+  -- Suggestions 1..3 use dynamic prefix based on the suggestion title
+  for i = 1, 3 do
+    local suggest = _G.EncounterJournalSuggestFrame and _G.EncounterJournalSuggestFrame["Suggestion" .. i]
+    local desc = suggest and suggest.centerDisplay and suggest.centerDisplay.description and suggest.centerDisplay.description.text
+    local titleFS = suggest and suggest.centerDisplay and suggest.centerDisplay.title and suggest.centerDisplay.title.text
+    local title = (titleFS and titleFS.GetText and titleFS:GetText()) or "?"
+    if desc then
+      ST_CheckAndReplaceTranslationTextUI(desc, true, "Dungeon&Raid:Suggest:" .. title, font)
     end
   end
+
+  -- Remaining UI elements in Suggest tab (same prefix + font selection)
+  T.ApplyUI({
+    function()
+      return _G.EncounterJournalMonthlyActivitiesFrame
+        and _G.EncounterJournalMonthlyActivitiesFrame.BarComplete
+        and _G.EncounterJournalMonthlyActivitiesFrame.BarComplete.AllRewardsCollectedText
+    end,
+    function() return _G.EncounterJournalTitleText end,
+    function()
+      return _G.EncounterJournalMonthlyActivitiesFrame
+        and _G.EncounterJournalMonthlyActivitiesFrame.HeaderContainer
+        and _G.EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Month
+    end,
+    function()
+      return _G.EncounterJournalMonthlyActivitiesFrame
+        and _G.EncounterJournalMonthlyActivitiesFrame.HeaderContainer
+        and _G.EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title
+    end,
+    function()
+      return _G.EncounterJournalMonthlyActivitiesFrame
+        and _G.EncounterJournalMonthlyActivitiesFrame.HeaderContainer
+        and _G.EncounterJournalMonthlyActivitiesFrame.HeaderContainer.TimeLeft
+    end,
+    function()
+      local s1 = _G.EncounterJournalSuggestFrame and _G.EncounterJournalSuggestFrame.Suggestion1
+      return s1 and s1.button and s1.button.Text
+    end,
+    function()
+      local s2 = _G.EncounterJournalSuggestFrame and _G.EncounterJournalSuggestFrame.Suggestion2
+      return s2 and s2.centerDisplay and s2.centerDisplay.button and s2.centerDisplay.button.Text
+    end,
+    function()
+      local s3 = _G.EncounterJournalSuggestFrame and _G.EncounterJournalSuggestFrame.Suggestion3
+      return s3 and s3.centerDisplay and s3.centerDisplay.button and s3.centerDisplay.button.Text
+    end,
+    function()
+      local s1 = _G.EncounterJournalSuggestFrame and _G.EncounterJournalSuggestFrame.Suggestion1
+      return s1 and s1.reward and s1.reward.text
+    end,
+    function()
+      return _G.EncounterJournalMonthlyActivitiesFrame
+        and _G.EncounterJournalMonthlyActivitiesFrame.BarComplete
+        and _G.EncounterJournalMonthlyActivitiesFrame.BarComplete.PendingRewardsText
+    end,
+    function() return _G.EncounterJournalMonthlyActivitiesTab and _G.EncounterJournalMonthlyActivitiesTab.Text end,
+    function() return _G.EncounterJournalSuggestTab and _G.EncounterJournalSuggestTab.Text end,
+    function() return _G.EncounterJournalDungeonTab and _G.EncounterJournalDungeonTab.Text end,
+    function() return _G.EncounterJournalRaidTab and _G.EncounterJournalRaidTab.Text end,
+    function() return _G.EncounterJournalLootJournalTab and _G.EncounterJournalLootJournalTab.Text end,
+  }, { sav = true, prefix = "ui", font = font })
 end
 
 function M.ShowLoreDescription()
-  if (TT_PS and TT_PS["ui5"] == "1") then
-    local ST_Dungeon_Raid_zone = EncounterJournalEncounterFrameInstanceFrame.title:GetText() or "?"
-    local ST_loreDescription = EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox.FontStringContainer.FontString
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationText(ST_loreDescription, true, "Dungeon&Raid:Zone:" .. ST_Dungeon_Raid_zone, false, false, -5, "RIGHT")
-    else
-      ST_CheckAndReplaceTranslationText(ST_loreDescription, true, "Dungeon&Raid:Zone:" .. ST_Dungeon_Raid_zone)
-    end
-    local ST_loreShowmap = EncounterJournalEncounterFrameInstanceFrameMapButtonText
-    if (WoWTR_Localization.lang == 'AR') then
-      ST_CheckAndReplaceTranslationText(ST_loreShowmap, true, "ui")
-    else
-      ST_CheckAndReplaceTranslationText(ST_loreShowmap, true, "ui")
-    end
+  if not (T and T.Enabled("ui5")) then return end
+
+  local rtl = ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL()
+  local zoneTitle = _G.EncounterJournalEncounterFrameInstanceFrame
+    and _G.EncounterJournalEncounterFrameInstanceFrame.title
+    and _G.EncounterJournalEncounterFrameInstanceFrame.title.GetText
+    and _G.EncounterJournalEncounterFrameInstanceFrame.title:GetText()
+    or "?"
+  local lore = _G.EncounterJournalEncounterFrameInstanceFrame
+    and _G.EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont
+    and _G.EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox
+    and _G.EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox.FontStringContainer
+    and _G.EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox.FontStringContainer.FontString
+
+  if rtl then
+    ST_CheckAndReplaceTranslationText(lore, true, "Dungeon&Raid:Zone:" .. zoneTitle, false, false, -5, "RIGHT")
+  else
+    ST_CheckAndReplaceTranslationText(lore, true, "Dungeon&Raid:Zone:" .. zoneTitle)
   end
+
+  local showMap = _G.EncounterJournalEncounterFrameInstanceFrameMapButtonText
+  ST_CheckAndReplaceTranslationText(showMap, true, "ui")
 end
 
 function M.ShowDelveDifficultFrame()
-  local DelveDF01 = DelvesDifficultyPickerFrame.Description
-  if (WoWTR_Localization.lang == 'AR') then
-    ST_CheckAndReplaceTranslationText(DelveDF01, true, "Dungeon&Raid:Zone:DelvesFrame", false, false)
+  local rtl = ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL()
+  local df = _G.DelvesDifficultyPickerFrame
+  local desc = df and df.Description
+  if rtl then
+    ST_CheckAndReplaceTranslationText(desc, true, "Dungeon&Raid:Zone:DelvesFrame", false, false)
   else
-    ST_CheckAndReplaceTranslationTextUI(DelveDF01, true, "Dungeon&Raid:Zone:DelvesFrame")
+    ST_CheckAndReplaceTranslationTextUI(desc, true, "Dungeon&Raid:Zone:DelvesFrame")
   end
 
-  local DelveDF02 = DelvesDifficultyPickerFrame.EnterDelveButton.Text
-  ST_CheckAndReplaceTranslationTextUI(DelveDF02, false, "ui")
+  if T then
+    T.ApplyUI({
+      function() return df and df.EnterDelveButton and df.EnterDelveButton.Text end,
+      function() return df and df.DelveRewardsContainerFrame and df.DelveRewardsContainerFrame.RewardText end,
+      function() return df and df.ScenarioLabel end,
+    }, { sav = false, prefix = "ui" })
 
-  local DelveDF03 = DelvesDifficultyPickerFrame.DelveRewardsContainerFrame.RewardText
-  ST_CheckAndReplaceTranslationTextUI(DelveDF03, false, "ui")
-
-  local DelveDF04 = DelvesDifficultyPickerFrame.ScenarioLabel
-  ST_CheckAndReplaceTranslationTextUI(DelveDF04, false, "ui")
-
-  local DelveDF05 = DelvesDifficultyPickerFrame.Title
-  ST_CheckAndReplaceTranslationTextUI(DelveDF05, true, "Dungeon&Raid:Zone:DelvesFrame")
+    T.ApplyUI({
+      function() return df and df.Title end,
+    }, { sav = true, prefix = "Dungeon&Raid:Zone:DelvesFrame" })
+  end
 end
 
 function M.UpdateJournalEncounterBossInfo(ST_bossName)
   if not ST_bossName or (TT_PS and TT_PS["ui5"] ~= "1") then return end
+  local rtl = ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL()
 
   local function updateElement(element, prefix, ST_corr, justifyAlign)
     if not element or not element.GetText then return end
@@ -198,8 +144,8 @@ function M.UpdateJournalEncounterBossInfo(ST_bossName)
   end
 
   local elementsToUpdate = {
-    { EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription, "Dungeon&Raid:Boss:", -5, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil },
-    { EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription, "Dungeon&Raid:Boss:", nil, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil },
+    { EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription, "Dungeon&Raid:Boss:", -5, rtl and "RIGHT" or nil },
+    { EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChildDescription, "Dungeon&Raid:Boss:", nil, rtl and "RIGHT" or nil },
     { EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle, "ui", nil, nil }
   }
 
@@ -234,13 +180,13 @@ function M.UpdateJournalEncounterBossInfo(ST_bossName)
         end
       }
 
-      ST_CheckAndReplaceTranslationText(tempObj, true, "Dungeon&Raid:Boss:" .. ST_bossName, WOWTR_Font2, false, -120, (WoWTR_Localization.lang == 'AR') and "RIGHT" or nil)
+      ST_CheckAndReplaceTranslationText(tempObj, true, "Dungeon&Raid:Boss:" .. ST_bossName, WOWTR_Font2, false, -120, rtl and "RIGHT" or nil)
     end
   end
 
   local rootButton = EncounterJournalEncounterFrameInfoRootButton
   if rootButton then
-    rootButton:SetText(WoWTR_Localization.lang == 'AR' and ">" or "<")
+    rootButton:SetText(rtl and ">" or "<")
   end
 
   M.BossHeaderTabText()
@@ -303,7 +249,7 @@ function M.UpdateBossDescriptionFont(descText)
   if not descText then return end
   local textTypes = { "p", "h1", "h2", "h3" }
   for _, textType in ipairs(textTypes) do
-    local alignment = (WoWTR_Localization.lang == 'AR') and "RIGHT" or "LEFT"
+    local alignment = (ns.RTL and ns.RTL.IsRTL and ns.RTL.IsRTL()) and "RIGHT" or "LEFT"
     if descText.SetJustifyH then
       descText:SetJustifyH(textType, alignment)
     end
@@ -383,17 +329,5 @@ function M.ShowAbility()
     end
   end
 end
-
--- Global wrappers for back-compat
-_G.ST_SuggestTabClick = function() return M.SuggestTabClick() end
-_G.ST_showLoreDescription = function() return M.ShowLoreDescription() end
-_G.ST_showDelveDifficultFrame = function() return M.ShowDelveDifficultFrame() end
-_G.ST_UpdateJournalEncounterBossInfo = function(n) return M.UpdateJournalEncounterBossInfo(n) end
-_G.ST_SaveOriginalText = function(n, t) return M.SaveOriginalText(n, t) end
-_G.ST_BossHeaderTabText = function() return M.BossHeaderTabText() end
-_G.ST_UpdateBossDescriptionFont = function(a) return M.UpdateBossDescriptionFont(a) end
-_G.ST_clickBosses = function() return M.ClickBosses() end
-_G.ST_AdventureGuidebutton = function() return M.AdventureGuideButton() end
-_G.ST_ShowAbility = function() return M.ShowAbility() end
 
 return M

@@ -6,15 +6,9 @@ WOWTR.Config = WOWTR.Config or {}
 WOWTR.Config.Groups = WOWTR.Config.Groups or {}
 
 function WOWTR.Config.Groups.Movies()
-  return {
-    type = "group", order = 4,
+  return WOWTR.Config.MakeTab("movies", {
+    order = 4,
     name = function() return WOWTR.Config.Label("titleTab3", "Subtitles") end,
-    get = function(info) return WOWTR.db.profile.movies[info[#info]] end,
-    set = function(info, val)
-      WOWTR.db.profile.movies[info[#info]] = val
-      WOWTR.Config.SyncGlobalsFromDB()
-      WOWTR.Config.NotifyChange()
-    end,
     args = {
       basics = {
         type = "group", inline = true, order = 1,
@@ -34,6 +28,6 @@ function WOWTR.Config.Groups.Movies()
         }
       },
     },
-  }
+  })
 end
 

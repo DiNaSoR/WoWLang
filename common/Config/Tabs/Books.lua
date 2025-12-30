@@ -6,16 +6,10 @@ WOWTR.Config = WOWTR.Config or {}
 WOWTR.Config.Groups = WOWTR.Config.Groups or {}
 
 function WOWTR.Config.Groups.Books()
-  return {
-    type = "group", order = 5,
+  return WOWTR.Config.MakeTab("books", {
+    order = 5,
     name = function() return WOWTR.Config.Label("titleTab5", "Books") end,
-    get = function(info) return WOWTR.db.profile.books[info[#info]] end,
-    set = function(info, val)
-      local key = info[#info]
-      WOWTR.db.profile.books[key] = val
-      WOWTR.Config.SyncGlobalsFromDB()
-      WOWTR.Config.NotifyChange()
-      
+    afterSet = function(key, val)
       -- If "active" or "title" changed, refresh visible book frame immediately
       if (key == "active" or key == "title") and ItemTextFrame and ItemTextFrame:IsVisible() then
         if key == "active" and not val then
@@ -59,7 +53,7 @@ function WOWTR.Config.Groups.Books()
         }
       },
     },
-  }
+  })
 end
 
 

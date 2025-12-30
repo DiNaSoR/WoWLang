@@ -13,20 +13,13 @@ _lastProcessedQuestTime = _lastProcessedQuestTime or 0
 
 -- Toggle quest translation on/off (keeps globals in sync)
 function Quests.ToggleTranslation()
+   -- IMPORTANT: Do not call QuestMapFrame_ShowQuestDetails here; it triggers Blizzard's
+   -- late UI refresh which can overwrite our text. QuestPrepare + the post-layout
+   -- ticker already handle keeping the chosen state applied.
    if (QTR_curr_trans=="1") then
-      QTR_curr_trans="0"
-      if QTR_Translate_Off then QTR_Translate_Off(1) end
+      if QTR_Translate_Off then QTR_Translate_Off(1, "__toggle__") end
    else
-      QTR_curr_trans="1"
       if QTR_Translate_On then QTR_Translate_On(1, "__toggle__") end
-   end
-   if WorldMapFrame and WorldMapFrame:IsVisible() then
-      local questID = (QuestMapFrame and QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.questID) or (Quests.GetQuestID and Quests.GetQuestID())
-      if questID and QuestMapFrame_ShowQuestDetails then
-         QuestMapFrame_ShowQuestDetails(questID)
-      elseif QTR_PrepareReload then
-         QTR_PrepareReload()
-      end
    end
 end
 
@@ -66,8 +59,19 @@ function Quests.GetQuestID()
       quest_ID = GetQuestID()
    end
 
-   if (((quest_ID==nil) or (quest_ID==0)) and QuestMapDetailsScrollFrame:IsVisible()) then
-      quest_ID = QuestMapFrame.DetailsFrame.questID
+   -- QuestMapFrame (modern UI) stores questID on QuestMapFrame.QuestsFrame.DetailsFrame.
+   -- Older builds used QuestMapFrame.DetailsFrame.questID; keep as fallback.
+   if (((quest_ID==nil) or (quest_ID==0)) and QuestMapDetailsScrollFrame and QuestMapDetailsScrollFrame:IsVisible()) then
+      quest_ID =
+        (QuestMapFrame and QuestMapFrame.QuestsFrame and QuestMapFrame.QuestsFrame.DetailsFrame and QuestMapFrame.QuestsFrame.DetailsFrame.questID)
+        or (QuestMapFrame and QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.questID)
+   end
+
+   -- Some layouts don't keep QuestMapDetailsScrollFrame visible; still try while QuestMapFrame is visible.
+   if (((quest_ID==nil) or (quest_ID==0)) and QuestMapFrame and QuestMapFrame:IsVisible()) then
+      quest_ID =
+        (QuestMapFrame.QuestsFrame and QuestMapFrame.QuestsFrame.DetailsFrame and QuestMapFrame.QuestsFrame.DetailsFrame.questID)
+        or (QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.questID)
    end
 
    if (((quest_ID==nil) or (quest_ID==0)) and QuestLogPopupDetailFrame:IsVisible()) then
@@ -163,9 +167,10 @@ function Quests.Start()
            return
         end
         if coalesceHandle then coalesceHandle:Cancel(); coalesceHandle = nil end
-        coalesceHandle = C_Timer.NewTimer(0.01, function()
+        -- Delay slightly so Blizzard finishes its late QuestMapFrame UI updates before we translate.
+        coalesceHandle = C_Timer.NewTimer(0.05, function()
                      if QuestMapFrame and QuestMapFrame:IsVisible() then
-                        suppressUntil = GetTime() + 0.05
+                        suppressUntil = GetTime() + 0.10
                         if Quests and Quests.Details and Quests.Details.QuestPrepare then
                            Quests.Details.QuestPrepare("__force__")
                         elseif QTR_PrepareReload then
@@ -174,6 +179,16 @@ function Quests.Start()
                      end
            coalesceHandle = nil
         end)
+     end)
+  end
+
+  -- Some QuestMapFrame panels (e.g. recap/info panes) can show QuestMapDetailsScrollFrame without firing
+  -- QuestMapFrame_ShowQuestDetails. Hook OnShow to keep our state in sync and to reset stale RTL when no questID exists.
+  if QuestMapDetailsScrollFrame and QuestMapDetailsScrollFrame.HookScript then
+     QuestMapDetailsScrollFrame:HookScript("OnShow", function()
+        if Quests and Quests.Details and Quests.Details.QuestPrepare then
+           Quests.Details.QuestPrepare("__force__")
+        end
      end)
   end
 
@@ -207,8 +222,10 @@ function Quests.Start()
            WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Processing visible QuestLogPopupDetailFrame...")
          end
          QTR_QuestPrepare("QUEST_DETAIL")
-      elseif QuestMapFrame and QuestMapFrame:IsVisible() and QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.questID then
-         local questID = QuestMapFrame.DetailsFrame.questID
+      elseif QuestMapFrame and QuestMapFrame:IsVisible() then
+         local questID =
+           (QuestMapFrame.QuestsFrame and QuestMapFrame.QuestsFrame.DetailsFrame and QuestMapFrame.QuestsFrame.DetailsFrame.questID)
+           or (QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.questID)
          if WOWTR and WOWTR.Debug then
            WOWTR.Debug.Verbose(WOWTR.Debug.Categories.QUESTS, "Processing visible QuestMapFrame, questID:", questID)
          end
