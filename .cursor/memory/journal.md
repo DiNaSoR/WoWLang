@@ -84,3 +84,6 @@
 - [Quests][RTL] Quest title repeatable icon extraction now supports inline atlas/texture tags inside `|H...|h...|h` display text.
   - Some titles use `|HRepeat...|h|A:...|a|h` (or `|T...|t`) rather than a single glyph.
   - Fix: `common/Quests/Details.lua` extracts the first `|A`/`|T` tag from the hyperlink display and renders it via the overlay FontString.
+
+- [Quests][RTL] Moved quest title icon overlay to the RTL side (right) for Arabic.
+  - Fix: `common/Quests/Details.lua` anchors the overlay FontString to `RIGHT` when `rtl` is true (keeps `LEFT` for LTR).

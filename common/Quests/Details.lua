@@ -307,14 +307,22 @@ function Quests.Details.TranslateOn(typ,event)
                   local iconFlags = (cache and cache.flags) or ""
                   if iconFS then
                      iconFS:ClearAllPoints()
-                     iconFS:SetPoint("LEFT", QuestInfoTitleHeader, "LEFT", 0, 0)
+                     if rtl then
+                        iconFS:SetPoint("RIGHT", QuestInfoTitleHeader, "RIGHT", -2, 0)
+                     else
+                        iconFS:SetPoint("LEFT", QuestInfoTitleHeader, "LEFT", 0, 0)
+                     end
                      iconFS:SetFont(iconFont, iconSize or titleSize, iconFlags)
                      iconFS:SetText(leadingGlyph)
                      iconFS:Show()
                   end
                   if iconFS2 then
                      iconFS2:ClearAllPoints()
-                     iconFS2:SetPoint("LEFT", QuestProgressTitleText, "LEFT", 0, 0)
+                     if rtl then
+                        iconFS2:SetPoint("RIGHT", QuestProgressTitleText, "RIGHT", -2, 0)
+                     else
+                        iconFS2:SetPoint("LEFT", QuestProgressTitleText, "LEFT", 0, 0)
+                     end
                      iconFS2:SetFont(iconFont, iconSize or titleSize, iconFlags)
                      iconFS2:SetText(leadingGlyph)
                      iconFS2:Show()
