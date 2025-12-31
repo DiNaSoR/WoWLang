@@ -112,6 +112,41 @@ WoWTR_Config_Interface = {
    showMinimapIcon = "ﻋﺮﺽ ﺭﻣﺰ ﺇﻋﺪﺍﺩﺍﺕ ﺍﻹﺿﺎﻓﺔ ﺑﺠﺎﻧﺐ ﺍﻟﺨﺮﻳﻄﺔ ﺍﻟﻤﺼﻐﺮﺓ",
    showMinimapIconDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﻴﻈﻬﺮ ﺭﻣﺰ ﺇﻋﺪﺍﺩﺍﺕ ﺍﻹﺿﺎﻓﺔ ﺑﺠﻮﺍﺭ ﺍﻟﺨﺮﻳﻄﺔ ﺍﻟﻤﺼﻐﺮﺓ.",
 
+   -- ControlCenter (Plumber-style settings panel)
+   ControlCenter_Modules = "اﻟﻮﺣﺪات",
+   ControlCenter_Release_Notes = "ﻣﺬﻛﺮات اﻹﺻﺪار",
+   ControlCenter_Sort_By = "ﺗﺮﺗﻴﺐ ﺣﺴﺐ",
+   ControlCenter_Sort_Alphabet = "ﺃﺑﺠﺪﻳﺎ",
+   ControlCenter_Sort_Date = "ﺗﺎرﻳﺦ اﻹﺿﺎﻓﺔ",
+   ControlCenter_NoSearchResults = "ﻻ ﺗﻮﺟﺪ ﻧﺘﺎﺋﺞ",
+   ControlCenter_Version = "اﻹﺻﺪار",
+
+   ControlCenter_Category_General = "ﻋﺎم",
+   ControlCenter_Category_Tooltips = "ﺗﻠﻤﻴﺤﺎت",
+   ControlCenter_Category_Bubbles = "ﻓﻘﺎﻋﺎت",
+   ControlCenter_Category_Movies = "ﻣﻘﺎﻃﻊ",
+   ControlCenter_Category_Books = "ﻛﺘﺐ",
+   ControlCenter_Category_Chat = "اﻟﺪﺭﺩﺷﺔ",
+   ControlCenter_Category_About = "ﺣﻮل",
+
+   ControlCenter_About_Title = "ﺣﻮل",
+   ControlCenter_About_Desc = "إعدادات ومعلومات WoWLang / WoWAR",
+
+   -- ControlCenter - UI target names / misc
+   ControlCenter_UI_GameMenu = "ﻗﺎﺋﻤﺔ اﻟﻠﻌﺒﺔ",
+   ControlCenter_UI_CharacterInfo = "ﻣﻌﻠﻮﻣﺎت اﻟﺸﺨﺼﻴﺔ",
+   ControlCenter_UI_GroupFinder = "اﻟﺒﺎﺣﺚ ﻋﻦ ﻣﺠﻤﻮﻋﺔ",
+   ControlCenter_UI_Collections = "اﻟﻤﺠﻤﻮﻋﺎت",
+   ControlCenter_UI_AdventureGuide = "ﺩﻟﻴﻞ اﻟﻤﻐﺎﻣﺮ",
+   ControlCenter_UI_Friends = "اﻷﺻﺪﻗﺎء",
+   ControlCenter_UI_Professions = "اﻟﻤﻬﻦ",
+   ControlCenter_UI_MiscUI = "ﻭﺍﺟﻬﺔ ﻣﺘﻨﻮﻋﺔ",
+   ControlCenter_UI_TalentsUI = "ﻭﺍﺟﻬﺔ اﻟﻤﻮاﻫﺐ",
+
+   ControlCenter_ShowID = "ﻋﺮﺽ اﻟﻤﻌﺮﻑ",
+   ControlCenter_ShowHash = "ﻋﺮﺽ اﻟﺘﺠﺰﺋﺔ",
+   ControlCenter_HideSellPrice = "إﺧﻔﺎء ﺳﻌﺮ اﻟﺒﻴﻊ",
+
    titleTab1 = "ﺍﻟﻤﻬﺎﻡ",
    generalMainHeaderQS = "ﺗﺮﺟﻤﺎﺕ ﺍﻟﻤﻬﺎﻡ - stseuQ",
    activateQuestsTranslations = "ﺗﻔﻌﻴﻞ ﺗﺮﺟﻤﺎﺕ ﺍﻟﻤﻬﺎﻡ",

@@ -57,7 +57,13 @@ WOWTR.Config = WOWTR.Config or {}
 function WOWTR.Config.Label(key, fallback)
   local v = (WoWTR_Config_Interface and WoWTR_Config_Interface[key]) or nil
   if v and v ~= "" then
-    return QTR_ReverseIfAR(v)
+    local rev = _G.QTR_ReverseIfAR
+    if type(rev) == "function" then
+      return rev(v)
+    end
+    -- Load-order safety: `QTR_ReverseIfAR` is defined later in `common/Text.lua`.
+    -- Return raw localized text rather than hard-crashing during early file loads.
+    return v
   end
   return fallback
 end

@@ -372,25 +372,24 @@ function C.Init()
       WOWTR.Debug.Initialize()
     end
   end
-  if AceConfig and AceConfigDialog then
-    AceConfig:RegisterOptionsTable("WOWTR", BuildOptions())
-    AceConfigDialog:AddToBlizOptions("WOWTR", GetOptionTitle())
-  end
+  -- WoWLang: options UI is now the Plumber-style ControlCenter panel (no AceConfig UI registration).
   RegisterLSMFonts()
   if WOWTR and WOWTR.Fonts then
-    WOWTR.Fonts.HookAceConfigDialog("WOWTR")
     WOWTR.Fonts.HookBlizzardAddOnsList()
     WOWTR.Fonts.HookDropdownLists()
   end
-  HookAceConfigDialogChrome()
+  -- (AceConfigDialog chrome hooks no longer needed)
   -- Tooltips own tooltip hooking/font templating (see common/Tooltips/Hooks.lua)
 end
 
 function C.Open()
-  if AceConfigDialog then
-    AceConfigDialog:Open("WOWTR")
-  elseif Settings and WOWTR and WOWTR.CategoryID then
-    Settings.OpenToCategory(WOWTR.CategoryID)
+  local CC = WOWTR and WOWTR.Config and WOWTR.Config.ControlCenter
+  if CC and CC.ToggleSettings then
+    CC.ToggleSettings()
+    return
+  end
+  if Settings and WOWTR and WOWTR.ControlCenterCategoryID then
+    Settings.OpenToCategory(WOWTR.ControlCenterCategoryID)
   end
 end
 

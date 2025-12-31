@@ -1,6 +1,6 @@
 # WoWLang / WoWAR – Project Memo
 
-Last updated: 2025-12-30
+Last updated: 2025-12-31
 
 ## High signal (current state)
 
@@ -14,7 +14,7 @@ Last updated: 2025-12-30
 - RTL detection is centralized via `ns.RTL.IsRTL()`; raw locale checks are deprecated.
 - All legacy `ST_*` globals are registered only in `common/Core/Compat.lua`.
 - Hook/ticker wiring uses shared helpers from `common/Core/HookUtils.lua`.
-- Config tabs use `WOWTR.Config.MakeTab()` unless custom side-effects are required.
+- Primary settings UI is the Plumber-style **ControlCenter panel** in `common/Config/ControlCenter/*` (AceConfig UI is disabled).
 - AceDB is the source of truth for config persistence; legacy migration runs **once only** on first install.
 
 ## RTL / text shaping invariants

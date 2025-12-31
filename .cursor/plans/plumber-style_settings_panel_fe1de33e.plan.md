@@ -4,45 +4,45 @@ overview: Reverse-engineer Plumber’s ControlCenter SettingsPanel (code + art d
 todos:
   - id: inventory-plumber-ui
     content: Inventory Plumber ControlCenter files and dependencies; decide exact subset to port and all required assets to copy.
-    status: pending
+    status: completed
   - id: create-wowlang-templates
     content: Create renamed XML templates (no Plumber* globals) and wire them to new WoWLang Lua files.
-    status: pending
+    status: completed
     dependencies:
       - inventory-plumber-ui
   - id: port-scrollview-and-utils
     content: Port minimal LandingPageUtil pieces + ScrollView + ControlCenter ScrollBar to support the panel’s virtual list and dropdown menu.
-    status: pending
+    status: completed
     dependencies:
       - create-wowlang-templates
   - id: implement-wowlang-registry
     content: Implement module registry mapping WoWLang settings (AceDB) into the ControlCenter module list, categories, search, and preview mapping.
-    status: pending
+    status: completed
     dependencies:
       - port-scrollview-and-utils
   - id: replace-aceconfig-ui
     content: Remove AceConfig UI registration; route minimap + slash + Settings category to the new panel while keeping AceDB and migration.
-    status: pending
+    status: completed
     dependencies:
       - implement-wowlang-registry
   - id: copy-assets-and-previews
     content: Copy Plumber art dependencies into WoWAR runtime folders and create initial WoWLang preview images (placeholders ok).
-    status: pending
+    status: completed
     dependencies:
       - replace-aceconfig-ui
   - id: safe-apply-hooks
     content: Implement safe apply behavior (no Blizzard forced refresh) using existing helpers like Quests.Details.SchedulePostLayoutRefresh and SyncGlobalsFromDB.
-    status: pending
+    status: completed
     dependencies:
       - replace-aceconfig-ui
   - id: localize-and-fonts
     content: Add missing UI strings to WoWTR_Config_Interface and ensure Arabic font application works on the new panel.
-    status: pending
+    status: completed
     dependencies:
       - copy-assets-and-previews
   - id: update-journal
     content: Append a journal entry describing the new settings UI and key files touched; add lessons entry if any new non-obvious issue is discovered.
-    status: pending
+    status: completed
     dependencies:
       - localize-and-fonts
 ---
@@ -332,8 +332,3 @@ flowchart TD
 
 - Replace UI:
 - [`common/Config/Core.lua`](common/Config/Core.lua)
-- [`common/Config/Minimap.lua`](common/Config/Minimap.lua)
-- [`common/Config/Main.lua`](common/Config/Main.lua)
-- [`WoWAR/WoWAR.toc`](WoWAR/WoWAR.toc)
-- New panel:
-- [`common/Config/ControlCenter/Templates.xml`](common/Config/ControlCenter/Templates.xml)

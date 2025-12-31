@@ -29,10 +29,8 @@ if LDB and LDBIcon then
   end
 
   local function OpenConfig()
-    if LibStub("AceConfigDialog-3.0", true) then
-      LibStub("AceConfigDialog-3.0"):Open("WOWTR")
-    elseif Settings and WOWTR and WOWTR.CategoryID then
-      Settings.OpenToCategory(WOWTR.CategoryID)
+    if WOWTR and WOWTR.Config and WOWTR.Config.Open then
+      WOWTR.Config.Open()
     end
   end
 
