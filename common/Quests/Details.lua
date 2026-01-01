@@ -360,9 +360,15 @@ function Quests.Details.TranslateOn(typ,event)
                local progParent = (QuestProgressTitleText and QuestProgressTitleText.GetParent and QuestProgressTitleText:GetParent()) or nil
                if not Quests.Details._TitleIconFS and titleParent then
                   Quests.Details._TitleIconFS = titleParent:CreateFontString(nil, "OVERLAY")
+               elseif Quests.Details._TitleIconFS and titleParent then
+                  -- Re-parent to current titleParent (may differ between QuestMapFrame and QuestFrame)
+                  Quests.Details._TitleIconFS:SetParent(titleParent)
                end
                if not Quests.Details._ProgressTitleIconFS and progParent then
                   Quests.Details._ProgressTitleIconFS = progParent:CreateFontString(nil, "OVERLAY")
+               elseif Quests.Details._ProgressTitleIconFS and progParent then
+                  -- Re-parent to current progParent
+                  Quests.Details._ProgressTitleIconFS:SetParent(progParent)
                end
 
                -- Mouse hit boxes so the overlay icon has the same tooltip hover behavior as the original title hyperlink.
@@ -371,12 +377,18 @@ function Quests.Details.TranslateOn(typ,event)
                   hit:EnableMouse(true)
                   hit:SetFrameStrata("TOOLTIP")
                   Quests.Details._TitleIconHit = hit
+               elseif Quests.Details._TitleIconHit and titleParent then
+                  -- Re-parent to current titleParent
+                  Quests.Details._TitleIconHit:SetParent(titleParent)
                end
                if not Quests.Details._ProgressTitleIconHit and progParent then
                   local hit2 = CreateFrame("Frame", nil, progParent)
                   hit2:EnableMouse(true)
                   hit2:SetFrameStrata("TOOLTIP")
                   Quests.Details._ProgressTitleIconHit = hit2
+               elseif Quests.Details._ProgressTitleIconHit and progParent then
+                  -- Re-parent to current progParent
+                  Quests.Details._ProgressTitleIconHit:SetParent(progParent)
                end
 
                local iconFS = Quests.Details._TitleIconFS
