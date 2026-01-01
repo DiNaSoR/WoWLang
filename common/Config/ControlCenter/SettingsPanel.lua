@@ -105,11 +105,47 @@ local function ApplyArabicFonts(obj)
     end
 end
 
+local function IsArabicUI()
+    if WOWTR and WOWTR.Fonts and type(WOWTR.Fonts.IsArabic) == "function" then
+        return WOWTR.Fonts.IsArabic()
+    end
+    return (WoWTR_Localization and WoWTR_Localization.lang == "AR") and true or false
+end
+
 local function ShapeTextIfArabic(text)
     local f = _G.QTR_ReverseIfAR
     if type(f) == "function" then
         return f(text)
     end
+    return text
+end
+
+-- Colorize "Tip" lines in Arabic config descriptions.
+-- We do this at render time because `QTR_ReverseIfAR` (and the reshaper) are loaded later in the TOC.
+local function ColorizeTipLine(text)
+    if type(text) ~= "string" or text == "" then return text end
+
+    -- Normalize newline tokens so we can pattern-match consistently.
+    text = text:gsub("{n}", "\n")
+
+    local function wrap(line)
+        -- Avoid double-wrapping if localization already inserted a color span.
+        if line:find("|c%x%x%x%x%x%x%x%x") then
+            return line
+        end
+        return "|cffffd200" .. line .. "|r"
+    end
+
+    -- Lua patterns don't support alternation; handle common tip prefixes separately.
+    for _, prefix in ipairs({ "نصيحة", "تلميح" }) do
+        text = text:gsub("(\n)(%s*" .. prefix .. "%s*:%s*[^\n]*)", function(nl, line)
+            return nl .. wrap(line)
+        end)
+        text = text:gsub("^(%s*" .. prefix .. "%s*:%s*[^\n]*)", function(line)
+            return wrap(line)
+        end)
+    end
+
     return text
 end
 
@@ -951,6 +987,22 @@ do  --Right Section
                 desc = warningText;
             end
         end
+
+        local rtl = IsArabicUI()
+        self.FeatureDescription:SetJustifyH(rtl and "RIGHT" or "LEFT")
+
+        if desc and rtl then
+            desc = ColorizeTipLine(desc)
+            local expander = _G.QTR_ExpandUnitInfo
+            if type(expander) == "function" then
+                -- Use ExpandUnitInfo to reshape + prepare RTL lines while keeping line order stable.
+                desc = expander(desc, false, self.FeatureDescription, _G.WOWTR_Font2, 0, true)
+            else
+                -- Fallback: best-effort single-pass reversal.
+                desc = ShapeTextIfArabic(desc)
+            end
+        end
+
         self.FeatureDescription:SetText(desc);
         if ControlCenter.Assets and ControlCenter.Assets.Path then
             self.FeaturePreview:SetTexture(ControlCenter.Assets.Path("Images\\ControlCenter\\Preview_"..tostring(parentDBKey or moduleData.dbKey)..".jpg"));
@@ -1237,14 +1289,20 @@ CreateUI = function()
         local description = Tab1:CreateFontString(nil, "OVERLAY", "GameTooltipText"); --GameFontNormal (ObjectiveFont), GameTooltipTextSmall
         MainFrame.FeatureDescription = description;
         SetTextColor(description, Def.TextColorReadable);
-        description:SetJustifyH("LEFT");
+        description:SetJustifyH(IsArabicUI() and "RIGHT" or "LEFT");
         description:SetJustifyV("TOP");
         description:SetSpacing(4);
         local visualOffset = 2;
-        description:SetPoint("TOPLEFT", preview, "BOTTOMLEFT", visualOffset, -Def.WidgetGap -visualOffset);
-        description:SetPoint("BOTTOMRIGHT", RightSection, "BOTTOMRIGHT", -visualOffset -Def.WidgetGap, Def.WidgetGap);
+        if IsArabicUI() then
+            description:SetPoint("TOPRIGHT", preview, "BOTTOMRIGHT", -visualOffset, -Def.WidgetGap -visualOffset);
+            description:SetPoint("BOTTOMLEFT", RightSection, "BOTTOMLEFT", visualOffset + Def.WidgetGap, Def.WidgetGap);
+        else
+            description:SetPoint("TOPLEFT", preview, "BOTTOMLEFT", visualOffset, -Def.WidgetGap -visualOffset);
+            description:SetPoint("BOTTOMRIGHT", RightSection, "BOTTOMRIGHT", -visualOffset -Def.WidgetGap, Def.WidgetGap);
+        end
         description:SetShadowColor(0, 0, 0);
         description:SetShadowOffset(1, -1);
+        ApplyArabicFonts(description);
     end
 
 
@@ -1421,7 +1479,7 @@ do  --ChangelogTab
     function Formatter:GetTextHeight(fontTag, text, textWidthShrink)
         if not self.UtilityFontString then
             local UtilityFontString = MainFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal");
-            UtilityFontString:SetJustifyH("LEFT");
+            UtilityFontString:SetJustifyH(IsArabicUI() and "RIGHT" or "LEFT");
             UtilityFontString:SetPoint("TOP", UIParent, "BOTTOM", 0, -4);
             self.UtilityFontString = UtilityFontString;
             ApplyArabicFonts(UtilityFontString);
@@ -1484,7 +1542,7 @@ do  --ChangelogTab
         local function CreateFontString()
             local obj = ScrollView:CreateFontString(nil, "OVERLAY", "GameFontNormal");
             obj:SetSpacing(Def.ChangelogLineSpacing);
-            obj:SetJustifyH("LEFT")
+            obj:SetJustifyH(IsArabicUI() and "RIGHT" or "LEFT")
             ApplyArabicFonts(obj);
             return obj
         end
@@ -1558,10 +1616,12 @@ do  --ChangelogTab
 
 
         local VersionTitle = Tab2:CreateFontString(nil, "OVERLAY", "GameFontNormal");
+        -- Keep the version header LTR even in Arabic UI (avoid mixed RTL/LTR reordering).
         VersionTitle:SetJustifyH("LEFT");
         VersionTitle:SetPoint("LEFT", LeftSection, "TOPLEFT", Def.WidgetGap + 9 + 2, -Def.WidgetGap - 0.5 * Def.ButtonSize);
         SetTextColor(VersionTitle, Def.TextColorNonInteractable);
-        VersionTitle:SetText((_Label("ControlCenter_Version", "Version") .. " " .. tostring(WOWTR_version or "")));
+        local versionLabel = _Label("ControlCenter_Version", GAME_VERSION_LABEL or "Version")
+        VersionTitle:SetText(versionLabel .. " " .. tostring(WOWTR_version or ""));
         ApplyArabicFonts(VersionTitle);
 
         local DivH = CreateDivider(Tab2, sideSectionWidth - 0.5*Def.WidgetGap);
@@ -1589,6 +1649,10 @@ do  --ChangelogTab
         Formatter:LoadUserFont();
         self.currentVersionID = versionID;
 
+        local rtl = IsArabicUI()
+        local edgePoint = rtl and "TOPRIGHT" or "TOPLEFT"
+        local indentSign = rtl and -1 or 1
+
 
         if not self.redactorPool then
             local function Redactor_Create()
@@ -1610,6 +1674,9 @@ do  --ChangelogTab
         local content = {};
         local objectHeight;
         local postfixNewFeature = " ("..L["New Feature Abbr"]..")";
+
+        local edgeOffset = 1.5 * Def.ButtonSize;
+        local edgeOffsetX = indentSign * edgeOffset;
 
         for i, info in ipairs(changelog) do
             top = offsetY;
@@ -1667,11 +1734,12 @@ do  --ChangelogTab
                     templateKey = "FontString",
                     top = top,
                     bottom = bottom,
-                    point = "TOPLEFT",
-                    relativePoint = "TOPLEFT",
+                    point = edgePoint,
+                    relativePoint = edgePoint,
                     setupFunc = function(obj)
                         obj:SetWidth(textWidth);
                         obj:SetFontObject(Formatter.TagFonts[info.type]);
+                        obj:SetJustifyH(rtl and "RIGHT" or "LEFT")
                         obj:SetText(ShapeTextIfArabic(text));
                         SetTextColor(obj, Def.TextColorReadable);
                         ApplyArabicFonts(obj);
@@ -1686,7 +1754,7 @@ do  --ChangelogTab
                 };
 
                 if info.type == "h1" then
-                    content[n].offsetX = leftOffset;
+                    content[n].offsetX = edgeOffsetX;
 
                     --Add Keywords
                     if info.dbKey then
@@ -1702,6 +1770,7 @@ do  --ChangelogTab
                                 templateKey = "FontString",
                                 setupFunc = function(obj)
                                     obj:SetFontObject(Formatter.TagFonts["p"]);
+                                    obj:SetJustifyH(rtl and "RIGHT" or "LEFT")
                                     obj:SetText(ShapeTextIfArabic(text));
                                     SetTextColor(obj, Def.TextColorNonInteractable);
                                     ApplyArabicFonts(obj);
@@ -1715,15 +1784,15 @@ do  --ChangelogTab
                                 end,
                                 top = top,
                                 bottom = bottom,
-                                point = "TOPLEFT",
-                                relativePoint = "TOPLEFT",
-                                offsetX = leftOffset,
+                                point = edgePoint,
+                                relativePoint = edgePoint,
+                                offsetX = edgeOffsetX,
                             };
                             top = bottom;
                         end
                     end
                 else
-                    content[n].offsetX = leftOffset + (info.bullet and Def.ChangelogIndent or 0);
+                    content[n].offsetX = edgeOffsetX + (info.bullet and indentSign * Def.ChangelogIndent or 0);
                     if info.bullet then
                         n = n + 1;
                         content[n] = {
@@ -1731,9 +1800,9 @@ do  --ChangelogTab
                             templateKey = "Texture",
                             top = top + 6,
                             bottom = bottom,
-                            point = "LEFT",
-                            relativePoint = "TOPLEFT",
-                            offsetX = leftOffset -6,
+                            point = rtl and "RIGHT" or "LEFT",
+                            relativePoint = edgePoint,
+                            offsetX = edgeOffsetX - indentSign * 6,
                             setupFunc = function(obj)
                                 obj:SetSize(20, 20);
                                 obj:SetTexture(Def.TextureFile);
@@ -1757,14 +1826,17 @@ do  --ChangelogTab
                     setupFunc = function(obj)
                         local data = ControlCenter:GetModule(info.dbKey);
                         obj.Label:SetFontObject(Formatter.TagFonts["p"]);
+                        if obj.Label and obj.Label.SetJustifyH then
+                            obj.Label:SetJustifyH(rtl and "RIGHT" or "LEFT")
+                        end
                         obj:SetData(data);
                         obj:SetWidth(objectWidth);
                     end,
                     top = top,
                     bottom = bottom,
-                    point = "TOPLEFT",
-                    relativePoint = "TOPLEFT",
-                    offsetX = leftOffset - 6,
+                    point = edgePoint,
+                    relativePoint = edgePoint,
+                    offsetX = edgeOffsetX - indentSign * 6,
                 };
 
             elseif info.type == "br" then
@@ -1779,9 +1851,9 @@ do  --ChangelogTab
                         templateKey = "Texture",
                         top = top,
                         bottom = bottom,
-                        point = "TOPLEFT",
-                        relativePoint = "TOPLEFT",
-                        offsetX = leftOffset,
+                        point = edgePoint,
+                        relativePoint = edgePoint,
+                        offsetX = edgeOffsetX,
                         setupFunc = function(obj)
                             obj:SetSize(Def.ChangelogImageSize, Def.ChangelogImageSize);
                             obj:SetTexCoord(0, 1, 0, 1);
@@ -1795,6 +1867,7 @@ do  --ChangelogTab
 
             elseif info.type == "date" then
                 if info.versionText and info.timestamp then
+                    -- Keep the version/date header LTR even in Arabic UI (avoid mixed RTL/LTR reordering).
                     local versionLabel = _Label("ControlCenter_Version", GAME_VERSION_LABEL or "Version")
                     local text = string.format("%s %s   %s", versionLabel, info.versionText, API.SecondsToDate(info.timestamp));
                     objectHeight = Formatter:GetTextHeight("p", text);
@@ -1805,13 +1878,14 @@ do  --ChangelogTab
                         templateKey = "FontString",
                         top = top,
                         bottom = bottom,
-                        point = "TOPLEFT",
-                        relativePoint = "TOPLEFT",
-                        offsetX = leftOffset,
+                        point = edgePoint,
+                        relativePoint = edgePoint,
+                        offsetX = edgeOffsetX,
                         setupFunc = function(obj)
                             obj:SetWidth(objectWidth);
                             obj:SetFontObject(Formatter.TagFonts["p"]);
                             obj:SetText(text);
+                            obj:SetJustifyH(rtl and "RIGHT" or "LEFT")
                             SetTextColor(obj, Def.TextColorNonInteractable);
                             ApplyArabicFonts(obj);
                         end;
@@ -1826,9 +1900,9 @@ do  --ChangelogTab
                         templateKey = "Texture",
                         top = top,
                         bottom = bottom,
-                        point = "TOPLEFT",
-                        relativePoint = "TOPLEFT",
-                        offsetX = leftOffset - 1,
+                        point = edgePoint,
+                        relativePoint = edgePoint,
+                        offsetX = edgeOffsetX - indentSign * 1,
                         setupFunc = function(obj)
                             obj:SetSize(objectWidth + 32, 8);
                             SetTexCoord(obj, 424, 864, 132, 148)

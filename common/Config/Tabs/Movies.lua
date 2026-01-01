@@ -14,17 +14,17 @@ function WOWTR.Config.Groups.Movies()
         type = "group", inline = true, order = 1,
         name = WOWTR.Config.Label("generalMainHeaderMF", "Basics"),
         args = {
-          active = { type = "toggle", name = WOWTR.Config.Label("activateSubtitleTranslations", "Enable"), order = 1, width = "full" },
-          save = { type = "toggle", name = WOWTR.Config.Label("saveUntranslatedSubtitles", "Save untranslated"), order = 5, width = "full" },
+          active = { type = "toggle", name = WOWTR.Config.Label("activateSubtitleTranslations", "Enable"), desc = WOWTR.Config.Label("activateSubtitleTranslationsDESC", "Enable/disable subtitle translations."), order = 1, width = "full" },
+          save = { type = "toggle", name = WOWTR.Config.Label("saveUntranslatedSubtitles", "Save untranslated"), desc = WOWTR.Config.Label("saveUntranslatedSubtitlesDESC", "Save missing subtitle lines."), order = 5, width = "full" },
         }
       },
       types = {
         type = "group", inline = true, order = 5,
         name = WOWTR.Config.Label("subtitleMovies", "Types"),
         args = {
-          intro = { type = "toggle", name = WOWTR.Config.Label("subtitleIntro", "Intro"), order = 2, width = "full" },
-          movie = { type = "toggle", name = WOWTR.Config.Label("subtitleMovies", "Movies"), order = 3, width = "full" },
-          cinematic = { type = "toggle", name = WOWTR.Config.Label("subtitleCinematics", "Cinematics"), order = 4, width = "full" },
+          intro = { type = "toggle", name = WOWTR.Config.Label("subtitleIntro", "Intro"), desc = WOWTR.Config.Label("subtitleIntroDESC", "Show intro subtitles."), order = 2, width = "full" },
+          movie = { type = "toggle", name = WOWTR.Config.Label("subtitleMovies", "Movies"), desc = WOWTR.Config.Label("subtitleMoviesDESC", "Show movie subtitles."), order = 3, width = "full" },
+          cinematic = { type = "toggle", name = WOWTR.Config.Label("subtitleCinematics", "Cinematics"), desc = WOWTR.Config.Label("subtitleCinematicsDESC", "Show cinematic subtitles."), order = 4, width = "full" },
         }
       },
     },

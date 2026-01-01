@@ -84,38 +84,38 @@ function WOWTR.Config.Groups.General()
         type = "group", inline = true, order = 1,
         name = WOWTR.Config.Label("generalMainHeaderQS", "Core"),
         args = {
-          active = { type = "toggle", name = WOWTR.Config.Label("activateQuestsTranslations", "Enable translations"), order = 2, width = "full" },
-          transtitle = { type = "toggle", name = WOWTR.Config.Label("translateQuestTitles", "Translate quest titles"), order = 3, width = "full" },
-          gossip = { type = "toggle", name = WOWTR.Config.Label("translateGossipTexts", "Translate gossip"), order = 4, width = "full" },
-          tracker = { type = "toggle", name = WOWTR.Config.Label("translateTrackObjectives", "Translate tracker"), order = 5, width = "full" },
-          ownnames = { type = "toggle", name = WOWTR.Config.Label("translateOwnNames", "Translate own names"), order = 6, width = "full" },
-          en_first = { type = "toggle", name = WOWTR.Config.Label("displayENfirst", "Show English first"), order = 7, width = "full" },
+          active = { type = "toggle", name = WOWTR.Config.Label("activateQuestsTranslations", "Enable translations"), desc = WOWTR.Config.Label("activateQuestsTranslationsDESC", "Enable/disable quest translations."), order = 2, width = "full" },
+          transtitle = { type = "toggle", name = WOWTR.Config.Label("translateQuestTitles", "Translate quest titles"), desc = WOWTR.Config.Label("translateQuestTitlesDESC", "Translate quest titles."), order = 3, width = "full" },
+          gossip = { type = "toggle", name = WOWTR.Config.Label("translateGossipTexts", "Translate gossip"), desc = WOWTR.Config.Label("translateGossipTextsDESC", "Translate NPC gossip/dialogue."), order = 4, width = "full" },
+          tracker = { type = "toggle", name = WOWTR.Config.Label("translateTrackObjectives", "Translate tracker"), desc = WOWTR.Config.Label("translateTrackObjectivesDESC", "Translate objective tracker text."), order = 5, width = "full" },
+          ownnames = { type = "toggle", name = WOWTR.Config.Label("translateOwnNames", "Translate own names"), desc = WOWTR.Config.Label("translateOwnNamesDESC", "Translate some proper nouns (places)."), order = 6, width = "full" },
+          en_first = { type = "toggle", name = WOWTR.Config.Label("displayENfirst", "Show English first"), desc = WOWTR.Config.Label("displayENfirstDESC", "Show original English text first."), order = 7, width = "full" },
         }
       },
       saving = {
         type = "group", inline = true, order = 5,
         name = WOWTR.Config.Label("savingUntranslatedQuests", "Saving"),
         args = {
-          saveQS = { type = "toggle", name = WOWTR.Config.Label("saveUntranslatedQuests", "Save untranslated quests"), order = 8, width = "full" },
-          saveGS = { type = "toggle", name = WOWTR.Config.Label("saveUntranslatedGossip", "Save untranslated gossip"), order = 9, width = "full" },
+          saveQS = { type = "toggle", name = WOWTR.Config.Label("saveUntranslatedQuests", "Save untranslated quests"), desc = WOWTR.Config.Label("saveUntranslatedQuestsDESC", "Save untranslated quest lines."), order = 8, width = "full" },
+          saveGS = { type = "toggle", name = WOWTR.Config.Label("saveUntranslatedGossip", "Save untranslated gossip"), desc = WOWTR.Config.Label("saveUntranslatedGossipDESC", "Save untranslated gossip lines."), order = 9, width = "full" },
         }
       },
       plugins = {
         type = "group", inline = true, order = 10,
         name = WOWTR.Config.Label("integrationWithOtherAddons", "Plugins"),
         args = {
-          immersion = { type = "toggle", name = "Immersion", order = 11, width = "full" },
-          storyline = { type = "toggle", name = "Storyline", order = 12, width = "full" },
-          questlog = { type = "toggle", name = "ClassicQuestLog", order = 13, width = "full" },
-          dialogueui = { type = "toggle", name = "DialogueUI", order = 14, width = "full" },
+          immersion = { type = "toggle", name = WOWTR.Config.Label("translateImmersion", "Immersion"), desc = WOWTR.Config.Label("translateImmersionDESC", "Enable Immersion integration."), order = 11, width = "full" },
+          storyline = { type = "toggle", name = WOWTR.Config.Label("translateStoryLine", "Storyline"), desc = WOWTR.Config.Label("translateStoryLineDESC", "Enable Storyline integration."), order = 12, width = "full" },
+          questlog = { type = "toggle", name = WOWTR.Config.Label("translateQuestLog", "ClassicQuestLog"), desc = WOWTR.Config.Label("translateQuestLogDESC", "Enable ClassicQuestLog integration."), order = 13, width = "full" },
+          dialogueui = { type = "toggle", name = WOWTR.Config.Label("translateDialogueUI", "DialogueUI"), desc = WOWTR.Config.Label("translateDialogueUIDESC", "Enable DialogueUI integration."), order = 14, width = "full" },
         }
       },
       fonts = {
         type = "group", inline = true, order = 16,
         name = WOWTR.Config.Label("fontSelectingFontHeader", "Font"),
         args = {
-          FontLSM = fontValues and { type = "select", name = WOWTR.Config.Label("fontSelectingFontHeader", "Font"), values = fontValues, order = 16, width = "full" } or nil,
-          fontsize = { type = "range", name = WOWTR.Config.Label("fontsize", "Font size"), min = 10, max = 24, step = 1, order = 17, width = "full" },
+          FontLSM = fontValues and { type = "select", name = WOWTR.Config.Label("fontSelectingFontHeader", "Font"), desc = WOWTR.Config.Label("fontSelectingFontHeaderDESC", "Choose a font for WoWLang."), values = fontValues, order = 16, width = "full" } or nil,
+          fontsize = { type = "range", name = WOWTR.Config.Label("fontsize", "Font size"), desc = WOWTR.Config.Label("fontsizeDESC", "Adjust font size."), min = 10, max = 24, step = 1, order = 17, width = "full" },
         }
       },
       minimapGroup = {
@@ -124,7 +124,7 @@ function WOWTR.Config.Groups.General()
         args = {
           minimap = {
             type = "toggle", order = 19,
-            name = WOWTR.Config.Label("showMinimapIcon", "Show minimap icon"), width = "full",
+            name = WOWTR.Config.Label("showMinimapIcon", "Show minimap icon"), desc = WOWTR.Config.Label("showMinimapIconDESC", "Show/hide the minimap icon."), width = "full",
             get = function() return not WOWTR.db.profile.minimap.hide end,
             set = function(_, val)
               WOWTR.db.profile.minimap.hide = not val

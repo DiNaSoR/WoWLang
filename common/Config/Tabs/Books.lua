@@ -32,24 +32,24 @@ function WOWTR.Config.Groups.Books()
         type = "group", inline = true, order = 1,
         name = WOWTR.Config.Label("generalMainHeaderBT", "Basics"),
         args = {
-          active = { type = "toggle", name = WOWTR.Config.Label("activateBooksTranslations", "Enable"), order = 1, width = "full" },
-          title = { type = "toggle", name = WOWTR.Config.Label("translateBookTitles", "Translate title"), order = 2, width = "full" },
-          showID = { type = "toggle", name = "Show ID", order = 3, width = "full" },
+          active = { type = "toggle", name = WOWTR.Config.Label("activateBooksTranslations", "Enable"), desc = WOWTR.Config.Label("activateBooksTranslationsDESC", "Enable/disable book translations."), order = 1, width = "full" },
+          title = { type = "toggle", name = WOWTR.Config.Label("translateBookTitles", "Translate title"), desc = WOWTR.Config.Label("translateBookTitlesDESC", "Translate book titles."), order = 2, width = "full" },
+          showID = { type = "toggle", name = WOWTR.Config.Label("showBookID", "Show ID"), desc = WOWTR.Config.Label("showBookIDDESC", "Show the book ID."), order = 3, width = "full" },
         }
       },
       appearance = {
         type = "group", inline = true, order = 5,
         name = WOWTR.Config.Label("fontSelectingFontHeader", "Appearance"),
         args = {
-          setsize = { type = "toggle", name = WOWTR.Config.Label("setFontActivate", "Custom size"), order = 4, width = "full" },
-          fontsize = { type = "range", name = WOWTR.Config.Label("fontsize", "Font size"), min = 10, max = 24, step = 1, order = 5, width = "full" },
+          setsize = { type = "toggle", name = WOWTR.Config.Label("setFontActivate", "Custom size"), desc = WOWTR.Config.Label("setFontActivateDESC", "Enable custom font size."), order = 4, width = "full" },
+          fontsize = { type = "range", name = WOWTR.Config.Label("fontsize", "Font size"), desc = WOWTR.Config.Label("fontsizeDESC", "Adjust font size."), min = 10, max = 24, step = 1, order = 5, width = "full" },
         }
       },
       saving = {
         type = "group", inline = true, order = 10,
         name = WOWTR.Config.Label("savingUntranslatedBooks", "Saving"),
         args = {
-          saveNW = { type = "toggle", name = WOWTR.Config.Label("saveUntranslatedBooks", "Save untranslated"), order = 6, width = "full" },
+          saveNW = { type = "toggle", name = WOWTR.Config.Label("saveUntranslatedBooks", "Save untranslated"), desc = WOWTR.Config.Label("saveUntranslatedBooksDESC", "Save missing book lines."), order = 6, width = "full" },
         }
       },
     },

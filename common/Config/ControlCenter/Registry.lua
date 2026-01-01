@@ -381,7 +381,7 @@ local function RegisterDefaultModules(self)
     local quests = MakeBoolModule({
       dbKey = "WOWTR_Quests",
       name = L("activateQuestsTranslations", "Enable translations"),
-      description = L("generalMainHeaderQS", "Quest translations and related features."),
+      description = L("activateQuestsTranslationsDESC", "Translate quests/gossip into your selected language."),
       categoryKey = "General",
       setting = MakeBoolSetting("quests.active"),
     })
@@ -390,77 +390,77 @@ local function RegisterDefaultModules(self)
       MakeBoolModule({
         dbKey = "WOWTR_Quests_Transtitle",
         name = L("translateQuestTitles", "Translate quest titles"),
-        description = nil,
+        description = L("translateQuestTitlesDESC", "Translate quest titles."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.transtitle"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_Gossip",
         name = L("translateGossipTexts", "Translate gossip"),
-        description = nil,
+        description = L("translateGossipTextsDESC", "Translate NPC gossip/dialogue."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.gossip"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_Tracker",
         name = L("translateTrackObjectives", "Translate tracker"),
-        description = nil,
+        description = L("translateTrackObjectivesDESC", "Translate objective tracker text."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.tracker"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_OwnNames",
         name = L("translateOwnNames", "Translate own names"),
-        description = nil,
+        description = L("translateOwnNamesDESC", "Translate some proper nouns (places)."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.ownnames"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_ENFirst",
         name = L("displayENfirst", "Show English first"),
-        description = nil,
+        description = L("displayENfirstDESC", "Show the original English text first."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.en_first"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_SaveQS",
         name = L("saveUntranslatedQuests", "Save untranslated quests"),
-        description = nil,
+        description = L("saveUntranslatedQuestsDESC", "Save missing quest lines for later translation."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.saveQS"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_SaveGS",
         name = L("saveUntranslatedGossip", "Save untranslated gossip"),
-        description = nil,
+        description = L("saveUntranslatedGossipDESC", "Save missing gossip lines for later translation."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.saveGS"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_Immersion",
-        name = "Immersion",
-        description = nil,
+        name = L("translateImmersion", "Immersion"),
+        description = L("translateImmersionDESC", "Enable Immersion addon integration."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.immersion"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_Storyline",
-        name = "Storyline",
-        description = nil,
+        name = L("translateStoryLine", "Storyline"),
+        description = L("translateStoryLineDESC", "Enable Storyline addon integration."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.storyline"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_QuestLog",
-        name = "ClassicQuestLog",
-        description = nil,
+        name = L("translateQuestLog", "ClassicQuestLog"),
+        description = L("translateQuestLogDESC", "Enable ClassicQuestLog addon integration."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.questlog"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_DialogueUI",
-        name = "DialogueUI",
-        description = nil,
+        name = L("translateDialogueUI", "DialogueUI"),
+        description = L("translateDialogueUIDESC", "Enable DialogueUI addon integration."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.dialogueui"),
       }),
@@ -471,12 +471,14 @@ local function RegisterDefaultModules(self)
     local minimap = MakeBoolModule({
       dbKey = "WOWTR_Minimap_ShowIcon",
       name = L("showMinimapIcon", "Show minimap icon"),
-      description = nil,
+      description = L("showMinimapIconDESC", "Show/hide the minimap icon for opening settings."),
       categoryKey = "General",
       setting = {
         get = function()
           local p = GetProfile()
-          return p and p.minimap and (not p.minimap.hide) or true
+          -- NOTE: Avoid `a and b or default` here; when `b` is false it will fall through to `default`.
+          -- We want: show icon unless the profile explicitly says `minimap.hide = true`.
+          return not (p and p.minimap and p.minimap.hide)
         end,
         set = function(val)
           local p = GetProfile()
@@ -509,32 +511,152 @@ local function RegisterDefaultModules(self)
     local tooltips = MakeBoolModule({
       dbKey = "WOWTR_Tooltips",
       name = L("activateTooltipTranslations", "Enable tooltips/UI translations"),
-      description = L("generalMainHeaderTT", "Tooltips and UI translation."),
+      description = L("activateTooltipTranslationsDESC", "Translate tooltips and selected UI panels."),
       categoryKey = "Tooltips",
       setting = MakeBoolSetting("tooltips.active"),
     })
 
     tooltips.subOptions = {
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_Always", name = L("displayTranslationConstantly", "Always show"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.constantly") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_SaveUI", name = L("saveTranslationUI", "Save UI"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.saveui") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_UI1", name = L("ControlCenter_UI_GameMenu", "Game Menu"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.ui1") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_UI2", name = L("ControlCenter_UI_CharacterInfo", "Character Info"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.ui2") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_UI3", name = L("ControlCenter_UI_GroupFinder", "Group Finder"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.ui3") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_UI4", name = L("ControlCenter_UI_Collections", "Collections"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.ui4") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_UI5", name = L("ControlCenter_UI_AdventureGuide", "Adventure Guide"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.ui5") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_UI6", name = L("ControlCenter_UI_Friends", "Friends"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.ui6") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_UI7", name = L("ControlCenter_UI_Professions", "Professions"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.ui7") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_UI8", name = L("ControlCenter_UI_MiscUI", "Misc UI"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.ui8") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_UITalents", name = L("ControlCenter_UI_TalentsUI", "Talents UI"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.ui_talents") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_Item", name = L("translateItems", "Items"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.item") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_Spell", name = L("translateSpells", "Spells"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.spell") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_Talent", name = L("translateTalents", "Talents"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.talent") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_Title", name = L("translateTooltipTitle", "Translate titles"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.transtitle") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_SaveTutorials", name = L("saveUntranslatedTutorials", "Save untranslated tutorials"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.save") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_ShowID", name = L("ControlCenter_ShowID", "Show ID"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.showID") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_ShowHash", name = L("ControlCenter_ShowHash", "Show Hash"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.showHS") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_HideSellPrice", name = L("ControlCenter_HideSellPrice", "Hide sell price"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.sellprice") }),
-      MakeBoolModule({ dbKey = "WOWTR_Tooltips_SaveNW", name = L("saveUntranslatedTooltips", "Save untranslated"), categoryKey = "Tooltips", setting = MakeBoolSetting("tooltips.saveNW") }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_Always",
+        name = L("displayTranslationConstantly", "Always show"),
+        description = L("displayTranslationConstantlyDESC", "Always show translated tooltip text."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.constantly"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_SaveUI",
+        name = L("saveTranslationUI", "Save UI"),
+        description = L("saveTranslationUIDESC", "Save untranslated UI strings for later translation."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.saveui"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_UI1",
+        name = L("displayTranslationUI1", "Game Menu"),
+        description = L("displayTranslationUI1DESC", "Translate Game Menu."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.ui1"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_UI2",
+        name = L("displayTranslationUI2", "Character Info"),
+        description = L("displayTranslationUI2DESC", "Translate Character Info."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.ui2"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_UI3",
+        name = L("displayTranslationUI3", "Group Finder"),
+        description = L("displayTranslationUI3DESC", "Translate Group Finder."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.ui3"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_UI4",
+        name = L("displayTranslationUI4", "Collections"),
+        description = L("displayTranslationUI4DESC", "Translate Collections."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.ui4"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_UI5",
+        name = L("displayTranslationUI5", "Adventure Guide"),
+        description = L("displayTranslationUI5DESC", "Translate Adventure Guide."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.ui5"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_UI6",
+        name = L("displayTranslationUI6", "Friends"),
+        description = L("displayTranslationUI6DESC", "Translate Friends."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.ui6"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_UI7",
+        name = L("displayTranslationUI7", "Professions"),
+        description = L("displayTranslationUI7DESC", "Translate Professions."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.ui7"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_UI8",
+        name = L("displayTranslationUI8", "Misc UI"),
+        description = L("displayTranslationUI8DESC", "Translate various UI dropdowns/filters."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.ui8"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_UITalents",
+        name = L("ControlCenter_UI_TalentsUI", "Talents UI"),
+        description = L("ControlCenter_UI_TalentsUI_DESC", "Translate Talents UI."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.ui_talents"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_Item",
+        name = L("translateItems", "Items"),
+        description = L("translateItemsDESC", "Translate item tooltips."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.item"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_Spell",
+        name = L("translateSpells", "Spells"),
+        description = L("translateSpellsDESC", "Translate spell tooltips."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.spell"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_Talent",
+        name = L("translateTalents", "Talents"),
+        description = L("translateTalentsDESC", "Translate talent tooltips."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.talent"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_Title",
+        name = L("translateTooltipTitle", "Translate titles"),
+        description = L("translateTooltipTitleDESC", "Show translated names in tooltips."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.transtitle"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_SaveTutorials",
+        name = L("saveUntranslatedTutorials", "Save untranslated tutorials"),
+        description = L("saveUntranslatedTutorialsDESC", "Save missing tutorial strings for later translation."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.save"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_ShowID",
+        name = L("showTooltipID", "Show ID"),
+        description = L("showTooltipIDDESC", "Show tooltip IDs."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.showID"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_ShowHash",
+        name = L("showTooltipHash", "Show Hash"),
+        description = L("showTooltipHashDESC", "Show tooltip hash codes."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.showHS"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_HideSellPrice",
+        name = L("hideSellPrice", "Hide sell price"),
+        description = L("hideSellPriceDESC", "Hide item sell price lines in tooltips."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.sellprice"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Tooltips_SaveNW",
+        name = L("saveUntranslatedTooltips", "Save untranslated"),
+        description = L("saveUntranslatedTooltipsDESC", "Save missing tooltip strings."),
+        categoryKey = "Tooltips",
+        setting = MakeBoolSetting("tooltips.saveNW"),
+      }),
     }
 
     self:AddModule(tooltips)
@@ -545,17 +667,47 @@ local function RegisterDefaultModules(self)
     local bubbles = MakeBoolModule({
       dbKey = "WOWTR_Bubbles",
       name = L("activateBubblesTranslations", "Enable bubbles"),
-      description = L("generalMainHeaderBB", "Chat bubbles and bubble-related features."),
+      description = L("activateBubblesTranslationsDESC", "Translate chat bubbles."),
       categoryKey = "Bubbles",
       setting = MakeBoolSetting("bubbles.active"),
     })
 
     bubbles.subOptions = {
-      MakeBoolModule({ dbKey = "WOWTR_Bubbles_ChatTR", name = L("bubbleChatTR", "Chat TR"), categoryKey = "Bubbles", setting = MakeBoolSetting("bubbles.chat_tr") }),
-      MakeBoolModule({ dbKey = "WOWTR_Bubbles_ChatEN", name = L("bubbleChatEN", "Chat EN"), categoryKey = "Bubbles", setting = MakeBoolSetting("bubbles.chat_en") }),
-      MakeBoolModule({ dbKey = "WOWTR_Bubbles_SaveNB", name = L("saveUntranslatedBubbles", "Save untranslated bubbles"), categoryKey = "Bubbles", setting = MakeBoolSetting("bubbles.saveNB") }),
-      MakeBoolModule({ dbKey = "WOWTR_Bubbles_SetSize", name = L("setBubbleFontSize", "Set font size"), categoryKey = "Bubbles", setting = MakeBoolSetting("bubbles.setsize") }),
-      MakeBoolModule({ dbKey = "WOWTR_Bubbles_Dungeon", name = L("enableDungeonFont", "Dungeon font"), categoryKey = "Bubbles", setting = MakeBoolSetting("bubbles.dungeon") }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Bubbles_ChatTR",
+        name = L("displayTranslatedTexts", "Chat TR"),
+        description = L("displayTranslatedTextsDESC", "Show translated bubble lines in chat."),
+        categoryKey = "Bubbles",
+        setting = MakeBoolSetting("bubbles.chat_tr"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Bubbles_ChatEN",
+        name = L("displayOriginalTexts", "Chat EN"),
+        description = L("displayOriginalTextsDESC", "Show original (English) bubble lines in chat."),
+        categoryKey = "Bubbles",
+        setting = MakeBoolSetting("bubbles.chat_en"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Bubbles_SaveNB",
+        name = L("saveUntranslatedBubbles", "Save untranslated bubbles"),
+        description = L("saveUntranslatedBubblesDESC", "Save missing bubble lines for later translation."),
+        categoryKey = "Bubbles",
+        setting = MakeBoolSetting("bubbles.saveNB"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Bubbles_SetSize",
+        name = L("setFontActivate", "Set font size"),
+        description = L("setFontActivateDESC", "Enable custom font size."),
+        categoryKey = "Bubbles",
+        setting = MakeBoolSetting("bubbles.setsize"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Bubbles_Dungeon",
+        name = L("showBubblesInDungeon", "Dungeon frames"),
+        description = L("showBubblesInDungeonDESC", "Show translated bubbles as dungeon frames."),
+        categoryKey = "Bubbles",
+        setting = MakeBoolSetting("bubbles.dungeon"),
+      }),
     }
 
     self:AddModule(bubbles)
@@ -565,17 +717,41 @@ local function RegisterDefaultModules(self)
   do
     local movies = MakeBoolModule({
       dbKey = "WOWTR_Movies",
-      name = L("activateMoviesTranslations", "Enable movies/cinematics"),
-      description = nil,
+      name = L("activateSubtitleTranslations", "Enable subtitles"),
+      description = L("activateSubtitleTranslationsDESC", "Show translated subtitles for movies/cinematics."),
       categoryKey = "Movies",
       setting = MakeBoolSetting("movies.active"),
     })
 
     movies.subOptions = {
-      MakeBoolModule({ dbKey = "WOWTR_Movies_Intro", name = L("translateIntroVideos", "Intro"), categoryKey = "Movies", setting = MakeBoolSetting("movies.intro") }),
-      MakeBoolModule({ dbKey = "WOWTR_Movies_Movie", name = L("translateMovies", "Movies"), categoryKey = "Movies", setting = MakeBoolSetting("movies.movie") }),
-      MakeBoolModule({ dbKey = "WOWTR_Movies_Cinematic", name = L("translateCinematics", "Cinematics"), categoryKey = "Movies", setting = MakeBoolSetting("movies.cinematic") }),
-      MakeBoolModule({ dbKey = "WOWTR_Movies_Save", name = L("saveUntranslatedMovies", "Save untranslated"), categoryKey = "Movies", setting = MakeBoolSetting("movies.save") }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Movies_Intro",
+        name = L("subtitleIntro", "Intro"),
+        description = L("subtitleIntroDESC", "Show translated intro subtitles."),
+        categoryKey = "Movies",
+        setting = MakeBoolSetting("movies.intro"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Movies_Movie",
+        name = L("subtitleMovies", "Movies"),
+        description = L("subtitleMoviesDESC", "Show translated movie subtitles."),
+        categoryKey = "Movies",
+        setting = MakeBoolSetting("movies.movie"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Movies_Cinematic",
+        name = L("subtitleCinematics", "Cinematics"),
+        description = L("subtitleCinematicsDESC", "Show translated cinematic subtitles."),
+        categoryKey = "Movies",
+        setting = MakeBoolSetting("movies.cinematic"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Movies_Save",
+        name = L("saveUntranslatedSubtitles", "Save untranslated"),
+        description = L("saveUntranslatedSubtitlesDESC", "Save missing subtitle lines for later translation."),
+        categoryKey = "Movies",
+        setting = MakeBoolSetting("movies.save"),
+      }),
     }
 
     self:AddModule(movies)
@@ -586,16 +762,40 @@ local function RegisterDefaultModules(self)
     local books = MakeBoolModule({
       dbKey = "WOWTR_Books",
       name = L("activateBooksTranslations", "Enable books"),
-      description = nil,
+      description = L("activateBooksTranslationsDESC", "Translate in-game books/letters."),
       categoryKey = "Books",
       setting = MakeBoolSetting("books.active"),
     })
 
     books.subOptions = {
-      MakeBoolModule({ dbKey = "WOWTR_Books_Title", name = L("translateBookTitles", "Translate titles"), categoryKey = "Books", setting = MakeBoolSetting("books.title") }),
-      MakeBoolModule({ dbKey = "WOWTR_Books_ShowID", name = L("ControlCenter_ShowID", "Show ID"), categoryKey = "Books", setting = MakeBoolSetting("books.showID") }),
-      MakeBoolModule({ dbKey = "WOWTR_Books_SetSize", name = L("setBookFontSize", "Set font size"), categoryKey = "Books", setting = MakeBoolSetting("books.setsize") }),
-      MakeBoolModule({ dbKey = "WOWTR_Books_SaveNW", name = L("saveUntranslatedBooks", "Save untranslated"), categoryKey = "Books", setting = MakeBoolSetting("books.saveNW") }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Books_Title",
+        name = L("translateBookTitles", "Translate titles"),
+        description = L("translateBookTitlesDESC", "Translate book titles."),
+        categoryKey = "Books",
+        setting = MakeBoolSetting("books.title"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Books_ShowID",
+        name = L("showBookID", "Show ID"),
+        description = L("showBookIDDESC", "Show book ID in the title."),
+        categoryKey = "Books",
+        setting = MakeBoolSetting("books.showID"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Books_SetSize",
+        name = L("setFontActivate", "Set font size"),
+        description = L("setFontActivateDESC", "Enable custom font size."),
+        categoryKey = "Books",
+        setting = MakeBoolSetting("books.setsize"),
+      }),
+      MakeBoolModule({
+        dbKey = "WOWTR_Books_SaveNW",
+        name = L("saveUntranslatedBooks", "Save untranslated"),
+        description = L("saveUntranslatedBooksDESC", "Save missing book lines for later translation."),
+        categoryKey = "Books",
+        setting = MakeBoolSetting("books.saveNW"),
+      }),
     }
 
     self:AddModule(books)
@@ -605,14 +805,20 @@ local function RegisterDefaultModules(self)
   do
     local chat = MakeBoolModule({
       dbKey = "WOWTR_ChatAR",
-      name = L("activateChatTranslations", "Enable chat (Arabic)"),
-      description = nil,
+      name = L("activateChatService", "Enable Arabic chat"),
+      description = L("activateChatServiceDESC", "Enable Arabic chat input helpers."),
       categoryKey = "Chat",
       setting = MakeBoolSetting("chatAR.active"),
     })
 
     chat.subOptions = {
-      MakeBoolModule({ dbKey = "WOWTR_ChatAR_SetSize", name = L("setChatFontSize", "Set font size"), categoryKey = "Chat", setting = MakeBoolSetting("chatAR.setsize") }),
+      MakeBoolModule({
+        dbKey = "WOWTR_ChatAR_SetSize",
+        name = L("chatFontActivate", "Set font size"),
+        description = L("chatFontActivateDESC", "Enable custom font size for Arabic chat."),
+        categoryKey = "Chat",
+        setting = MakeBoolSetting("chatAR.setsize"),
+      }),
     }
 
     self:AddModule(chat)

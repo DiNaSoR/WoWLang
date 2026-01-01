@@ -349,13 +349,14 @@ function Quests.Gossip.Show()
                -- Interact with Storyline via integration wrapper only; avoid undeclared globals
                local function setStorylineText()
                   local chat = rawget(_G, "Storyline_NPCFrameChat")
-                  if chat and chat.texts and chat.texts[0] then
-                     local prepared = QTR_ExpandUnitInfo(Greeting_TR,false,chat.texts[0],WOWTR_Font2)
-                     _G.txt0txt = prepared
-                     if QTR_Storyline_Gossip then QTR_Storyline_Gossip() end
-                  elseif QTR_Storyline_Gossip then
+                  local chatText = rawget(_G, "Storyline_NPCFrameChatText")
+                  local isArabic = (WOWTR and WOWTR.Fonts and WOWTR.Fonts.IsArabic and WOWTR.Fonts.IsArabic()) or (WoWTR_Localization and WoWTR_Localization.lang == "AR")
+
+                  if QTR_Storyline_Gossip then
                      local fallbackRegion = (ImmersionFrame and ImmersionFrame.TalkBox and ImmersionFrame.TalkBox.TextFrame and ImmersionFrame.TalkBox.TextFrame.Text) or GossipGreetingText
-                     _G.txt0txt = QTR_ExpandUnitInfo(Greeting_TR,false,fallbackRegion,WOWTR_Font2)
+                     local region = chatText or fallbackRegion
+                     local prepared = QTR_ExpandUnitInfo(Greeting_TR, false, region, WOWTR_Font2, -15, isArabic and true or nil)
+                     _G.txt0txt = prepared
                      QTR_Storyline_Gossip()
                   end
                end
