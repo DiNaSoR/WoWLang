@@ -1,1 +1,0 @@
-D:/Program Files (x86)/World of Warcraft/_beta_/WTF/Account/100483567#1/SavedVariables/WoWAR.lua
