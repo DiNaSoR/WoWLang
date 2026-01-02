@@ -68,6 +68,15 @@ function WOWTR.Config.Label(key, fallback)
   return fallback
 end
 
+-- Return localized text without RTL reversal (used when the caller handles reversing).
+function WOWTR.Config.LabelRaw(key, fallback)
+  local v = (WoWTR_Config_Interface and WoWTR_Config_Interface[key]) or nil
+  if v and v ~= "" then
+    return v
+  end
+  return fallback
+end
+
 -- Factory for Ace3 config tabs that bind directly to WOWTR.db.profile.<profileSection>.
 -- Reduces duplicated get/set + SyncGlobalsFromDB/NotifyChange boilerplate across tabs.
 function WOWTR.Config.MakeTab(profileSection, spec)

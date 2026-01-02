@@ -21,6 +21,18 @@ local function L(key, fallback)
   return fallback
 end
 
+local function LDesc(key, fallback)
+  if WOWTR and WOWTR.Config then
+    if WOWTR.Config.LabelRaw then
+      return WOWTR.Config.LabelRaw(key, fallback)
+    end
+    if WOWTR.Config.Label then
+      return WOWTR.Config.Label(key, fallback)
+    end
+  end
+  return fallback
+end
+
 local function GetProfile()
   return WOWTR and WOWTR.db and WOWTR.db.profile
 end
@@ -381,7 +393,7 @@ local function RegisterDefaultModules(self)
     local quests = MakeBoolModule({
       dbKey = "WOWTR_Quests",
       name = L("activateQuestsTranslations", "Enable translations"),
-      description = L("activateQuestsTranslationsDESC", "Translate quests/gossip into your selected language."),
+      description = LDesc("activateQuestsTranslationsDESC", "Translate quests/gossip into your selected language."),
       categoryKey = "General",
       setting = MakeBoolSetting("quests.active"),
     })
@@ -390,77 +402,77 @@ local function RegisterDefaultModules(self)
       MakeBoolModule({
         dbKey = "WOWTR_Quests_Transtitle",
         name = L("translateQuestTitles", "Translate quest titles"),
-        description = L("translateQuestTitlesDESC", "Translate quest titles."),
+        description = LDesc("translateQuestTitlesDESC", "Translate quest titles."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.transtitle"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_Gossip",
         name = L("translateGossipTexts", "Translate gossip"),
-        description = L("translateGossipTextsDESC", "Translate NPC gossip/dialogue."),
+        description = LDesc("translateGossipTextsDESC", "Translate NPC gossip/dialogue."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.gossip"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_Tracker",
         name = L("translateTrackObjectives", "Translate tracker"),
-        description = L("translateTrackObjectivesDESC", "Translate objective tracker text."),
+        description = LDesc("translateTrackObjectivesDESC", "Translate objective tracker text."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.tracker"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_OwnNames",
         name = L("translateOwnNames", "Translate own names"),
-        description = L("translateOwnNamesDESC", "Translate some proper nouns (places)."),
+        description = LDesc("translateOwnNamesDESC", "Translate some proper nouns (places)."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.ownnames"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_ENFirst",
         name = L("displayENfirst", "Show English first"),
-        description = L("displayENfirstDESC", "Show the original English text first."),
+        description = LDesc("displayENfirstDESC", "Show the original English text first."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.en_first"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_SaveQS",
         name = L("saveUntranslatedQuests", "Save untranslated quests"),
-        description = L("saveUntranslatedQuestsDESC", "Save missing quest lines for later translation."),
+        description = LDesc("saveUntranslatedQuestsDESC", "Save missing quest lines for later translation."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.saveQS"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_SaveGS",
         name = L("saveUntranslatedGossip", "Save untranslated gossip"),
-        description = L("saveUntranslatedGossipDESC", "Save missing gossip lines for later translation."),
+        description = LDesc("saveUntranslatedGossipDESC", "Save missing gossip lines for later translation."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.saveGS"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_Immersion",
         name = L("translateImmersion", "Immersion"),
-        description = L("translateImmersionDESC", "Enable Immersion addon integration."),
+        description = LDesc("translateImmersionDESC", "Enable Immersion addon integration."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.immersion"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_Storyline",
         name = L("translateStoryLine", "Storyline"),
-        description = L("translateStoryLineDESC", "Enable Storyline addon integration."),
+        description = LDesc("translateStoryLineDESC", "Enable Storyline addon integration."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.storyline"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_QuestLog",
         name = L("translateQuestLog", "ClassicQuestLog"),
-        description = L("translateQuestLogDESC", "Enable ClassicQuestLog addon integration."),
+        description = LDesc("translateQuestLogDESC", "Enable ClassicQuestLog addon integration."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.questlog"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Quests_DialogueUI",
         name = L("translateDialogueUI", "DialogueUI"),
-        description = L("translateDialogueUIDESC", "Enable DialogueUI addon integration."),
+        description = LDesc("translateDialogueUIDESC", "Enable DialogueUI addon integration."),
         categoryKey = "General",
         setting = MakeBoolSetting("quests.dialogueui"),
       }),
@@ -471,7 +483,7 @@ local function RegisterDefaultModules(self)
     local minimap = MakeBoolModule({
       dbKey = "WOWTR_Minimap_ShowIcon",
       name = L("showMinimapIcon", "Show minimap icon"),
-      description = L("showMinimapIconDESC", "Show/hide the minimap icon for opening settings."),
+      description = LDesc("showMinimapIconDESC", "Show/hide the minimap icon for opening settings."),
       categoryKey = "General",
       setting = {
         get = function()
@@ -511,7 +523,7 @@ local function RegisterDefaultModules(self)
     local tooltips = MakeBoolModule({
       dbKey = "WOWTR_Tooltips",
       name = L("activateTooltipTranslations", "Enable tooltips/UI translations"),
-      description = L("activateTooltipTranslationsDESC", "Translate tooltips and selected UI panels."),
+      description = LDesc("activateTooltipTranslationsDESC", "Translate tooltips and selected UI panels."),
       categoryKey = "Tooltips",
       setting = MakeBoolSetting("tooltips.active"),
     })
@@ -520,140 +532,140 @@ local function RegisterDefaultModules(self)
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_Always",
         name = L("displayTranslationConstantly", "Always show"),
-        description = L("displayTranslationConstantlyDESC", "Always show translated tooltip text."),
+        description = LDesc("displayTranslationConstantlyDESC", "Always show translated tooltip text."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.constantly"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_SaveUI",
         name = L("saveTranslationUI", "Save UI"),
-        description = L("saveTranslationUIDESC", "Save untranslated UI strings for later translation."),
+        description = LDesc("saveTranslationUIDESC", "Save untranslated UI strings for later translation."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.saveui"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_UI1",
         name = L("displayTranslationUI1", "Game Menu"),
-        description = L("displayTranslationUI1DESC", "Translate Game Menu."),
+        description = LDesc("displayTranslationUI1DESC", "Translate Game Menu."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.ui1"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_UI2",
         name = L("displayTranslationUI2", "Character Info"),
-        description = L("displayTranslationUI2DESC", "Translate Character Info."),
+        description = LDesc("displayTranslationUI2DESC", "Translate Character Info."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.ui2"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_UI3",
         name = L("displayTranslationUI3", "Group Finder"),
-        description = L("displayTranslationUI3DESC", "Translate Group Finder."),
+        description = LDesc("displayTranslationUI3DESC", "Translate Group Finder."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.ui3"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_UI4",
         name = L("displayTranslationUI4", "Collections"),
-        description = L("displayTranslationUI4DESC", "Translate Collections."),
+        description = LDesc("displayTranslationUI4DESC", "Translate Collections."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.ui4"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_UI5",
         name = L("displayTranslationUI5", "Adventure Guide"),
-        description = L("displayTranslationUI5DESC", "Translate Adventure Guide."),
+        description = LDesc("displayTranslationUI5DESC", "Translate Adventure Guide."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.ui5"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_UI6",
         name = L("displayTranslationUI6", "Friends"),
-        description = L("displayTranslationUI6DESC", "Translate Friends."),
+        description = LDesc("displayTranslationUI6DESC", "Translate Friends."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.ui6"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_UI7",
         name = L("displayTranslationUI7", "Professions"),
-        description = L("displayTranslationUI7DESC", "Translate Professions."),
+        description = LDesc("displayTranslationUI7DESC", "Translate Professions."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.ui7"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_UI8",
         name = L("displayTranslationUI8", "Misc UI"),
-        description = L("displayTranslationUI8DESC", "Translate various UI dropdowns/filters."),
+        description = LDesc("displayTranslationUI8DESC", "Translate various UI dropdowns/filters."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.ui8"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_UITalents",
         name = L("ControlCenter_UI_TalentsUI", "Talents UI"),
-        description = L("ControlCenter_UI_TalentsUI_DESC", "Translate Talents UI."),
+        description = LDesc("ControlCenter_UI_TalentsUI_DESC", "Translate Talents UI."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.ui_talents"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_Item",
         name = L("translateItems", "Items"),
-        description = L("translateItemsDESC", "Translate item tooltips."),
+        description = LDesc("translateItemsDESC", "Translate item tooltips."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.item"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_Spell",
         name = L("translateSpells", "Spells"),
-        description = L("translateSpellsDESC", "Translate spell tooltips."),
+        description = LDesc("translateSpellsDESC", "Translate spell tooltips."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.spell"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_Talent",
         name = L("translateTalents", "Talents"),
-        description = L("translateTalentsDESC", "Translate talent tooltips."),
+        description = LDesc("translateTalentsDESC", "Translate talent tooltips."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.talent"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_Title",
         name = L("translateTooltipTitle", "Translate titles"),
-        description = L("translateTooltipTitleDESC", "Show translated names in tooltips."),
+        description = LDesc("translateTooltipTitleDESC", "Show translated names in tooltips."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.transtitle"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_SaveTutorials",
         name = L("saveUntranslatedTutorials", "Save untranslated tutorials"),
-        description = L("saveUntranslatedTutorialsDESC", "Save missing tutorial strings for later translation."),
+        description = LDesc("saveUntranslatedTutorialsDESC", "Save missing tutorial strings for later translation."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.save"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_ShowID",
         name = L("showTooltipID", "Show ID"),
-        description = L("showTooltipIDDESC", "Show tooltip IDs."),
+        description = LDesc("showTooltipIDDESC", "Show tooltip IDs."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.showID"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_ShowHash",
         name = L("showTooltipHash", "Show Hash"),
-        description = L("showTooltipHashDESC", "Show tooltip hash codes."),
+        description = LDesc("showTooltipHashDESC", "Show tooltip hash codes."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.showHS"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_HideSellPrice",
         name = L("hideSellPrice", "Hide sell price"),
-        description = L("hideSellPriceDESC", "Hide item sell price lines in tooltips."),
+        description = LDesc("hideSellPriceDESC", "Hide item sell price lines in tooltips."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.sellprice"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Tooltips_SaveNW",
         name = L("saveUntranslatedTooltips", "Save untranslated"),
-        description = L("saveUntranslatedTooltipsDESC", "Save missing tooltip strings."),
+        description = LDesc("saveUntranslatedTooltipsDESC", "Save missing tooltip strings."),
         categoryKey = "Tooltips",
         setting = MakeBoolSetting("tooltips.saveNW"),
       }),
@@ -667,7 +679,7 @@ local function RegisterDefaultModules(self)
     local bubbles = MakeBoolModule({
       dbKey = "WOWTR_Bubbles",
       name = L("activateBubblesTranslations", "Enable bubbles"),
-      description = L("activateBubblesTranslationsDESC", "Translate chat bubbles."),
+      description = LDesc("activateBubblesTranslationsDESC", "Translate chat bubbles."),
       categoryKey = "Bubbles",
       setting = MakeBoolSetting("bubbles.active"),
     })
@@ -676,35 +688,35 @@ local function RegisterDefaultModules(self)
       MakeBoolModule({
         dbKey = "WOWTR_Bubbles_ChatTR",
         name = L("displayTranslatedTexts", "Chat TR"),
-        description = L("displayTranslatedTextsDESC", "Show translated bubble lines in chat."),
+        description = LDesc("displayTranslatedTextsDESC", "Show translated bubble lines in chat."),
         categoryKey = "Bubbles",
         setting = MakeBoolSetting("bubbles.chat_tr"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Bubbles_ChatEN",
         name = L("displayOriginalTexts", "Chat EN"),
-        description = L("displayOriginalTextsDESC", "Show original (English) bubble lines in chat."),
+        description = LDesc("displayOriginalTextsDESC", "Show original (English) bubble lines in chat."),
         categoryKey = "Bubbles",
         setting = MakeBoolSetting("bubbles.chat_en"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Bubbles_SaveNB",
         name = L("saveUntranslatedBubbles", "Save untranslated bubbles"),
-        description = L("saveUntranslatedBubblesDESC", "Save missing bubble lines for later translation."),
+        description = LDesc("saveUntranslatedBubblesDESC", "Save missing bubble lines for later translation."),
         categoryKey = "Bubbles",
         setting = MakeBoolSetting("bubbles.saveNB"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Bubbles_SetSize",
         name = L("setFontActivate", "Set font size"),
-        description = L("setFontActivateDESC", "Enable custom font size."),
+        description = LDesc("setFontActivateDESC", "Enable custom font size."),
         categoryKey = "Bubbles",
         setting = MakeBoolSetting("bubbles.setsize"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Bubbles_Dungeon",
         name = L("showBubblesInDungeon", "Dungeon frames"),
-        description = L("showBubblesInDungeonDESC", "Show translated bubbles as dungeon frames."),
+        description = LDesc("showBubblesInDungeonDESC", "Show translated bubbles as dungeon frames."),
         categoryKey = "Bubbles",
         setting = MakeBoolSetting("bubbles.dungeon"),
       }),
@@ -718,7 +730,7 @@ local function RegisterDefaultModules(self)
     local movies = MakeBoolModule({
       dbKey = "WOWTR_Movies",
       name = L("activateSubtitleTranslations", "Enable subtitles"),
-      description = L("activateSubtitleTranslationsDESC", "Show translated subtitles for movies/cinematics."),
+      description = LDesc("activateSubtitleTranslationsDESC", "Show translated subtitles for movies/cinematics."),
       categoryKey = "Movies",
       setting = MakeBoolSetting("movies.active"),
     })
@@ -727,28 +739,28 @@ local function RegisterDefaultModules(self)
       MakeBoolModule({
         dbKey = "WOWTR_Movies_Intro",
         name = L("subtitleIntro", "Intro"),
-        description = L("subtitleIntroDESC", "Show translated intro subtitles."),
+        description = LDesc("subtitleIntroDESC", "Show translated intro subtitles."),
         categoryKey = "Movies",
         setting = MakeBoolSetting("movies.intro"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Movies_Movie",
         name = L("subtitleMovies", "Movies"),
-        description = L("subtitleMoviesDESC", "Show translated movie subtitles."),
+        description = LDesc("subtitleMoviesDESC", "Show translated movie subtitles."),
         categoryKey = "Movies",
         setting = MakeBoolSetting("movies.movie"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Movies_Cinematic",
         name = L("subtitleCinematics", "Cinematics"),
-        description = L("subtitleCinematicsDESC", "Show translated cinematic subtitles."),
+        description = LDesc("subtitleCinematicsDESC", "Show translated cinematic subtitles."),
         categoryKey = "Movies",
         setting = MakeBoolSetting("movies.cinematic"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Movies_Save",
         name = L("saveUntranslatedSubtitles", "Save untranslated"),
-        description = L("saveUntranslatedSubtitlesDESC", "Save missing subtitle lines for later translation."),
+        description = LDesc("saveUntranslatedSubtitlesDESC", "Save missing subtitle lines for later translation."),
         categoryKey = "Movies",
         setting = MakeBoolSetting("movies.save"),
       }),
@@ -762,7 +774,7 @@ local function RegisterDefaultModules(self)
     local books = MakeBoolModule({
       dbKey = "WOWTR_Books",
       name = L("activateBooksTranslations", "Enable books"),
-      description = L("activateBooksTranslationsDESC", "Translate in-game books/letters."),
+      description = LDesc("activateBooksTranslationsDESC", "Translate in-game books/letters."),
       categoryKey = "Books",
       setting = MakeBoolSetting("books.active"),
     })
@@ -771,28 +783,28 @@ local function RegisterDefaultModules(self)
       MakeBoolModule({
         dbKey = "WOWTR_Books_Title",
         name = L("translateBookTitles", "Translate titles"),
-        description = L("translateBookTitlesDESC", "Translate book titles."),
+        description = LDesc("translateBookTitlesDESC", "Translate book titles."),
         categoryKey = "Books",
         setting = MakeBoolSetting("books.title"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Books_ShowID",
         name = L("showBookID", "Show ID"),
-        description = L("showBookIDDESC", "Show book ID in the title."),
+        description = LDesc("showBookIDDESC", "Show book ID in the title."),
         categoryKey = "Books",
         setting = MakeBoolSetting("books.showID"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Books_SetSize",
         name = L("setFontActivate", "Set font size"),
-        description = L("setFontActivateDESC", "Enable custom font size."),
+        description = LDesc("setFontActivateDESC", "Enable custom font size."),
         categoryKey = "Books",
         setting = MakeBoolSetting("books.setsize"),
       }),
       MakeBoolModule({
         dbKey = "WOWTR_Books_SaveNW",
         name = L("saveUntranslatedBooks", "Save untranslated"),
-        description = L("saveUntranslatedBooksDESC", "Save missing book lines for later translation."),
+        description = LDesc("saveUntranslatedBooksDESC", "Save missing book lines for later translation."),
         categoryKey = "Books",
         setting = MakeBoolSetting("books.saveNW"),
       }),
@@ -806,7 +818,7 @@ local function RegisterDefaultModules(self)
     local chat = MakeBoolModule({
       dbKey = "WOWTR_ChatAR",
       name = L("activateChatService", "Enable Arabic chat"),
-      description = L("activateChatServiceDESC", "Enable Arabic chat input helpers."),
+      description = LDesc("activateChatServiceDESC", "Enable Arabic chat input helpers."),
       categoryKey = "Chat",
       setting = MakeBoolSetting("chatAR.active"),
     })
@@ -815,7 +827,7 @@ local function RegisterDefaultModules(self)
       MakeBoolModule({
         dbKey = "WOWTR_ChatAR_SetSize",
         name = L("chatFontActivate", "Set font size"),
-        description = L("chatFontActivateDESC", "Enable custom font size for Arabic chat."),
+        description = LDesc("chatFontActivateDESC", "Enable custom font size for Arabic chat."),
         categoryKey = "Chat",
         setting = MakeBoolSetting("chatAR.setsize"),
       }),
@@ -829,7 +841,7 @@ local function RegisterDefaultModules(self)
     local about = {
       dbKey = "WOWTR_About",
       name = L("ControlCenter_About_Title", "About"),
-      description = L("ControlCenter_About_Desc", "WoWLang / WoWAR settings and info."),
+      description = LDesc("ControlCenter_About_Desc", "WoWLang / WoWAR settings and info."),
       categoryKeys = { "About" },
       isValid = true,
       virtual = true,
