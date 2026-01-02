@@ -136,15 +136,38 @@ local function ColorizeTipLine(text)
         return "|cffffd200" .. line .. "|r"
     end
 
-    -- Lua patterns don't support alternation; handle common tip prefixes separately.
-    for _, prefix in ipairs({ "نصيحة", "تلميح" }) do
-        text = text:gsub("(\n)(%s*" .. prefix .. "%s*:%s*[^\n]*)", function(nl, line)
-            return nl .. wrap(line)
-        end)
-        text = text:gsub("^(%s*" .. prefix .. "%s*:%s*[^\n]*)", function(line)
-            return wrap(line)
-        end)
+    -- Match common tip prefixes regardless of where they land after RTL reversal.
+    local prefixes = {
+        "نصيحة", "تلميح",
+        "ﻧﺼﻴﺤﺔ", "ﺗﻠﻤﻴﺢ",
+        "ةحيصن", "حيملت",
+        "ﺔﺤﻴﺼﻧ", "ﺢﻴﻤﻟﺗ",
+    }
+    local function hasPrefix(line)
+        for _, prefix in ipairs(prefixes) do
+            if line:find(prefix, 1, true) then
+                return true
+            end
+        end
+        return false
     end
+
+    local out = {}
+    local inTip = false
+    for line in (text .. "\n"):gmatch("(.-)\n") do
+        if hasPrefix(line) then
+            inTip = true
+            line = wrap(line)
+        elseif inTip then
+            if line == "" then
+                inTip = false
+            else
+                line = wrap(line)
+            end
+        end
+        out[#out + 1] = line
+    end
+    text = table.concat(out, "\n")
 
     return text
 end
@@ -992,7 +1015,6 @@ do  --Right Section
         self.FeatureDescription:SetJustifyH(rtl and "RIGHT" or "LEFT")
 
         if desc and rtl then
-            desc = ColorizeTipLine(desc)
             local expander = _G.QTR_ExpandUnitInfo
             if type(expander) == "function" then
                 -- Use ExpandUnitInfo to reshape + prepare RTL lines while keeping line order stable.
@@ -1001,6 +1023,7 @@ do  --Right Section
                 -- Fallback: best-effort single-pass reversal.
                 desc = ShapeTextIfArabic(desc)
             end
+            desc = ColorizeTipLine(desc)
         end
 
         self.FeatureDescription:SetText(desc);
