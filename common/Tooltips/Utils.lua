@@ -193,13 +193,58 @@ local function ReverseIfAR(text)
   return text
 end
 
--- Translate prepare (moved, exact logic stays in original file; proxy here)
+-- Translate prepare: Extract dynamic values from original text and substitute into translation placeholders
+-- This handles Blizzard's dynamic placeholders like {1}, {2}, {3} in tooltip translations.
+-- The translation contains placeholders like "{1}% damage for {2} seconds" and the original
+-- contains actual values like "20% damage for 8 seconds". We extract numbers from the original
+-- and substitute them into the translation.
+--
+-- IMPORTANT: For Arabic RTL, substituted values are wrapped with \003...\004 markers so that
+-- HandleWoWSpecialCodes can protect them from reversal. Without this, "20" would become "02".
 function ST_TranslatePrepare(origin, tlumacz)
-  if _G.ST_TranslatePrepare and _G.ST_TranslatePrepare ~= ST_TranslatePrepare then
-    return _G.ST_TranslatePrepare(origin, tlumacz)
+  if not origin or not tlumacz then return tlumacz or "" end
+  
+  -- Check if translation contains any numeric placeholders {1}, {2}, etc.
+  if not string.find(tlumacz, "{%d+}") then
+    return tlumacz
   end
-  -- Fallback minimal: just return provided translation
-  return tlumacz
+  
+  -- Extract all numeric values from the original text (supports decimals, negatives, formatted numbers)
+  -- Pattern matches: integers, decimals, negative numbers, and comma-formatted numbers like 1,000
+  local numbers = {}
+  for num in string.gmatch(origin, "%-?[%d,]+%.?%d*") do
+    -- Store the number as-is (preserving original formatting)
+    if num ~= "" and num ~= "-" and num ~= "." then
+      numbers[#numbers + 1] = num
+    end
+  end
+  
+  -- If no numbers found in original, return translation unchanged
+  if #numbers == 0 then
+    return tlumacz
+  end
+  
+  -- Check if we're in Arabic locale (need to mark values for RTL protection)
+  local isArabic = _G.WoWTR_Localization and _G.WoWTR_Localization.lang == 'AR'
+  
+  -- Substitute {1}, {2}, {3}, etc. with extracted values
+  local result = tlumacz
+  for i, val in ipairs(numbers) do
+    -- Use plain string replacement to avoid pattern interpretation issues
+    local placeholder = "{" .. i .. "}"
+    -- For Arabic, wrap the value with \003...\004 markers so HandleWoWSpecialCodes
+    -- can protect it from RTL reversal (otherwise "20" becomes "02")
+    local substitution = isArabic and ("\003" .. val .. "\004") or val
+    local startPos = 1
+    while true do
+      local foundPos = string.find(result, placeholder, startPos, true)
+      if not foundPos then break end
+      result = string.sub(result, 1, foundPos - 1) .. substitution .. string.sub(result, foundPos + #placeholder)
+      startPos = foundPos + #substitution
+    end
+  end
+  
+  return result
 end
 
 -- Apply translation to a FontString-like object; mirrors original signature

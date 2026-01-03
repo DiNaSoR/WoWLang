@@ -29,3 +29,24 @@
 - **Root cause:** The overlay FontString/Frame was created **once** and parented to the first frame's parent. WoW hides child elements when the parent is hidden, so the overlay becomes invisible when switching to a different parent frame.
 - **Incorrect approach:** Create the overlay element once with `parent:CreateFontString()` or `CreateFrame("Frame", nil, parent)` and never update the parent.
 - **Correct rule:** When a shared overlay may be used across multiple parent frames (e.g., QuestMapFrame vs QuestFrame), call `SetParent(currentParent)` each time the overlay is positioned—not just during initial creation.
+
+## [Tooltips][Text] L-004: Translation placeholder functions must actually substitute values
+
+- **Symptom:** Tooltip translations show literal `{1}%` or `{2} seconds` instead of actual spell values like `20%` or `8 seconds`.
+- **Root cause:** `ST_TranslatePrepare(origin, tlumacz)` was designed to extract numbers from the original English text and substitute them into `{1}`, `{2}`, `{3}` placeholders in the translation—but the implementation was a stub that simply returned `tlumacz` unchanged.
+- **Incorrect approach:** Assuming a proxy function will be overridden elsewhere, or assuming pre-shaped translation data doesn't need runtime value substitution.
+- **Correct rule:** When translation data contains dynamic placeholders like `{1}`, `{2}`, always implement the value extraction and substitution logic. The function signature `(origin, tlumacz)` provides both the original text (with values) and translation (with placeholders)—use `string.gmatch(origin, "pattern")` to extract values and substitute them into the translation before returning.
+
+## [Text][RTL] L-005: printf-style format tokens must be protected before RTL reversal
+
+- **Symptom:** Strings containing `%s`, `%d`, `%1$s`, `%.2f` become corrupted after Arabic RTL processing (e.g., `%s` → `s%`, `%1$s` → `s$1%`).
+- **Root cause:** `HandleWoWSpecialCodes` protects WoW escape codes (`|c`, `|T`, `|H`, etc.) but did not protect printf-style format tokens, which are also sensitive to character order reversal.
+- **Incorrect approach:** Assuming only WoW-specific codes need protection; forgetting that any addon integration or edge case could introduce printf tokens.
+- **Correct rule:** In `HandleWoWSpecialCodes`, protect printf tokens with patterns like `(%%%-?%d*%.?%d*[sdifFeEgGxXouc])` for standard tokens and `(%%%d+%$%-?%d*%.?%d*[sdifFeEgGxXouc])` for positional tokens. These should be converted to `\001INDEX\002` placeholders like other protected codes.
+
+## [Text][RTL] L-006: Values substituted before RTL reversal must be marked for protection
+
+- **Symptom:** Numbers like "20" appear reversed as "02" in Arabic tooltips after `{1}` placeholder substitution.
+- **Root cause:** `ST_TranslatePrepare` substitutes `{1}` → `20` BEFORE `HandleWoWSpecialCodes` runs, so the "20" is treated as regular text and gets reversed during RTL processing.
+- **Incorrect approach:** Directly substituting values into translation text without considering that the text will later go through RTL reversal.
+- **Correct rule:** When substituting values into Arabic text that will be RTL-processed, wrap the values with marker characters (e.g., `\003VALUE\004`) that `HandleWoWSpecialCodes` can recognize and protect. The markers are stripped during protection, and the value is restored intact after reversal. This ensures substituted numbers maintain their correct digit order.

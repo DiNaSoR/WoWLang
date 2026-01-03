@@ -63,6 +63,40 @@ function Text.HandleWoWSpecialCodes(msg)
     return "\001" .. (index-1) .. "\002"
   end)
 
+  -- Protect Blizzard dynamic placeholders {1}, {2}, {3}, etc.
+  -- These are used in spell tooltips and other dynamic content where WoW substitutes values.
+  -- Must be protected from RTL reversal to prevent {1} becoming }1{
+  msg = msg:gsub("(%{%d+%})", function(code)
+    specialCodes[index] = code
+    index = index + 1
+    return "\001" .. (index-1) .. "\002"
+  end)
+
+  -- Protect printf-style format tokens from RTL reversal corruption.
+  -- These tokens (%s, %d, %f, etc.) would break under reversal (e.g., %s -> s%).
+  -- Pattern matches: %s, %d, %i, %f, %e, %g, %x, %o, %c, %u and variants with width/precision like %.2f, %10d
+  msg = msg:gsub("(%%%-?%d*%.?%d*[sdifFeEgGxXouc])", function(code)
+    specialCodes[index] = code
+    index = index + 1
+    return "\001" .. (index-1) .. "\002"
+  end)
+
+  -- Protect positional printf tokens (%1$s, %2$d, etc.) used for argument reordering
+  msg = msg:gsub("(%%%d+%$%-?%d*%.?%d*[sdifFeEgGxXouc])", function(code)
+    specialCodes[index] = code
+    index = index + 1
+    return "\001" .. (index-1) .. "\002"
+  end)
+
+  -- Protect numeric values substituted by ST_TranslatePrepare (marked with \003...\004)
+  -- This prevents substituted values like "20" from being reversed to "02" during RTL processing.
+  -- The markers are stripped and only the actual value is stored/restored.
+  msg = msg:gsub("\003([^\004]*)\004", function(value)
+    specialCodes[index] = value
+    index = index + 1
+    return "\001" .. (index-1) .. "\002"
+  end)
+
   return msg, specialCodes, prefix
 end
 
