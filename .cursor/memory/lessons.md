@@ -50,3 +50,17 @@
 - **Root cause:** `ST_TranslatePrepare` substitutes `{1}` → `20` BEFORE `HandleWoWSpecialCodes` runs, so the "20" is treated as regular text and gets reversed during RTL processing.
 - **Incorrect approach:** Directly substituting values into translation text without considering that the text will later go through RTL reversal.
 - **Correct rule:** When substituting values into Arabic text that will be RTL-processed, wrap the values with marker characters (e.g., `\003VALUE\004`) that `HandleWoWSpecialCodes` can recognize and protect. The markers are stripped during protection, and the value is restored intact after reversal. This ensures substituted numbers maintain their correct digit order.
+
+## [Tooltips] L-007: Number extraction patterns must require at least one digit
+
+- **Symptom:** A placeholder like `{3}` shows a comma `,` or other punctuation instead of the expected number.
+- **Root cause:** Pattern `[%d,]+` matches one or more digits OR commas, so a lone comma in the original text gets extracted as a "number" and substituted into a placeholder.
+- **Incorrect approach:** Using `%-?[%d,]+%.?%d*` to extract numbers (matches commas without requiring digits).
+- **Correct rule:** Use `%-?%d[%d,]*%.?%d*` which requires at least one digit (`%d`) before allowing optional commas. This prevents lone punctuation from being treated as numbers while still supporting formatted numbers like "1,000".
+
+## [Tooltips][RTL] L-008: RTL justification must check for actual Arabic content, not just locale
+
+- **Symptom:** English tooltips (without Arabic translation) appear right-aligned in Arabic mode, making them hard to read.
+- **Root cause:** RTL justification code checked `WoWTR_Localization.lang == 'AR'` but didn't verify that the tooltip actually contained Arabic text. Untranslated tooltips showing English were incorrectly right-justified.
+- **Incorrect approach:** Applying RTL layout based solely on the addon's current language setting.
+- **Correct rule:** Before applying RTL justification, check if **any line in the tooltip contains Arabic characters** (using `ContainsArabic()` or checking for Arabic Unicode ranges). Only apply RTL layout when Arabic content is actually present.

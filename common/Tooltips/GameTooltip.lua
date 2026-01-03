@@ -10,6 +10,21 @@ local GT = Tooltips.GameTooltip
 local Utils = (ns.Tooltips and ns.Tooltips.Utils) or {}
 local ignoreSettings = (Utils and Utils.ignoreSettings) or { words = {}, pattern = "" }
 
+-- Helper to check if text contains Arabic (access Text module at runtime since it loads later in TOC)
+local function ContainsArabicText(txt)
+  local TextModule = ns and ns.Text
+  if TextModule and TextModule.ContainsArabic then
+    return TextModule.ContainsArabic(txt)
+  end
+  -- Fallback: check for Arabic character ranges directly
+  if not txt or txt == "" then return false end
+  -- Arabic Presentation Forms-A/B (U+FB50-U+FDFF, U+FE70-U+FEFF) encoded in UTF-8
+  if string.find(txt, "[\239][\173-187]") then return true end
+  -- Base Arabic block (U+0600-U+06FF) encoded in UTF-8
+  if string.find(txt, "[\216-\217][\128-\191]") then return true end
+  return false
+end
+
 -- Placeholder handler; legacy global remains authoritative until full migration.
 function GT.OnShow()
   if (ST_PM and ST_PM["active"] == "1") then
@@ -526,6 +541,37 @@ function GT.OnShow()
         end
       end
     end
+    
+    -- Apply or reset RTL justification for tooltips (must happen AFTER all text is set)
+    -- Set RIGHT if Arabic text is found, otherwise reset to LEFT (justification persists between shows)
+    if WoWTR_Localization and WoWTR_Localization.lang == 'AR' then
+      local numLinesToJustify = GameTooltip:NumLines()
+      local hasArabic = false
+      -- Check if any line contains Arabic text
+      for i = 1, numLinesToJustify do
+        local leftLine = _G["GameTooltipTextLeft" .. i]
+        if leftLine and leftLine.GetText then
+          local lineText = leftLine:GetText()
+          if lineText and ContainsArabicText(lineText) then
+            hasArabic = true
+            break
+          end
+        end
+      end
+      -- Apply RIGHT for Arabic, LEFT for English (must reset because justification persists)
+      local justify = hasArabic and "RIGHT" or "LEFT"
+      for i = 1, numLinesToJustify do
+        local leftLine = _G["GameTooltipTextLeft" .. i]
+        if leftLine and leftLine.SetJustifyH then
+          leftLine:SetJustifyH(justify)
+        end
+        local rightLine = _G["GameTooltipTextRight" .. i]
+        if rightLine and rightLine.SetJustifyH then
+          rightLine:SetJustifyH(justify)
+        end
+      end
+    end
+    
     GameTooltip:Show()
     ST_lastNumLines = GameTooltip:NumLines()
 
@@ -632,6 +678,29 @@ function GT.ElvSpellBookTooltipOnShow()
     end
   end
 
+  -- Apply or reset RTL justification for ElvUI SpellBook tooltip
+  if WoWTR_Localization and WoWTR_Localization.lang == 'AR' then
+    local numLinesToJustify = ST_MyGameTooltip:NumLines()
+    local hasArabic = false
+    for i = 1, numLinesToJustify do
+      local leftLine = _G["ST_MyGameTooltipTextLeft" .. i]
+      if leftLine and leftLine.GetText then
+        local lineText = leftLine:GetText()
+        if lineText and ContainsArabicText(lineText) then
+          hasArabic = true
+          break
+        end
+      end
+    end
+    local justify = hasArabic and "RIGHT" or "LEFT"
+    for i = 1, numLinesToJustify do
+      local leftLine = _G["ST_MyGameTooltipTextLeft" .. i]
+      if leftLine and leftLine.SetJustifyH then
+        leftLine:SetJustifyH(justify)
+      end
+    end
+  end
+
   ST_MyGameTooltip:Show()
 end
 
@@ -668,6 +737,28 @@ function GT.BuffOrDebuff()
         ST_MyGameTooltip:AddLine(" ", 0, 0, 0)
         ST_MyGameTooltip:AddLine("Hash: " .. tostring(ST_hash), 0, 1, 1)
         _G["ST_MyGameTooltipTextLeft3"]:SetFont(WOWTR_Font2, 12)
+      end
+      -- Apply or reset RTL justification for buff/debuff tooltip
+      if WoWTR_Localization and WoWTR_Localization.lang == 'AR' then
+        local numLinesToJustify = ST_MyGameTooltip:NumLines()
+        local hasArabic = false
+        for i = 1, numLinesToJustify do
+          local leftLine = _G["ST_MyGameTooltipTextLeft" .. i]
+          if leftLine and leftLine.GetText then
+            local lineText = leftLine:GetText()
+            if lineText and ContainsArabicText(lineText) then
+              hasArabic = true
+              break
+            end
+          end
+        end
+        local justify = hasArabic and "RIGHT" or "LEFT"
+        for i = 1, numLinesToJustify do
+          local leftLine = _G["ST_MyGameTooltipTextLeft" .. i]
+          if leftLine and leftLine.SetJustifyH then
+            leftLine:SetJustifyH(justify)
+          end
+        end
       end
       ST_MyGameTooltip:Show()
     elseif ((ST_PM and ST_PM["saveNW"] == "1")) then
@@ -834,6 +925,34 @@ function GT.CurrentEquipped(obj)
           numLines = obj:NumLines()
           _G[obj:GetName() .. "TextLeft" .. numLines]:SetFont(WOWTR_Font2, 12)
           _G[obj:GetName() .. "TextRight" .. numLines]:SetFont(WOWTR_Font2, 12)
+        end
+      end
+
+      -- Apply or reset RTL justification for compare tooltips
+      if WoWTR_Localization and WoWTR_Localization.lang == 'AR' then
+        local objName = obj:GetName()
+        local numLinesToJustify = obj:NumLines()
+        local hasArabic = false
+        for i = 1, numLinesToJustify do
+          local leftLine = _G[objName .. "TextLeft" .. i]
+          if leftLine and leftLine.GetText then
+            local lineText = leftLine:GetText()
+            if lineText and ContainsArabicText(lineText) then
+              hasArabic = true
+              break
+            end
+          end
+        end
+        local justify = hasArabic and "RIGHT" or "LEFT"
+        for i = 1, numLinesToJustify do
+          local leftLine = _G[objName .. "TextLeft" .. i]
+          if leftLine and leftLine.SetJustifyH then
+            leftLine:SetJustifyH(justify)
+          end
+          local rightLine = _G[objName .. "TextRight" .. i]
+          if rightLine and rightLine.SetJustifyH then
+            rightLine:SetJustifyH(justify)
+          end
         end
       end
 

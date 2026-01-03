@@ -1,6 +1,6 @@
 # WoWLang / WoWAR – Project Memo
 
-Last updated: 2025-12-31
+Last updated: 2026-01-03
 
 ## High signal (current state)
 
@@ -9,6 +9,7 @@ Last updated: 2025-12-31
 - Arabic RTL layout and headers are applied **only when real Arabic QuestData exists**.
 - Mixed Arabic headers with English quest bodies are explicitly prevented (fallback restores LTR + original headers).
 - Tooltip hooks and font templating are owned exclusively by `common/Tooltips/*`.
+- Arabic tooltips enforce RTL-feeling layout via RIGHT justification (no anchor mirroring), applied in `common/Tooltips/Hooks.lua`.
 - Arabic font application is centralized in `common/UI/Fonts.lua`.
 - UI translation is data-driven via `common/UI/Translate.lua`; ad-hoc per-frame logic is discouraged.
 - RTL detection is centralized via `ns.RTL.IsRTL()`; raw locale checks are deprecated.

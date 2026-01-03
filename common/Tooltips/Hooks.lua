@@ -8,6 +8,7 @@ local State = (Tooltips and Tooltips.State) or {}
 Tooltips.Hooks = Tooltips.Hooks or {}
 local Hooks = Tooltips.Hooks
 local Core = ns.Core
+-- NOTE: ns.RTL is accessed dynamically at runtime, NOT cached here, because RTL.lua loads after Hooks.lua in the TOC.
 
 -- Hook tooltip frames to use WOWTR_Font2 for Arabic (moved from common/Config/Core.lua)
 local TooltipsHooked = false
@@ -16,6 +17,46 @@ local processedFrames = {}
 local function ApplyTooltipFonts(tt)
   if not tt or not tt.GetRegions then return end
   if not (WoWTR_Localization and WoWTR_Localization.lang == 'AR' and WOWTR_Font2) then return end
+
+  -- For Arabic tooltips, enforce RTL-feeling layout via justification (no anchor mirroring).
+  -- This ensures shaped Arabic lines render aligned to the RIGHT edge of the tooltip.
+  -- Resets to LEFT for non-Arabic tooltips (justification persists between shows).
+  local function ApplyRTLJustifyToTooltipLines(tooltipFrame)
+    if not tooltipFrame or not tooltipFrame.GetName then return end
+    -- Access ns.RTL at runtime (not cached at load time) because RTL.lua loads after this file
+    local RTL = ns and ns.RTL
+    if not (RTL and RTL.IsRTL and RTL.IsRTL()) then return end
+    local name = tooltipFrame:GetName()
+    if not name or name == "" then return end
+    
+    -- First check if any line contains Arabic text
+    local hasArabic = false
+    local TextModule = _G.Text or (ns and ns.Text)
+    local ContainsArabic = TextModule and TextModule.ContainsArabic
+    for i = 1, 40 do
+      local left = _G[name .. "TextLeft" .. i]
+      if left and left.GetText then
+        local lineText = left:GetText()
+        if lineText and ContainsArabic and ContainsArabic(lineText) then
+          hasArabic = true
+          break
+        end
+      end
+    end
+    
+    -- Apply RIGHT for Arabic, LEFT for English (must reset because justification persists)
+    local justify = hasArabic and "RIGHT" or "LEFT"
+    for i = 1, 40 do
+      local left = _G[name .. "TextLeft" .. i]
+      if left and left.SetJustifyH then
+        pcall(left.SetJustifyH, left, justify)
+      end
+      local right = _G[name .. "TextRight" .. i]
+      if right and right.SetJustifyH then
+        pcall(right.SetJustifyH, right, justify)
+      end
+    end
+  end
   
   -- Helper function to get original WoW font
   local function GetOriginalWoWFont()
@@ -260,6 +301,9 @@ local function ApplyTooltipFonts(tt)
       setFS(_G[name .. "TextRight" .. i])
     end
   end
+
+  -- Apply RTL justification after any font/text updates.
+  ApplyRTLJustifyToTooltipLines(tt)
   
   -- Debug: Log summary only when fonts are actually changed (to reduce spam)
   if processedCount > 0 and WOWTR and WOWTR.Debug and WOWTR.Debug.Normal then
@@ -307,7 +351,7 @@ local function HookTooltipFonts()
     SetFO(_G.Tooltip_Small, "Tooltip_Small")
   end
 
-  local names = { "GameTooltip", "ItemRefTooltip", "ShoppingTooltip1", "ShoppingTooltip2", "ShoppingTooltip3", "ItemRefShoppingTooltip1", "ItemRefShoppingTooltip2", "ItemRefShoppingTooltip3" }
+  local names = { "GameTooltip", "ItemRefTooltip", "ShoppingTooltip1", "ShoppingTooltip2", "ShoppingTooltip3", "ItemRefShoppingTooltip1", "ItemRefShoppingTooltip2", "ItemRefShoppingTooltip3", "ST_MyGameTooltip" }
   for _, n in ipairs(names) do
     local tt = _G[n]
     if tt and tt.HookScript then
@@ -316,7 +360,7 @@ local function HookTooltipFonts()
       if tt:HasScript("OnTooltipSetItem") then tt:HookScript("OnTooltipSetItem", ApplyTooltipFonts) end
       if tt:HasScript("OnTooltipSetSpell") then tt:HookScript("OnTooltipSetSpell", ApplyTooltipFonts) end
       if tt:HasScript("OnTooltipSetUnit") then tt:HookScript("OnTooltipSetUnit", ApplyTooltipFonts) end
-      -- Clear cache when tooltip is hidden
+      -- Clear cache and reset justification when tooltip is hidden
       if tt:HasScript("OnHide") then
         tt:HookScript("OnHide", function()
           -- Clear cache for this tooltip's frames
@@ -325,6 +369,20 @@ local function HookTooltipFonts()
             for key, _ in pairs(processedFrames) do
               if string.find(key, "^" .. ttName) then
                 processedFrames[key] = nil
+              end
+            end
+            -- Reset justification to LEFT on hide so next tooltip starts fresh
+            -- This fixes the "sticky RIGHT" issue when switching from Arabic to English tooltips
+            if WoWTR_Localization and WoWTR_Localization.lang == 'AR' then
+              for i = 1, 40 do
+                local left = _G[ttName .. "TextLeft" .. i]
+                if left and left.SetJustifyH then
+                  pcall(left.SetJustifyH, left, "LEFT")
+                end
+                local right = _G[ttName .. "TextRight" .. i]
+                if right and right.SetJustifyH then
+                  pcall(right.SetJustifyH, right, "LEFT")
+                end
               end
             end
           end

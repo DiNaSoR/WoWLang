@@ -210,11 +210,13 @@ function ST_TranslatePrepare(origin, tlumacz)
   end
   
   -- Extract all numeric values from the original text (supports decimals, negatives, formatted numbers)
-  -- Pattern matches: integers, decimals, negative numbers, and comma-formatted numbers like 1,000
+  -- Pattern: requires at least one digit, optionally with commas (1,000), decimals (.5), or negative sign
+  -- The pattern uses %d to ensure we don't match lone commas or other non-numeric characters
   local numbers = {}
-  for num in string.gmatch(origin, "%-?[%d,]+%.?%d*") do
+  for num in string.gmatch(origin, "%-?%d[%d,]*%.?%d*") do
     -- Store the number as-is (preserving original formatting)
-    if num ~= "" and num ~= "-" and num ~= "." then
+    -- Filter out any matches that are just punctuation (shouldn't happen with new pattern, but be safe)
+    if num ~= "" and num:match("%d") then
       numbers[#numbers + 1] = num
     end
   end
@@ -224,8 +226,14 @@ function ST_TranslatePrepare(origin, tlumacz)
     return tlumacz
   end
   
-  -- Check if we're in Arabic locale (need to mark values for RTL protection)
-  local isArabic = _G.WoWTR_Localization and _G.WoWTR_Localization.lang == 'AR'
+  -- If we're in RTL (Arabic), mark substituted values so the text pipeline can protect them from reversal.
+  -- Use multiple fallbacks for RTL detection in case ns.RTL isn't loaded yet
+  local isRTL = false
+  if ns and ns.RTL and ns.RTL.IsRTL then
+    isRTL = ns.RTL.IsRTL()
+  elseif _G.WoWTR_Localization and _G.WoWTR_Localization.lang == 'AR' then
+    isRTL = true
+  end
   
   -- Substitute {1}, {2}, {3}, etc. with extracted values
   local result = tlumacz
@@ -234,7 +242,7 @@ function ST_TranslatePrepare(origin, tlumacz)
     local placeholder = "{" .. i .. "}"
     -- For Arabic, wrap the value with \003...\004 markers so HandleWoWSpecialCodes
     -- can protect it from RTL reversal (otherwise "20" becomes "02")
-    local substitution = isArabic and ("\003" .. val .. "\004") or val
+    local substitution = isRTL and ("\003" .. val .. "\004") or val
     local startPos = 1
     while true do
       local foundPos = string.find(result, placeholder, startPos, true)
