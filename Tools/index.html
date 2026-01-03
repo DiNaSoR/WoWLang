@@ -467,10 +467,12 @@
             <label>Options</label>
             <div class="option-list">
               <label><input type="checkbox" id="includeMixed"> Reshape mixed entries</label>
+              <label><input type="checkbox" id="mirrorBrackets" checked> Mirror brackets for WoW RTL</label>
+              <label><input type="checkbox" id="reverseLatin" checked> Keep Latin words (ID/NPC) LTR</label>
             </div>
           </div>
           <div class="control-actions">
-            <button type="button" class="primary" id="reshapeAll">Reshape Unshaped</button>
+            <button type="button" class="primary" id="reshapeAll">Apply Changes</button>
             <button type="button" class="secondary" id="resetAll">Revert All</button>
             <button type="button" class="accent" id="exportBtn">Export Lua</button>
           </div>
@@ -482,7 +484,7 @@
       </section>
 
       <section class="foot">
-        Reshapes Arabic without reversing line order, using WoWAR/WoW_Arabic_Reshaper.lua rules while keeping WoW codes, hyperlinks, URLs, and paths intact.
+        Reshapes Arabic without reversing line order, using WoWAR/WoW_Arabic_Reshaper.lua rules while keeping WoW codes, hyperlinks, URLs, and paths intact. Optional helpers mirror brackets and pre-flip Latin words so they render correctly after WoW reversal.
       </section>
     </main>
 
@@ -507,6 +509,10 @@
             <div class="entry-actions">
               <button type="button" class="primary apply">Use Reshaped</button>
             </div>
+          </div>
+          <div class="entry-card">
+            <h4>WoW Preview (after reverse)</h4>
+            <pre class="preview wow"></pre>
           </div>
         </div>
       </details>
@@ -606,6 +612,8 @@
       const NON_CONNECTING = new Set([
         0x0627, 0x0622, 0x0623, 0x0625, 0x062F, 0x0630, 0x0631, 0x0632,
         0x0648, 0x0624, 0x0649, 0x0629, 0x0621, 0x0698
+        // Lam-Alef presentation ligatures connect to previous but NOT to the next letter.
+        ,0xFEF5, 0xFEF6, 0xFEF7, 0xFEF8, 0xFEF9, 0xFEFA, 0xFEFB, 0xFEFC
       ]);
 
       const RESHAPING_RULES = Object.create(null);
@@ -621,7 +629,7 @@
       const BASE_ARABIC_RE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
       const PRESENTATION_RE = /[\uFB50-\uFDFF\uFE70-\uFEFF]/;
 
-      const PROTECTED_RE = /(\|H[^|]*?\|h.*?\|h|\|T[^|]*?\|t|\|A[^|]*?\|a|\|c[0-9A-Fa-f]{8}|\|cn[\w_]+:|\|r|https?:\/\/[^\s]+|www\.[^\s]+|(?:\.{1,2}\/|\/)[^\s"']+|[^\s"']*\\[^\s"']*)/g;
+      const PROTECTED_RE = /(\|H[^|]*?\|h.*?\|h|\|T[^|]*?\|t|\|A[^|]*?\|a|\|c[0-9A-Fa-f]{8}|\|cn[\w_]+:|\|r|\{[^}\s]+\}|https?:\/\/[^\s]+|www\.[^\s]+|(?:\.{1,2}\/|\/)[^\s"']+|[^\s"']*\\[^\s"']*)/g;
 
       const state = {
         fileName: "",
@@ -631,6 +639,8 @@
         filter: "unshaped",
         search: "",
         includeMixed: false,
+        mirrorBrackets: true,
+        reverseLatin: true,
         usePresentationDiacritics: false
       };
 
@@ -642,6 +652,8 @@
         resetAll: document.getElementById("resetAll"),
         exportBtn: document.getElementById("exportBtn"),
         includeMixed: document.getElementById("includeMixed"),
+        mirrorBrackets: document.getElementById("mirrorBrackets"),
+        reverseLatin: document.getElementById("reverseLatin"),
         searchInput: document.getElementById("searchInput"),
         filterButtons: document.getElementById("filterButtons"),
         statArabic: document.getElementById("statArabic"),
@@ -694,6 +706,16 @@
 
       ui.includeMixed.addEventListener("change", () => {
         state.includeMixed = ui.includeMixed.checked;
+      });
+
+      ui.mirrorBrackets.addEventListener("change", () => {
+        state.mirrorBrackets = ui.mirrorBrackets.checked;
+        render();
+      });
+
+      ui.reverseLatin.addEventListener("change", () => {
+        state.reverseLatin = ui.reverseLatin.checked;
+        render();
       });
 
       ui.searchInput.addEventListener("input", (event) => {
@@ -982,6 +1004,7 @@
           const snippet = node.querySelector(".entry-snippet");
           const originalPreview = node.querySelector(".preview.original");
           const reshapedPreview = node.querySelector(".preview.reshaped");
+          const wowPreviewNode = node.querySelector(".preview.wow");
           const applyButton = node.querySelector(".apply");
           const resetButton = node.querySelector(".reset");
 
@@ -990,10 +1013,12 @@
           line.textContent = "Line " + seg.line;
           snippet.textContent = makeSnippet(seg.decodedCurrent);
 
+          const candidate = reshapeDecoded(seg.decodedOriginal);
           originalPreview.textContent = seg.decodedOriginal;
-          reshapedPreview.textContent = reshapeDecoded(seg.decodedOriginal);
+          reshapedPreview.textContent = candidate;
+          wowPreviewNode.textContent = wowPreview(candidate);
 
-          applyButton.disabled = analysis.status === "shaped";
+          applyButton.disabled = candidate === seg.decodedCurrent;
           applyButton.addEventListener("click", (event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -1032,10 +1057,11 @@
         });
       }
       function applyReshapeToAll() {
+        const applyToAll = state.mirrorBrackets || state.reverseLatin;
         for (const entry of state.entries) {
           const seg = state.segments[entry.segmentIndex];
           const analysis = analyzeArabic(seg.decodedCurrent);
-          if (analysis.status === "unshaped" || (state.includeMixed && analysis.status === "mixed")) {
+          if (applyToAll || analysis.status === "unshaped" || (state.includeMixed && analysis.status === "mixed")) {
             applyReshape(entry);
           }
         }
@@ -1045,6 +1071,7 @@
       function applyReshape(entry) {
         const seg = state.segments[entry.segmentIndex];
         const reshaped = reshapeDecoded(seg.decodedOriginal);
+        if (reshaped === seg.decodedCurrent) return;
         seg.decodedCurrent = reshaped;
         seg.rawCurrent = encodeLuaString(reshaped, seg.quote);
       }
@@ -1061,13 +1088,33 @@
         return reshapedLines.join("\n");
       }
 
+      function wowPreview(text) {
+        const lines = text.split("\n");
+        const previewLines = lines.map((line) => wowPreviewLine(line));
+        return previewLines.join("\n");
+      }
+
+      function wowPreviewLine(line) {
+        const tokens = tokenizeProtected(line);
+        const out = [];
+        for (let i = tokens.length - 1; i >= 0; i -= 1) {
+          const token = tokens[i];
+          if (token.type === "protected") {
+            out.push(token.value);
+          } else {
+            out.push(Array.from(token.value).reverse().join(""));
+          }
+        }
+        return out.join("");
+      }
+
       function reshapeLine(line) {
         const tokens = tokenizeProtected(line);
         const out = tokens.map((token) => {
           if (token.type === "protected") {
             return token.value;
           }
-          return reshapeOnly(token.value);
+          return postProcessToken(reshapeOnly(token.value));
         });
         return out.join("");
       }
@@ -1083,13 +1130,56 @@
           if (start > lastIndex) {
             tokens.push({ type: "text", value: line.slice(lastIndex, start) });
           }
-          tokens.push({ type: "protected", value });
+          tokens.push({ type: shouldProtectToken(value) ? "protected" : "text", value });
           lastIndex = start + value.length;
         }
         if (lastIndex < line.length) {
           tokens.push({ type: "text", value: line.slice(lastIndex) });
         }
         return tokens;
+      }
+
+      const BRACKET_MIRROR = Object.freeze({
+        "(": ")",
+        ")": "(",
+        "[": "]",
+        "]": "[",
+        "<": ">",
+        ">": "<",
+        "«": "»",
+        "»": "«",
+        "‹": "›",
+        "›": "‹"
+      });
+
+      function postProcessToken(text) {
+        let out = text;
+        if (state.mirrorBrackets) {
+          out = out.replace(/[()\[\]<>«»‹›]/g, (ch) => BRACKET_MIRROR[ch] || ch);
+        }
+        if (state.reverseLatin) {
+          out = out.replace(/[A-Za-z]+/g, (run) => Array.from(run).reverse().join(""));
+        }
+        return out;
+      }
+
+      function shouldProtectToken(value) {
+        if (!value) return false;
+        if (value.startsWith("{") && value.endsWith("}")) return true;
+        if (value.startsWith("|")) return true;
+
+        const lower = value.toLowerCase();
+        if (lower.startsWith("http://") || lower.startsWith("https://") || lower.startsWith("www.")) {
+          return true;
+        }
+
+        const hasArabic = BASE_ARABIC_RE.test(value) || PRESENTATION_RE.test(value);
+        if (!hasArabic) return true;
+
+        // If the match contains Arabic, only protect it when it clearly looks like a path.
+        if (/^(?:[A-Za-z]:\\|\\\\)/.test(value)) return true;
+        if (/(?:^|[\\/])[^\\/]+\\.[A-Za-z0-9]{1,4}$/.test(value)) return true;
+        return false;
       }
 
       function reshapeOnly(text) {

@@ -1,6 +1,7 @@
 -- Description: Texts in the selected localization language
--- Author: Platine [platine.wow@gmail.com]
--- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]
+-- Authors: Platine, Dragonarab[DiNaSoR]
+-- Website: https://www.wowar.co
+-- GitHub: https://github.com/DiNaSoR/WoWLang
 -------------------------------------------------------------------------------------------------------
 
 WoWTR_Localization = {
@@ -12,7 +13,7 @@ WoWTR_Localization = {
    addonIconDesc = "ﺍﻧﻘﺮ , ﻟﻔﺘﺢ ﻗﺎﺋﻤﺔ ﺍﻹﻋﺪﺍﺩﺍﺕ.", -- Click to open the settings menu
    optionName = "WoWAR - Options", -- WoWAR - options
    optionTitle = "ﺇﺿﺎﻓﺔ ﻭﺍﻭ ﺑﺎﻟﻌﺮﺑﻲ", -- WoWAR Patch
-   optionTitleAR = "ﻣﻠﺤﻖ RAWoW ﺑﺎﻟﻠﻐﺔ ﺍﻟﻌﺮﺑﻴﺔ، baranogarD & enitalP، )C( 5202-3202", -- Main title of addon in Arabic
+   optionTitleAR = "ﻣﻠﺤﻖ RAWoW ﺑﺎﻟﻠﻐﺔ ﺍﻟﻌﺮﺑﻴﺔ، baranogarD & enitalP، (C) 5202-3202", -- Main title of addon in Arabic
    addressWWW = "https://www.WoWAR.co", -- address of project page
    addressDiscord = "https://discord.gg/uW5NJ6y", -- address of discord page
    addressTwitch = "", -- address of Twitch page
