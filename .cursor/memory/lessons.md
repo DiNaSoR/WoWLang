@@ -78,3 +78,17 @@
 - **Root cause:** `AS_UTF8charbytes` had a control-flow path (e.g., when `strbyte` returns `0` for a NUL byte) that fell through without a `return`, yielding `nil`.
 - **Incorrect approach:** Having a final `else` branch that logs/prints but does not return a numeric byte-length.
 - **Correct rule:** Ensure **all** paths in `AS_UTF8charbytes` (and similar functions) return a **number**; for unexpected/invalid bytes, return `1` as a safe single-byte fallback to keep iteration stable.
+
+## [Text][RTL] L-011: Persian/Urdu shaping must use Presentation Forms-A (FB50–FDFF) for extended letters
+
+- **Symptom:** Persian/Urdu letters reshape into completely different Arabic letters (e.g., پ becomes ح-like forms, ی becomes Lam-Alef ligatures).
+- **Root cause:** Using Arabic Presentation Forms-B code points (FE70–FEFF) for Persian/Urdu extension letters whose correct glyph forms are defined in **Arabic Presentation Forms-A** (FB50–FDFF).
+- **Incorrect approach:** “Guessing” presentation form ranges for extended letters (پ/چ/ژ/گ/ک/ڌ/ی) or copying unrelated FE** forms from similar-looking Arabic letters.
+- **Correct rule:** For extended letters, verify the exact `ARABIC LETTER <X> <POSITION> FORM` code points (e.g., via Unicode names) and map them to the correct FB** forms:
+  - PEH: FB56–FB59
+  - TCHEH: FB7A–FB7D
+  - JEH: FB8A–FB8B (isolated/final)
+  - KEHEH: FB8E–FB91
+  - GAF: FB92–FB95
+  - DAHAL: FB84–FB85 (isolated/final)
+  - FARSI YEH: FBFC–FBFF

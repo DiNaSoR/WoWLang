@@ -168,13 +168,15 @@ AS_Reshaping_Rules = {
    ["\217\128"] = { isolated = "\217\128", initial = "\217\128", middle = "\217\128", final = "\217\128" },                         -- TATWEEL (ـ) U+0640 - connects both sides
 
    -- ===== PERSIAN/URDU EXTENSIONS =====
-   ["\217\190"] = { isolated = "\217\190", initial = "\239\186\161", middle = "\239\186\162", final = "\239\186\160" },             -- PEH (پ) U+067E - Persian P
-   ["\218\134"] = { isolated = "\218\134", initial = "\239\186\173", middle = "\239\186\174", final = "\239\186\172" },             -- TCHEH (چ) U+0686 - Persian CH
-   ["\218\152"] = { isolated = "\218\152", initial = "\218\152", middle = "\239\186\183", final = "\239\186\183" },                 -- JEH (ژ) U+0698 - Persian ZH - non-connecting
-   ["\218\175"] = { isolated = "\218\175", initial = "\239\186\179", middle = "\239\186\180", final = "\239\186\178" },             -- GAF (گ) U+06AF - Persian G
-   ["\218\169"] = { isolated = "\218\169", initial = "\239\187\139", middle = "\239\187\140", final = "\239\187\138" },             -- KEHEH (ک) U+06A9 - Persian/Urdu K variant
-   ["\218\140"] = { isolated = "\218\140", initial = "\239\187\183", middle = "\239\187\184", final = "\239\187\182" },             -- YEH WITH THREE DOTS (ۍ) U+068C
-   ["\219\140"] = { isolated = "\219\140", initial = "\239\187\187", middle = "\239\187\188", final = "\239\187\186" },             -- FARSI YEH (ی) U+06CC
+   -- These letters have their correct presentation forms in Arabic Presentation Forms-A (FB50–FDFF),
+   -- not in Forms-B (FE70–FEFF). Using the wrong code points renders *different* Arabic letters.
+   ["\217\190"] = { isolated = "\217\190", initial = "\239\173\152", middle = "\239\173\153", final = "\239\173\151" },             -- PEH (پ) U+067E → FB58/FB59/FB57
+   ["\218\134"] = { isolated = "\218\134", initial = "\239\173\188", middle = "\239\173\189", final = "\239\173\187" },             -- TCHEH (چ) U+0686 → FB7C/FB7D/FB7B
+   ["\218\152"] = { isolated = "\218\152", initial = "\218\152", middle = "\239\174\139", final = "\239\174\139" },                 -- JEH (ژ) U+0698 (non-connecting) → FB8B (final)
+   ["\218\175"] = { isolated = "\218\175", initial = "\239\174\148", middle = "\239\174\149", final = "\239\174\147" },             -- GAF (گ) U+06AF → FB94/FB95/FB93
+   ["\218\169"] = { isolated = "\218\169", initial = "\239\174\144", middle = "\239\174\145", final = "\239\174\143" },             -- KEHEH (ک) U+06A9 → FB90/FB91/FB8F
+   ["\218\140"] = { isolated = "\218\140", initial = "\218\140", middle = "\239\174\133", final = "\239\174\133" },                 -- DAHAL (ڌ) U+068C (non-connecting) → FB85 (final)
+   ["\219\140"] = { isolated = "\219\140", initial = "\239\175\190", middle = "\239\175\191", final = "\239\175\189" },             -- FARSI YEH (ی) U+06CC → FBFE/FBFF/FBFD
 
    -- ===== ADDITIONAL ARABIC LETTERS =====
    -- Note: HAMZA (ء) U+0621 is already defined above at line 123
