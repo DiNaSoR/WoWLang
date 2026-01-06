@@ -878,15 +878,43 @@ function ControlCenter:InitializeModules()
         return string.gmatch((text or "") .. "\n", "(.-)\n")
       end
 
+      local MONTH_ABBR_TO_NUM = {
+        Jan = 1, Feb = 2, Mar = 3, Apr = 4, May = 5, Jun = 6,
+        Jul = 7, Aug = 8, Sep = 9, Oct = 10, Nov = 11, Dec = 12,
+      }
+
+      -- Parse hardcoded changelog dates like "05 Sep 2025" (preferred) or "2025-09-05".
+      local function ParseChangelogDateToTimestamp(dateText)
+        dateText = tostring(dateText or "")
+        local d, mon, y = dateText:match("^(%d%d?)%s+([%a]+)%s+(%d%d%d%d)$")
+        if d and mon and y then
+          mon = mon:sub(1, 1):upper() .. mon:sub(2, 3):lower()
+          local m = MONTH_ABBR_TO_NUM[mon]
+          if m then
+            return time({ year = tonumber(y), month = m, day = tonumber(d), hour = 12 })
+          end
+        end
+
+        local y2, m2, d2 = dateText:match("^(%d%d%d%d)%-(%d%d)%-(%d%d)$")
+        if y2 and m2 and d2 then
+          return time({ year = tonumber(y2), month = tonumber(m2), day = tonumber(d2), hour = 12 })
+        end
+
+        return nil
+      end
+
       for _, e in ipairs(entries) do
         local id = VersionToID(e.version) or tonumber(e.version)
         if id then
           local list = {}
 
+          local dateText = tostring(e.date or "")
+          local ts = ParseChangelogDateToTimestamp(dateText) or time()
           list[#list + 1] = {
             type = "date",
             versionText = tostring(e.version or ""),
-            timestamp = time(),
+            timestamp = ts,
+            dateText = dateText,
           }
 
           if e.title and e.title ~= "" then

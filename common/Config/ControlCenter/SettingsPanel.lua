@@ -1892,7 +1892,8 @@ do  --ChangelogTab
                 if info.versionText and info.timestamp then
                     -- Keep the version/date header LTR even in Arabic UI (avoid mixed RTL/LTR reordering).
                     local versionLabel = _Label("ControlCenter_Version", GAME_VERSION_LABEL or "Version")
-                    local text = string.format("%s %s   %s", versionLabel, info.versionText, API.SecondsToDate(info.timestamp));
+                    local dateText = (info.dateText and info.dateText ~= "") and info.dateText or API.SecondsToDate(info.timestamp)
+                    local text = string.format("%s %s   %s", versionLabel, info.versionText, dateText);
                     objectHeight = Formatter:GetTextHeight("p", text);
                     bottom = top + objectHeight;
                     n = n + 1;

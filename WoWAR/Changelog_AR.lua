@@ -8,7 +8,8 @@ WOWTR.Changelog = WOWTR.Changelog or {}
 WOWTR.Changelog.entries = {
   {
     version = tostring(WOWTR_version or "12.00"),
-    date = date("%d %b %Y"),
+    -- NOTE: Hardcode release dates; do NOT use date() which evaluates at addon load.
+    date = "31 Dec 2025",
     color = "legendary",
     type = "Feature",
     author = "WoWLang",
@@ -21,7 +22,7 @@ WOWTR.Changelog.entries = {
   },
   {
     version = "11.20",
-    date = date("%d %b %Y"),
+    date = "05 Sep 2025",
     color = "purple",
     type = "Feature",
     author = "WoWLang",
@@ -34,7 +35,7 @@ WOWTR.Changelog.entries = {
   },
   {
     version = "11.19",
-    date = date("%d %b %Y"),
+    date = "04 Sep 2025",
     color = "blue",
     type = "Improvement",
     author = "WoWLang",
@@ -47,7 +48,7 @@ WOWTR.Changelog.entries = {
   },
   {
     version = "11.18",
-    date = date("%d %b %Y"),
+    date = "03 Sep 2025",
     color = "red",
     type = "Fix",
     author = "WoWLang",

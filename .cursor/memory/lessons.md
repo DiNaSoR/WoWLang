@@ -64,3 +64,10 @@
 - **Root cause:** RTL justification code checked `WoWTR_Localization.lang == 'AR'` but didn't verify that the tooltip actually contained Arabic text. Untranslated tooltips showing English were incorrectly right-justified.
 - **Incorrect approach:** Applying RTL layout based solely on the addon's current language setting.
 - **Correct rule:** Before applying RTL justification, check if **any line in the tooltip contains Arabic characters** (using `ContainsArabic()` or checking for Arabic Unicode ranges). Only apply RTL layout when Arabic content is actually present.
+
+## [Config][ControlCenter] L-009: Changelog dates must be data, not runtime time()
+
+- **Symptom:** Release Notes show today’s date for every historical version entry.
+- **Root cause:** Using runtime `date()`/`time()` when building changelog metadata (either inside locale pack data like `Changelog_AR.lua` or inside ControlCenter conversion) stamps entries at addon load/build time, not at the actual release time.
+- **Incorrect approach:** `date = date("%d %b %Y")` (evaluates at addon load) or `timestamp = time()` (evaluates at UI build time) for historical changelog entries.
+- **Correct rule:** Store a hardcoded release date string in the changelog entry (e.g., `"05 Sep 2025"`) and have the UI display that string (or parse it into a stable timestamp once) instead of calling `date()`/`time()` for past releases.
