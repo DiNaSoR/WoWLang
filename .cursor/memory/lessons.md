@@ -71,3 +71,10 @@
 - **Root cause:** Using runtime `date()`/`time()` when building changelog metadata (either inside locale pack data like `Changelog_AR.lua` or inside ControlCenter conversion) stamps entries at addon load/build time, not at the actual release time.
 - **Incorrect approach:** `date = date("%d %b %Y")` (evaluates at addon load) or `timestamp = time()` (evaluates at UI build time) for historical changelog entries.
 - **Correct rule:** Store a hardcoded release date string in the changelog entry (e.g., `"05 Sep 2025"`) and have the UI display that string (or parse it into a stable timestamp once) instead of calling `date()`/`time()` for past releases.
+
+## [Text][RTL] L-010: UTF-8 char-byte helpers must never return nil
+
+- **Symptom:** Random crash: “attempt to perform arithmetic on a nil value” during UTF-8 iteration (e.g., `pos = pos + AS_UTF8charbytes(...)`).
+- **Root cause:** `AS_UTF8charbytes` had a control-flow path (e.g., when `strbyte` returns `0` for a NUL byte) that fell through without a `return`, yielding `nil`.
+- **Incorrect approach:** Having a final `else` branch that logs/prints but does not return a numeric byte-length.
+- **Correct rule:** Ensure **all** paths in `AS_UTF8charbytes` (and similar functions) return a **number**; for unexpected/invalid bytes, return `1` as a safe single-byte fallback to keep iteration stable.

@@ -461,6 +461,9 @@ function AS_UTF8charbytes(s, i)
       return 1; -- Treat as a single-byte character
    else
       --print("Invalid UTF-8 character: " .. c);
+      -- `strbyte` can return 0 for NUL bytes; treat it (and any other unexpected value)
+      -- as a single-byte character to avoid returning nil and crashing callers.
+      return 1;
    end
 end
 
