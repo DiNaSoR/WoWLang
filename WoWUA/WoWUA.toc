@@ -3,7 +3,7 @@
 ## Version: 11.01
 ## Notes: Доповнення відображає перекладені тексти українською мовою
 ## Notes_en: AddOn displays the translated text informations in Ukrainian
-## Author: Platine
+## Authors: Platine, Dragonarab[DiNaSoR]
 ## E-mail: platine.wow@gmail.com
 ## WWW: https://www.wowpopolsku.pl/
 ## DefaultState: Enabled

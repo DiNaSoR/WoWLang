@@ -3,7 +3,7 @@
 ## Version: 11.09
 ## Notes: Dodatek wyswietla przetlumaczone teksty po polsku
 ## Notes_en: AddOn displays the translated text informations in Polish
-## Author: Platine
+## Authors: Platine, Dragonarab[DiNaSoR]
 ## E-mail: platine.wow@gmail.com
 ## WWW: https://www.wowpopolsku.pl/
 ## DefaultState: Enabled

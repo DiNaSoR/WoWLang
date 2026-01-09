@@ -3,7 +3,7 @@
 ## Version: 11.06
 ## Notes: Oyun içindeki Görevleri Türkçe'ye tercüme eder.
 ## Notes_en: AddOn displays the translated quest informations in Turkish.
-## Author: Platine & hknylmz
+## Authors: Platine, Dragonarab[DiNaSoR], Hakan YILMAZ
 ## E-mail: info@wowtr.com.tr
 ## WWW: https://www.wowtr.com.tr
 ## DefaultState: Enabled

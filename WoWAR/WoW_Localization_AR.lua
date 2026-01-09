@@ -1,6 +1,5 @@
 -- Description: Texts in the selected localization language
--- Author: Platine [platine.wow@gmail.com]
--- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]
+-- Authors: Platine, Dragonarab[DiNaSoR]
 -------------------------------------------------------------------------------------------------------
 
 WoWTR_Localization = {

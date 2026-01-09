@@ -1,5 +1,4 @@
--- Author: Platine (email: platine.wow@gmail.com)
--- Co-Author: DragonArab - Developed letter reshaping tables and ligatures (http://WoWAR.co)
+-- Authors: Platine, Dragonarab[DiNaSoR]
 -- Based on: UTF8 library by Kyle Smith
 -- Enhanced: Added diacritics, Persian/Urdu support, performance optimizations, and bug fixes
 -------------------------------------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 ## Version: 11.01
 ## Notes: Az AddOn magyar nyelven jeleníti meg a lefordított szöveges információkat
 ## Notes_en: AddOn displays the translated text informations in Hungarian
-## Author: Platine & WowHunCraft team
+## Authors: Platine, Dragonarab[DiNaSoR]
 ## E-mail: platine.wow@gmail.com
 ## WWW: https://panel.wowpopolsku.pl/
 ## DefaultState: Enabled

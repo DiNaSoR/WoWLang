@@ -2,7 +2,7 @@
 ## Title: WoWAR |cff8080ffv12.00|r
 ## Version: 12.00
 ## Notes: World of Warcraft in Arabic.
-## Author: Dragonarab & Platine
+## Authors: Platine, Dragonarab[DiNaSoR]
 ## E-mail: Dragonarab@gmail.com
 ## WWW: https://www.wowar.co
 ## DefaultState: Enabled

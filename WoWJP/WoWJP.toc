@@ -2,7 +2,7 @@
 ## Title: WoWinJapanese |cff8080ff11.02|r
 ## Version: 11.02
 ## Notes: AddOn displays the translated text informations in Japanese
-## Author: Platine
+## Authors: Platine, Dragonarab[DiNaSoR]
 ## E-mail: platine.wow@gmail.com
 ## WWW: https://panel.wowpopolsku.pl/ ,  https://www.wowpopolsku.pl
 ## DefaultState: Enabled
