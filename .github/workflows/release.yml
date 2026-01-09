@@ -70,9 +70,9 @@ jobs:
             mkdir -p temp/$addon
             # Copy add-on specific files
             cp -r $addon/* temp/$addon/
-            # Copy common files if they exist
+            # Copy common directory if it exists (TOCs reference common/* paths)
             if [ -d "common" ]; then
-              cp -r common/* temp/$addon/
+              cp -r common temp/$addon/
             else
               echo "Warning: common directory not found, skipping..."
             fi
