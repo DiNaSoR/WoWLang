@@ -64,3 +64,31 @@
 - **Root cause:** RTL justification code checked `WoWTR_Localization.lang == 'AR'` but didn't verify that the tooltip actually contained Arabic text. Untranslated tooltips showing English were incorrectly right-justified.
 - **Incorrect approach:** Applying RTL layout based solely on the addon's current language setting.
 - **Correct rule:** Before applying RTL justification, check if **any line in the tooltip contains Arabic characters** (using `ContainsArabic()` or checking for Arabic Unicode ranges). Only apply RTL layout when Arabic content is actually present.
+
+## [Config][ControlCenter] L-009: Changelog dates must be data, not runtime time()
+
+- **Symptom:** Release Notes show today’s date for every historical version entry.
+- **Root cause:** Using runtime `date()`/`time()` when building changelog metadata (either inside locale pack data like `Changelog_AR.lua` or inside ControlCenter conversion) stamps entries at addon load/build time, not at the actual release time.
+- **Incorrect approach:** `date = date("%d %b %Y")` (evaluates at addon load) or `timestamp = time()` (evaluates at UI build time) for historical changelog entries.
+- **Correct rule:** Store a hardcoded release date string in the changelog entry (e.g., `"05 Sep 2025"`) and have the UI display that string (or parse it into a stable timestamp once) instead of calling `date()`/`time()` for past releases.
+
+## [Text][RTL] L-010: UTF-8 char-byte helpers must never return nil
+
+- **Symptom:** Random crash: “attempt to perform arithmetic on a nil value” during UTF-8 iteration (e.g., `pos = pos + AS_UTF8charbytes(...)`).
+- **Root cause:** `AS_UTF8charbytes` had a control-flow path (e.g., when `strbyte` returns `0` for a NUL byte) that fell through without a `return`, yielding `nil`.
+- **Incorrect approach:** Having a final `else` branch that logs/prints but does not return a numeric byte-length.
+- **Correct rule:** Ensure **all** paths in `AS_UTF8charbytes` (and similar functions) return a **number**; for unexpected/invalid bytes, return `1` as a safe single-byte fallback to keep iteration stable.
+
+## [Text][RTL] L-011: Persian/Urdu shaping must use Presentation Forms-A (FB50–FDFF) for extended letters
+
+- **Symptom:** Persian/Urdu letters reshape into completely different Arabic letters (e.g., پ becomes ح-like forms, ی becomes Lam-Alef ligatures).
+- **Root cause:** Using Arabic Presentation Forms-B code points (FE70–FEFF) for Persian/Urdu extension letters whose correct glyph forms are defined in **Arabic Presentation Forms-A** (FB50–FDFF).
+- **Incorrect approach:** “Guessing” presentation form ranges for extended letters (پ/چ/ژ/گ/ک/ڌ/ی) or copying unrelated FE** forms from similar-looking Arabic letters.
+- **Correct rule:** For extended letters, verify the exact `ARABIC LETTER <X> <POSITION> FORM` code points (e.g., via Unicode names) and map them to the correct FB** forms:
+  - PEH: FB56–FB59
+  - TCHEH: FB7A–FB7D
+  - JEH: FB8A–FB8B (isolated/final)
+  - KEHEH: FB8E–FB91
+  - GAF: FB92–FB95
+  - DAHAL: FB84–FB85 (isolated/final)
+  - FARSI YEH: FBFC–FBFF

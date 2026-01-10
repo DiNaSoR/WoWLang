@@ -1,4 +1,4 @@
-﻿-- Arabic database of translated gossip texts
+﻿-- Japanese database of translated gossip texts
 -- for the addon WoWJP
 
 GS_lang = "JP";         -- arabic language

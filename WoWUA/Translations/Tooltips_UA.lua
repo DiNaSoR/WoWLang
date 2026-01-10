@@ -1,4 +1,4 @@
-﻿-- Turkish database of translated tooltips
+﻿-- Ukrainian database of translated tooltips
 -- for the addon WoW-UA
 
 ST_lang = "UA";         -- translation language

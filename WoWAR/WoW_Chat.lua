@@ -1,6 +1,5 @@
 ﻿-- Description: The addon supports chat for entering and displaying messages in Arabic.
--- Author: Platine [platine.wow@gmail.com]
--- Co-Author: Dragonarab[WoWAR]
+-- Authors: Platine, Dragonarab[DiNaSoR]
 -------------------------------------------------------------------------------------------------------
 
 local CH_on_debug = false;

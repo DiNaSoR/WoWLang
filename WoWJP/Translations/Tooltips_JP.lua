@@ -1,4 +1,4 @@
-﻿-- Arabic database of translated tooltips
+﻿-- Japanese database of translated tooltips
 -- for the addon WoWJP
 
 ST_lang = "JP";         -- translation language
