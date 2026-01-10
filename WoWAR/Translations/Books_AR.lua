@@ -1,4 +1,4 @@
-﻿-- Turkish database of translated books
+﻿-- Arabic database of translated books
 -- for the addon WoWinArabic-Books
 
 BT_lang = "AR";         -- translation language

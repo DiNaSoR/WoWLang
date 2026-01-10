@@ -1,0 +1,1361 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>WoWAR Arabic Localization Reshaper</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Fira+Mono:wght@400;500&display=swap");
+
+      :root {
+        --bg: #f6f0e6;
+        --ink: #1f1a14;
+        --muted: #6d6154;
+        --accent: #2f8c88;
+        --accent-2: #e07a5f;
+        --panel: #fff8ee;
+        --panel-border: #e4d7c6;
+        --good: #2f8c88;
+        --warn: #d97706;
+        --bad: #c24137;
+        --shadow: 0 18px 40px rgba(31, 26, 20, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Fraunces", "Times New Roman", serif;
+        color: var(--ink);
+        background: var(--bg);
+        min-height: 100vh;
+      }
+
+      .bg {
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(1200px 600px at 10% -10%, #f9d9c1 0%, transparent 60%),
+          radial-gradient(1200px 600px at 110% 10%, #c7e7e2 0%, transparent 55%),
+          linear-gradient(180deg, rgba(255, 248, 238, 0.7) 0%, rgba(246, 240, 230, 1) 70%);
+        z-index: -1;
+      }
+
+      .bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(31, 26, 20, 0.06) 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0.25;
+      }
+
+      .shell {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 48px 24px 72px;
+      }
+
+      .hero {
+        display: grid;
+        gap: 12px;
+        margin-bottom: 32px;
+        animation: rise 700ms ease-out both;
+      }
+
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        font-size: 0.75rem;
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 3vw + 1rem, 3rem);
+        margin: 0;
+      }
+
+      .lead {
+        color: var(--muted);
+        max-width: 70ch;
+        margin: 0;
+      }
+
+      .dropzone {
+        position: relative;
+        border: 2px dashed rgba(47, 140, 136, 0.45);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.7);
+        padding: 32px;
+        margin-bottom: 28px;
+        box-shadow: var(--shadow);
+        transition: border-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+      }
+
+      .dropzone.dragover {
+        border-color: var(--accent-2);
+        transform: translateY(-2px);
+        box-shadow: 0 24px 50px rgba(31, 26, 20, 0.16);
+      }
+
+      .dropzone input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .drop-content {
+        display: grid;
+        gap: 6px;
+        text-align: center;
+      }
+
+      .drop-title {
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin: 0;
+      }
+
+      .drop-sub {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+      .stat {
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        display: grid;
+        gap: 8px;
+      }
+
+      .stat-label {
+        color: var(--muted);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .stat-value {
+        font-size: 1.6rem;
+        font-weight: 600;
+      }
+
+      .controls {
+        display: grid;
+        gap: 16px;
+        margin-bottom: 28px;
+        background: rgba(255, 255, 255, 0.75);
+        padding: 20px;
+        border-radius: 20px;
+        border: 1px solid var(--panel-border);
+      }
+
+      .control-row {
+        display: grid;
+        gap: 16px;
+      }
+
+      .control-group {
+        display: grid;
+        gap: 8px;
+      }
+
+      label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+      }
+
+      .segmented {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .segmented button {
+        border: 1px solid transparent;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(47, 140, 136, 0.1);
+        color: var(--accent);
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 150ms ease, background 150ms ease, border-color 150ms ease;
+      }
+
+      .segmented button.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+
+      .segmented button:hover {
+        transform: translateY(-1px);
+      }
+
+      .controls input[type="text"] {
+        border-radius: 12px;
+        border: 1px solid var(--panel-border);
+        padding: 10px 12px;
+        font-family: "Fira Mono", "Courier New", monospace;
+        background: #fff;
+      }
+
+      .option-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 0.95rem;
+      }
+
+      .option-list label {
+        text-transform: none;
+        letter-spacing: normal;
+        color: var(--ink);
+        font-family: "Fira Mono", "Courier New", monospace;
+        font-size: 0.85rem;
+      }
+
+      .control-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      button {
+        border: none;
+        border-radius: 14px;
+        padding: 10px 16px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: "Fraunces", "Times New Roman", serif;
+        transition: transform 150ms ease, box-shadow 150ms ease;
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .primary {
+        background: var(--accent);
+        color: #fff;
+        box-shadow: 0 10px 20px rgba(47, 140, 136, 0.25);
+      }
+
+      .accent {
+        background: var(--accent-2);
+        color: #fff;
+        box-shadow: 0 10px 20px rgba(224, 122, 95, 0.25);
+      }
+
+      .secondary {
+        background: rgba(31, 26, 20, 0.08);
+        color: var(--ink);
+      }
+
+      .entries-list {
+        display: grid;
+        gap: 16px;
+      }
+
+      details.entry {
+        border-radius: 18px;
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        padding: 12px 16px;
+      }
+
+      details.entry[open] {
+        box-shadow: var(--shadow);
+      }
+
+      details.entry summary {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        list-style: none;
+      }
+
+      details.entry summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .badge {
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-weight: 700;
+        font-family: "Fira Mono", "Courier New", monospace;
+      }
+
+      .badge.unshaped {
+        background: rgba(196, 65, 55, 0.15);
+        color: var(--bad);
+      }
+
+      .badge.shaped {
+        background: rgba(47, 140, 136, 0.15);
+        color: var(--good);
+      }
+
+      .badge.mixed {
+        background: rgba(217, 119, 6, 0.15);
+        color: var(--warn);
+      }
+
+      .entry-line {
+        font-family: "Fira Mono", "Courier New", monospace;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+
+      .entry-snippet {
+        flex: 1;
+        font-family: "Fira Mono", "Courier New", monospace;
+        font-size: 0.85rem;
+        color: var(--ink);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .entry-body {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+        margin-top: 16px;
+      }
+
+      .entry-card {
+        display: grid;
+        gap: 8px;
+      }
+
+      .entry-card h4 {
+        margin: 0;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+      }
+
+      .preview {
+        background: #fff;
+        border: 1px solid var(--panel-border);
+        border-radius: 12px;
+        padding: 12px;
+        font-family: "Fira Mono", "Courier New", monospace;
+        font-size: 0.85rem;
+        white-space: pre-wrap;
+        direction: ltr;
+        unicode-bidi: bidi-override;
+      }
+
+      .entry-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 8px;
+      }
+
+      .foot {
+        margin-top: 36px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @media (max-width: 720px) {
+        .control-actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .segmented {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .segmented button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg"></div>
+    <main class="shell">
+      <header class="hero">
+        <div class="eyebrow">WoWAR Tools</div>
+        <h1>Arabic Localization Reshaper</h1>
+        <p class="lead">
+          Import WoW_Localization_AR.lua, detect shaped vs unshaped Arabic strings, reshape with one click,
+          and export the Lua file without breaking WoW codes, links, URLs, or file paths.
+        </p>
+      </header>
+
+      <section class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept=".lua">
+        <div class="drop-content">
+          <p class="drop-title">Drop WoW_Localization_AR.lua here</p>
+          <p class="drop-sub">or click to browse</p>
+        </div>
+      </section>
+
+      <section class="stats" id="stats">
+        <div class="stat">
+          <div class="stat-label">Arabic Strings</div>
+          <div class="stat-value" id="statArabic">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Unshaped</div>
+          <div class="stat-value" id="statUnshaped">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Shaped</div>
+          <div class="stat-value" id="statShaped">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Mixed</div>
+          <div class="stat-value" id="statMixed">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Modified</div>
+          <div class="stat-value" id="statModified">0</div>
+        </div>
+      </section>
+      <section class="controls">
+        <div class="control-row">
+          <div class="control-group">
+            <label>Filters</label>
+            <div class="segmented" id="filterButtons">
+              <button type="button" data-filter="unshaped" class="active">Unshaped</button>
+              <button type="button" data-filter="mixed">Mixed</button>
+              <button type="button" data-filter="shaped">Shaped</button>
+              <button type="button" data-filter="all">All</button>
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="searchInput">Search</label>
+            <input type="text" id="searchInput" placeholder="Find text">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="control-group">
+            <label>Options</label>
+            <div class="option-list">
+              <label><input type="checkbox" id="includeMixed"> Reshape mixed entries</label>
+              <label><input type="checkbox" id="mirrorBrackets" checked> Mirror brackets for WoW RTL</label>
+              <label><input type="checkbox" id="reverseLatin" checked> Keep Latin words (ID/NPC) LTR</label>
+            </div>
+          </div>
+          <div class="control-actions">
+            <button type="button" class="primary" id="reshapeAll">Apply Changes</button>
+            <button type="button" class="secondary" id="resetAll">Revert All</button>
+            <button type="button" class="accent" id="exportBtn">Export Lua</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="entries">
+        <div class="entries-list" id="entriesList"></div>
+      </section>
+
+      <section class="foot">
+        Reshapes Arabic without reversing line order, using WoWAR/WoW_Arabic_Reshaper.lua rules while keeping WoW codes, hyperlinks, URLs, and paths intact. Optional helpers mirror brackets and pre-flip Latin words so they render correctly after WoW reversal.
+      </section>
+    </main>
+
+    <template id="entryTemplate">
+      <details class="entry">
+        <summary>
+          <span class="badge"></span>
+          <span class="entry-line"></span>
+          <span class="entry-snippet"></span>
+        </summary>
+        <div class="entry-body">
+          <div class="entry-card">
+            <h4>Original</h4>
+            <pre class="preview original"></pre>
+            <div class="entry-actions">
+              <button type="button" class="secondary reset">Revert</button>
+            </div>
+          </div>
+          <div class="entry-card">
+            <h4>Reshaped Preview</h4>
+            <pre class="preview reshaped"></pre>
+            <div class="entry-actions">
+              <button type="button" class="primary apply">Use Reshaped</button>
+            </div>
+          </div>
+          <div class="entry-card">
+            <h4>WoW Preview (after reverse)</h4>
+            <pre class="preview wow"></pre>
+          </div>
+        </div>
+      </details>
+    </template>
+
+    <script>
+      "use strict";
+
+      const RULES_LIST = [
+        [0x0627, 0x0627, 0x0627, 0xFE8E, 0xFE8E],
+        [0x0622, 0xFE81, 0xFE81, 0xFE8E, 0xFE8E],
+        [0x0623, 0x0623, 0x0623, 0xFE84, 0xFE84],
+        [0x0625, 0x0625, 0x0625, 0xFE88, 0xFE88],
+        [0x0628, 0x0628, 0xFE91, 0xFE92, 0xFE90],
+        [0x062A, 0x062A, 0xFE97, 0xFE98, 0xFE96],
+        [0x062B, 0x062B, 0xFE9B, 0xFE9C, 0xFE9A],
+        [0x062C, 0x062C, 0xFE9F, 0xFEA0, 0xFE9E],
+        [0x062D, 0x062D, 0xFEA3, 0xFEA4, 0xFEA2],
+        [0x062E, 0x062E, 0xFEA7, 0xFEA8, 0xFEA6],
+        [0x062F, 0x062F, 0x062F, 0xFEAA, 0xFEAA],
+        [0x0630, 0x0630, 0x0630, 0xFEAC, 0xFEAC],
+        [0x0631, 0x0631, 0x0631, 0xFEAE, 0xFEAE],
+        [0x0632, 0x0632, 0x0632, 0xFEB0, 0xFEB0],
+        [0x0633, 0x0633, 0xFEB3, 0xFEB4, 0xFEB2],
+        [0x0634, 0x0634, 0xFEB7, 0xFEB8, 0xFEB6],
+        [0x0635, 0x0635, 0xFEBB, 0xFEBC, 0xFEBA],
+        [0x0636, 0x0636, 0xFEBF, 0xFEC0, 0xFEBE],
+        [0x0637, 0x0637, 0xFEC3, 0xFEC4, 0xFEC2],
+        [0x0638, 0x0638, 0xFEC7, 0xFEC8, 0xFEC6],
+        [0x0639, 0x0639, 0xFECB, 0xFECC, 0xFECA],
+        [0x063A, 0x063A, 0xFECF, 0xFED0, 0xFECE],
+        [0x0641, 0x0641, 0xFED3, 0xFED4, 0xFED2],
+        [0x0642, 0x0642, 0xFED7, 0xFED8, 0xFED6],
+        [0x0643, 0x0643, 0xFEDB, 0xFEDC, 0xFEDA],
+        [0x0644, 0x0644, 0xFEDF, 0xFEE0, 0xFEDE],
+        [0x0645, 0x0645, 0xFEE3, 0xFEE4, 0xFEE2],
+        [0x0646, 0x0646, 0xFEE7, 0xFEE8, 0xFEE6],
+        [0x064A, 0x064A, 0xFEF3, 0xFEF4, 0xFEF2],
+        [0x0626, 0x0626, 0xFE8B, 0xFE8C, 0xFE8A],
+        [0x0649, 0x0649, 0x0649, 0x0649, 0xFEF0],
+        [0x0648, 0x0648, 0x0648, 0xFEEE, 0xFEEE],
+        [0x0624, 0x0624, 0x0624, 0xFE86, 0xFE86],
+        [0x0647, 0xFEE9, 0xFEEB, 0xFEEC, 0xFEEA],
+        [0x0629, 0x0629, 0x0629, 0x0629, 0xFE94],
+        [0xFEFB, 0xFEFB, 0xFEFB, 0xFEFC, 0xFEFC],
+        [0xFEF5, 0xFEF5, 0xFEF5, 0xFEF6, 0xFEF6],
+        [0x0621, 0x0621, 0x0621, 0x0621, 0x0621],
+        [0x0640, 0x0640, 0x0640, 0x0640, 0x0640],
+        // Persian/Urdu extensions: correct presentation forms are in Arabic Presentation Forms-A (FB50–FDFF).
+        [0x067E, 0x067E, 0xFB58, 0xFB59, 0xFB57], // PEH
+        [0x0686, 0x0686, 0xFB7C, 0xFB7D, 0xFB7B], // TCHEH
+        [0x0698, 0x0698, 0x0698, 0xFB8B, 0xFB8B], // JEH (non-connecting): only final form is used
+        [0x06AF, 0x06AF, 0xFB94, 0xFB95, 0xFB93], // GAF
+        [0x06A9, 0x06A9, 0xFB90, 0xFB91, 0xFB8F], // KEHEH
+        [0x068C, 0x068C, 0x068C, 0xFB85, 0xFB85], // DAHAL (non-connecting): only final form is used
+        [0x06CC, 0x06CC, 0xFBFE, 0xFBFF, 0xFBFD], // FARSI YEH
+        [0x0681, 0x0681, 0x0681, 0x0681, 0x0681]
+      ];
+
+      const LIGATURE_LIST = [
+        [0x0644, 0x0627, 0xFEFB, 0xFEFB, 0xFEFC, 0xFEFC],
+        [0x0644, 0x0623, 0xFEF7, 0xFEF7, 0xFEF8, 0xFEF8],
+        [0x0644, 0x0625, 0xFEF9, 0xFEF9, 0xFEFA, 0xFEFA],
+        [0x0644, 0x0622, 0xFEF5, 0xFEF5, 0xFEF6, 0xFEF6]
+      ];
+      const DIACRITICS = new Set([
+        0x064B, 0x064C, 0x064D, 0x064E, 0x064F, 0x0650, 0x0651, 0x0652,
+        0xFE70, 0xFE72, 0xFE74, 0xFE76, 0xFE78, 0xFE7A, 0xFE7C, 0xFE7E,
+        0x0653, 0x0654, 0x0655, 0x0670
+      ]);
+
+      const DIACRITIC_PRESENTATION = {
+        0x064B: 0xFE70,
+        0x064C: 0xFE72,
+        0x064D: 0xFE74,
+        0x064E: 0xFE76,
+        0x064F: 0xFE78,
+        0x0650: 0xFE7A,
+        0x0651: 0xFE7C,
+        0x0652: 0xFE7E,
+        0xFE70: 0xFE70,
+        0xFE72: 0xFE72,
+        0xFE74: 0xFE74,
+        0xFE76: 0xFE76,
+        0xFE78: 0xFE78,
+        0xFE7A: 0xFE7A,
+        0xFE7C: 0xFE7C,
+        0xFE7E: 0xFE7E
+      };
+
+      const ARABIC_INDIC = new Set([
+        0x0660, 0x0661, 0x0662, 0x0663, 0x0664,
+        0x0665, 0x0666, 0x0667, 0x0668, 0x0669
+      ]);
+
+      const ARABIC_PUNCT = new Set([0x061F, 0x061B, 0x060C, 0x066A, 0x066B, 0x066C]);
+
+      const NON_CONNECTING = new Set([
+        0x0627, 0x0622, 0x0623, 0x0625, 0x062F, 0x0630, 0x0631, 0x0632,
+        0x0648, 0x0624, 0x0649, 0x0629, 0x0621, 0x0698
+        // Lam-Alef presentation ligatures connect to previous but NOT to the next letter.
+        ,0xFEF5, 0xFEF6, 0xFEF7, 0xFEF8, 0xFEF9, 0xFEFA, 0xFEFB, 0xFEFC
+      ]);
+
+      const RESHAPING_RULES = Object.create(null);
+      for (const [base, iso, init, mid, fin] of RULES_LIST) {
+        RESHAPING_RULES[base] = { isolated: iso, initial: init, middle: mid, final: fin };
+      }
+
+      const LIGATURE_RULES = Object.create(null);
+      for (const [first, second, iso, init, mid, fin] of LIGATURE_LIST) {
+        LIGATURE_RULES[ligKey(first, second)] = { isolated: iso, initial: init, middle: mid, final: fin };
+      }
+
+      const BASE_ARABIC_RE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
+      const PRESENTATION_RE = /[\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+      const PROTECTED_RE = /(\|H[^|]*?\|h.*?\|h|\|T[^|]*?\|t|\|A[^|]*?\|a|\|c[0-9A-Fa-f]{8}|\|cn[\w_]+:|\|r|\{[^}\s]+\}|https?:\/\/[^\s]+|www\.[^\s]+|(?:\.{1,2}\/|\/)[^\s"']+|[^\s"']*\\[^\s"']*)/g;
+
+      const state = {
+        fileName: "",
+        fileText: "",
+        segments: [],
+        entries: [],
+        filter: "unshaped",
+        search: "",
+        includeMixed: false,
+        mirrorBrackets: true,
+        reverseLatin: true,
+        usePresentationDiacritics: false
+      };
+
+      const ui = {
+        dropzone: document.getElementById("dropzone"),
+        fileInput: document.getElementById("fileInput"),
+        entriesList: document.getElementById("entriesList"),
+        reshapeAll: document.getElementById("reshapeAll"),
+        resetAll: document.getElementById("resetAll"),
+        exportBtn: document.getElementById("exportBtn"),
+        includeMixed: document.getElementById("includeMixed"),
+        mirrorBrackets: document.getElementById("mirrorBrackets"),
+        reverseLatin: document.getElementById("reverseLatin"),
+        searchInput: document.getElementById("searchInput"),
+        filterButtons: document.getElementById("filterButtons"),
+        statArabic: document.getElementById("statArabic"),
+        statUnshaped: document.getElementById("statUnshaped"),
+        statShaped: document.getElementById("statShaped"),
+        statMixed: document.getElementById("statMixed"),
+        statModified: document.getElementById("statModified"),
+        template: document.getElementById("entryTemplate")
+      };
+
+      ui.fileInput.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          loadFile(file);
+        }
+      });
+
+      ui.dropzone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        ui.dropzone.classList.add("dragover");
+      });
+
+      ui.dropzone.addEventListener("dragleave", () => {
+        ui.dropzone.classList.remove("dragover");
+      });
+
+      ui.dropzone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        ui.dropzone.classList.remove("dragover");
+        const file = event.dataTransfer.files[0];
+        if (file) {
+          loadFile(file);
+        }
+      });
+
+      ui.reshapeAll.addEventListener("click", () => {
+        applyReshapeToAll();
+      });
+
+      ui.resetAll.addEventListener("click", () => {
+        for (const entry of state.entries) {
+          revertEntry(entry);
+        }
+        render();
+      });
+
+      ui.exportBtn.addEventListener("click", () => {
+        exportLua();
+      });
+
+      ui.includeMixed.addEventListener("change", () => {
+        state.includeMixed = ui.includeMixed.checked;
+      });
+
+      ui.mirrorBrackets.addEventListener("change", () => {
+        state.mirrorBrackets = ui.mirrorBrackets.checked;
+        render();
+      });
+
+      ui.reverseLatin.addEventListener("change", () => {
+        state.reverseLatin = ui.reverseLatin.checked;
+        render();
+      });
+
+      ui.searchInput.addEventListener("input", (event) => {
+        state.search = event.target.value.trim();
+        render();
+      });
+
+      ui.filterButtons.addEventListener("click", (event) => {
+        if (event.target.tagName !== "BUTTON") return;
+        const filter = event.target.dataset.filter;
+        if (!filter) return;
+        state.filter = filter;
+        for (const button of ui.filterButtons.querySelectorAll("button")) {
+          button.classList.toggle("active", button.dataset.filter === filter);
+        }
+        render();
+      });
+      function loadFile(file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const text = stripBom(reader.result || "");
+          state.fileName = file.name || "WoW_Localization_AR.lua";
+          state.fileText = text;
+          state.segments = parseLua(text);
+          state.entries = buildEntries(state.segments);
+          render();
+        };
+        reader.readAsText(file, "utf-8");
+      }
+
+      function stripBom(text) {
+        if (text.charCodeAt(0) === 0xFEFF) {
+          return text.slice(1);
+        }
+        return text;
+      }
+
+      function parseLua(text) {
+        const segments = [];
+        let buffer = "";
+        let line = 1;
+        let col = 1;
+        let i = 0;
+        let stateMode = "code";
+        let quote = "";
+        let raw = "";
+        let decoded = "";
+        let startLine = 1;
+        let startCol = 1;
+
+        while (i < text.length) {
+          const ch = text[i];
+          const next = text[i + 1];
+
+          if (stateMode === "code") {
+            if (ch === "-" && next === "-") {
+              const third = text[i + 2];
+              const fourth = text[i + 3];
+              if (third === "[" && fourth === "[") {
+                stateMode = "commentBlock";
+                buffer += "--[[";
+                i += 4;
+                col += 4;
+                continue;
+              }
+              stateMode = "commentLine";
+              buffer += "--";
+              i += 2;
+              col += 2;
+              continue;
+            }
+
+            if (ch === "\"" || ch === "'") {
+              if (buffer) {
+                segments.push({ type: "text", value: buffer });
+                buffer = "";
+              }
+              stateMode = "string";
+              quote = ch;
+              raw = "";
+              decoded = "";
+              startLine = line;
+              startCol = col;
+              i += 1;
+              col += 1;
+              continue;
+            }
+
+            buffer += ch;
+            if (ch === "\n") {
+              line += 1;
+              col = 1;
+            } else {
+              col += 1;
+            }
+            i += 1;
+          } else if (stateMode === "commentLine") {
+            buffer += ch;
+            i += 1;
+            if (ch === "\n") {
+              line += 1;
+              col = 1;
+              stateMode = "code";
+            } else {
+              col += 1;
+            }
+          } else if (stateMode === "commentBlock") {
+            buffer += ch;
+            i += 1;
+            if (ch === "\n") {
+              line += 1;
+              col = 1;
+            } else {
+              col += 1;
+            }
+            if (ch === "]" && next === "]") {
+              buffer += "]";
+              i += 1;
+              col += 1;
+              stateMode = "code";
+            }
+          } else if (stateMode === "string") {
+            if (ch === "\\") {
+              const esc = text[i + 1] || "";
+              raw += ch + esc;
+              decoded += decodeEscape(esc);
+              i += 2;
+              if (esc === "\n") {
+                line += 1;
+                col = 1;
+              } else {
+                col += 2;
+              }
+              continue;
+            }
+
+            if (ch === quote) {
+              segments.push({
+                type: "string",
+                quote,
+                rawOriginal: raw,
+                decodedOriginal: decoded,
+                rawCurrent: null,
+                decodedCurrent: decoded,
+                line: startLine,
+                col: startCol
+              });
+              stateMode = "code";
+              quote = "";
+              raw = "";
+              decoded = "";
+              i += 1;
+              col += 1;
+              continue;
+            }
+
+            raw += ch;
+            decoded += ch;
+            if (ch === "\n") {
+              line += 1;
+              col = 1;
+            } else {
+              col += 1;
+            }
+            i += 1;
+          }
+        }
+
+        if (buffer) {
+          segments.push({ type: "text", value: buffer });
+        }
+        return segments;
+      }
+
+      function decodeEscape(ch) {
+        if (ch === "n") return "\n";
+        if (ch === "r") return "\r";
+        if (ch === "t") return "\t";
+        if (ch === "\\") return "\\";
+        if (ch === "\"") return "\"";
+        if (ch === "'") return "'";
+        return ch;
+      }
+
+      function encodeLuaString(text, quote) {
+        let out = "";
+        for (const ch of text) {
+          if (ch === "\n") {
+            out += "\\n";
+          } else if (ch === "\r") {
+            out += "\\r";
+          } else if (ch === "\t") {
+            out += "\\t";
+          } else if (ch === "\\") {
+            out += "\\\\";
+          } else if (ch === quote) {
+            out += "\\" + quote;
+          } else {
+            out += ch;
+          }
+        }
+        return out;
+      }
+
+      function buildEntries(segments) {
+        const entries = [];
+        let id = 1;
+        segments.forEach((segment, index) => {
+          if (segment.type !== "string") return;
+          const analysis = analyzeArabic(segment.decodedOriginal);
+          if (!analysis.hasArabic) return;
+          entries.push({
+            id: id++,
+            segmentIndex: index,
+            status: analysis.status,
+            hasArabic: analysis.hasArabic
+          });
+        });
+        return entries;
+      }
+
+      function analyzeArabic(text) {
+        const hasBase = BASE_ARABIC_RE.test(text);
+        const hasPresentation = PRESENTATION_RE.test(text);
+        const hasArabic = hasBase || hasPresentation;
+        let status = "no-arabic";
+        if (hasArabic) {
+          if (hasBase && hasPresentation) status = "mixed";
+          else if (hasPresentation) status = "shaped";
+          else status = "unshaped";
+        }
+        return { hasArabic, hasBase, hasPresentation, status };
+      }
+
+      function render() {
+        updateStats();
+        renderEntries();
+      }
+
+      function updateStats() {
+        let arabicCount = 0;
+        let unshaped = 0;
+        let shaped = 0;
+        let mixed = 0;
+        let modified = 0;
+
+        for (const entry of state.entries) {
+          const seg = state.segments[entry.segmentIndex];
+          const analysis = analyzeArabic(seg.decodedCurrent);
+          arabicCount += 1;
+          if (analysis.status === "unshaped") unshaped += 1;
+          if (analysis.status === "shaped") shaped += 1;
+          if (analysis.status === "mixed") mixed += 1;
+          if (seg.rawCurrent !== null) modified += 1;
+        }
+
+        ui.statArabic.textContent = String(arabicCount);
+        ui.statUnshaped.textContent = String(unshaped);
+        ui.statShaped.textContent = String(shaped);
+        ui.statMixed.textContent = String(mixed);
+        ui.statModified.textContent = String(modified);
+
+        const disabled = state.entries.length === 0;
+        ui.reshapeAll.disabled = disabled;
+        ui.resetAll.disabled = disabled;
+        ui.exportBtn.disabled = disabled;
+      }
+
+      function renderEntries() {
+        ui.entriesList.innerHTML = "";
+        const filtered = filterEntries();
+        if (filtered.length === 0) {
+          const empty = document.createElement("div");
+          empty.className = "stat";
+          empty.textContent = "No entries match the current filter.";
+          ui.entriesList.appendChild(empty);
+          return;
+        }
+
+        for (const entry of filtered) {
+          const seg = state.segments[entry.segmentIndex];
+          const analysis = analyzeArabic(seg.decodedCurrent);
+          const node = ui.template.content.cloneNode(true);
+          const badge = node.querySelector(".badge");
+          const line = node.querySelector(".entry-line");
+          const snippet = node.querySelector(".entry-snippet");
+          const originalPreview = node.querySelector(".preview.original");
+          const reshapedPreview = node.querySelector(".preview.reshaped");
+          const wowPreviewNode = node.querySelector(".preview.wow");
+          const applyButton = node.querySelector(".apply");
+          const resetButton = node.querySelector(".reset");
+
+          badge.textContent = analysis.status.replace("-", " ");
+          badge.classList.add(analysis.status);
+          line.textContent = "Line " + seg.line;
+          snippet.textContent = makeSnippet(seg.decodedCurrent);
+
+          const candidate = reshapeDecoded(seg.decodedOriginal);
+          originalPreview.textContent = seg.decodedOriginal;
+          reshapedPreview.textContent = candidate;
+          wowPreviewNode.textContent = wowPreview(candidate);
+
+          applyButton.disabled = candidate === seg.decodedCurrent;
+          applyButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            applyReshape(entry);
+            render();
+          });
+
+          resetButton.disabled = seg.rawCurrent === null;
+          resetButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            revertEntry(entry);
+            render();
+          });
+
+          ui.entriesList.appendChild(node);
+        }
+      }
+
+      function filterEntries() {
+        const search = state.search.toLowerCase();
+        return state.entries.filter((entry) => {
+          const seg = state.segments[entry.segmentIndex];
+          const analysis = analyzeArabic(seg.decodedCurrent);
+
+          if (state.filter !== "all" && analysis.status !== state.filter) {
+            return false;
+          }
+
+          if (search) {
+            const haystack = seg.decodedCurrent.toLowerCase();
+            if (!haystack.includes(search)) return false;
+          }
+
+          return true;
+        });
+      }
+      function applyReshapeToAll() {
+        const applyToAll = state.mirrorBrackets || state.reverseLatin;
+        for (const entry of state.entries) {
+          const seg = state.segments[entry.segmentIndex];
+          const analysis = analyzeArabic(seg.decodedCurrent);
+          if (applyToAll || analysis.status === "unshaped" || (state.includeMixed && analysis.status === "mixed")) {
+            applyReshape(entry);
+          }
+        }
+        render();
+      }
+
+      function applyReshape(entry) {
+        const seg = state.segments[entry.segmentIndex];
+        const reshaped = reshapeDecoded(seg.decodedOriginal);
+        if (reshaped === seg.decodedCurrent) return;
+        seg.decodedCurrent = reshaped;
+        seg.rawCurrent = encodeLuaString(reshaped, seg.quote);
+      }
+
+      function revertEntry(entry) {
+        const seg = state.segments[entry.segmentIndex];
+        seg.decodedCurrent = seg.decodedOriginal;
+        seg.rawCurrent = null;
+      }
+
+      function reshapeDecoded(text) {
+        const lines = text.split("\n");
+        const reshapedLines = lines.map((line) => reshapeLine(line));
+        return reshapedLines.join("\n");
+      }
+
+      function wowPreview(text) {
+        const lines = text.split("\n");
+        const previewLines = lines.map((line) => wowPreviewLine(line));
+        return previewLines.join("\n");
+      }
+
+      function wowPreviewLine(line) {
+        const tokens = tokenizeProtected(line);
+        const out = [];
+        for (let i = tokens.length - 1; i >= 0; i -= 1) {
+          const token = tokens[i];
+          if (token.type === "protected") {
+            out.push(token.value);
+          } else {
+            out.push(Array.from(token.value).reverse().join(""));
+          }
+        }
+        return out.join("");
+      }
+
+      function reshapeLine(line) {
+        const tokens = tokenizeProtected(line);
+        const out = tokens.map((token) => {
+          if (token.type === "protected") {
+            return token.value;
+          }
+          return postProcessToken(reshapeOnly(token.value));
+        });
+        return out.join("");
+      }
+
+      function tokenizeProtected(line) {
+        const tokens = [];
+        let lastIndex = 0;
+        let match;
+        PROTECTED_RE.lastIndex = 0;
+        while ((match = PROTECTED_RE.exec(line)) !== null) {
+          const start = match.index;
+          const value = match[0];
+          if (start > lastIndex) {
+            tokens.push({ type: "text", value: line.slice(lastIndex, start) });
+          }
+          tokens.push({ type: shouldProtectToken(value) ? "protected" : "text", value });
+          lastIndex = start + value.length;
+        }
+        if (lastIndex < line.length) {
+          tokens.push({ type: "text", value: line.slice(lastIndex) });
+        }
+        return tokens;
+      }
+
+      const BRACKET_MIRROR = Object.freeze({
+        "(": ")",
+        ")": "(",
+        "[": "]",
+        "]": "[",
+        "<": ">",
+        ">": "<",
+        "«": "»",
+        "»": "«",
+        "‹": "›",
+        "›": "‹"
+      });
+
+      function postProcessToken(text) {
+        let out = text;
+        if (state.mirrorBrackets) {
+          out = out.replace(/[()\[\]<>«»‹›]/g, (ch) => BRACKET_MIRROR[ch] || ch);
+        }
+        if (state.reverseLatin) {
+          out = out.replace(/[A-Za-z]+/g, (run) => Array.from(run).reverse().join(""));
+        }
+        return out;
+      }
+
+      function shouldProtectToken(value) {
+        if (!value) return false;
+        if (value.startsWith("{") && value.endsWith("}")) return true;
+        if (value.startsWith("|")) return true;
+
+        const lower = value.toLowerCase();
+        if (lower.startsWith("http://") || lower.startsWith("https://") || lower.startsWith("www.")) {
+          return true;
+        }
+
+        const hasArabic = BASE_ARABIC_RE.test(value) || PRESENTATION_RE.test(value);
+        if (!hasArabic) return true;
+
+        // If the match contains Arabic, only protect it when it clearly looks like a path.
+        if (/^(?:[A-Za-z]:\\|\\\\)/.test(value)) return true;
+        if (/(?:^|[\\/])[^\\/]+\\.[A-Za-z0-9]{1,4}$/.test(value)) return true;
+        return false;
+      }
+
+      function reshapeOnly(text) {
+        if (!text) return "";
+        const chars = Array.from(text);
+        const outParts = [];
+        let prevChar = null;
+        let prevConnectsRight = false;
+        let i = 0;
+
+        while (i < chars.length) {
+          const char = chars[i];
+          const cp = char.codePointAt(0);
+
+          const attached = [];
+          let nextPos = i + 1;
+          while (nextPos < chars.length && isDiacritic(chars[nextPos])) {
+            attached.push(chars[nextPos].codePointAt(0));
+            nextPos += 1;
+          }
+          i = nextPos;
+
+          if (isDiacriticChar(cp)) {
+            outParts.push(codePointToChar(applyDiacritic(cp)));
+            continue;
+          }
+
+          let lookPos = i;
+          let nextCp = null;
+          while (lookPos < chars.length) {
+            const candidate = chars[lookPos];
+            if (!isDiacritic(candidate)) {
+              nextCp = candidate.codePointAt(0);
+              break;
+            }
+            lookPos += 1;
+          }
+
+          let ligatureApplied = false;
+          let ligatureForm = null;
+          if (nextCp !== null) {
+            const key = ligKey(cp, nextCp);
+            if (LIGATURE_RULES[key]) {
+              ligatureApplied = true;
+              ligatureForm = LIGATURE_RULES[key];
+              i = lookPos + 1;
+              while (i < chars.length && isDiacritic(chars[i])) {
+                i += 1;
+              }
+
+              lookPos = i;
+              nextCp = null;
+              while (lookPos < chars.length) {
+                const candidate = chars[lookPos];
+                if (!isDiacritic(candidate)) {
+                  nextCp = candidate.codePointAt(0);
+                  break;
+                }
+                lookPos += 1;
+              }
+            }
+          }
+
+          let isCurrentSeparator = isWordSeparator(cp);
+          const isNextSeparator = nextCp === null ? true : isWordSeparator(nextCp);
+          const isCurrentArabic = ligatureApplied || Boolean(RESHAPING_RULES[cp]);
+          if (!isCurrentSeparator && !isCurrentArabic) {
+            isCurrentSeparator = true;
+          }
+
+          if (isCurrentSeparator) {
+            outParts.push(codePointToChar(cp));
+            prevChar = null;
+            prevConnectsRight = false;
+            continue;
+          }
+
+          const connectedFromLeft = prevChar !== null && prevConnectsRight;
+          let currentConnectsRight = false;
+          if (ligatureApplied) {
+            currentConnectsRight = false;
+          } else if (isNonConnecting(cp)) {
+            currentConnectsRight = false;
+          } else if (!isNextSeparator && nextCp !== null && RESHAPING_RULES[nextCp]) {
+            currentConnectsRight = true;
+          }
+
+          let position = "isolated";
+          if (connectedFromLeft && currentConnectsRight) position = "middle";
+          else if (connectedFromLeft && !currentConnectsRight) position = "final";
+          else if (!connectedFromLeft && currentConnectsRight) position = "initial";
+
+          let outputCp = cp;
+          if (ligatureApplied && ligatureForm) {
+            outputCp = ligatureForm[position];
+          } else {
+            const rules = RESHAPING_RULES[cp];
+            if (rules) outputCp = rules[position];
+          }
+
+          let output = codePointToChar(outputCp);
+          for (const diac of attached) {
+            output += codePointToChar(applyDiacritic(diac));
+          }
+
+          outParts.push(output);
+          prevChar = cp;
+          prevConnectsRight = currentConnectsRight;
+        }
+
+        return outParts.join("");
+      }
+
+      function isDiacritic(ch) {
+        return DIACRITICS.has(ch.codePointAt(0));
+      }
+
+      function isDiacriticChar(cp) {
+        return DIACRITICS.has(cp);
+      }
+
+      function applyDiacritic(cp) {
+        if (!state.usePresentationDiacritics) return cp;
+        return DIACRITIC_PRESENTATION[cp] || cp;
+      }
+
+      function isNonConnecting(cp) {
+        return NON_CONNECTING.has(cp);
+      }
+
+      function isWordSeparator(cp) {
+        if (cp === 0x58) return true;
+        if (cp === 0x20 || cp === 0x0A || cp === 0x0D || cp === 0x09) return true;
+        if (cp === 0x21 || cp === 0x2C || cp === 0x2E || cp === 0x3A || cp === 0x3B || cp === 0x3F || cp === 0x25) return true;
+        if (cp >= 0x30 && cp <= 0x39) return true;
+        if (cp === 0x0621) return true;
+        if (ARABIC_PUNCT.has(cp)) return true;
+        if (ARABIC_INDIC.has(cp)) return true;
+        return false;
+      }
+
+      function ligKey(first, second) {
+        return hexKey(first) + "_" + hexKey(second);
+      }
+
+      function hexKey(cp) {
+        return "0x" + cp.toString(16).toUpperCase().padStart(4, "0");
+      }
+
+      function codePointToChar(cp) {
+        return String.fromCodePoint(cp);
+      }
+
+      function makeSnippet(text) {
+        const cleaned = text.replace(/\n/g, "\\n");
+        if (cleaned.length <= 90) return cleaned;
+        return cleaned.slice(0, 90) + "...";
+      }
+
+      function exportLua() {
+        const output = state.segments.map((segment) => {
+          if (segment.type === "text") return segment.value;
+          const raw = segment.rawCurrent !== null ? segment.rawCurrent : segment.rawOriginal;
+          return segment.quote + raw + segment.quote;
+        }).join("");
+
+        const blob = new Blob([output], { type: "text/plain;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = state.fileName || "WoW_Localization_AR.lua";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(link.href);
+      }
+    </script>
+  </body>
+</html>

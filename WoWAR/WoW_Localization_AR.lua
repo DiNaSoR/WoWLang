@@ -1,6 +1,5 @@
 -- Description: Texts in the selected localization language
--- Author: Platine [platine.wow@gmail.com]
--- Co-Author: Dragonarab[WoWAR], Hakan YILMAZ[WoWTR]
+-- Authors: Platine, Dragonarab[DiNaSoR]
 -------------------------------------------------------------------------------------------------------
 
 WoWTR_Localization = {
@@ -12,7 +11,7 @@ WoWTR_Localization = {
    addonIconDesc = "ﺍﻧﻘﺮ , ﻟﻔﺘﺢ ﻗﺎﺋﻤﺔ ﺍﻹﻋﺪﺍﺩﺍﺕ.", -- Click to open the settings menu
    optionName = "WoWAR - Options", -- WoWAR - options
    optionTitle = "ﺇﺿﺎﻓﺔ ﻭﺍﻭ ﺑﺎﻟﻌﺮﺑﻲ", -- WoWAR Patch
-   optionTitleAR = "ﻣﻠﺤﻖ RAWoW ﺑﺎﻟﻠﻐﺔ ﺍﻟﻌﺮﺑﻴﺔ، baranogarD & enitalP، )C( 5202-3202", -- Main title of addon in Arabic
+   optionTitleAR = "ﻣﻠﺤﻖ RAWoW ﺑﺎﻟﻠﻐﺔ ﺍﻟﻌﺮﺑﻴﺔ، baranogarD & enitalP، (C) 5202-3202", -- Main title of addon in Arabic
    addressWWW = "https://www.WoWAR.co", -- address of project page
    addressDiscord = "https://discord.gg/uW5NJ6y", -- address of discord page
    addressTwitch = "", -- address of Twitch page
@@ -56,13 +55,13 @@ WoWTR_Localization = {
    resetButton1Opis = "ﻣﺴﺢ ﺍﻟﻨﺼﻮﺹ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ ﺍﻟﻤﺤﻔﻮﻇﺔ", -- Clear saved untranslated text (as a hint)
    resetButton1OpisDESC = "ﺳﻴﺘﻢ ﺣﺬﻑ ﺟﻤﻴﻊ ﺍﻟﺒﻴﺎﻧﺎﺕ ﺍﻟﻤﺤﻔﻮﻇﺔ ﻓﻲ ﺍﻟﻠﻌﺒﺔ", -- Clear saved untranslated texts (as a hint)
    resetButton2Opis = "ﺇﻋﺎﺩﺓ ﺍﻹﺿﺎﻓﺔ ﺇﻟﻰ ﺇﻋﺪﺍﺩﺍﺗﻬﺎ ﺍﻻﻓﺘﺮﺍﺿﻴﺔ", -- Restore the extension to its default settings (as a tip)
-   resetButton2OpisDESC = "ﺳﻴﺘﻢ ﺇﻋﺎﺩﺓ ﺇﻋﺪﺍﺩﺍﺕ ﺍﻹﺿﺎﻓﺔ ﺇﻟﻰ ﺍﻟﻮﺿﻊ ﺍﻻﻓﺘﺮﺍﺿﻲ \n)ﻭﺳﻴﺘﻢ ﺇﻋﺎﺩﺓ ﺗﺤﻤﻴﻞ ﺍﻟﻮﺍﺟﻬﺔ(",
+   resetButton2OpisDESC = "ﺳﻴﺘﻢ ﺇﻋﺎﺩﺓ ﺇﻋﺪﺍﺩﺍﺕ ﺍﻹﺿﺎﻓﺔ ﺇﻟﻰ ﺍﻟﻮﺿﻊ ﺍﻻﻓﺘﺮﺍﺿﻲ \n(ﻭﺳﻴﺘﻢ ﺇﻋﺎﺩﺓ ﺗﺤﻤﻴﻞ ﺍﻟﻮﺍﺟﻬﺔ)",
    resultButton1 = "ﺗﻢ ﻣﺴﺢ ﺍﻟﻨﺼﻮﺹ ﺍﻟﻤﺨﺰﻧﺔ", -- Saved texts have been erased
    confirmationHeader = "ﺗﺄﻛﻴﺪ", -- Confirmation
    confirmationText1 = "ﻫﻞ ﺗﺮﻏﺐ ﻓﻲ ﻣﺴﺢ ﺟﻤﻴﻊ ﺍﻟﺴﺠﻼﺕ ﺍﻟﻤﺤﻔﻮﻇﺔ؟", -- Do you want to clear all saved untranslated texts?
-   confirmationText2 = "ﻫﻞ ﺗﺮﻏﺐ ﻓﻲ ﺇﻋﺎﺩﺓ ﺗﺤﻤﻴﻞ ﺍﻹﺿﺎﻓﺔ ﺇﻟﻰ ﺇﻋﺪﺍﺩﺍﺗﻬﺎ ﺍﻻﻓﺘﺮﺍﺿﻴﺔ؟\n(ﺳﻴﺘﻢ ﺇﻋﺎﺩﺓ ﺗﺤﻤﻴﻞ ﺍﻟﻮﺍﺟﻬﺔ)", -- Do you want to restore the addon's default settings?
+   confirmationText2 = "ﻫﻞ ﺗﺮﻏﺐ ﻓﻲ ﺇﻋﺎﺩﺓ ﺗﺤﻤﻴﻞ ﺍﻹﺿﺎﻓﺔ ﺇﻟﻰ ﺇﻋﺪﺍﺩﺍﺗﻬﺎ ﺍﻻﻓﺘﺮﺍﺿﻴﺔ؟\n)ﺳﻴﺘﻢ ﺇﻋﺎﺩﺓ ﺗﺤﻤﻴﻞ ﺍﻟﻮﺍﺟﻬﺔ(", -- Do you want to restore the addon's default settings?
    moveFrameUpDown = "ﺣﺮﻙ ﺍﻟﻨﺎﻓﺬﺓ ﻷﻋﻠﻰ ﺃﻭ ﻷﺳﻔﻞ", -- Move the window up or down
-   newVersionAvailable = "إصدار جديد من الوظيفة الإضافية متاح:", -- new version of addon is available
+   newVersionAvailable = "إﺻﺪار ﺟﺪﻳﺪ ﻣﻦ اﻟﻮﻇﻴﻔﺔ اﻹﺿﺎﻓﻴﺔ ﻣﺘﺎح:", -- new version of addon is available
 };
 
 ---------------------------------------------------------------------------------------------------------
@@ -77,6 +76,10 @@ QTR_Messages = {
    completion        = "ﺇﻛﻤﺎﻝ", -- Completion
    translator        = "ﻣﺘﺮﺟﻢ", -- Translator
    rewards           = "اﻟﻤﻜﺎﻓﺌﺎت", -- Rewards
+   -- Questline reward headers (QuestMapFrame rewards pane)
+   -- NOTE: Kept as normal Arabic text; we shape/reverse using AS_UTF8reverseRS in code.
+   questline_unlocking    = "ﺳﻠﺴﻠﺔ ﻫﺬﻩ اﻟﻤﻬﻤﺔ ﺟﺰء ﻣﻦ ﻓﺘﺢ:", -- This quest line is part of unlocking:
+   questline_rewards_end  = "ﻧﻬﺎﻳﺔ ﺳﻠﺴﻠﺔ ﻫﺬﻩ اﻟﻤﻬﻤﺔ ﺗﻜﺎﻓﺊ:", -- The end of this quest line rewards:
    experience        = "ﺍﻟﺨﺒﺮﺓ:", -- Experience
    reqmoney          = "ﺍﻟﻤﺎﻝ ﺍﻟﻤﻄﻠﻮﺏ", -- Required money
    reqitems          = "اﻟﻌﻨﺎﺻﺮ اﻟﻤﻄﻠﻮﺑﺔ", -- Required items
@@ -106,87 +109,125 @@ QTR_Messages = {
 
 WoWTR_Config_Interface = {
    showMinimapIcon = "ﻋﺮﺽ ﺭﻣﺰ ﺇﻋﺪﺍﺩﺍﺕ ﺍﻹﺿﺎﻓﺔ ﺑﺠﺎﻧﺐ ﺍﻟﺨﺮﻳﻄﺔ ﺍﻟﻤﺼﻐﺮﺓ",
-   showMinimapIconDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﻴﻈﻬﺮ ﺭﻣﺰ ﺇﻋﺪﺍﺩﺍﺕ ﺍﻹﺿﺎﻓﺔ ﺑﺠﻮﺍﺭ ﺍﻟﺨﺮﻳﻄﺔ ﺍﻟﻤﺼﻐﺮﺓ.",
+   showMinimapIconDESC = "ﻣﻠﺨﺺ: ﻳﻈﻬﺮ أﻳﻘﻮﻧﺔ اﻹﺿﺎﻓﺔ ﺑﺠﺎﻧﺐ اﻟﺨﺮﻳﻄﺔ اﻟﻤﺼﻐﺮة.\nﻧﺼﻴﺤﺔ: اﺿﻐﻂ ﻋﻠﻰ اﻷﻳﻘﻮﻧﺔ ﻟﻔﺘﺢ اﻹﻋﺪادات ﺑﺴﺮﻋﺔ.",
+   minimap = "اﻟﺨﺮﻳﻄﺔ ﺍﻟﻤﺼﻐﺮﺓ",
+
+   -- ControlCenter (Plumber-style settings panel)
+   ControlCenter_Modules = "اﻟﻮﺣﺪات",
+   ControlCenter_Release_Notes = "ﻣﺬﻛﺮات اﻹﺻﺪار",
+   ControlCenter_Sort_By = "ﺗﺮﺗﻴﺐ ﺣﺴﺐ",
+   ControlCenter_Sort_Alphabet = "ﺃﺑﺠﺪﻳﺎ",
+   ControlCenter_Sort_Date = "ﺗﺎرﻳﺦ اﻹﺿﺎﻓﺔ",
+   ControlCenter_NoSearchResults = "ﻻ ﺗﻮﺟﺪ ﻧﺘﺎﺋﺞ",
+   ControlCenter_Version = "اﻹﺻﺪار",
+
+   ControlCenter_Category_General = "ﻋﺎم",
+   ControlCenter_Category_Tooltips = "ﺗﻠﻤﻴﺤﺎت",
+   ControlCenter_Category_Bubbles = "ﻓﻘﺎﻋﺎت",
+   ControlCenter_Category_Movies = "ﻣﻘﺎﻃﻊ",
+   ControlCenter_Category_Books = "ﻛﺘﺐ",
+   ControlCenter_Category_Chat = "اﻟﺪﺭﺩﺷﺔ",
+   ControlCenter_Category_About = "ﺣﻮل",
+
+   ControlCenter_About_Title = "ﺣﻮل",
+   ControlCenter_About_Desc = "إﻋﺪادات وﻣﻌﻠﻮﻣﺎت WoWLang / WoWAR",
+
+   -- ControlCenter - UI target names / misc
+   ControlCenter_UI_GameMenu = "ﻗﺎﺋﻤﺔ اﻟﻠﻌﺒﺔ",
+   ControlCenter_UI_CharacterInfo = "ﻣﻌﻠﻮﻣﺎت اﻟﺸﺨﺼﻴﺔ",
+   ControlCenter_UI_GroupFinder = "اﻟﺒﺎﺣﺚ ﻋﻦ ﻣﺠﻤﻮﻋﺔ",
+   ControlCenter_UI_Collections = "اﻟﻤﺠﻤﻮﻋﺎت",
+   ControlCenter_UI_AdventureGuide = "ﺩﻟﻴﻞ اﻟﻤﻐﺎﻣﺮ",
+   ControlCenter_UI_Friends = "اﻷﺻﺪﻗﺎء",
+   ControlCenter_UI_Professions = "اﻟﻤﻬﻦ",
+   ControlCenter_UI_MiscUI = "ﻭﺍﺟﻬﺔ ﻣﺘﻨﻮﻋﺔ",
+   ControlCenter_UI_TalentsUI = "ﻭﺍﺟﻬﺔ اﻟﻤﻮاﻫﺐ",
+   ControlCenter_UI_TalentsUI_DESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ واﺟﻬﺔ اﻟﻤﻮاﻫﺐ.\nﻧﺼﻴﺤﺔ: اﻓﺘﺢ اﻟﻤﻮاﻫﺐ ﻣﺮة ﺛﺎﻧﻴﺔ إذا ﻟﻢ ﺗﺘﺤﺪث اﻟﺘﺮﺟﻤﺔ.",
+
+   ControlCenter_ShowID = "ﻋﺮﺽ اﻟﻤﻌﺮﻑ",
+   ControlCenter_ShowHash = "ﻋﺮﺽ اﻟﺘﺠﺰﺋﺔ",
+   ControlCenter_HideSellPrice = "إﺧﻔﺎء ﺳﻌﺮ اﻟﺒﻴﻊ",
 
    titleTab1 = "ﺍﻟﻤﻬﺎﻡ",
    generalMainHeaderQS = "ﺗﺮﺟﻤﺎﺕ ﺍﻟﻤﻬﺎﻡ - stseuQ",
    activateQuestsTranslations = "ﺗﻔﻌﻴﻞ ﺗﺮﺟﻤﺎﺕ ﺍﻟﻤﻬﺎﻡ",
-   activateQuestsTranslationsDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﺳﺘﻈﻬﺮ ﺍﻟﺘﺮﺟﻤﺎﺕ ﺑﺎﻟﻠﻐﺔ ﺍﻷﺻﻠﻴﺔ",
+   activateQuestsTranslationsDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﻧﺼﻮص اﻟﻤﻬﺎم واﻟﺤﻮار إﻟﻰ اﻟﻌﺮﺑﻴﺔ.\nﻧﺼﻴﺤﺔ: إذا وﺟﺪت ﻧﺺ ﻏﻴﺮ ﻣﺘﺮﺟﻢ ﻓﻌّﻞ ﺧﻴﺎر اﻟﺤﻔﻆ ﻟﻤﺴﺎﻋﺪﺗﻨﺎ.",
    translateQuestTitles = "ﻋﺮﺽ ﻋﻨﺎﻭﻳﻦ ﺍﻟﻤﻬﺎﻡ ﺑﺎﻟﻌﺮﺑﻴﺔ",
-   translateQuestTitlesDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﺳﺘﻈﻬﺮ ﺍﻟﻌﻨﺎﻭﻳﻦ ﻓﻘﻂ ﺑﺎﻟﻠﻐﺔ ﺍﻷﺻﻠﻴﺔ",
+   translateQuestTitlesDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﻋﻨﺎوﻳﻦ اﻟﻤﻬﺎم ﻓﻘﻂ.\nﻧﺼﻴﺤﺔ: أوﻗﻔﻪ إذا ﺗﺮﻳﺪ اﻟﻌﻨﻮان اﻷﺻﻠﻲ.",
    translateGossipTexts = "ﻋﺮﺽ ﻧﺼﻮﺹ ﺍﻟﺤﻮﺍﺭﺍﺕ CPN ﺑﺎﻟﻌﺮﺑﻴﺔ",
-   translateGossipTextsDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﺳﺘﻈﻬﺮ ﺑﺎﻟﻠﻐﺔ ﺍﻷﺻﻠﻴﺔ",
+   translateGossipTextsDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﻧﺼﻮص اﻟﺤﻮار ﻣﻊ اﻟﺸﺨﺼﻴﺎت.\nﻧﺼﻴﺤﺔ: أﻋﺪ ﻓﺘﺢ ﻧﺎﻓﺬة اﻟﺤﻮار إذا ﻟﻢ ﻳﺘﻐﻴﺮ اﻟﻨﺺ ﻓﻮراً.",
    translateTrackObjectives = "ﻋﺮﺽ ﺗﺮﺟﻤﺔ ﻗﺎﺋﻤﺔ ﺗﺘﺒﻊ ﺍﻟﻤﻬﺎﻡ ﺑﺎﻟﻌﺮﺑﻴﺔ",
-   translateTrackObjectivesDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﺳﺘﻈﻬﺮ ﺑﺤﺎﻟﺘﻬﺎ ﺍﻷﺻﻠﻴﺔ",
-   translateOwnNames = "ﻋﺮﺽ ﺃﺳﻤﺎﺀ ﺍﻷﻣﺎﻛﻦ ﺑﺎﻟﻌﺮﺑﻴﺔ - 002DFFFFc|)ﻏﻴﺮ ﻧﺸﻂ ﺍﻵﻥ(r|",
-   translateOwnNamesDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺃﺳﻤﺎﺀ ﺍﻟﻤﺪﻥ ﻭﺍﻷﻣﺎﻛﻦ ﺑﺎﻟﻌﺮﺑﻴﺔ.",
+   translateTrackObjectivesDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﻗﺎﺋﻤﺔ ﺗﺘﺒﻊ اﻟﻤﻬﺎم.\nﻧﺼﻴﺤﺔ: ﻣﻔﻴﺪ ﻋﻨﺪﻣﺎ ﺗﺘﺎﺑﻊ أﻛﺜﺮ ﻣﻦ ﻣﻬﻤﺔ.",
+   translateOwnNames = "ﻋﺮﺽ ﺃﺳﻤﺎﺀ ﺍﻷﻣﺎﻛﻦ ﺑﺎﻟﻌﺮﺑﻴﺔ - 002DFFFFc|(ﻏﻴﺮ ﻧﺸﻂ ﺍﻵﻥ)r|",
+   translateOwnNamesDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﺑﻌﺾ أﺳﻤﺎء اﻷﻣﺎﻛﻦ )ﺗﺠﺮﻳﺒﻲ(.\nﻧﺼﻴﺤﺔ: ﻗﺪ ﻻ ﻳﻌﻤﻞ ﻟﻜﻞ اﻷﺳﻤﺎء.",
    savingUntranslatedQuests = "ﺧﻴﺎﺭﺍﺕ ﺍﻟﺤﻔﻆ",
    saveUntranslatedQuests = "ﺣﻔﻆ ﺍﻟﻤﻬﺎﻡ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ",
-   saveUntranslatedQuestsDESC = "ﺇﺿﺎﻓﺔ ﺍﻟﺒﻴﺎﻧﺎﺕ ﺇﻟﻰ ﻣﻠﻒ ﺍﻟﺤﻔﻆ",
+   saveUntranslatedQuestsDESC = "ﻣﻠﺨﺺ: ﻳﺤﻔﻆ أﺳﻄﺮ اﻟﻤﻬﺎم ﻏﻴﺮ اﻟﻤﺘﺮﺟﻤﺔ ﻓﻲ ﻣﻠﻒ اﻟﺤﻔﻆ.\nﻧﺼﻴﺤﺔ: ﺷﺎرك ﻣﻠﻒ اﻟﺤﻔﻆ ﻣﻌﻨﺎ ﻟﻨﻀﻴﻒ اﻟﺘﺮﺟﻤﺔ.",
    saveUntranslatedGossip = "ﺣﻔﻆ ﺣﻮﺍﺭﺍﺕ CPN ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ",
-   saveUntranslatedGossipDESC = "ﺇﺿﺎﻓﺔ ﺍﻟﺒﻴﺎﻧﺎﺕ ﺇﻟﻰ ﻣﻠﻒ ﺍﻟﺤﻔﻆ",
+   saveUntranslatedGossipDESC = "ﻣﻠﺨﺺ: ﻳﺤﻔﻆ أﺳﻄﺮ اﻟﺤﻮارات ﻏﻴﺮ اﻟﻤﺘﺮﺟﻤﺔ ﻓﻲ ﻣﻠﻒ اﻟﺤﻔﻆ.\nﻧﺼﻴﺤﺔ: ﺷﺎرك ﻣﻠﻒ اﻟﺤﻔﻆ ﻣﻌﻨﺎ ﻟﻨﻀﻴﻒ اﻟﺘﺮﺟﻤﺔ.",
    integrationWithOtherAddons = "ﺍﻟﺘﻜﺎﻣﻞ",
    translateImmersion = "ﻋﺮﺽ ﺍﻟﺘﺮﺟﻤﺎﺕ ﻓﻲ ﺇﺿﺎﻓﺔ noisremmI",
-   translateImmersionDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﺳﺘﻈﻬﺮ noisremmI ﺑﺎﻟﻠﻐﺔ ﺍﻷﺻﻠﻴﺔ",
+   translateImmersionDESC = "ﻣﻠﺨﺺ: ﻳﻔﻌّﻞ اﻟﺘﺮﺟﻤﺔ داﺧﻞ إﺿﺎﻓﺔ noisremmI.\nﻧﺼﻴﺤﺔ: ﻓﻌّﻠﻪ ﻓﻘﻂ إذا ﻛﻨﺖ ﺗﺴﺘﺨﺪم ﻫﺬﻩ اﻹﺿﺎﻓﺔ.",
    translateStoryLine = "ﻋﺮﺽ ﺍﻟﺘﺮﺟﻤﺎﺕ ﻓﻲ ﺇﺿﺎﻓﺔ eniLyrotS",
-   translateStoryLineDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﺳﺘﻈﻬﺮ eniLyrotS ﺑﺎﻟﻠﻐﺔ ﺍﻷﺻﻠﻴﺔ",
+   translateStoryLineDESC = "ﻣﻠﺨﺺ: ﻳﻔﻌّﻞ اﻟﺘﺮﺟﻤﺔ داﺧﻞ إﺿﺎﻓﺔ eniLyrotS.\nﻧﺼﻴﺤﺔ: ﻓﻌّﻠﻪ ﻓﻘﻂ إذا ﻛﻨﺖ ﺗﺴﺘﺨﺪم ﻫﺬﻩ اﻹﺿﺎﻓﺔ.",
    translateQuestLog = "ﻋﺮﺽ ﺍﻟﺘﺮﺟﻤﺎﺕ ﻓﻲ ﺇﺿﺎﻓﺔ goL tseuQ cissalC",
-   translateQuestLogDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﺳﺘﻈﻬﺮ goL tseuQ cissalC ﺑﺎﻟﻠﻐﺔ ﺍﻷﺻﻠﻴﺔ",
+   translateQuestLogDESC = "ﻣﻠﺨﺺ: ﻳﻔﻌّﻞ اﻟﺘﺮﺟﻤﺔ داﺧﻞ إﺿﺎﻓﺔ goL tseuQ cissalC.\nﻧﺼﻴﺤﺔ: ﻓﻌّﻠﻪ ﻓﻘﻂ إذا ﻛﻨﺖ ﺗﺴﺘﺨﺪم ﻫﺬﻩ اﻹﺿﺎﻓﺔ.",
    translateDialogueUI = "ﻋﺮﺽ ﺍﻟﺘﺮﺟﻤﺎﺕ ﻓﻲ ﺇﺿﺎﻓﺔ IUeuqolaiD",
-   translateDialogueUIDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﺳﺘﻈﻬﺮ IUeuqolaiD ﺑﺎﻟﻠﻐﺔ ﺍﻷﺻﻠﻴﺔ",
+   translateDialogueUIDESC = "ﻣﻠﺨﺺ: ﻳﻔﻌّﻞ اﻟﺘﺮﺟﻤﺔ داﺧﻞ إﺿﺎﻓﺔ IUeuqolaiD.\nﻧﺼﻴﺤﺔ: ﻓﻌّﻠﻪ ﻓﻘﻂ إذا ﻛﻨﺖ ﺗﺴﺘﺨﺪم ﻫﺬﻩ اﻹﺿﺎﻓﺔ.",
    sampleGossipText = "ﻧﻤﻮﺫﺝ ﺣﺠﻢ ﺍﻟﺨﻂ ﻟﻨﺺ ﺍﻟﺤﻮﺍﺭﺍﺕ CPN",
    displayENfirst = "ﻋﺮض اﻟﻨﺺ اﻹﻧﺠﻠﻴﺰي أوﻻ", -- display EN text first on Quests and Gossip
-   displayENfirstDESC = "إذا ﺗﻢ ﺗﺤﺪﻳﺪ ﻫﺬا اﻟﻤﺮﺑﻊ، ﻓﺴﻴﺘﻢ ﻋﺮض اﻟﻨﺺ اﻹﻧﺠﻠﻴﺰي أوﻻ", -- If enabled, English text will display first on Quests and Gossip
+   displayENfirstDESC = "ﻣﻠﺨﺺ: ﻳﻌﺮض اﻟﻨﺺ اﻹﻧﺠﻠﻴﺰي ﻗﺒﻞ اﻟﺘﺮﺟﻤﺔ.\nﻧﺼﻴﺤﺔ: ﻣﻔﻴﺪ ﻟﻠﻤﻘﺎرﻧﺔ أو إذا ﻛﺎﻧﺖ اﻟﺘﺮﺟﻤﺔ ﻧﺎﻗﺼﺔ.", -- If enabled, English text will display first on Quests and Gossip
 
    titleTab2 = "ﺍﻟﻔﻘﺎﻋﺎﺕ",
    generalMainHeaderBB = "ﺗﺮﺟﻤﺎﺕ ﺍﻟﻔﻘﺎﻋﺎﺕ - selbbuB",
    activateBubblesTranslations = "ﺗﻔﻌﻴﻞ ﺗﺮﺟﻤﺎﺕ ﺍﻟﻔﻘﺎﻋﺎﺕ",
-   activateBubblesTranslationsDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﺳﺘﻈﻬﺮ ﺍﻟﺘﺮﺟﻤﺎﺕ ﺑﺎﻟﻠﻐﺔ ﺍﻷﺻﻠﻴﺔ",
+   activateBubblesTranslationsDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﻓﻘﺎﻋﺎت اﻟﻜﻼم ﻓﻮق اﻟﺸﺨﺼﻴﺎت.\nﻧﺼﻴﺤﺔ: إذا ﻛﺎن اﻟﻨﺺ ﻳﺘﻜﺮر ﻓﻲ اﻟﺸﺎت، ﻓﻌّﻞ ﺧﻴﺎر واﺣﺪ ﻓﻘﻂ )اﻷﺻﻞ أو اﻟﺘﺮﺟﻤﺔ(.",
    displayOriginalTexts = "ﻋﺮﺽ ﺍﻟﻨﺺ ﺍﻷﺻﻠﻲ ﻓﻲ ﻧﺎﻓﺬﺓ ﺍﻟﺪﺭﺩﺷﺔ",
-   displayOriginalTextsDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﻟﻦ ﻳﻈﻬﺮ ﺍﻟﻨﺺ ﺍﻷﺻﻠﻲ ﻓﻲ ﻧﺎﻓﺬﺓ ﺍﻟﺪﺭﺩﺷﺔ",
+   displayOriginalTextsDESC = "ﻣﻠﺨﺺ: ﻳﻌﺮض اﻟﻨﺺ اﻷﺻﻠﻲ ﻓﻲ اﻟﺸﺎت ﻣﻊ اﻟﻔﻘﺎﻋﺎت.\nﻧﺼﻴﺤﺔ: أوﻗﻔﻪ إذا ﻛﻨﺖ ﺗﺮﻳﺪ اﻟﺸﺎت ﻣﺘﺮﺟﻢ ﻓﻘﻂ.",
    displayTranslatedTexts = "ﻋﺮﺽ ﺍﻟﺘﺮﺟﻤﺔ اﻟﻌﺮﺑﻴﺔ ﻓﻲ ﻧﺎﻓﺬﺓ ﺍﻟﺪﺭﺩﺷﺔ",
-   displayTranslatedTextsDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﻟﻦ ﺗﻈﻬﺮ ﺍﻟﺘﺮﺟﻤﺔ ﻓﻲ ﻧﺎﻓﺬﺓ ﺍﻟﺪﺭﺩﺷﺔ",
+   displayTranslatedTextsDESC = "ﻣﻠﺨﺺ: ﻳﻌﺮض اﻟﺘﺮﺟﻤﺔ ﻓﻲ اﻟﺸﺎت ﻣﻊ اﻟﻔﻘﺎﻋﺎت.\nﻧﺼﻴﺤﺔ: ﻓﻌّﻠﻪ ﺑﺪل اﻟﻨﺺ اﻷﺻﻠﻲ ﻟﺘﺠﻨﺐ ﺗﻜﺮار اﻟﺴﻄﻮر.",
    choiceGender1OfPlayer = "r| ﺍﺳﺘﺨﺪﺍﻡ ﺍﻟﻌﺒﺎﺭﺍﺕ ﺍﻟﻤﻮﺟﻬﺔ ﻟﻼﻋﺒﻴﻦ ﺍﻟﺬﻛﻮﺭf7f7f7ffc|",
    choiceGender1OfPlayerDESC = "ﺍﻟﺘﻔﺎﻋﻞ ﻣﻊ CPN ﻛﻤﺎ ﻟﻮ ﻛﻨﺖ ﻻﻋﺒﺎ ﺫﻛﺮﺍ",
    choiceGender2OfPlayer = "r|ﺍﺳﺘﺨﺪﺍﻡ ﺍﻟﻌﺒﺎﺭﺍﺕ ﺍﻟﻤﻮﺟﻬﺔ ﻟﻼﻋﺒﺎﺕ ﺍﻹﻧﺎﺙf7f7f7ffc|",
    choiceGender2OfPlayerDESC = "ﺍﻟﺘﻔﺎﻋﻞ ﻣﻊ CPN ﻛﻤﺎ ﻟﻮ ﻛﻨﺖ ﻻﻋﺒﺔ ﺃﻧﺜﻰ",
    choiceGender3OfPlayer = "r|ﺍﺳﺘﺨﺪﺍﻡ ﺍﻟﻌﺒﺎﺭﺍﺕ ﺑﻨﺎﺀ ﻋﻠﻰ ﺟﻨﺲ ﺍﻟﺸﺨﺼﻴﺔf7f7f7ffc|",
-   choiceGender3OfPlayerDESC = "ﺗﻔﺎﻋﻞ CPN ﺑﻨﺎﺀ ﻋﻠﻰ ﺟﻨﺲ ﺷﺨﺼﻴﺘﻚ",
+   choiceGender3OfPlayerDESC = "ﻣﻠﺨﺺ: ﻳﺤﺪد ﻃﺮﻳﻘﺔ اﻟﺘﻌﺎﻣﻞ ﻣﻊ اﻟﻜﻠﻤﺎت اﻟﻤﺬﻛﺮة/اﻟﻤﺆﻧﺜﺔ ﻓﻲ اﻟﺘﺮﺟﻤﺔ.\nﻧﺼﻴﺤﺔ: اﺧﺘﺮ )ﺣﺴﺐ ﺷﺨﺼﻴﺘﻚ( ﻟﻴﺘﻢ اﻻﺧﺘﻴﺎر ﺗﻠﻘﺎﺋﻴﺎً.",
    showBubblesInDungeon = "ﺇﻇﻬﺎﺭ ﻓﻘﺎﻋﺎﺕ ﺍﻟﻜﻼﻡ ﻓﻲ ﺍﻷﺑﺮﺍﺝ ﺍﻟﻤﺤﺼﻨﺔ",
-   showBubblesInDungeonDESC = "ﺇﺫﺍ ﺗﻢ ﺗﺤﺪﻳﺪﻫﺎ، ﺳﻴﺘﻢ ﻋﺮﺽ ﻓﻘﺎﻋﺎﺕ ﺍﻟﺰﻧﺰﺍﻧﺔ ﻓﻲ 5 ﺇﻃﺎﺭﺍﺕ ﺧﺎﺻﺔ ﺑﻬﺎ ﻓﻲ ﺍﻟﺠﺰﺀ ﺍﻟﻌﻠﻮﻱ ﻣﻦ ﺍﻟﺸﺎﺷﺔ",
+   showBubblesInDungeonDESC = "ﻣﻠﺨﺺ: ﻳﻌﺮض اﻟﻔﻘﺎﻋﺎت ﻓﻲ اﻟﺪﻫﺎﻟﻴﺰ ﻛﺈﻃﺎرات ﺛﺎﺑﺘﺔ.\nﻧﺼﻴﺤﺔ: ﻣﻔﻴﺪ أﺛﻨﺎء اﻟﻘﺘﺎل ﻋﻨﺪﻣﺎ ﺗﺨﺘﻔﻲ اﻟﻔﻘﺎﻋﺎت ﺑﺴﺮﻋﺔ.",
    setDungeonFrames = "ﻗﻢ ﺑﺈﻋﺪﺍﺩ ﻧﻮﺍﻓﺬ ﺍﻟﻔﻘﺎﻋﺎﺕ ﺍﻟﻜﻼﻣﻴﺔ",
    setDungeonFramesDESC = "ﻋﻨﺪ ﺗﺤﺪﻳﺪ ﻫﺬﺍ ﺍﻟﺨﻴﺎﺭ، ﺳﺘﺘﻤﻜﻦ ﻣﻦ ﻣﺤﺎﺫﺍﺓ ﻧﻮﺍﻓﺬ ﺍﻟﻔﻘﺎﻋﺎﺕ ﻓﻲ ﺍﻟﺰﻧﺰﺍﻧﺎﺕ ﻋﻤﻮﺩﻳﺎ",
    savingUntranslatedBubbles = "ﺧﻴﺎﺭﺍﺕ ﺍﻟﺤﻔﻆ",
    saveUntranslatedBubbles = "ﺣﻔﻆ ﺍﻟﻔﻘﺎﻋﺎﺕ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ",
-   saveUntranslatedBubblesDESC = "ﺇﺿﺎﻓﺔ ﺍﻟﺒﻴﺎﻧﺎﺕ ﺇﻟﻰ ﻣﻠﻒ ﺍﻟﺤﻔﻆ",
+   saveUntranslatedBubblesDESC = "ﻣﻠﺨﺺ: ﻳﺤﻔﻆ ﻓﻘﺎﻋﺎت اﻟﻜﻼم ﻏﻴﺮ اﻟﻤﺘﺮﺟﻤﺔ ﻓﻲ ﻣﻠﻒ اﻟﺤﻔﻆ.\nﻧﺼﻴﺤﺔ: ﺷﺎرك ﻣﻠﻒ اﻟﺤﻔﻆ ﻣﻌﻨﺎ ﻟﻨﻀﻴﻒ اﻟﺘﺮﺟﻤﺔ.",
    fontSizeHeader = "ﺣﺠﻢ ﺍﻟﺨﻂ",
    setFontActivate = "ﺗﻔﻌﻴﻞ ﺗﻐﻴﻴﺮ ﺣﺠﻢ ﺍﻟﺨﻂ",
-   setFontActivateDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﻳﺘﻢ ﺗﻌﺪﻳﻞ ﺣﺠﻢ ﺍﻟﺨﻂ ﻭﻓﻘﺎ ﻻﺧﺘﻴﺎﺭﻙ",
+   setFontActivateDESC = "ﻣﻠﺨﺺ: ﻳﺴﻤﺢ ﻟﻚ ﺑﺘﻐﻴﻴﺮ ﺣﺠﻢ اﻟﺨﻂ.\nﻧﺼﻴﺤﺔ: ﺑﻌﺪ اﻟﺘﻔﻌﻴﻞ ﻋﺪّل ﺷﺮﻳﻂ ﺣﺠﻢ اﻟﺨﻂ ﺣﺘﻰ ﻳﻨﺎﺳﺒﻚ.",
    fontsizeBubbles = "ﺍﺧﺘﺮ ﺣﺠﻢ ﺍﻟﺨﻂ",
-   fontsizeBubblesDESC = "ﻳﻤﻜﻨﻚ ﺍﺧﺘﻴﺎﺭ ﺣﺠﻢ ﻳﺘﺮﺍﻭﺡ ﺑﻴﻦ 10 ﻭ20",
+   fontsizeBubblesDESC = "ﻣﻠﺨﺺ: ﻳﺤﺪد ﺣﺠﻢ ﺧﻂ اﻟﻔﻘﺎﻋﺎت.\nﻧﺼﻴﺤﺔ: اﺧﺘﺮ ﺣﺠﻢ أﻛﺒﺮ إذا ﻛﺎن اﻟﻨﺺ ﺻﻐﻴﺮ.",
    sampleText = "ﻧﻤﻮﺫﺝ ﻧﺺ ﺣﺠﻢ ﺍﻟﺨﻂ",
    timerDisplay = "ﻭﻗﺖ ﻋﺮﺽ ﺍﻟﺘﺮﺟﻤﺔ",
+   timerDisplayDESC = "ﻣﻠﺨﺺ: ﻳﺤﺪد ﻣﺪة ﺑﻘﺎء إﻃﺎر اﻟﻔﻘﺎﻋﺔ ﻓﻲ اﻟﺪﻫﻠﻴﺰ.\nﻧﺼﻴﺤﺔ: وﻗﺖ أﻗﻞ ﻳﻘﻠﻞ اﻟﺰﺣﻤﺔ ﻋﻠﻰ اﻟﺸﺎﺷﺔ.",
 
    titleTab3 = "ﺍﻟﺘﺮﺟﻤﺎﺕ",
    generalMainHeaderMF = "ﺗﺮﺟﻤﺎﺕ ﺍﻷﻓﻼﻡ ﻭﺍﻟﻌﺮﻭﺽ ﺍﻟﺴﻴﻨﻤﺎﺋﻴﺔ - seltitbuS",
    activateSubtitleTranslations = "ﺗﻔﻌﻴﻞ ﺗﺮﺟﻤﺎﺕ ﺍﻷﻓﻼﻡ ﻭﺍﻟﻌﺮﻭﺽ ﺍﻟﺴﻴﻨﻤﺎﺋﻴﺔ",
-   activateSubtitleTranslationsDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﻟﻦ ﺗﻈﻬﺮ ﺍﻟﺘﺮﺟﻤﺎﺕ",
+   activateSubtitleTranslationsDESC = "ﻣﻠﺨﺺ: ﻳﻌﺮض ﺗﺮﺟﻤﺎت اﻟﻤﻘﺎﻃﻊ اﻟﺴﻴﻨﻤﺎﺋﻴﺔ.\nﻧﺼﻴﺤﺔ: إذا ﻻ ﺗﺮﻳﺪ اﻟﺘﺮﺟﻤﺎت أﺛﻨﺎء اﻟﻤﺸﺎﻫﺪة، أوﻗﻒ ﻫﺬا اﻟﺨﻴﺎر.",
    subtitleIntro = "ﻋﺮﺽ ﺗﺮﺟﻤﺎﺕ ﺍﻟﻤﺸﺎﻫﺪ ﺍﻟﺘﻤﻬﻴﺪﻳﺔ",
-   subtitleIntroDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺍﻟﺘﺮﺟﻤﺎﺕ ﻓﻲ ﻣﻘﺪﻣﺔ ﺍﻷﻓﻼﻡ ﻭﺍﻟﻌﺮﻭﺽ ﺍﻟﺴﻴﻨﻤﺎﺋﻴﺔ",
+   subtitleIntroDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﻣﺸﺎﻫﺪ اﻟﺒﺪاﻳﺔ.\nﻧﺼﻴﺤﺔ: ﻓﻌّﻠﻪ إذا ﺗﺮﻳﺪ ﺗﺮﺟﻤﺔ ﻛﻞ اﻟﻤﻘﺎﻃﻊ.",
    subtitleMovies = "ﻋﺮﺽ ﺗﺮﺟﻤﺎﺕ ﺍﻟﻤﺸﺎﻫﺪ ﺍﻟﺴﻴﻨﻤﺎﺋﻴﺔ",
-   subtitleMoviesDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺍﻟﺘﺮﺟﻤﺎﺕ ﻓﻲ ﺍﻷﻓﻼﻡ",
+   subtitleMoviesDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ اﻷﻓﻼم داﺧﻞ اﻟﻠﻌﺒﺔ.\nﻧﺼﻴﺤﺔ: اﺗﺮﻛﻪ ﻣﻔﻌّﻞ إذا ﺗﺮﻳﺪ اﻟﺘﺮﺟﻤﺔ داﺋﻤﺎً.",
    subtitleCinematics = "ﻋﺮﺽ ﺗﺮﺟﻤﺎﺕ ﺍﻟﻌﺮﻭﺽ ﺍﻟﺴﻴﻨﻤﺎﺋﻴﺔ",
-   subtitleCinematicsDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺍﻟﺘﺮﺟﻤﺎﺕ ﻓﻲ ﺍﻟﻌﺮﻭﺽ ﺍﻟﺴﻴﻨﻤﺎﺋﻴﺔ",
+   subtitleCinematicsDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ اﻟﺴﻴﻨﻤﺎﺋﻴﺎت.\nﻧﺼﻴﺤﺔ: أوﻗﻔﻪ إذا ﻛﺎن ﻳﺴﺒﺐ ﻟﻚ ﺗﻘﻄﻴﻊ أو إزﻋﺎج.",
    savingUntranslatedSubtitles = "ﺧﻴﺎﺭﺍﺕ ﺍﻟﺤﻔﻆ",
    saveUntranslatedSubtitles = "ﺣﻔﻆ ﺍﻟﺘﺮﺟﻤﺎﺕ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ",
-   saveUntranslatedSubtitlesDESC = "ﺇﺿﺎﻓﺔ ﺍﻟﺒﻴﺎﻧﺎﺕ ﺇﻟﻰ ﻣﻠﻒ ﺍﻟﺤﻔﻆ",
+   saveUntranslatedSubtitlesDESC = "ﻣﻠﺨﺺ: ﻳﺤﻔﻆ ﺳﻄﻮر اﻟﺘﺮﺟﻤﺎت ﻏﻴﺮ اﻟﻤﺘﻮﻓﺮة ﻓﻲ ﻣﻠﻒ اﻟﺤﻔﻆ.\nﻧﺼﻴﺤﺔ: ﺷﺎرك ﻣﻠﻒ اﻟﺤﻔﻆ ﻣﻌﻨﺎ ﻟﻨﻀﻴﻒ اﻟﺘﺮﺟﻤﺔ.",
    chatService = "اﻟﻜﺘﺎﺑﺔ ﺑﺎﻟﻠﻐﺔ اﻟﻌﺮﺑﻴﺔ ﻓﻲ اﻟﺸﺎت - tahC",
    activateChatService = "ﺗﻔﻌﻴﻞ ﺧﺎﺻﻴﺔ اﻟﻜﺘﺎﺑﺔ ﺑﺎﻟﻠﻐﺔ اﻟﻌﺮﺑﻴﺔ",
-   activateChatServiceDESC = "ﻋﻨﺪ اﻟﺘﻔﻌﻴﻞ ﻳﻤﻜﻨﻚ اﻟﻜﺘﺎﺑﺔ ﺑﺎﻟﻌﺮﺑﻲ",
+   activateChatServiceDESC = "ﻣﻠﺨﺺ: ﻳﺴﻤﺢ ﻟﻚ ﺑﺎﻟﻜﺘﺎﺑﺔ ﺑﺎﻟﻌﺮﺑﻴﺔ ﻓﻲ اﻟﺸﺎت ﺑﺴﻬﻮﻟﺔ.\nﻧﺼﻴﺤﺔ: اﺳﺘﺨﺪﻣﻪ ﻋﻨﺪﻣﺎ ﺗﻜﺘﺐ رﺳﺎﺋﻞ ﻋﺮﺑﻴﺔ ﻛﺜﻴﺮة.",
    chatFontActivate = "ﺗﻔﻌﻴﻞ ﺗﻐﻴﻴﺮ ﺣﺠﻢ ﺍﻟﺨﻂ",
-   chatFontActivateDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﻳﺘﻢ ﺗﻌﺪﻳﻞ ﺣﺠﻢ ﺍﻟﺨﻂ ﻭﻓﻘﺎ ﻻﺧﺘﻴﺎﺭﻙ",
+   chatFontActivateDESC = "ﻣﻠﺨﺺ: ﻳﻔﻌّﻞ ﺗﻐﻴﻴﺮ ﺣﺠﻢ ﺧﻂ اﻟﺸﺎت اﻟﻌﺮﺑﻲ.\nﻧﺼﻴﺤﺔ: ﻋﺪّل ﺣﺠﻢ اﻟﺨﻂ إذا ﻛﺎﻧﺖ اﻟﺤﺮوف ﻛﺒﻴﺮة أو ﺻﻐﻴﺮة.",
    fontsizeChat = "ﺍﺧﺘﺮ ﺣﺠﻢ ﺍﻟﺨﻂ",
-   fontsizeChatDESC = "ﻳﻤﻜﻨﻚ ﺍﺧﺘﻴﺎﺭ ﺣﺠﻢ ﻳﺘﺮﺍﻭﺡ ﺑﻴﻦ 10 ﻭ20",
+   fontsizeChatDESC = "ﻣﻠﺨﺺ: ﻳﺤﺪد ﺣﺠﻢ ﺧﻂ اﻟﺸﺎت اﻟﻌﺮﺑﻲ.\nﻧﺼﻴﺤﺔ: ﺣﺠﻢ أﻛﺒﺮ ﻳﺴﺎﻋﺪ ﻋﻠﻰ اﻟﻘﺮاءة.",
 
    titleTab4 = "ﺇﻋﺪﺍﺩﺍﺕ ﺍﻟﻮﺍﺟﻬﺔ",
    generalMainHeaderTT = "ﺗﺮﺟﻤﺎﺕ ﺍﻟﺪﺭﻭﺱ ﺍﻟﺘﻌﻠﻴﻤﻴﺔ - slairotuT",
@@ -194,72 +235,75 @@ WoWTR_Config_Interface = {
    activateTutorialTranslationsDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺍﻟﺪﺭﻭﺱ ﺍﻟﺘﻌﻠﻴﻤﻴﺔ ﺍﻟﻤﺘﺮﺟﻤﺔ",
    savingUntranslatedTutorials = "ﺧﻴﺎﺭﺍﺕ ﺍﻟﺤﻔﻆ",
    saveUntranslatedTutorials = "ﺣﻔﻆ ﺍﻟﻤﺪﺭﺱ ﺍﻟﺘﻌﻠﻴﻤﻴﺔ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ",
-   saveUntranslatedTutorialsDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﻴﺘﻢ ﺣﻔﻆ ﺍﻟﺪﺭﻭﺱ ﺍﻟﺘﻌﻠﻴﻤﻴﺔ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ",
+   saveUntranslatedTutorialsDESC = "ﻣﻠﺨﺺ: ﻳﺤﻔﻆ ﻧﺼﻮص اﻟﺪروس اﻟﺘﻌﻠﻴﻤﻴﺔ ﻏﻴﺮ اﻟﻤﺘﺮﺟﻤﺔ ﻓﻲ ﻣﻠﻒ اﻟﺤﻔﻆ.\nﻧﺼﻴﺤﺔ: ﺷﺎرك ﻣﻠﻒ اﻟﺤﻔﻆ ﻣﻌﻨﺎ ﻟﻨﻀﻴﻒ اﻟﺘﺮﺟﻤﺔ.",
    fontSelectingFontHeader = "ﺗﺤﺪﻳﺪ ﺍﻟﺨﻂ ﺍﻹﺿﺎﻓﻲ", -- Selecting the add-on font
+   fontSelectingFontHeaderDESC = "ﻣﻠﺨﺺ: ﻳﻐﻴﺮ اﻟﺨﻂ اﻟﻤﺴﺘﺨﺪم ﻓﻲ اﻟﺘﺮﺟﻤﺔ.\nﻧﺼﻴﺤﺔ: اﺧﺘﺮ ﺧﻂ ﻳﺪﻋﻢ اﻟﻌﺮﺑﻴﺔ ﺑﺸﻜﻞ واﺿﺢ.",
    fontSelectFontFile = "Select a font file", -- Select a font file
    fontCurrentFont = "ﺍﻟﺨﻂ ﺍﻟﺤﺎﻟﻲ:", -- Current font:
+   fontsize = "ﺣﺠﻢ ﺍﻟﺨﻂ",
+   fontsizeDESC = "ﻣﻠﺨﺺ: ﻳﻐﻴﺮ ﺣﺠﻢ اﻟﺨﻂ ﻓﻲ اﻟﺘﺮﺟﻤﺔ.\nﻧﺼﻴﺤﺔ: ﺣﺠﻢ أﻛﺒﺮ ﻳﺴﺎﻋﺪ ﻋﻠﻰ اﻟﻘﺮاءة.",
 
    translationUI = "ﺗﺮﺟﻤﺔ ﻭﺍﺟﻬﺔ ﺍﻟﻤﺴﺘﺨﺪﻡ - IU",
    savingTranslationUI = "ﺧﻴﺎﺭﺍﺕ ﺣﻔﻆ ﻭﺍﺟﻬﺔ ﺍﻟﻤﺴﺘﺨﺪﻡ",
    saveTranslationUI = "ﺣﻔﻆ ﻋﻨﺎﺻﺮ ﻭﺍﺟﻬﺔ ﺍﻟﻤﺴﺘﺨﺪﻡ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ",
-   saveTranslationUIDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﻴﺘﻢ ﺣﻔﻆ ﻋﻨﺎﺻﺮ ﻭﺍﺟﻬﺔ ﺍﻟﻤﺴﺘﺨﺪﻡ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ",
+   saveTranslationUIDESC = "ﻣﻠﺨﺺ: ﻳﺤﻔﻆ ﻧﺼﻮص اﻟﻮاﺟﻬﺔ ﻏﻴﺮ اﻟﻤﺘﺮﺟﻤﺔ.\nﻧﺼﻴﺤﺔ: ﻓﻌّﻠﻪ إذا ﻻﺣﻈﺖ أزرار أو ﻗﻮاﺋﻢ ﻣﺎ زاﻟﺖ إﻧﺠﻠﻴﺰﻳﺔ.",
    ReloadButtonUI = "ﺍﺿﻐﻂ ﻟﺘﻄﺒﻴﻖ ﺍﻹﻋﺪﺍﺩﺍﺕ ﺇﻋﺎﺩﺓ ﺗﺤﻤﻴﻞ ﻭﺍﺟﻬﺔ ﺍﻟﻤﺴﺘﺨﺪﻡ",
    displayTranslationtxt = "ﺍﺧﺘﺮ ﺍﻟﺘﺮﺟﻤﺎﺕ ﺍﻟﺘﻲ ﺗﺮﻏﺐ ﺑﺘﻔﻌﻴﻠﻬﺎ.",
    displayTranslationUI1 = "ﻗﺎﺋﻤﺔ ﺍﻟﻠﻌﺒﺔ",
-   displayTranslationUI1DESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﻗﺎﺋﻤﺔ ﺍﻟﻠﻌﺒﺔ ﻭﻣﺤﺘﻮﻳﺎﺗﻬﺎ ﺑﺎﻟﻌﺮﺑﻴﺔ.",
+   displayTranslationUI1DESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﻗﺎﺋﻤﺔ اﻟﻠﻌﺒﺔ.\nﻧﺼﻴﺤﺔ: أوﻗﻔﻪ إذا ﺗﺮﻳﺪ ﻗﺎﺋﻤﺔ اﻟﻠﻌﺒﺔ ﻛﻤﺎ ﻫﻲ.",
    displayTranslationUI2 = "ﻣﻌﻠﻮﻣﺎﺕ ﺍﻟﺸﺨﺼﻴﺔ",
-   displayTranslationUI2DESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﻭﺍﺟﻬﺔ ﻣﻌﻠﻮﻣﺎﺕ ﺍﻟﺸﺨﺼﻴﺔ ﺑﺎﻟﻌﺮﺑﻴﺔ.",
+   displayTranslationUI2DESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ واﺟﻬﺔ ﻣﻌﻠﻮﻣﺎت اﻟﺸﺨﺼﻴﺔ.\nﻧﺼﻴﺤﺔ: أوﻗﻔﻪ إذا ﺗﺮﻳﺪ اﻷﺳﻤﺎء اﻷﺻﻠﻴﺔ ﻟﻸﻏﺮاض ﻓﻲ ﻫﺬﻩ اﻟﻨﺎﻓﺬة.",
    displayTranslationUI3 = "ﺍﻟﺒﺤﺚ ﻋﻦ ﻣﺠﻤﻮﻋﺔ",
-   displayTranslationUI3DESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﻭﺍﺟﻬﺔ ﺍﻟﺒﺤﺚ ﻋﻦ ﻣﺠﻤﻮﻋﺔ ﻭﺗﺒﻮﻳﺒﺎﺗﻬﺎ ﺍﻟﻔﺮﻋﻴﺔ ﺑﺎﻟﻌﺮﺑﻴﺔ.",
+   displayTranslationUI3DESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ واﺟﻬﺔ اﻟﺒﺤﺚ ﻋﻦ ﻣﺠﻤﻮﻋﺔ.\nﻧﺼﻴﺤﺔ: ﻣﻔﻴﺪ إذا ﻛﻨﺖ ﺗﺒﺤﺚ ﻋﻦ دﻧﺠﻦ/راﻳﺪ ﺑﺎﻟﻠﻐﺔ اﻟﻌﺮﺑﻴﺔ.",
    displayTranslationUI4 = "ﺍﻟﻤﺠﻤﻮﻋﺎﺕ",
-   displayTranslationUI4DESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺻﻔﺤﺔ ﺍﻟﻤﺠﻤﻮﻋﺎﺕ ﻭﻣﺤﺘﻮﻳﺎﺗﻬﺎ ﺑﺎﻟﻌﺮﺑﻴﺔ.",
+   displayTranslationUI4DESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﺻﻔﺤﺔ اﻟﻤﺠﻤﻮﻋﺎت.\nﻧﺼﻴﺤﺔ: أوﻗﻔﻪ إذا ﻛﻨﺖ ﺗﻔﻀﻞ أﺳﻤﺎء اﻹﻧﺠﻠﻴﺰي ﻟﻸﺷﻴﺎء/اﻟﻤﻘﺘﻨﻴﺎت.",
    displayTranslationUI5 = "ﺩﻟﻴﻞ ﺍﻟﻤﻐﺎﻣﺮﺍﺕ",
-   displayTranslationUI5DESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺩﻟﻴﻞ ﺍﻟﻤﻐﺎﻣﺮﺍﺕ ﻭﺻﻔﺤﺎﺗﻪ ﺍﻟﻔﺮﻋﻴﺔ ﺑﺎﻟﻌﺮﺑﻴﺔ.",
+   displayTranslationUI5DESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ دﻟﻴﻞ اﻟﻤﻐﺎﻣﺮ وﺻﻔﺤﺎﺗﻪ.\nﻧﺼﻴﺤﺔ: ﻣﻔﻴﺪ ﻟﻘﺮاءة ﺷﺮح اﻟﺒﻮﺳﺎت ﺑﺎﻟﻌﺮﺑﻴﺔ.",
    displayTranslationUI6 = "ﻗﺎﺋﻤﺔ ﺍﻷﺻﺪﻗﺎﺀ",
-   displayTranslationUI6DESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﻣﺤﺘﻮﻳﺎﺕ ﻗﺎﺋﻤﺔ ﺍﻷﺻﺪﻗﺎﺀ ﺑﺎﻟﻌﺮﺑﻴﺔ.",
+   displayTranslationUI6DESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﻗﺎﺋﻤﺔ اﻷﺻﺪﻗﺎء.\nﻧﺼﻴﺤﺔ: أوﻗﻔﻪ إذا ﻛﻨﺖ ﻻ ﺗﺤﺘﺎج ﺗﺮﺟﻤﺔ ﻫﺬﻩ اﻟﻘﺎﺋﻤﺔ.",
    displayTranslationUI7 = "ﺍﻟﻤﻬﻦ ﺍﻟﻤﻬﻦ",
-   displayTranslationUI7DESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﻭﺍﺟﻬﺔ ﺍﻟﻤﻬﻦ ﻭﻣﺤﺘﻮﻳﺎﺗﻬﺎ ﺑﺎﻟﻌﺮﺑﻴﺔ.",
+   displayTranslationUI7DESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ واﺟﻬﺔ اﻟﻤﻬﻦ وﻣﺤﺘﻮﻳﺎﺗﻬﺎ.\nﻧﺼﻴﺤﺔ: ﻣﻔﻴﺪ أﺛﻨﺎء اﻟﺘﻌﻠﻢ أو ﺻﻨﺎﻋﺔ اﻷدوات.",
    displayTranslationUI8 = "ﺍﻟﻔﻠﺘﺮ ﻭﺍﻟﻘﻮﺍﺋﻢ ﺍﻟﻤﻨﺴﺪﻟﺔ",
-   displayTranslationUI8DESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺍﻟﻔﻼﺗﺮ ﻭﺍﻟﻘﻮﺍﺋﻢ ﺍﻟﻤﻨﺴﺪﻟﺔ ﺑﺎﻟﻌﺮﺑﻴﺔ.",
+   displayTranslationUI8DESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ اﻟﻔﻼﺗﺮ واﻟﻘﻮاﺋﻢ اﻟﻤﻨﺴﺪﻟﺔ.\nﻧﺼﻴﺤﺔ: أوﻗﻔﻪ إذا ﻻﺣﻈﺖ ﺗﻌﺎرض ﻣﻊ إﺿﺎﻓﺎت ﺗﻐﻴﺮ اﻟﻘﻮاﺋﻢ.",
 
    titleTab5 = "ﺍﻟﻜﺘﺐ",
    generalMainHeaderBT = "ﺗﺮﺟﻤﺎﺕ ﺍﻟﻜﺘﺐ - skooB",
    activateBooksTranslations = "ﺗﻔﻌﻴﻞ ﺗﺮﺟﻤﺎﺕ ﺍﻟﻜﺘﺐ",
-   activateBooksTranslationsDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺗﺮﺟﻤﺎﺕ ﺍﻟﻜﺘﺐ ﺑﺪﻻ ﻣﻦ ﺍﻟﻨﺼﻮﺹ ﺍﻷﺻﻠﻴﺔ",
+   activateBooksTranslationsDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ اﻟﻜﺘﺐ واﻟﺮﺳﺎﺋﻞ داﺧﻞ اﻟﻠﻌﺒﺔ.\nﻧﺼﻴﺤﺔ: إذا وﺟﺪت ﻛﺘﺎب ﻏﻴﺮ ﻣﺘﺮﺟﻢ ﻓﻌّﻞ ﺧﻴﺎر اﻟﺤﻔﻆ.",
    translateBookTitles = "ﻋﺮﺽ ﺗﺮﺟﻤﺎﺕ ﻋﻨﺎﻭﻳﻦ ﺍﻟﻜﺘﺐ",
-   translateBookTitlesDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﺘﻢ ﺗﺮﺟﻤﺔ ﻋﻨﺎﻭﻳﻦ ﺍﻟﻜﺘﺐ",
+   translateBookTitlesDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﻋﻨﻮان اﻟﻜﺘﺎب.\nﻧﺼﻴﺤﺔ: أوﻗﻔﻪ إذا ﺗﺮﻳﺪ اﻟﻌﻨﻮان اﻷﺻﻠﻲ.",
    showBookID = "ﻋﺮﺽ ﻣﻌﺮﻑ ﺍﻟﻜﺘﺎﺏ",
-   showBookIDDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﻴﺘﻢ ﻋﺮﺽ ﻣﻌﺮﻑ ﺍﻟﻜﺘﺎﺏ",
+   showBookIDDESC = "ﻣﻠﺨﺺ: ﻳﻌﺮض رﻗﻢ ﻣﻌﺮف اﻟﻜﺘﺎب.\nﻧﺼﻴﺤﺔ: ﻣﻔﻴﺪ ﻋﻨﺪ اﻹﺑﻼغ ﻋﻦ ﻛﺘﺎب ﻏﻴﺮ ﻣﺘﺮﺟﻢ.",
    savingUntranslatedBooks = "ﺧﻴﺎﺭﺍﺕ ﺍﻟﺤﻔﻆ",
    saveUntranslatedBooks = "ﺣﻔﻆ ﺍﻟﻜﺘﺐ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ",
-   saveUntranslatedBooksDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﻴﺘﻢ ﺣﻔﻆ ﺍﻟﻜﺘﺐ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ",
+   saveUntranslatedBooksDESC = "ﻣﻠﺨﺺ: ﻳﺤﻔﻆ اﻟﻜﺘﺐ ﻏﻴﺮ اﻟﻤﺘﺮﺟﻤﺔ ﻓﻲ ﻣﻠﻒ اﻟﺤﻔﻆ.\nﻧﺼﻴﺤﺔ: ﺷﺎرك ﻣﻠﻒ اﻟﺤﻔﻆ ﻣﻌﻨﺎ ﻟﻨﻀﻴﻒ اﻟﺘﺮﺟﻤﺔ.",
 
    titleTab6 = "ﺍﻟﺘﻠﻤﻴﺤﺎﺕ",
    generalMainHeaderST = "ﺗﺮﺟﻤﺎﺕ ﺍﻟﺘﻠﻤﻴﺤﺎﺕ - spitlooT",
    activateTooltipTranslations = "ﺗﻔﻌﻴﻞ ﺗﺮﺟﻤﺎﺕ ﺍﻟﺘﻠﻤﻴﺤﺎﺕ",
-   activateTooltipTranslationsDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺍﻟﺘﻠﻤﻴﺤﺎﺕ ﺍﻟﻤﺘﺮﺟﻤﺔ",
+   activateTooltipTranslationsDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ اﻟﺘﻠﻤﻴﺤﺎت وﺑﻌﺾ ﻋﻨﺎﺻﺮ اﻟﻮاﺟﻬﺔ.\nﻧﺼﻴﺤﺔ: إذا ﻻﺣﻈﺖ ﺑﻂء، ﻋﻄّﻞ ﻣﺎ ﻻ ﺗﺤﺘﺎﺟﻪ ﻣﻦ اﻟﺨﻴﺎرات.",
    translateItems = "ﻋﺮﺽ ﺍﻟﺘﻠﻤﻴﺤﺎﺕ ﺍﻟﻤﺘﺮﺟﻤﺔ ﻟﻸﻏﺮﺍﺽ",
-   translateItemsDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺍﻟﺘﻠﻤﻴﺤﺎﺕ ﺍﻟﻤﺘﺮﺟﻤﺔ ﻟﻸﻏﺮﺍﺽ",
+   translateItemsDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﺗﻠﻤﻴﺤﺎت اﻷﻏﺮاض.\nﻧﺼﻴﺤﺔ: أوﻗﻔﻪ إذا ﻻ ﺗﺤﺘﺎج ﺗﺮﺟﻤﺔ اﻷﻏﺮاض.",
    translateSpells = "ﻋﺮﺽ ﺍﻟﺘﻠﻤﻴﺤﺎﺕ ﺍﻟﻤﺘﺮﺟﻤﺔ ﻟﻠﺘﻌﺎﻭﻳﺬ",
-   translateSpellsDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺍﻟﺘﻠﻤﻴﺤﺎﺕ ﺍﻟﻤﺘﺮﺟﻤﺔ ﻟﻠﺘﻌﺎﻭﻳﺬ",
+   translateSpellsDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﺗﻠﻤﻴﺤﺎت اﻟﺘﻌﻮﻳﺬات.\nﻧﺼﻴﺤﺔ: ﻣﻔﻴﺪ أﺛﻨﺎء اﻟﺘﻌﻠﻢ أو ﻋﻨﺪ ﺗﺠﺮﺑﺔ ﺗﻌﻮﻳﺬة ﺟﺪﻳﺪة.",
    translateTalents = "ﻋﺮﺽ ﺍﻟﺘﻠﻤﻴﺤﺎﺕ ﺍﻟﻤﺘﺮﺟﻤﺔ ﻟﻠﻤﻮﺍﻫﺐ",
-   translateTalentsDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﺘﻈﻬﺮ ﺍﻟﺘﻠﻤﻴﺤﺎﺕ ﺍﻟﻤﺘﺮﺟﻤﺔ ﻟﻠﻤﻮﺍﻫﺐ",
+   translateTalentsDESC = "ﻣﻠﺨﺺ: ﻳﺘﺮﺟﻢ ﺗﻠﻤﻴﺤﺎت اﻟﻤﻮاﻫﺐ.\nﻧﺼﻴﺤﺔ: ﻓﻌّﻠﻪ ﻋﻨﺪﻣﺎ ﺗﻘﺎرن اﻟﻤﻮاﻫﺐ.",
    translateTooltipTitle = "ﻋﺮﺽ ﻋﻨﻮﺍﻥ ﺍﻟﻤﺘﺮﺟﻢ ﻟﻠﻌﻨﺼﺮ ﺃﻭ ﺍﻟﺘﻌﻮﻳﺬﺓ ﺃﻭ ﺍﻟﻤﻮﻫﺒﺔ",
-   translateTooltipTitleDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﻴﺘﻢ ﻋﺮﺽ ﺍﻟﻌﻨﻮﺍﻥ ﺍﻟﻤﺘﺮﺟﻢ ﻟﻠﺘﻠﻤﻴﺤﺎﺕ",
+   translateTooltipTitleDESC = "ﻣﻠﺨﺺ: ﻳﻌﺮض اﺳﻢ اﻟﻌﻨﺼﺮ/اﻟﺘﻌﻮﻳﺬة ﻣﺘﺮﺟﻢ ﻓﻲ أﻋﻠﻰ اﻟﺘﻠﻤﻴﺢ.\nﻧﺼﻴﺤﺔ: ﻓﻌّﻠﻪ ﺣﺘﻰ ﻟﻮ ﻛﻨﺖ ﺗﺘﺮك ﺑﺎﻗﻲ اﻟﻨﺺ أﺻﻠﻲ.",
    showTooltipID = "ﻋﺮﺽ ﻣﻌﺮﻑ ﺍﻟﺘﻠﻤﻴﺢ",
-   showTooltipIDDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﻴﺘﻢ ﻋﺮﺽ ﻣﻌﺮﻑ ﺍﻟﺘﻠﻤﻴﺢ",
+   showTooltipIDDESC = "ﻣﻠﺨﺺ: ﻳﻌﺮض رﻗﻢ ID داﺧﻞ اﻟﺘﻠﻤﻴﺢ.\nﻧﺼﻴﺤﺔ: اﺳﺘﺨﺪﻣﻪ ﻋﻨﺪ اﻹﺑﻼغ ﻋﻦ ﺗﺮﺟﻤﺔ ﻧﺎﻗﺼﺔ.",
    showTooltipHash = "ﻋﺮﺽ ﺭﻣﺰ ﺍﻟﺘﺠﺰﺋﺔ",
-   showTooltipHashDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﻴﺘﻢ ﻋﺮﺽ ﺭﻣﺰ ﺍﻟﺘﺠﺰﺋﺔ ﻟﻠﺘﻠﻤﻴﺤﺎﺕ",
+   showTooltipHashDESC = "ﻣﻠﺨﺺ: ﻳﻌﺮض رﻣﺰ اﻟﺘﺠﺰﺋﺔ داﺧﻞ اﻟﺘﻠﻤﻴﺢ.\nﻧﺼﻴﺤﺔ: ﻣﻔﻴﺪ ﻟﻠﻤﻄﻮرﻳﻦ ﻟﺘﺘﺒﻊ اﻟﻨﺺ.",
    hideSellPrice = "ﺇﺧﻔﺎﺀ ﺳﻌﺮ ﺍﻟﺒﻴﻊ ﻟﻸﻏﺮﺍﺽ",
-   hideSellPriceDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﻴﺘﻢ ﺇﺧﻔﺎﺀ ﺳﻌﺮ ﺍﻟﺒﻴﻊ ﻟﻸﻏﺮﺍﺽ",
+   hideSellPriceDESC = "ﻣﻠﺨﺺ: ﻳﺨﻔﻲ ﺳﻄﺮ ﺳﻌﺮ اﻟﺒﻴﻊ ﻣﻦ اﻟﺘﻠﻤﻴﺤﺎت.\nﻧﺼﻴﺤﺔ: ﻓﻌّﻠﻪ إذا ﺗﺮﻳﺪ واﺟﻬﺔ أﻧﻈﻒ.",
    timerHoldTranslation = "ﺗﺄﺟﻴﻞ ﻋﺮﺽ ﺍﻟﺘﺮﺟﻤﺔ",
    timerLimitSeconds = "ﺗﺤﺪﻳﺪ ﻭﻗﺖ ﺍﻟﺘﺄﺟﻴﻞ",
-   timerLimitSecondsDESC = "ﺍﻟﻮﻗﺖ ﻫﻮ ﺭﻗﻢ ﺑﻴﻦ 5 ﻭ30",
+   timerLimitSecondsDESC = "ﻣﻠﺨﺺ: ﻣﺪة ﻇﻬﻮر اﻟﺘﺮﺟﻤﺔ ﻋﻨﺪ إﻳﻘﺎف )ﻋﺮض اﻟﺘﺮﺟﻤﺔ ﺑﺸﻜﻞ ﻣﺴﺘﻤﺮ(.\nﻧﺼﻴﺤﺔ: اﺧﺘﺮ وﻗﺖ أﻗﻞ إذا ﺗﺮﻳﺪ اﻟﺘﻠﻤﻴﺤﺎت أﺳﺮع.",
    displayTranslationConstantly = "ﻋﺮﺽ ﺍﻟﺘﺮﺟﻤﺔ ﺑﺸﻜﻞ ﻣﺴﺘﻤﺮ",
-   displayTranslationConstantlyDESC = "ﻋﻨﺪ ﺍﻹﻏﻼﻕ, ﺳﺘﻈﻬﺮ ﺍﻟﺘﺮﺟﻤﺔ ﻟﻠﻮﻗﺖ ﺍﻟﻤﺤﺪﺩ ﻓﻘﻂ",
+   displayTranslationConstantlyDESC = "ﻣﻠﺨﺺ: ﻳﺠﻌﻞ اﻟﺘﺮﺟﻤﺔ ﺗﻈﻬﺮ داﺋﻤﺎً ﺑﺪون ﻣﺆﻗﺖ.\nﻧﺼﻴﺤﺔ: ﻋﻄّﻠﻪ إذا ﺗﺮﻳﺪ اﻟﺘﺮﺟﻤﺔ ﺗﻈﻬﺮ ﻟﺜﻮاﻧﻲ ﻓﻘﻂ.",
    savingUntranslatedTooltips = "ﺧﻴﺎﺭﺍﺕ ﺍﻟﺤﻔﻆ",
    saveUntranslatedTooltips = "ﺣﻔﻆ ﺍﻟﺘﻠﻤﻴﺤﺎﺕ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ",
-   saveUntranslatedTooltipsDESC = "ﻋﻨﺪ ﺍﻟﺘﻔﻌﻴﻞ, ﺳﻴﺘﻢ ﺣﻔﻆ ﺍﻟﺘﻠﻤﻴﺤﺎﺕ ﻏﻴﺮ ﺍﻟﻤﺘﺮﺟﻤﺔ",
+   saveUntranslatedTooltipsDESC = "ﻣﻠﺨﺺ: ﻳﺤﻔﻆ اﻟﺘﻠﻤﻴﺤﺎت ﻏﻴﺮ اﻟﻤﺘﺮﺟﻤﺔ ﻓﻲ ﻣﻠﻒ اﻟﺤﻔﻆ.\nﻧﺼﻴﺤﺔ: ﺷﺎرك ﻣﻠﻒ اﻟﺤﻔﻆ ﻣﻌﻨﺎ ﻟﻨﻀﻴﻒ اﻟﺘﺮﺟﻤﺔ.",
 
    titleTab9 = "ﺣﻮﻝ",
    generalText =
@@ -308,7 +352,7 @@ local p_race = {
    ["Draenei"] = { M = "دراﻳﻨﻲ", F = "دراﻳﻨﻴﺔ" },
    ["Dwarf"] = { M = "دوارف", F = "دوارﻓﺔ" },
    ["Gnome"] = { M = "ﺟﻨﻮم", F = "ﺟﻨﻮﻣﺔ" },
-   ["Earthen"] = { M = "ترابي", F = "ترابي" },
+   ["Earthen"] = { M = "ﺗﺮاﺑﻲ", F = "ﺗﺮاﺑﻲ" },
    ["Goblin"] = { M = "ﺟﻮﺑﻠﻦ", F = "ﺟﻮﺑﻠﻨﺔ" },
    ["Highmountain Tauren"] = { M = "ﻫﺎي ﻣﺎوﻧﺘﻦ ﺗﻮرﻳﻦ", F = "ﻫﺎي ﻣﺎوﻧﺘﻦ ﺗﻮرﻳﻨﺔ" },
    ["Human"] = { M = "ﻫﻴﻮﻣﻦ", F = "ﻫﻴﻮﻣﻨﺔ" },

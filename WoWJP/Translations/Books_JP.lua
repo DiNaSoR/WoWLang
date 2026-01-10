@@ -1,4 +1,4 @@
-﻿-- Turkish database of translated books
+﻿-- Japanese database of translated books
 -- for the addon WoWJP-Books
 
 BT_lang = "JP";         -- translation language

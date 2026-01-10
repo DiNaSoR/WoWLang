@@ -1,6 +1,8 @@
 -- ImmersionPlugin.lua
 -- Plugin for handling Immersion addon integration
 
+-- luacheck: globals ImmersionFrame ImmersionContentFrame
+---@diagnostic disable: undefined-global
 ImmersionPlugin = {}
 
 function ImmersionPlugin.isImmersion()

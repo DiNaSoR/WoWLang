@@ -1,6 +1,5 @@
 ﻿-- Description: The addon supports chat for entering and displaying messages in Arabic.
--- Author: Platine [platine.wow@gmail.com]
--- Co-Author: Dragonarab[WoWAR]
+-- Authors: Platine, Dragonarab[DiNaSoR]
 -------------------------------------------------------------------------------------------------------
 
 local CH_on_debug = false;
@@ -19,6 +18,7 @@ local CH_key_ctrl = false;
 local CH_key_shift = false;
 local CH_key_alt = false;
 local CH_highlight_text = false;
+local CH_ActiveEditBox = nil;    -- tracks the editbox currently receiving input (for non-default chat UIs)
 local CH_BSize = 14;            -- default size of chat bubbles
 
 -- fonty z arabskimi znakami
@@ -30,7 +30,9 @@ local function CH_bubblizeText()
    -- Iterate the children, as the actual bubble content 
    -- has been placed in a nameless subframe in 9.0.1.
       for j = 1, bubble:GetNumChildren() do
-         local child = select(j, select(j, bubble:GetChildren()));
+         -- NOTE: bubble:GetChildren() returns multiple values; select(j, ...) picks the j-th child.
+         -- The previous double-select form skipped children (e.g. 2 -> 3, 3 -> 5) and could miss bubble content.
+         local child = select(j, bubble:GetChildren());
          if (not child:IsForbidden()) then                           -- czy ramka nie jest zabroniona?
             if (child:GetObjectType() == "Frame") and (child.String) and (child.Center) then
             -- This is hopefully the frame with the content
@@ -319,37 +321,64 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
-local function CH_AR_ON_OFF()       -- funkcja włącz/wyłącza tryb arabski
-   local txt = DEFAULT_CHAT_FRAME.editBox:GetText();
+local function CH_IsEditBox(obj)
+   return obj and obj.GetText and obj.SetText and obj.SetFocus and obj.SetCursorPosition
+end
+
+local function CH_GetTargetEditBox(candidate)
+   local eb = CH_IsEditBox(candidate) and candidate or nil
+   if (not eb) then eb = CH_IsEditBox(CH_ActiveEditBox) and CH_ActiveEditBox or nil end
+   if (not eb) and DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.editBox and CH_IsEditBox(DEFAULT_CHAT_FRAME.editBox) then
+      eb = DEFAULT_CHAT_FRAME.editBox
+   end
+   return eb
+end
+
+local function CH_AR_ON_OFF(editBox)       -- funkcja włącz/wyłącza tryb arabski
+   local eb = CH_GetTargetEditBox(editBox)
+   if not eb then return end
+   local txt = eb:GetText() or "";
    if (CH_ED_mode == 0) then        -- mamy tryb EN - przełącz na tryb arabski
-      DEFAULT_CHAT_FRAME.editBox:SetJustifyH("RIGHT");
-      DEFAULT_CHAT_FRAME.editBox:SetCursorPosition(0);         -- przesuń kursor na skrajne lewo
-      CH_ToggleButton:SetNormalFontObject("GameFontNormal");   -- litery AR żółte
-      CH_ToggleButton:SetText("AR");
-      CH_ToggleButton2:SetNormalFontObject("GameFontNormal");  -- litery AR żółte
-      CH_ToggleButton2:SetText("AR");
+      eb:SetJustifyH("LEFT");          -- Keep LEFT aligned (user preference)
+      eb:SetCursorPosition(0);         -- przesuń kursor na skrajne lewo
+      if CH_ToggleButton then
+         CH_ToggleButton:SetNormalFontObject("GameFontNormal");   -- litery AR żółte
+         CH_ToggleButton:SetText("AR");
+      end
+      if CH_ToggleButton2 then
+         CH_ToggleButton2:SetNormalFontObject("GameFontNormal");  -- litery AR żółte
+         CH_ToggleButton2:SetText("AR");
+      end
       CH_ED_mode = 1;
       CH_BuforCursor = 0;
       CH_ED_cursor_move = 1;
-      CH_InsertButton:SetText("←");
-      CH_InsertButton:Show();
+      if CH_InsertButton then
+         CH_InsertButton:SetText("←");
+         CH_InsertButton:Show();
+      end
    else                             -- mamy tryb arabski - przełącz na tryb angielski
-      DEFAULT_CHAT_FRAME.editBox:SetJustifyH("LEFT");
-      CH_ToggleButton:SetNormalFontObject("GameFontRed");      -- litery EN czerwone
-      CH_ToggleButton:SetText("EN");
-      CH_ToggleButton2:SetNormalFontObject("GameFontRed");     -- litery EN czerwone
-      CH_ToggleButton2:SetText("EN");
+      eb:SetJustifyH("LEFT");
+      if CH_ToggleButton then
+         CH_ToggleButton:SetNormalFontObject("GameFontRed");      -- litery EN czerwone
+         CH_ToggleButton:SetText("EN");
+      end
+      if CH_ToggleButton2 then
+         CH_ToggleButton2:SetNormalFontObject("GameFontRed");     -- litery EN czerwone
+         CH_ToggleButton2:SetText("EN");
+      end
       CH_ED_mode = 0;
       if ((CH_BuforLength > 0) and (CH_BuforEditBox[CH_BuforLength] >= "؀")) then   -- pierwszym znakiem z prawej strony jest litera arabska
-         DEFAULT_CHAT_FRAME.editBox:SetCursorPosition(0);      -- przesuń kursor na skrajne lewo
+         eb:SetCursorPosition(0);      -- przesuń kursor na skrajne lewo
          CH_BuforCursor = 0;
          CH_ED_cursor_move = 1;
       else
-         DEFAULT_CHAT_FRAME.editBox:SetCursorPosition(strlen(txt));      -- przesuń kursor na skrajne prawo
+         eb:SetCursorPosition(strlen(txt));      -- przesuń kursor na skrajne prawo
          CH_BuforCursor = CH_BuforLength;
          CH_ED_cursor_move = 0;
-         CH_InsertButton:SetText("→");
-         CH_InsertButton:Hide();
+         if CH_InsertButton then
+            CH_InsertButton:SetText("→");
+            CH_InsertButton:Hide();
+         end
       end
    end
    if (strlen(txt) == 0) then    -- przy komendzie /w Player trzeba wyzerować tę komendę
@@ -357,40 +386,56 @@ local function CH_AR_ON_OFF()       -- funkcja włącz/wyłącza tryb arabski
       CH_BuforLength = 0;
       CH_BuforCursor = 0;
    end
-   ChatEdit_ActivateChat(DEFAULT_CHAT_FRAME.editBox);
-   DEFAULT_CHAT_FRAME.editBox:SetFocus();
+   -- Don't forcibly activate the default chat editbox when toggling inside other UI editboxes (e.g. Communities).
+   if (DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.editBox) and (eb == DEFAULT_CHAT_FRAME.editBox) and ChatEdit_ActivateChat then
+      ChatEdit_ActivateChat(eb);
+   end
+   if eb.SetFocus then eb:SetFocus() end
 end
 
 -------------------------------------------------------------------------------------------------------
 
-local function CH_INS_ON_OFF()            -- funkcja przełącza przesuwanie kursora w zależności od wprowadzonej litery
+local function CH_INS_ON_OFF(editBox)            -- funkcja przełącza przesuwanie kursora w zależności od wprowadzonej litery
+   local eb = CH_GetTargetEditBox(editBox)
    if (CH_ED_cursor_move == 1) then       -- mamy tryb przesuwania kursowa na lewo
-      CH_InsertButton:SetText("→");
+      if CH_InsertButton then CH_InsertButton:SetText("→"); end
       CH_ED_cursor_move = 0;              -- włącz tryb przesuwania na prawo od wpisanego znaku
    else
-      CH_InsertButton:SetText("←");
+      if CH_InsertButton then CH_InsertButton:SetText("←"); end
       CH_ED_cursor_move = 1;              -- włącz tryb przesuwania w lewo od wpisanego znaku
    end
-   DEFAULT_CHAT_FRAME.editBox:SetFocus();
-   CH_InsertButton:Show();
+   if eb and eb.SetFocus then eb:SetFocus() end
+   if CH_InsertButton then CH_InsertButton:Show(); end
 end
 
 -------------------------------------------------------------------------------------------------------
 
 function CH_Oblicz_Pozycje(curs)        -- oblicza pozycję (bytes) cursora w oknie edycji
    local pozycja = 0;
+   -- Defensive: cursor can legally be > buffer length (e.g. Length+1), and buffer entries can be nil
+   if (type(curs) ~= "number") then
+      return 0;
+   end
    if (CH_ED_cursor_move == 1) then    -- mamy tryb przesuwania w lewo (litera arabska)
       curs = curs - 1;
    end
+   if (curs < 0) then curs = 0 end
+   if (CH_BuforLength and curs > CH_BuforLength) then
+      curs = CH_BuforLength;
+   end
    for i = 1, curs do
-      pozycja = pozycja + strlen(CH_BuforEditBox[i]);   -- liczba bajtów znaku
+      local entry = CH_BuforEditBox[i];
+      if entry then
+         pozycja = pozycja + strlen(entry);   -- liczba bajtów znaku
+      end
    end
    return pozycja;
 end
 
 -------------------------------------------------------------------------------------------------------
 
-local function CH_OnShow()       -- otworzony został editBox
+local function CH_OnShow(self)       -- otworzony został editBox
+   CH_ActiveEditBox = self or CH_ActiveEditBox
    if (CH_PM["active"]=="1") then
       CH_ToggleButton2:Show();
    else
@@ -415,7 +460,8 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
-local function CH_OnHide()       -- został zamknięty editBox
+local function CH_OnHide(self)       -- został zamknięty editBox
+   CH_ActiveEditBox = self or CH_ActiveEditBox
    if (CH_PM["active"]=="0") then
       return;
    end
@@ -485,6 +531,7 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CH_OnChar(self, character)    -- wprowadzono znak litery z klawiatury
+   CH_ActiveEditBox = self
    if (CH_PM["active"]=="0") then
       return;
    end
@@ -524,6 +571,10 @@ local function CH_OnChar(self, character)    -- wprowadzono znak litery z klawia
             if (CH_BuforCursor == 0) then
                CH_BuforCursor = 1;              -- tylko gdy = 0
             end
+            -- All characters (including digits) are inserted at cursor in Arabic mode
+            -- This naturally reverses sequences, but since display also reverses,
+            -- the final output is correct. Example: typing "1000" puts ['0','0','0','1']
+            -- in buffer, which displays as "1000" when read backwards.
             tinsert(CH_BuforEditBox, CH_BuforCursor, character);
          else                                   -- tu jest tryb przesuwania w prawo (litera łacińska)
             if (CH_BuforCursor < CH_BuforLength) then
@@ -531,15 +582,18 @@ local function CH_OnChar(self, character)    -- wprowadzono znak litery z klawia
             end
             tinsert(CH_BuforEditBox, CH_BuforCursor, character);
          end
-         local spaces = "( )?؟!,.;:،";             -- letters that we treat as a space
-         if (AS_UTF8find(spaces, character) == false) then       -- nie wprowadzono znaku z listy spaces      
+         -- Characters that are "neutral" - don't trigger direction switching
+         -- Includes: spaces, punctuation, AND digits (0-9)
+         -- Digits should flow with surrounding text, not switch direction
+         local neutralChars = "( )?؟!,.;:،0123456789";
+         if (AS_UTF8find(neutralChars, character) == false) then       -- not a neutral character
             if (((character >= "؀") and (character <= "ݿ")) or ((string.sub(character,1,1) == "|") and (CH_ED_mode == 1))) then  -- mamy literę arabską
                if (CH_ED_cursor_move == 0) then    -- mamy tryb przesuwania w prawo - przełącz na tryb przesuwania w lewo od wpisanego znaku
-                  CH_INS_ON_OFF();                 -- zmień na przesuwanie w lewo
+                  CH_INS_ON_OFF(self);                 -- zmień na przesuwanie w lewo
                end
-            else                                                 -- wprowadzono literę inną niż arabska
+            else                                                 -- wprowadzono literę inną niż arabska (but not digits)
                if (CH_ED_cursor_move == 1) then    -- mamy tryb przesuwania w lewo - przełącz na tryb przesuwania w prawo od wpisanego znaku
-                  CH_INS_ON_OFF();
+                  CH_INS_ON_OFF(self);
                end
             end
          end
@@ -552,14 +606,42 @@ local function CH_OnChar(self, character)    -- wprowadzono znak litery z klawia
                   newtext = newtext .. CH_BuforEditBox[i];
                end
             end
-            newtext = AS_UTF8reverseRS(newtext);     -- odwróć kolejność liter + ReShaping
+            -- NOTE: In the editbox pipeline we already reverse the buffer before calling AS_UTF8reverseRS.
+            -- That means numbers are already corrected by the double-reversal; don't apply digit-run fix here.
+            newtext = AS_UTF8reverseRS(newtext);     -- odwróć kolejność liter + ReShaping (with digit-run fix)
+            self:SetText(newtext);
+            self:SetCursorPosition(CH_Oblicz_Pozycje(CH_BuforCursor));
          else
+            -- EN mode: build LTR, but keep Arabic segments shaped to avoid "unshaping" after Shift+Alt toggling.
+            -- We must preserve cursor position even though Arabic glyph bytes can change after reshaping.
+            local rawCursor = CH_Oblicz_Pozycje(CH_BuforCursor);
             for i = 1, CH_BuforLength do
                newtext = newtext .. CH_BuforEditBox[i];
             end
+            if CH_Check_Arabic_Letters(newtext) then
+               -- Convert raw cursor byte offset -> UTF-8 char count in the raw string
+               local cursorChars = AS_UTF8len(strsub(newtext, 1, rawCursor));
+               -- Reshape Arabic without changing overall order
+               newtext = AS_ReshapeOnly(newtext);
+               -- Convert UTF-8 char count -> byte offset in reshaped string
+               local newCursor = 0;
+               if cursorChars > 0 then
+                  local bytes2 = strlen(newtext);
+                  local pos2 = 1;
+                  local count2 = 0;
+                  while (pos2 <= bytes2) and (count2 < cursorChars) do
+                     pos2 = pos2 + AS_UTF8charbytes(newtext, pos2);
+                     count2 = count2 + 1;
+                  end
+                  newCursor = pos2 - 1;
+               end
+               self:SetText(newtext);
+               self:SetCursorPosition(newCursor);
+            else
+               self:SetText(newtext);
+               self:SetCursorPosition(rawCursor);
+            end
          end
-         self:SetText(newtext);
-         self:SetCursorPosition(CH_Oblicz_Pozycje(CH_BuforCursor));
       end
       CH_last_letter = character;
    end
@@ -567,7 +649,62 @@ end
 
 -------------------------------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------------------------------
+-- Helper function to rebuild and reshape text from buffer after deletion
+-- This ensures Arabic letters get correct contextual forms after characters are removed
+-------------------------------------------------------------------------------------------------------
+local function CH_RebuildAndReshapeFromBuffer(editBox)
+   if CH_BuforLength == 0 then
+      editBox:SetText("");
+      return;
+   end
+   
+   local newtext = "";
+   if (CH_ED_mode == 1) then        -- Arabic mode: rebuild with reshaping
+      for i = CH_BuforLength, 1, -1 do
+         if (string.sub(CH_BuforEditBox[i],1,1) == "|") then           -- item link
+            newtext = newtext .. CH_UTF8reverse(CH_BuforEditBox[i]);   -- reverse link characters
+         else
+            newtext = newtext .. CH_BuforEditBox[i];
+         end
+      end
+      -- NOTE: Editbox rebuild uses pre-reversed buffer; disable digit-run fix to avoid flipping numbers (1000 -> 0001).
+      newtext = AS_UTF8reverseRS(newtext);     -- Reverse + ReShaping (with digit-run fix)
+      editBox:SetText(newtext);
+      editBox:SetCursorPosition(CH_Oblicz_Pozycje(CH_BuforCursor));
+   else
+      local rawCursor = CH_Oblicz_Pozycje(CH_BuforCursor);
+      for i = 1, CH_BuforLength do
+         newtext = newtext .. CH_BuforEditBox[i];
+      end
+      if CH_Check_Arabic_Letters(newtext) then
+         local cursorChars = AS_UTF8len(strsub(newtext, 1, rawCursor));
+         newtext = AS_ReshapeOnly(newtext);
+         local newCursor = 0;
+         if cursorChars > 0 then
+            local bytes2 = strlen(newtext);
+            local pos2 = 1;
+            local count2 = 0;
+            while (pos2 <= bytes2) and (count2 < cursorChars) do
+               pos2 = pos2 + AS_UTF8charbytes(newtext, pos2);
+               count2 = count2 + 1;
+            end
+            newCursor = pos2 - 1;
+         end
+         editBox:SetText(newtext);
+         editBox:SetCursorPosition(newCursor);
+         return;
+      end
+      editBox:SetText(newtext);
+      editBox:SetCursorPosition(rawCursor);
+      return;
+   end
+end
+
+-------------------------------------------------------------------------------------------------------
+
 local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź czy wciśnięto BACKSPACE lub DELETE
+   CH_ActiveEditBox = self
    if (CH_PM["active"]=="0") then
       return;
    end
@@ -582,75 +719,66 @@ local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź cz
       CH_highlight_text = true;
       CH_ToggleButton:SetNormalFontObject("GameFontBlack");   -- litery EN/AR czarne
    end
+   
+   -- CRITICAL: Handle DELETE/BACKSPACE when text is highlighted (Ctrl+A selection)
+   if CH_highlight_text and ((key == "DELETE") or (key == "BACKSPACE")) then
+      -- Clear the entire buffer
+      CH_BuforEditBox = {};
+      CH_BuforLength = 0;
+      CH_BuforCursor = 0;
+      CH_highlight_text = false;
+      self:SetText("");
+      self:SetCursorPosition(0);
+      if (CH_ED_mode == 0) then
+         CH_ToggleButton:SetNormalFontObject("GameFontRed");      -- litery EN czerwone
+      else
+         CH_ToggleButton:SetNormalFontObject("GameFontNormal");   -- litery AR żółte
+      end
+      return;  -- We handled it, stop here
+   end
+   
    if (CH_ToggleButton:IsEnabled()) then                 -- obsługa bufora włączona?
       if (CH_ED_mode == 1) then        -- mamy tryb arabski
-         if (key == "BACKSPACE") then  -- usuń znak poprzedzający, czyli 1 na prawo
-            local buf = self:GetText();              -- cały tekst
-            local pos = self:GetCursorPosition();    -- aktualna pozycja kursora
-            if (strlen(buf) > 0) then                -- nie jest to pusty tekst
-               if (pos < strlen(buf)) then           -- kursor nie jest na początku tekstu, skrajnie na prawo
-                  local charbytes = AS_UTF8charbytes(buf, pos+1);   -- liczba bajtów 1 znaku w pozycji pos
-                  self:SetCursorPosition(pos+charbytes);    -- przesuń kursor o 1 znak w prawo, aby usunięcie było tego znaku
-               else                                         -- nic nie usuwaj, jesteś na początku tekstu, skrajnie na prawo
-                  self:SetText(buf.." ");                   -- dodaj spację na początku, skrajnie na prawo
-                  self:SetCursorPosition(strlen(buf)+1);    -- przesuń kursor na początek tekstu w prawo, aby usunąć tę spację
-                  CH_BuforCursor = CH_BuforLength + 1;
+         if (key == "BACKSPACE") then  -- usuń znak poprzedzający, czyli 1 na prawo (visual right in RTL)
+            -- Update the buffer ONLY - DO NOT SetText here!
+            -- WoW's native backspace will fire after us, so we rebuild in OnKeyUp to overwrite it
+               -- IMPORTANT: Keep cursor inside buffer bounds; it can be Length+1 at the "end" position.
+               if (CH_BuforCursor > CH_BuforLength) then
+                  CH_BuforCursor = CH_BuforLength;
                end
-            end
-  
-            if (CH_BuforLength == 1) then               -- pierwszy znak z buforze
+            if (CH_BuforLength == 1) then               -- first character in buffer
                tremove(CH_BuforEditBox, 1);
                CH_BuforCursor = 0;
                CH_BuforLength = 0;
-            elseif (CH_BuforCursor <= CH_BuforLength) then
+            elseif (CH_BuforCursor <= CH_BuforLength) and (CH_BuforLength > 0) then
                if (CH_BuforCursor < 2) then
                   tremove(CH_BuforEditBox, 1);
                else
                   tremove(CH_BuforEditBox, CH_BuforCursor);
                end
-               if (CH_BuforLength > 0) then
-                  CH_BuforLength = CH_BuforLength - 1;
-               end
+               CH_BuforLength = CH_BuforLength - 1;
+                  if (CH_BuforCursor > CH_BuforLength) then
+                     CH_BuforCursor = CH_BuforLength;
+                  end
             end
+            -- NOTE: Rebuild happens in OnKeyUp AFTER WoW's native handler finishes
+            return;
             
-         elseif (key == "DELETE") then                -- usuń znak następujący, czyli 1 na lewo
-            local buf = self:GetText();
-            local pos = self:GetCursorPosition();
-            if (pos > 0) then                         -- kursor nie jest na końcu tekstu, skrajnie w lewo
-               -- ustal znak z lewej strony
---               if (pos == strlen(buf)) then           -- kursor jest skrajnie na prawo
-                  pos = pos - 1;
-                  if (pos > 0) then
-                     local c = strbyte(buf, pos);
-                     while (c >= 128 and c <= 191) do
-                        pos = pos - 1;
-                        c = strbyte(buf, pos);
-                     end
-                  end
---               end
-               pos = pos - 1;
-               if (pos > 0) then
-                  local c = strbyte(buf, pos);
-                  while (c >= 128 and c <= 191) do
-                     pos = pos - 1;
-                     c = strbyte(buf, pos);
-                  end
-               end
-               self:SetCursorPosition(pos);    -- przesuń kursor o 1 znak w lewo, aby usunięcie było tego znaku
-            else                             -- kursor jest na końcu tekstu, nie ma co usuwać - dodaj spację na końcu
-               self:SetText(" "..buf);
-               self:SetCursorPosition(0);    -- przesuń kursor na koniec tekstu w lewo, aby usunąć tę spację
-               CH_BuforCursor = 1;
-            end
-            if (CH_BuforCursor > 1) then
-               tremove(CH_BuforEditBox, CH_BuforCursor-1);
+         elseif (key == "DELETE") then                -- usuń znak następujący, czyli 1 na lewo (visual left in RTL)
+            -- DELETE in RTL removes the character to the visual LEFT of the cursor
+            -- In our buffer model: that's CH_BuforCursor - 1
+            if (CH_BuforCursor > 1) and (CH_BuforLength > 0) then
+               tremove(CH_BuforEditBox, CH_BuforCursor - 1);
                CH_BuforCursor = CH_BuforCursor - 1;
                CH_BuforLength = CH_BuforLength - 1;
             end
+            -- NOTE: If cursor is at position 0 or 1, DELETE does nothing (we're at the left edge)
+            -- NOTE: Rebuild happens in OnKeyUp AFTER WoW's native handler finishes
+            return;
          end
          
       else           -- mamy tryb angielski
-         if (key == "DELETE") then                -- usuń bieżący znak z bufora
+         if (key == "DELETE") then                -- usuń bieżący znak z bufora (character to the RIGHT of cursor in LTR)
             if (CH_BuforLength > CH_BuforCursor) then
                if (self:GetCursorPosition() == 0) then
                   tremove(CH_BuforEditBox, 1);
@@ -661,24 +789,29 @@ local function CH_OnKeyDown(self, key)    -- wciśnięto klawisz key: spradź cz
             elseif (CH_BuforLength == 0) then
                CH_BuforCursor = 0;
             end
+            -- NOTE: Rebuild happens in OnKeyUp AFTER WoW's native handler finishes
+            return;
          elseif (key == "BACKSPACE") then         -- usuń znak poprzedzający, czyli 1 na lewo
             if (CH_BuforCursor > 0) then
                tremove(CH_BuforEditBox, CH_BuforCursor);
                CH_BuforCursor = CH_BuforCursor - 1;
                CH_BuforLength = CH_BuforLength - 1;
             end
+            -- NOTE: Rebuild happens in OnKeyUp AFTER WoW's native handler finishes
+            return;
          end
       end
       if ((key == "ENTER") and (CH_ED_mode == 1)) then                    -- wciśnięto klawisz ENTER
          local newtext = "";
          for i = CH_BuforLength, 1, -1 do
             if (string.sub(CH_BuforEditBox[i],1,1) == "|") then           -- mamy tu link do przedmiotu
-               newtext = newtext .. CH_UTF8reverseRS(CH_BuforEditBox[i]);   -- trzeba odwrócić znaki w linku przedmiotu
+               newtext = newtext .. CH_UTF8reverse(CH_BuforEditBox[i]);   -- trzeba odwrócić znaki w linku przedmiotu
             else
                newtext = newtext .. CH_BuforEditBox[i];
             end
          end
-         newtext = AS_UTF8reverseRS(newtext);       -- odwróć kolejność liter + ReShaping
+         -- NOTE: Send-text rebuild uses the same editbox pipeline; disable digit-run fix to keep numbers correct.
+         newtext = AS_UTF8reverseRS(newtext);       -- odwróć kolejność liter + ReShaping (with digit-run fix)
          self:SetText(newtext);
       end
    end
@@ -687,11 +820,12 @@ end
 -------------------------------------------------------------------------------------------------------
 
 local function CH_OnKeyUp(self, key)      -- puszczono klawisz key: sprawdź czy wciśnięto HOME, END, LEFT i RIGHT
+   CH_ActiveEditBox = self
    if (CH_PM["active"]=="0") then
       return;
    end
    if ((CH_key_shift and ((key == "LALT") or (key == "RALT"))) or (CH_key_alt and ((key == "LSHIFT") or (key == "RSHIFT")))) then
-      CH_AR_ON_OFF();                                    -- wciśnięto jednocześnie klawisze SHIFT+ALT
+      CH_AR_ON_OFF(self);                                    -- wciśnięto jednocześnie klawisze SHIFT+ALT
    end
    if ((key == "LCTRL") or (key == "RCTRL")) then        -- puszczono klawisz CONTROL
       CH_key_ctrl = false;
@@ -742,6 +876,15 @@ local function CH_OnKeyUp(self, key)      -- puszczono klawisz key: sprawdź czy
       end
       if ((key == "RIGHT") and (CH_BuforCursor-CH_ED_mode < CH_BuforLength)) then    -- wciśnięto klawisz "strzałka w prawo" alt+RIGHT
          CH_BuforCursor = CH_BuforCursor + 1;      -- dopuszczamy: Cursor+1 od Length dla CH_ED_mode == 1
+      end
+
+      -- WoW EditBox still performs its own Delete/Backspace after our OnKeyDown handler.
+      -- This can desync the visible text from our buffer (deleted char reappears, or 2 chars deleted).
+      -- Re-apply our buffer->text rebuild on KeyUp to force the final state to match the buffer.
+      -- This runs for BOTH AR and EN modes to prevent double-deletion.
+      if (key == "DELETE") or (key == "BACKSPACE") then
+         CH_RebuildAndReshapeFromBuffer(self);
+         return;
       end
    end
    if (strlen(self:GetText()) == 0) then    -- profilaktycznie trzeba wyzerować bufor
@@ -907,12 +1050,14 @@ function CHAT_START()
 
    -- Rest of the original function (buttons, filters, etc.)
    
+   -- CH_ToggleButton is kept hidden but used for state tracking (IsEnabled checks)
+   -- The visible toggle is CH_ToggleButton2 which appears when chat editbox opens
    CH_ToggleButton = CreateFrame("Button", nil, DEFAULT_CHAT_FRAME, "UIPanelButtonTemplate");
    CH_ToggleButton:SetWidth(34);
    CH_ToggleButton:SetHeight(20);
    CH_ToggleButton:SetNormalFontObject("GameFontRed");      -- litery EN czerwone
    CH_ToggleButton:SetText("EN");
-   CH_ToggleButton:Show();
+   CH_ToggleButton:Hide();                                   -- Always hidden - use CH_ToggleButton2 instead
    CH_ToggleButton:ClearAllPoints();
    CH_ToggleButton:SetPoint("TOPRIGHT", DEFAULT_CHAT_FRAME, "BOTTOMLEFT", 1, -8);
    CH_ToggleButton:SetScript("OnClick", CH_AR_ON_OFF);
@@ -957,13 +1102,193 @@ function CHAT_START()
    
    SlashCmdList["WOWAR"] = function(msg) CH_SlashCommand(msg); end
    SLASH_WOWINARABIC_CHAT1 = "/archat";
-   if (CH_PM["active"]=="1") then
-      CH_ToggleButton:Show();
-   else
-      CH_ToggleButton:Hide();
-   end
+   -- CH_ToggleButton is always hidden now - only CH_ToggleButton2 shows when editbox opens
 --   CH_CheckVars();
 --   CH_BlizzardOptions();
+
+   -------------------------------------------------------------------------------------------------------
+   -- Communities (Guild & Communities) chat uses its own MessageFrame + EditBox.
+   -- Hook them for Arabic font enforcement + input/output reshaping.
+   -------------------------------------------------------------------------------------------------------
+
+   local function HasArabicPresentationForms(txt)
+      if not txt then return false end
+      -- Arabic Presentation Forms-A/B live in UTF-8 sequences starting with 0xEF 0xAD..0xBB
+      return (string.find(txt, "\239\173") ~= nil)
+         or (string.find(txt, "\239\174") ~= nil)
+         or (string.find(txt, "\239\175") ~= nil)
+         or (string.find(txt, "\239\185") ~= nil)
+         or (string.find(txt, "\239\186") ~= nil)
+         or (string.find(txt, "\239\187") ~= nil);
+   end
+
+   local function ReverseAndReshapeSafe(txt)
+      if (not txt) or (txt == "") then return txt end
+      if HandleWoWSpecialCodes and RestoreWoWSpecialCodes then
+         local msg, sc, prefix = HandleWoWSpecialCodes(txt)
+         msg = AS_UTF8reverseRS(msg)
+         msg = RestoreWoWSpecialCodes(msg, sc)
+         if prefix and prefix ~= "" then
+            msg = prefix .. msg
+         end
+         return msg
+      end
+      return AS_UTF8reverseRS(txt)
+   end
+   
+   local function CH_ResetInputBuffer()
+      CH_BuforEditBox = {};
+      CH_BuforLength = 0;
+      CH_BuforCursor = 0;
+      CH_last_letter = "";
+      CH_highlight_text = false;
+   end
+
+   local function WrapEditBoxForArabic(editBox)
+      if (not editBox) or editBox.WoWAR_ArabicChatWrapped then return end
+      editBox.WoWAR_ArabicChatWrapped = true
+
+      local origOnShow = editBox:GetScript("OnShow")
+      editBox:SetScript("OnShow", function(self, ...)
+         CH_ActiveEditBox = self
+         if origOnShow then origOnShow(self, ...) end
+         CH_OnShow(self)
+      end)
+
+      local origOnHide = editBox:GetScript("OnHide")
+      editBox:SetScript("OnHide", function(self, ...)
+         CH_ActiveEditBox = self
+         if origOnHide then origOnHide(self, ...) end
+         CH_OnHide(self)
+      end)
+
+      -- Communities chat editbox typically stays visible between sends.
+      -- When a line is sent, Blizzard clears the editbox text asynchronously; if we don't reset our buffer,
+      -- the next character typed will rebuild the previous message from CH_BuforEditBox.
+      local origOnEnterPressed = editBox:GetScript("OnEnterPressed")
+      editBox:SetScript("OnEnterPressed", function(self, ...)
+         CH_ActiveEditBox = self
+         if origOnEnterPressed then origOnEnterPressed(self, ...) end
+         -- Clear our internal buffer immediately (send already happened).
+         CH_ResetInputBuffer()
+         -- And also re-check after Blizzard finishes clearing the editbox.
+         if C_Timer and self and self.GetText then
+            C_Timer.After(0, function()
+               if self and self.GetText and strlen(self:GetText() or "") == 0 then
+                  CH_ResetInputBuffer()
+               end
+            end)
+         end
+      end)
+
+      local origOnTextChanged = editBox:GetScript("OnTextChanged")
+      editBox:SetScript("OnTextChanged", function(self, userInput, ...)
+         if origOnTextChanged then origOnTextChanged(self, userInput, ...) end
+         if self and self.GetText and strlen(self:GetText() or "") == 0 then
+            CH_ResetInputBuffer()
+         end
+      end)
+
+      local origOnChar = editBox:GetScript("OnChar")
+      editBox:SetScript("OnChar", function(self, character, ...)
+         CH_ActiveEditBox = self
+         if origOnChar then origOnChar(self, character, ...) end
+         CH_OnChar(self, character)
+      end)
+
+      local origOnKeyDown = editBox:GetScript("OnKeyDown")
+      editBox:SetScript("OnKeyDown", function(self, key, ...)
+         CH_ActiveEditBox = self
+         CH_OnKeyDown(self, key)
+         if origOnKeyDown then origOnKeyDown(self, key, ...) end
+      end)
+
+      local origOnKeyUp = editBox:GetScript("OnKeyUp")
+      editBox:SetScript("OnKeyUp", function(self, key, ...)
+         CH_ActiveEditBox = self
+         if origOnKeyUp then origOnKeyUp(self, key, ...) end
+         CH_OnKeyUp(self, key)
+      end)
+   end
+
+   local function HookMessageFrameAddMessage(frame)
+      if (not frame) or (type(frame.AddMessage) ~= "function") then return end
+      if frame.originalAddMessage_WoWinArabic then return end
+
+      frame.originalAddMessage_WoWinArabic = frame.AddMessage
+      frame.AddMessage = function(self, text, r, g, b, id, holdTime, ...)
+         if (CH_PM and CH_PM["active"] == "0") or (not text) then
+            return self.originalAddMessage_WoWinArabic(self, text, r, g, b, id, holdTime, ...)
+         end
+         if (not CH_Check_Arabic_Letters(text)) or HasArabicPresentationForms(text) then
+            return self.originalAddMessage_WoWinArabic(self, text, r, g, b, id, holdTime, ...)
+         end
+
+         -- Try to keep the player/link prefix intact and only reshape the message payload.
+         local prefix, msg = string.match(text, "^(|Hplayer.-|h%[.-%]|h:%s*)(.*)$")
+         if not prefix then
+            prefix, msg = string.match(text, "^(%b[]:%s*)(.*)$")
+         end
+         if not prefix then
+            prefix, msg = string.match(text, "^([^:]+:%s*)(.*)$")
+         end
+
+         if prefix and msg and CH_Check_Arabic_Letters(msg) and (not HasArabicPresentationForms(msg)) then
+            text = prefix .. ReverseAndReshapeSafe(msg)
+         else
+            text = ReverseAndReshapeSafe(text)
+         end
+
+         return self.originalAddMessage_WoWinArabic(self, text, r, g, b, id, holdTime, ...)
+      end
+   end
+
+   local function SetupCommunitiesChat()
+      local cf = _G["CommunitiesFrame"]
+      if not cf then return false end
+
+      local messageFrame = cf.Chat and cf.Chat.MessageFrame
+      local editBox = cf.ChatEditBox or (cf.Chat and cf.Chat.EditBox)
+
+      if messageFrame and messageFrame.GetFont and messageFrame.SetFont then
+         local _, size, flags = messageFrame:GetFont()
+         messageFrame:SetFont(CH_Font, size or frameSize, flags)
+         HookSetFontToForceArabic(messageFrame)
+         fontGuardian:Register(messageFrame, size or frameSize, flags)
+         HookSetFontObject(messageFrame)
+         HookMessageFrameAddMessage(messageFrame)
+      end
+
+      if editBox and editBox.GetFont and editBox.SetFont then
+         local _, size, flags = editBox:GetFont()
+         editBox:SetFont(CH_Font, size or editBoxSize, flags)
+         HookSetFontToForceArabic(editBox)
+         fontGuardian:Register(editBox, size or editBoxSize, flags)
+         HookSetFontObject(editBox)
+         WrapEditBoxForArabic(editBox)
+      end
+
+      return (messageFrame ~= nil) or (editBox ~= nil)
+   end
+
+   local function TrySetupCommunitiesChat(retries)
+      if SetupCommunitiesChat() then return end
+      if retries and retries > 0 and C_Timer then
+         C_Timer.After(0.25, function()
+            TrySetupCommunitiesChat(retries - 1)
+         end)
+      end
+   end
+
+   -- If Communities UI is already present, hook immediately. Otherwise hook when Blizzard_Communities loads.
+   TrySetupCommunitiesChat(5)
+   local communitiesHookFrame = CreateFrame("Frame")
+   communitiesHookFrame:RegisterEvent("ADDON_LOADED")
+   communitiesHookFrame:SetScript("OnEvent", function(_, _, addonName)
+      if addonName == "Blizzard_Communities" then
+         TrySetupCommunitiesChat(20)
+      end
+   end)
    
 end
 
