@@ -130,11 +130,24 @@ function ST_UsunZbedneZnaki(txt)
 end
 
 function ST_PrzedZapisem(txt)
-  local text = string.gsub(txt or "", "(%d),(%d)", "%1%2")
+  local text = string.gsub(txt or "", "(%d),(%d)", "%1%2")  -- Remove commas from numbers (1,000 → 1000)
   text = string.gsub(text, "\r", "")
+  
+  -- Replace player name with $N placeholder
   if _G.WOWTR_player_name then
     text = string.gsub(text, '%f[%a]' .. _G.WOWTR_player_name .. '%f[%A]', "$N")
   end
+  
+  -- Convert numeric values to {1}, {2}, {3} placeholders for easier translation
+  -- This makes saved untranslated text ready for translation with dynamic values preserved.
+  -- Even small numbers (like "3 sec" or "2 targets") are converted because they could be
+  -- affected by talents/modifiers. Translator can hard-code values that are truly static.
+  local placeholderIndex = 0
+  text = string.gsub(text, "(%-?%d+%.?%d*)", function(num)
+    placeholderIndex = placeholderIndex + 1
+    return "{" .. placeholderIndex .. "}"
+  end)
+  
   return text
 end
 
